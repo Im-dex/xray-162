@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;../../xrServerEntities/;../../../sdk/include/stlport;../../../sdk/include/;"
+				AdditionalIncludeDirectories="./;..\..\xrServerEntities\;../../../sdk/include/stlport;../../../sdk/include/;"
 				PreprocessorDefinitions="WIN32,_WINDOWS,DEBUG,AI_COMPILER;_SECURE_SCL=0"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -161,7 +161,7 @@
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="./;../../xrServerEntities/;../../../sdk/include/stlport;../../../sdk/include/;"
+				AdditionalIncludeDirectories="./;..\..\xrServerEntities\;../../../sdk/include/stlport;../../../sdk/include/;"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,AI_COMPILER;_SECURE_SCL=0"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -276,7 +276,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="./;../../xrServerEntities/;../../../sdk/include/stlport;../../../sdk/include/;"
+				AdditionalIncludeDirectories="./;..\..\xrServerEntities\;../../../sdk/include/stlport;../../../sdk/include/;"
 				PreprocessorDefinitions="WIN32,DEBUG,_WINDOWS,AI_COMPILER;_SECURE_SCL=0"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -605,7 +605,7 @@
 				Name="Kernel"
 				>
 				<File
-					RelativePath="../../xrServerEntities/FastDelegate.h"
+					RelativePath="..\..\xrServerEntities\FastDelegate.h"
 					>
 				</File>
 				<File
@@ -1136,7 +1136,7 @@
 						Name="game_graph"
 						>
 						<File
-							RelativePath="../../xrServerEntities/game_graph_space.h"
+							RelativePath="..\..\xrServerEntities\game_graph_space.h"
 							>
 						</File>
 						<File
@@ -1238,7 +1238,7 @@
 				Name="Shared"
 				>
 				<File
-					RelativePath="../../xrServerEntities/restriction_space.h"
+					RelativePath="..\..\xrServerEntities\restriction_space.h"
 					>
 				</File>
 				<File
@@ -1264,15 +1264,15 @@
 						Name="alife_human_brain"
 						>
 						<File
-							RelativePath="../../xrServerEntities/alife_human_brain.cpp"
+							RelativePath="..\..\xrServerEntities\alife_human_brain.cpp"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_human_brain.h"
+							RelativePath="..\..\xrServerEntities\alife_human_brain.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_human_brain_inline.h"
+							RelativePath="..\..\xrServerEntities\alife_human_brain_inline.h"
 							>
 						</File>
 					</Filter>
@@ -1280,15 +1280,15 @@
 						Name="alife_monster_brain"
 						>
 						<File
-							RelativePath="../../xrServerEntities/alife_monster_brain.cpp"
+							RelativePath="..\..\xrServerEntities\alife_monster_brain.cpp"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_monster_brain.h"
+							RelativePath="..\..\xrServerEntities\alife_monster_brain.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_monster_brain_inline.h"
+							RelativePath="..\..\xrServerEntities\alife_monster_brain_inline.h"
 							>
 						</File>
 					</Filter>
@@ -1296,11 +1296,11 @@
 						Name="alife_space"
 						>
 						<File
-							RelativePath="../../xrServerEntities/alife_space.cpp"
+							RelativePath="..\..\xrServerEntities\alife_space.cpp"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_space.h"
+							RelativePath="..\..\xrServerEntities\alife_space.h"
 							>
 						</File>
 					</Filter>
@@ -1309,107 +1309,107 @@
 					Name="ServerEntities"
 					>
 					<File
-						RelativePath="../../xrServerEntities/character_info_defs.h"
+						RelativePath="..\..\xrServerEntities\character_info_defs.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/DrawUtils.h"
+						RelativePath="..\..\xrServerEntities\DrawUtils.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/InfoPortionDefs.h"
+						RelativePath="..\..\xrServerEntities\InfoPortionDefs.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/inventory_space.h"
+						RelativePath="..\..\xrServerEntities\inventory_space.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/ItemListTypes.h"
+						RelativePath="..\..\xrServerEntities\ItemListTypes.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PropertiesListTypes.h"
+						RelativePath="..\..\xrServerEntities\PropertiesListTypes.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_export_space.h"
+						RelativePath="..\..\xrServerEntities\script_export_space.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_value_container.h"
+						RelativePath="..\..\xrServerEntities\script_value_container.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_value_container_impl.h"
+						RelativePath="..\..\xrServerEntities\script_value_container_impl.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/ShapeData.h"
+						RelativePath="..\..\xrServerEntities\ShapeData.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/WaveForm.h"
+						RelativePath="..\..\xrServerEntities\WaveForm.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrEProps.h"
+						RelativePath="..\..\xrServerEntities\xrEProps.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Object_Base.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Object_Base.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Object_Base.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Object_Base.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_Abstract.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_Abstract.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_Abstract.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_Abstract.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_All.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_All.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Items.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Items.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Items.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Items.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Monsters.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Monsters.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Monsters.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Monsters.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Space.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Space.h"
 						>
 					</File>
 					<File
@@ -1429,27 +1429,27 @@
 					Name="Server"
 					>
 					<File
-						RelativePath="../../xrServerEntities/game_base_space.h"
+						RelativePath="..\..\xrServerEntities\game_base_space.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PHNetState.cpp"
+						RelativePath="..\..\xrServerEntities\PHNetState.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PHNetState.h"
+						RelativePath="..\..\xrServerEntities\PHNetState.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PHSynchronize.cpp"
+						RelativePath="..\..\xrServerEntities\PHSynchronize.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PHSynchronize.h"
+						RelativePath="..\..\xrServerEntities\PHSynchronize.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrMessages.h"
+						RelativePath="..\..\xrServerEntities\xrMessages.h"
 						>
 					</File>
 					<File
@@ -1469,35 +1469,35 @@
 					Name="ObjectBroker"
 					>
 					<File
-						RelativePath="../../xrServerEntities/object_broker.h"
+						RelativePath="..\..\xrServerEntities\object_broker.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_cloner.h"
+						RelativePath="..\..\xrServerEntities\object_cloner.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_comparer.h"
+						RelativePath="..\..\xrServerEntities\object_comparer.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_destroyer.h"
+						RelativePath="..\..\xrServerEntities\object_destroyer.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_interfaces.h"
+						RelativePath="..\..\xrServerEntities\object_interfaces.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_loader.h"
+						RelativePath="..\..\xrServerEntities\object_loader.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_saver.h"
+						RelativePath="..\..\xrServerEntities\object_saver.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_type_traits.h"
+						RelativePath="..\..\xrServerEntities\object_type_traits.h"
 						>
 					</File>
 				</Filter>
@@ -1505,31 +1505,31 @@
 					Name="Common"
 					>
 					<File
-						RelativePath="../../xrServerEntities/clsid_game.h"
+						RelativePath="..\..\xrServerEntities\clsid_game.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/smart_cast.cpp"
+						RelativePath="..\..\xrServerEntities\smart_cast.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/smart_cast.h"
+						RelativePath="..\..\xrServerEntities\smart_cast.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/smart_cast_impl0.h"
+						RelativePath="..\..\xrServerEntities\smart_cast_impl0.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/smart_cast_impl1.h"
+						RelativePath="..\..\xrServerEntities\smart_cast_impl1.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/smart_cast_impl2.h"
+						RelativePath="..\..\xrServerEntities\smart_cast_impl2.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/smart_cast_stats.cpp"
+						RelativePath="..\..\xrServerEntities\smart_cast_stats.cpp"
 						>
 					</File>
 					<File
@@ -1553,19 +1553,19 @@
 					Name="associative_vector"
 					>
 					<File
-						RelativePath="../../xrServerEntities/associative_vector.h"
+						RelativePath="..\..\xrServerEntities\associative_vector.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/associative_vector_compare_predicate.h"
+						RelativePath="..\..\xrServerEntities\associative_vector_compare_predicate.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/associative_vector_compare_predicate_inline.h"
+						RelativePath="..\..\xrServerEntities\associative_vector_compare_predicate_inline.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/associative_vector_inline.h"
+						RelativePath="..\..\xrServerEntities\associative_vector_inline.h"
 						>
 					</File>
 				</Filter>

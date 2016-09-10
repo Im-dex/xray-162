@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="xrSE_Factory"
 	ProjectGUID="{3AD26FD3-4F52-4E22-A4CF-AD4C49E74C61}"
 	RootNamespace="xrSE_Factory"
@@ -335,11 +335,15 @@
 			Name="Core"
 			>
 			<File
-				RelativePath="../../xrServerEntities/DrawUtils.h"
+				RelativePath="..\..\xrServerEntities\DrawUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="../../xrServerEntities/pch_script.cpp"
+				RelativePath="..\..\xrServerEntities\pch_script.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\xrServerEntities\pch_script.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -348,7 +352,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"
 						PrecompiledHeaderThrough="pch_script.h"
-						PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -358,7 +362,7 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"
 						PrecompiledHeaderThrough="pch_script.h"
-						PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -368,13 +372,9 @@
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"
 						PrecompiledHeaderThrough="pch_script.h"
-						PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="../../xrServerEntities/pch_script.h"
-				>
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp"
@@ -385,6 +385,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName).pch"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -393,6 +394,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName).pch"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -401,6 +403,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="1"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName).pch"
 					/>
 				</FileConfiguration>
 			</File>
@@ -452,7 +455,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PrecompiledHeaderThrough="pch_script.h"
-						PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -461,7 +464,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PrecompiledHeaderThrough="pch_script.h"
-						PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -470,7 +473,7 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						PrecompiledHeaderThrough="pch_script.h"
-						PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 					/>
 				</FileConfiguration>
 			</File>
@@ -487,7 +490,7 @@
 			Name="Common"
 			>
 			<File
-				RelativePath="../../xrServerEntities/FastDelegate.h"
+				RelativePath="..\..\xrServerEntities\FastDelegate.h"
 				>
 			</File>
 			<File
@@ -501,7 +504,7 @@
 					Name="SpaceRestrictionManager"
 					>
 					<File
-						RelativePath="../../xrServerEntities/restriction_space.h"
+						RelativePath="..\..\xrServerEntities\restriction_space.h"
 						>
 					</File>
 				</Filter>
@@ -510,7 +513,7 @@
 				Name="ASound"
 				>
 				<File
-					RelativePath="../../xrServerEntities/ai_sounds.h"
+					RelativePath="..\..\xrServerEntities\ai_sounds.h"
 					>
 				</File>
 			</Filter>
@@ -534,35 +537,35 @@
 				Name="ObjectBroker"
 				>
 				<File
-					RelativePath="../../xrServerEntities/object_broker.h"
+					RelativePath="..\..\xrServerEntities\object_broker.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_cloner.h"
+					RelativePath="..\..\xrServerEntities\object_cloner.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_comparer.h"
+					RelativePath="..\..\xrServerEntities\object_comparer.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_destroyer.h"
+					RelativePath="..\..\xrServerEntities\object_destroyer.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_interfaces.h"
+					RelativePath="..\..\xrServerEntities\object_interfaces.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_loader.h"
+					RelativePath="..\..\xrServerEntities\object_loader.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_saver.h"
+					RelativePath="..\..\xrServerEntities\object_saver.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_type_traits.h"
+					RelativePath="..\..\xrServerEntities\object_type_traits.h"
 					>
 				</File>
 			</Filter>
@@ -570,27 +573,27 @@
 				Name="ObjectFactory"
 				>
 				<File
-					RelativePath="../../xrServerEntities/clsid_game.h"
+					RelativePath="..\..\xrServerEntities\clsid_game.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_factory.cpp"
+					RelativePath="..\..\xrServerEntities\object_factory.cpp"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_factory.h"
+					RelativePath="..\..\xrServerEntities\object_factory.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_factory_impl.h"
+					RelativePath="..\..\xrServerEntities\object_factory_impl.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_factory_inline.h"
+					RelativePath="..\..\xrServerEntities\object_factory_inline.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_factory_register.cpp"
+					RelativePath="..\..\xrServerEntities\object_factory_register.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -598,7 +601,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -607,7 +610,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -616,12 +619,12 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_factory_script.cpp"
+					RelativePath="..\..\xrServerEntities\object_factory_script.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -629,7 +632,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -638,7 +641,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -647,23 +650,23 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/object_factory_space.h"
+					RelativePath="..\..\xrServerEntities\object_factory_space.h"
 					>
 				</File>
 				<Filter
 					Name="object_item_abstract"
 					>
 					<File
-						RelativePath="../../xrServerEntities/object_item_abstract.h"
+						RelativePath="..\..\xrServerEntities\object_item_abstract.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_item_abstract_inline.h"
+						RelativePath="..\..\xrServerEntities\object_item_abstract_inline.h"
 						>
 					</File>
 				</Filter>
@@ -671,11 +674,11 @@
 					Name="object_item_client_server"
 					>
 					<File
-						RelativePath="../../xrServerEntities/object_item_client_server.h"
+						RelativePath="..\..\xrServerEntities\object_item_client_server.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_item_client_server_inline.h"
+						RelativePath="..\..\xrServerEntities\object_item_client_server_inline.h"
 						>
 					</File>
 				</Filter>
@@ -683,7 +686,7 @@
 					Name="object_item_script"
 					>
 					<File
-						RelativePath="../../xrServerEntities/object_item_script.cpp"
+						RelativePath="..\..\xrServerEntities\object_item_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -691,7 +694,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -700,7 +703,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -709,16 +712,16 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_item_script.h"
+						RelativePath="..\..\xrServerEntities\object_item_script.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_item_script_inline.h"
+						RelativePath="..\..\xrServerEntities\object_item_script_inline.h"
 						>
 					</File>
 				</Filter>
@@ -726,11 +729,11 @@
 					Name="object_item_single"
 					>
 					<File
-						RelativePath="../../xrServerEntities/object_item_single.h"
+						RelativePath="..\..\xrServerEntities\object_item_single.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/object_item_single_inline.h"
+						RelativePath="..\..\xrServerEntities\object_item_single_inline.h"
 						>
 					</File>
 				</Filter>
@@ -739,27 +742,27 @@
 				Name="SmartCast"
 				>
 				<File
-					RelativePath="../../xrServerEntities/smart_cast.cpp"
+					RelativePath="..\..\xrServerEntities\smart_cast.cpp"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/smart_cast.h"
+					RelativePath="..\..\xrServerEntities\smart_cast.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/smart_cast_impl0.h"
+					RelativePath="..\..\xrServerEntities\smart_cast_impl0.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/smart_cast_impl1.h"
+					RelativePath="..\..\xrServerEntities\smart_cast_impl1.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/smart_cast_impl2.h"
+					RelativePath="..\..\xrServerEntities\smart_cast_impl2.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/smart_cast_stats.cpp"
+					RelativePath="..\..\xrServerEntities\smart_cast_stats.cpp"
 					>
 				</File>
 			</Filter>
@@ -767,19 +770,19 @@
 				Name="associative_vector"
 				>
 				<File
-					RelativePath="../../xrServerEntities/associative_vector.h"
+					RelativePath="..\..\xrServerEntities\associative_vector.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/associative_vector_compare_predicate.h"
+					RelativePath="..\..\xrServerEntities\associative_vector_compare_predicate.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/associative_vector_compare_predicate_inline.h"
+					RelativePath="..\..\xrServerEntities\associative_vector_compare_predicate_inline.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/associative_vector_inline.h"
+					RelativePath="..\..\xrServerEntities\associative_vector_inline.h"
 					>
 				</File>
 			</Filter>
@@ -788,15 +791,15 @@
 			Name="Scripts"
 			>
 			<File
-				RelativePath="../../xrServerEntities/script_export_macroses.h"
+				RelativePath="..\..\xrServerEntities\script_export_macroses.h"
 				>
 			</File>
 			<File
-				RelativePath="../../xrServerEntities/script_export_space.h"
+				RelativePath="..\..\xrServerEntities\script_export_space.h"
 				>
 			</File>
 			<File
-				RelativePath="../../xrServerEntities/script_space_forward.h"
+				RelativePath="..\..\xrServerEntities\script_space_forward.h"
 				>
 			</File>
 			<File
@@ -810,11 +813,11 @@
 					Name="ScriptFmatrix"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_fmatrix.h"
+						RelativePath="..\..\xrServerEntities\script_fmatrix.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_fmatrix_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_fmatrix_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -822,7 +825,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -831,7 +834,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -840,7 +843,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 					</File>
@@ -849,11 +852,11 @@
 					Name="ScriptFvector"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_fcolor.h"
+						RelativePath="..\..\xrServerEntities\script_fcolor.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_fcolor_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_fcolor_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -861,7 +864,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -870,7 +873,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -879,16 +882,16 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_fvector.h"
+						RelativePath="..\..\xrServerEntities\script_fvector.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_fvector_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_fvector_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -896,7 +899,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -905,7 +908,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -914,7 +917,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 					</File>
@@ -923,19 +926,19 @@
 					Name="ScriptIniFile"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_ini_file.cpp"
+						RelativePath="..\..\xrServerEntities\script_ini_file.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_ini_file.h"
+						RelativePath="..\..\xrServerEntities\script_ini_file.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_ini_file_inline.h"
+						RelativePath="..\..\xrServerEntities\script_ini_file_inline.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_ini_file_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_ini_file_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -943,7 +946,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -952,7 +955,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -961,7 +964,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+								PrecompiledHeaderFile="$(IntDir)$(ProjectName)_script.pch"
 							/>
 						</FileConfiguration>
 					</File>
@@ -969,19 +972,19 @@
 						Name="ScriptTokenList"
 						>
 						<File
-							RelativePath="../../xrServerEntities/script_token_list.cpp"
+							RelativePath="..\..\xrServerEntities\script_token_list.cpp"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/script_token_list.h"
+							RelativePath="..\..\xrServerEntities\script_token_list.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/script_token_list_inline.h"
+							RelativePath="..\..\xrServerEntities\script_token_list_inline.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/script_token_list_script.cpp"
+							RelativePath="..\..\xrServerEntities\script_token_list_script.cpp"
 							>
 							<FileConfiguration
 								Name="Debug|Win32"
@@ -1016,15 +1019,15 @@
 						Name="ScriptRTokenList"
 						>
 						<File
-							RelativePath="../../xrServerEntities/script_rtoken_list.h"
+							RelativePath="..\..\xrServerEntities\script_rtoken_list.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/script_rtoken_list_inline.h"
+							RelativePath="..\..\xrServerEntities\script_rtoken_list_inline.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/script_rtoken_list_script.cpp"
+							RelativePath="..\..\xrServerEntities\script_rtoken_list_script.cpp"
 							>
 							<FileConfiguration
 								Name="Debug|Win32"
@@ -1060,11 +1063,11 @@
 					Name="ScriptNetPacket"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_net_packet.h"
+						RelativePath="..\..\xrServerEntities\script_net_packet.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_net_packet_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_net_packet_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1099,11 +1102,11 @@
 					Name="ScriptSoundType"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_sound_type.h"
+						RelativePath="..\..\xrServerEntities\script_sound_type.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_sound_type_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_sound_type_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1138,11 +1141,11 @@
 					Name="ScriptFlags"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_flags.h"
+						RelativePath="..\..\xrServerEntities\script_flags.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_flags_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_flags_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1177,11 +1180,11 @@
 					Name="ScriptReader"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_reader.h"
+						RelativePath="..\..\xrServerEntities\script_reader.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_reader_script.cpp"
+						RelativePath="..\..\xrServerEntities\script_reader_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1217,7 +1220,7 @@
 				Name="ScriptEngine"
 				>
 				<File
-					RelativePath="../../xrServerEntities/script_engine.cpp"
+					RelativePath="..\..\xrServerEntities\script_engine.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1248,50 +1251,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_engine.h"
+					RelativePath="..\..\xrServerEntities\script_engine.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_engine_export.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PrecompiledHeaderThrough="pch_script.h"
-							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="../../xrServerEntities/script_engine_export.h"
-					>
-				</File>
-				<File
-					RelativePath="../../xrServerEntities/script_engine_inline.h"
-					>
-				</File>
-				<File
-					RelativePath="../../xrServerEntities/script_engine_script.cpp"
+					RelativePath="..\..\xrServerEntities\script_engine_export.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1322,7 +1286,46 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_engine_space.h"
+					RelativePath="..\..\xrServerEntities\script_engine_export.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\xrServerEntities\script_engine_inline.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\xrServerEntities\script_engine_script.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="pch_script.h"
+							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Mixed|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="pch_script.h"
+							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="pch_script.h"
+							PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\xrServerEntities\script_engine_space.h"
 					>
 				</File>
 			</Filter>
@@ -1330,7 +1333,7 @@
 				Name="ScriptStorage"
 				>
 				<File
-					RelativePath="../../xrServerEntities/script_storage.cpp"
+					RelativePath="..\..\xrServerEntities\script_storage.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1361,15 +1364,15 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_storage.h"
+					RelativePath="..\..\xrServerEntities\script_storage.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_storage_inline.h"
+					RelativePath="..\..\xrServerEntities\script_storage_inline.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_storage_space.h"
+					RelativePath="..\..\xrServerEntities\script_storage_space.h"
 					>
 				</File>
 				<File
@@ -1385,7 +1388,7 @@
 				Name="ScriptProcess"
 				>
 				<File
-					RelativePath="../../xrServerEntities/script_process.cpp"
+					RelativePath="..\..\xrServerEntities\script_process.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1416,11 +1419,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_process.h"
+					RelativePath="..\..\xrServerEntities\script_process.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_process_inline.h"
+					RelativePath="..\..\xrServerEntities\script_process_inline.h"
 					>
 				</File>
 			</Filter>
@@ -1428,7 +1431,7 @@
 				Name="ScriptThread"
 				>
 				<File
-					RelativePath="../../xrServerEntities/script_thread.cpp"
+					RelativePath="..\..\xrServerEntities\script_thread.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1459,18 +1462,18 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_thread.h"
+					RelativePath="..\..\xrServerEntities\script_thread.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_thread_inline.h"
+					RelativePath="..\..\xrServerEntities\script_thread_inline.h"
 					>
 				</File>
 				<Filter
 					Name="ScriptStackTracker"
 					>
 					<File
-						RelativePath="../../xrServerEntities/script_stack_tracker.cpp"
+						RelativePath="..\..\xrServerEntities\script_stack_tracker.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1502,11 +1505,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_stack_tracker.h"
+						RelativePath="..\..\xrServerEntities\script_stack_tracker.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/script_stack_tracker_inline.h"
+						RelativePath="..\..\xrServerEntities\script_stack_tracker_inline.h"
 						>
 					</File>
 				</Filter>
@@ -1515,39 +1518,39 @@
 				Name="ScriptDebugger"
 				>
 				<File
-					RelativePath="../../xrServerEntities/mslotutils.h"
+					RelativePath="..\..\xrServerEntities\mslotutils.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_callStack.cpp"
+					RelativePath="..\..\xrServerEntities\script_callStack.cpp"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_callStack.h"
+					RelativePath="..\..\xrServerEntities\script_callStack.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_debugger.cpp"
+					RelativePath="..\..\xrServerEntities\script_debugger.cpp"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_debugger.h"
+					RelativePath="..\..\xrServerEntities\script_debugger.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_debugger_messages.h"
+					RelativePath="..\..\xrServerEntities\script_debugger_messages.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_debugger_threads.cpp"
+					RelativePath="..\..\xrServerEntities\script_debugger_threads.cpp"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_debugger_threads.h"
+					RelativePath="..\..\xrServerEntities\script_debugger_threads.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_lua_helper.cpp"
+					RelativePath="..\..\xrServerEntities\script_lua_helper.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1578,7 +1581,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/script_lua_helper.h"
+					RelativePath="..\..\xrServerEntities\script_lua_helper.h"
 					>
 				</File>
 				<File
@@ -1648,15 +1651,15 @@
 					Name="ALifeStuff"
 					>
 					<File
-						RelativePath="../../xrServerEntities/alife_space.cpp"
+						RelativePath="..\..\xrServerEntities\alife_space.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/alife_space.h"
+						RelativePath="..\..\xrServerEntities\alife_space.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/game_graph_space.h"
+						RelativePath="..\..\xrServerEntities\game_graph_space.h"
 						>
 					</File>
 					<Filter
@@ -1675,15 +1678,15 @@
 						Name="human_brain"
 						>
 						<File
-							RelativePath="../../xrServerEntities/alife_human_brain.cpp"
+							RelativePath="..\..\xrServerEntities\alife_human_brain.cpp"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_human_brain.h"
+							RelativePath="..\..\xrServerEntities\alife_human_brain.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_human_brain_inline.h"
+							RelativePath="..\..\xrServerEntities\alife_human_brain_inline.h"
 							>
 						</File>
 					</Filter>
@@ -1691,15 +1694,15 @@
 						Name="monster_brain"
 						>
 						<File
-							RelativePath="../../xrServerEntities/alife_monster_brain.cpp"
+							RelativePath="..\..\xrServerEntities\alife_monster_brain.cpp"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_monster_brain.h"
+							RelativePath="..\..\xrServerEntities\alife_monster_brain.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/alife_monster_brain_inline.h"
+							RelativePath="..\..\xrServerEntities\alife_monster_brain_inline.h"
 							>
 						</File>
 					</Filter>
@@ -1708,11 +1711,11 @@
 					Name="GameStuff"
 					>
 					<File
-						RelativePath="../../xrServerEntities/game_base_space.h"
+						RelativePath="..\..\xrServerEntities\game_base_space.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/inventory_space.h"
+						RelativePath="..\..\xrServerEntities\inventory_space.h"
 						>
 					</File>
 					<File
@@ -1740,19 +1743,19 @@
 					Name="PhysicsStuff"
 					>
 					<File
-						RelativePath="../../xrServerEntities/PHNetState.cpp"
+						RelativePath="..\..\xrServerEntities\PHNetState.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PHNetState.h"
+						RelativePath="..\..\xrServerEntities\PHNetState.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PHSynchronize.cpp"
+						RelativePath="..\..\xrServerEntities\PHSynchronize.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PHSynchronize.h"
+						RelativePath="..\..\xrServerEntities\PHSynchronize.h"
 						>
 					</File>
 				</Filter>
@@ -1760,39 +1763,39 @@
 					Name="ServerStuff"
 					>
 					<File
-						RelativePath="../../xrServerEntities/character_info.cpp"
+						RelativePath="..\..\xrServerEntities\character_info.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/character_info.h"
+						RelativePath="..\..\xrServerEntities\character_info.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/character_info_defs.h"
+						RelativePath="..\..\xrServerEntities\character_info_defs.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/shared_data.h"
+						RelativePath="..\..\xrServerEntities\shared_data.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/specific_character.cpp"
+						RelativePath="..\..\xrServerEntities\specific_character.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/specific_character.h"
+						RelativePath="..\..\xrServerEntities\specific_character.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xml_str_id_loader.h"
+						RelativePath="..\..\xrServerEntities\xml_str_id_loader.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrMessages.h"
+						RelativePath="..\..\xrServerEntities\xrMessages.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Space.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Space.h"
 						>
 					</File>
 					<File
@@ -1809,7 +1812,7 @@
 				Name="ServerFactory"
 				>
 				<File
-					RelativePath="../../xrServerEntities/xrServer_Factory.cpp"
+					RelativePath="..\..\xrServerEntities\xrServer_Factory.cpp"
 					>
 				</File>
 			</Filter>
@@ -1817,27 +1820,27 @@
 				Name="ServerEntities"
 				>
 				<File
-					RelativePath="../../xrServerEntities/InfoPortionDefs.h"
+					RelativePath="..\..\xrServerEntities\InfoPortionDefs.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/ShapeData.h"
+					RelativePath="..\..\xrServerEntities\ShapeData.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/xrServer_Objects_Abstract.cpp"
+					RelativePath="..\..\xrServerEntities\xrServer_Objects_Abstract.cpp"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/xrServer_Objects_Abstract.h"
+					RelativePath="..\..\xrServerEntities\xrServer_Objects_Abstract.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/xrServer_Objects_ALife_All.h"
+					RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_All.h"
 					>
 				</File>
 				<File
-					RelativePath="../../xrServerEntities/xrServer_script_macroses.h"
+					RelativePath="..\..\xrServerEntities\xrServer_script_macroses.h"
 					>
 				</File>
 				<File
@@ -1852,23 +1855,23 @@
 					Name="objects"
 					>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Object_Base.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Object_Base.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Object_Base.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Object_Base.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_script.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1899,7 +1902,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_script2.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_script2.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1934,46 +1937,15 @@
 					Name="objects_alife"
 					>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_script.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Mixed|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_script2.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2004,7 +1976,38 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_script3.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_script2.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Mixed|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_script3.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2039,46 +2042,15 @@
 					Name="objects_alife_items"
 					>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Items.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Items.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Items.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Items.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Items_script.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Mixed|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Items_script2.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Items_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2109,7 +2081,38 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Items_script3.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Items_script2.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Mixed|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Items_script3.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2144,46 +2147,15 @@
 					Name="objects_alife_monsters"
 					>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Monsters.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Monsters.cpp"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Monsters.h"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Monsters.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Monsters_script.cpp"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Mixed|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="pch_script.h"
-								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Monsters_script2.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Monsters_script.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2214,7 +2186,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrserver_objects_alife_monsters_script3.cpp"
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Monsters_script2.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2245,7 +2217,38 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrServer_Objects_ALife_Monsters_script4.cpp"
+						RelativePath="..\..\xrServerEntities\xrserver_objects_alife_monsters_script3.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Mixed|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="pch_script.h"
+								PrecompiledHeaderFile="$(IntDir)/$(ProjectName)_script.pch"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\xrServerEntities\xrServer_Objects_ALife_Monsters_script4.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -2280,19 +2283,19 @@
 					Name="editor_properties"
 					>
 					<File
-						RelativePath="../../xrServerEntities/ItemListTypes.h"
+						RelativePath="..\..\xrServerEntities\ItemListTypes.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/PropertiesListTypes.h"
+						RelativePath="..\..\xrServerEntities\PropertiesListTypes.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/WaveForm.h"
+						RelativePath="..\..\xrServerEntities\WaveForm.h"
 						>
 					</File>
 					<File
-						RelativePath="../../xrServerEntities/xrEProps.h"
+						RelativePath="..\..\xrServerEntities\xrEProps.h"
 						>
 					</File>
 					<File
@@ -2339,11 +2342,11 @@
 						Name="script_value_container"
 						>
 						<File
-							RelativePath="../../xrServerEntities/script_value_container.h"
+							RelativePath="..\..\xrServerEntities\script_value_container.h"
 							>
 						</File>
 						<File
-							RelativePath="../../xrServerEntities/script_value_container_impl.h"
+							RelativePath="..\..\xrServerEntities\script_value_container_impl.h"
 							>
 						</File>
 					</Filter>
