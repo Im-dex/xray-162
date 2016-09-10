@@ -78,16 +78,16 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = include/ogg
+subdir = doc/libogg
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/config_types.h.in $(ogginclude_HEADERS)
+	$(dist_apidoc_DATA)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = config_types.h
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -135,28 +135,9 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(oggincludedir)" \
-	"$(DESTDIR)$(oggincludedir)"
-HEADERS = $(nodist_ogginclude_HEADERS) $(ogginclude_HEADERS)
+am__installdirs = "$(DESTDIR)$(apidocdir)"
+DATA = $(dist_apidoc_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-# Read a list of newline-separated strings from the standard input,
-# and print each of them once, without duplicates.  Input order is
-# *not* preserved.
-am__uniquify_input = $(AWK) '\
-  BEGIN { nonempty = 0; } \
-  { items[$$0] = 1; nonempty = 1; } \
-  END { if (nonempty) { for (i in items) print i; }; } \
-'
-# Make sure the list of sources is unique.  This is necessary because,
-# e.g., the same source file might be shared among _SOURCES variables
-# for different programs/libraries.
-am__define_uniq_tagged_files = \
-  list='$(am__tagged_files)'; \
-  unique=`for i in $$list; do \
-    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-  done | $(am__uniquify_input)`
-ETAGS = etags
-CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -288,9 +269,29 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-oggincludedir = $(includedir)/ogg
-ogginclude_HEADERS = ogg.h os_types.h
-nodist_ogginclude_HEADERS = config_types.h
+apidocdir = $(htmldir)/libogg
+dist_apidoc_DATA = bitpacking.html datastructures.html decoding.html encoding.html\
+	general.html index.html ogg_iovec_t.html ogg_packet.html ogg_packet_clear.html\
+	ogg_page.html ogg_page_bos.html ogg_page_checksum_set.html\
+	ogg_page_continued.html ogg_page_eos.html ogg_page_granulepos.html\
+	ogg_page_packets.html ogg_page_pageno.html ogg_page_serialno.html\
+	ogg_page_version.html ogg_stream_check.html ogg_stream_clear.html ogg_stream_destroy.html\
+	ogg_stream_eos.html ogg_stream_flush.html ogg_stream_flush_fill.html ogg_stream_init.html\
+	ogg_stream_iovecin.html ogg_stream_packetin.html ogg_stream_packetout.html\
+	ogg_stream_packetpeek.html ogg_stream_pagein.html\
+	ogg_stream_pageout.html ogg_stream_pageout_fill.html ogg_stream_reset.html\
+	ogg_stream_reset_serialno.html ogg_stream_state.html\
+	ogg_sync_buffer.html ogg_sync_check.html ogg_sync_clear.html ogg_sync_destroy.html\
+	ogg_sync_init.html ogg_sync_pageout.html ogg_sync_pageseek.html\
+	ogg_sync_reset.html ogg_sync_state.html ogg_sync_wrote.html\
+	oggpack_adv.html oggpack_adv1.html oggpack_bits.html\
+	oggpack_buffer.html oggpack_bytes.html oggpack_get_buffer.html\
+	oggpack_look.html oggpack_look1.html oggpack_read.html\
+	oggpack_read1.html oggpack_readinit.html oggpack_reset.html\
+	oggpack_write.html oggpack_writealign.html oggpack_writecheck.html oggpack_writeclear.html\
+	oggpack_writecopy.html oggpack_writeinit.html oggpack_writetrunc.html\
+	overview.html reference.html style.css
+
 all: all-am
 
 .SUFFIXES:
@@ -303,9 +304,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu include/ogg/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/libogg/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu include/ogg/Makefile
+	  $(AUTOMAKE) --gnu doc/libogg/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -324,108 +325,39 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-config_types.h: $(top_builddir)/config.status $(srcdir)/config_types.h.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-nodist_oggincludeHEADERS: $(nodist_ogginclude_HEADERS)
+install-dist_apidocDATA: $(dist_apidoc_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(nodist_ogginclude_HEADERS)'; test -n "$(oggincludedir)" || list=; \
+	@list='$(dist_apidoc_DATA)'; test -n "$(apidocdir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(oggincludedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(oggincludedir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(apidocdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(apidocdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(oggincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(oggincludedir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(apidocdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(apidocdir)" || exit $$?; \
 	done
 
-uninstall-nodist_oggincludeHEADERS:
+uninstall-dist_apidocDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_ogginclude_HEADERS)'; test -n "$(oggincludedir)" || list=; \
+	@list='$(dist_apidoc_DATA)'; test -n "$(apidocdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(oggincludedir)'; $(am__uninstall_files_from_dir)
-install-oggincludeHEADERS: $(ogginclude_HEADERS)
-	@$(NORMAL_INSTALL)
-	@list='$(ogginclude_HEADERS)'; test -n "$(oggincludedir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(oggincludedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(oggincludedir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(oggincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(oggincludedir)" || exit $$?; \
-	done
+	dir='$(DESTDIR)$(apidocdir)'; $(am__uninstall_files_from_dir)
+tags TAGS:
 
-uninstall-oggincludeHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(ogginclude_HEADERS)'; test -n "$(oggincludedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(oggincludedir)'; $(am__uninstall_files_from_dir)
+ctags CTAGS:
 
-ID: $(am__tagged_files)
-	$(am__define_uniq_tagged_files); mkid -fID $$unique
-tags: tags-am
-TAGS: tags
+cscope cscopelist:
 
-tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
-	set x; \
-	here=`pwd`; \
-	$(am__define_uniq_tagged_files); \
-	shift; \
-	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
-	  test -n "$$unique" || unique=$$empty_fix; \
-	  if test $$# -gt 0; then \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      "$$@" $$unique; \
-	  else \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      $$unique; \
-	  fi; \
-	fi
-ctags: ctags-am
-
-CTAGS: ctags
-ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
-	$(am__define_uniq_tagged_files); \
-	test -z "$(CTAGS_ARGS)$$unique" \
-	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
-	     $$unique
-
-GTAGS:
-	here=`$(am__cd) $(top_builddir) && pwd` \
-	  && $(am__cd) $(top_srcdir) \
-	  && gtags -i $(GTAGS_ARGS) "$$here"
-cscopelist: cscopelist-am
-
-cscopelist-am: $(am__tagged_files)
-	list='$(am__tagged_files)'; \
-	case "$(srcdir)" in \
-	  [\\/]* | ?:[\\/]*) sdir="$(srcdir)" ;; \
-	  *) sdir=$(subdir)/$(srcdir) ;; \
-	esac; \
-	for i in $$list; do \
-	  if test -f "$$i"; then \
-	    echo "$(subdir)/$$i"; \
-	  else \
-	    echo "$$sdir/$$i"; \
-	  fi; \
-	done >> $(top_builddir)/cscope.files
-
-distclean-tags:
-	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -459,9 +391,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(HEADERS)
+all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(oggincludedir)" "$(DESTDIR)$(oggincludedir)"; do \
+	for dir in "$(DESTDIR)$(apidocdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -500,7 +432,7 @@ clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-tags
+distclean-am: clean-am distclean-generic
 
 dvi: dvi-am
 
@@ -514,8 +446,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nodist_oggincludeHEADERS \
-	install-oggincludeHEADERS
+install-data-am: install-dist_apidocDATA
 
 install-dvi: install-dvi-am
 
@@ -559,26 +490,36 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-nodist_oggincludeHEADERS \
-	uninstall-oggincludeHEADERS
+uninstall-am: uninstall-dist_apidocDATA
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libtool cscopelist-am ctags ctags-am distclean \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	cscopelist-am ctags-am distclean distclean-generic \
+	distclean-libtool distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am \
+	install-dist_apidocDATA install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man \
-	install-nodist_oggincludeHEADERS install-oggincludeHEADERS \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am \
-	uninstall-nodist_oggincludeHEADERS uninstall-oggincludeHEADERS
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags-am uninstall \
+	uninstall-am uninstall-dist_apidocDATA
 
+
+update-doc-version:
+	@YEAR=$$(date +%Y); DAY=$$(date +%Y%m%d);					\
+	for f in $(srcdir)/*.html; do							\
+		sed -e "s/2000-[0-9]\{4\} Xiph.Org/2000-$$YEAR Xiph.Org/g"		\
+		    -e "s/libogg release [0-9. -]\+/libogg release $(VERSION) - $$DAY/g"\
+			< $$f > $$f.tmp;						\
+		if diff -q $$f $$f.tmp > /dev/null; then				\
+			rm $$f.tmp;							\
+		else									\
+			mv $$f.tmp $$f;							\
+		fi;									\
+	done;
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
