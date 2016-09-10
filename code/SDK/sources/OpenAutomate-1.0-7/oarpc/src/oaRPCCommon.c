@@ -300,315 +300,374 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#include <oaRPCInternal.h>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+#define _USE_MATH_DEFINES 1
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
+#include <math.h>
 
-#include <string.h>
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
-
-#ifdef __cplusplus
-extern "C"
+/*******************************************************************************
+*** General cleanup transport function
+******************************************************************************/
+void oaRPCCleanupTransport(oaRPCTransport* transport)
 {
-#endif
+  assert(transport != NULL);
+  assert(transport->UserData != NULL);
 
+  if(!transport || !transport->UserData)
+    return;
 
-/******************************************************************************* 
- * Types
- ******************************************************************************/
+  if(transport->CleanupAll)
+    transport->CleanupAll(transport->UserData);
 
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
-  {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
-
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
-
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
-  
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
-
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+  memset( transport, 0, sizeof(oaRPCTransport));
 }
-#endif
 
-#endif
+/*******************************************************************************
+*** oaRPCBuf functions
+******************************************************************************/
+void oaRPCLogMsg(const char *filename, int line, const char *msg)
+{
+  FILE *FP = fopen("c:/tmp/debug.txt", "a");
+
+  fprintf(stderr, "ERROR %s,%d: %s\n", filename, line, msg);
+  if(FP)
+  {
+    fprintf(FP, "ERROR %s,%d: %s\n", filename, line, msg);
+    fclose(FP);
+  }
+}
+
+/*******************************************************************************
+*** Globals
+******************************************************************************/
+const char Magic[] = "OpenAutomateRPC";
+const int MagicLen = sizeof(Magic);
+const unsigned long RPCVersionMajor = 1;
+const unsigned long RPCVersionMinor = 0;
+
+/*******************************************************************************
+*** oaRPCBuf functions
+******************************************************************************/
+
+oaRPCBuf *oaRPCAllocBuf(void)
+{
+  oaRPCBuf *Ret;
+
+  Ret = (oaRPCBuf *)malloc(sizeof(oaRPCBuf));
+  assert(Ret);
+
+  Ret->Size = 0;
+  Ret->BufSize = OARPC_MIN_BUF_SIZE;
+  Ret->Buf = (char *)malloc(OARPC_MIN_BUF_SIZE);
+  assert(Ret->Buf);
+
+  return(Ret);
+}
+
+void oaRPCFreeBuf(oaRPCBuf *buf)
+{
+  assert(buf);
+
+  free(buf->Buf);
+  free(buf);
+}
+
+static void ResizeBuf(oaRPCBuf *buf, oaRPCSize size)
+{
+  assert(buf);
+
+  if(size > buf->BufSize)
+  {
+    int Exp = (int)ceil(log((double)size) / M_LN2) + 1;
+    oaRPCSize NewSize = 1 << Exp;
+
+    buf->Buf = (char *)realloc(buf->Buf, NewSize);
+    assert(buf->Buf);
+
+    buf->BufSize = NewSize;
+  }
+
+  buf->Size = size;
+}
+
+void oaRPCPushBuf(oaRPCBuf *buf, const void *src, oaRPCSize n)
+{
+  oaRPCSize End;
+  assert(buf);
+  assert(src);
+  assert(n > 0);
+
+  End = buf->Size;
+  ResizeBuf(buf, n + buf->Size);
+
+  memcpy(buf->Buf + End, src, n);
+}
+
+void oaRPCSetBufSize(oaRPCBuf *buf, oaRPCSize size)
+{
+  assert(buf);
+
+  ResizeBuf(buf, size);
+  buf->Size = size;
+}
+
+void oaRPCClearBuf(oaRPCBuf *buf)
+{
+  assert(buf);
+
+  buf->Size = 0;
+}
+
+char *oaRPCGetBuf(oaRPCBuf *buf, oaRPCSize offset)
+{
+  assert(buf);
+  assert(offset >= 0);
+  assert(offset < buf->Size);
+
+  return(buf->Buf + offset);
+}
+
+const char *oaRPCGetBufConst(const oaRPCBuf *buf, oaRPCSize offset)
+{
+  assert(buf);
+  assert(offset >= 0);
+  assert(offset < buf->Size);
+
+  return(buf->Buf + offset);
+}
+
+oaBool oaRPCWriteBufToFile(const char *filename, oaRPCBuf *buf, oaBool append)
+{
+  FILE *FP;
+  const char *OpenStr = (append == OA_TRUE) ? "ab" : "wb";
+  oaRPCSize Size, NumWrote;
+
+  assert(filename != NULL);
+  assert(buf != NULL);
+
+  if((FP = fopen(filename, OpenStr)) == NULL)
+    return(OA_FALSE);
+
+  Size = OARPC_BUF_SIZE(buf);
+  NumWrote = (oaRPCSize)fwrite(OARPC_GET_BUF(buf, 0), 1, Size, FP);
+
+  fclose(FP);
+
+  if(NumWrote != Size)
+    return(OA_FALSE);
+
+  return(OA_TRUE);
+}
+
+/*******************************************************************************
+*** Low-level serialization functions
+******************************************************************************/
+
+
+#define SERIALIZE_VALUE_HEADER(buf, type, size, reverse_bytes_flag) \
+{ \
+  oaRPCUInt8 Type = type; \
+  oaRPCSize Size = size; \
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, Type); \
+  oaRPCPushBuf(buf, &Type, sizeof(Type)); \
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, Size); \
+  oaRPCPushBuf(buf, &Size, sizeof(Size)); \
+}
+
+
+void oaRPCSerializeString(oaRPCBuf *buf, const oaChar *str, oaBool reverse_bytes_flag)
+{ 
+  oaRPCSize StrLen;
+
+  assert(buf);
+
+  if(str == NULL)
+  {
+    SERIALIZE_VALUE_HEADER(buf, OA_TYPE_STRING, 0, reverse_bytes_flag);
+  }
+  else
+  {
+    StrLen = (oaRPCSize)(OA_STRLEN(str) + 1); /* Include the trailing null */
+
+    SERIALIZE_VALUE_HEADER(buf, OA_TYPE_STRING, StrLen, reverse_bytes_flag);
+    oaRPCPushBuf(buf, str, StrLen);
+  }
+}
+
+void oaRPCSerializeInt(oaRPCBuf *buf, oaInt val, oaBool reverse_bytes_flag)
+{
+  SERIALIZE_VALUE_HEADER(buf, OA_TYPE_INT, sizeof(val), reverse_bytes_flag);
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, val);
+  oaRPCPushBuf(buf, &val, sizeof(val));
+}
+
+void oaRPCSerializeFloat(oaRPCBuf *buf, oaFloat val, oaBool reverse_bytes_flag)
+{
+  SERIALIZE_VALUE_HEADER(buf, OA_TYPE_FLOAT, sizeof(val), reverse_bytes_flag);
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, val);
+  oaRPCPushBuf(buf, &val, sizeof(val));
+}
+
+void oaRPCSerializeBool(oaRPCBuf *buf, oaBool val, oaBool reverse_bytes_flag)
+{
+  oaRPCUInt8 Val = (oaRPCUInt8)val;
+  SERIALIZE_VALUE_HEADER(buf, OA_TYPE_BOOL, sizeof(Val), reverse_bytes_flag);
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, val);
+  oaRPCPushBuf(buf, &Val, sizeof(Val));
+}
+
+void oaRPCSerializeValue(oaRPCBuf *buf, 
+                         oaOptionDataType type, 
+                         oaValue value, 
+                         oaBool reverse_bytes_flag)
+{
+
+  oaRPCSerializeInt(buf, (oaInt)type, reverse_bytes_flag);
+
+  switch(type)
+  {
+  case OA_TYPE_INVALID:
+    break;
+
+  case OA_TYPE_STRING:
+    oaRPCSerializeString(buf, value.String, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_INT:
+    oaRPCSerializeInt(buf, value.Int, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_FLOAT:
+    oaRPCSerializeFloat(buf, value.Float, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_ENUM:
+    oaRPCSerializeString(buf, value.Enum, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_BOOL:
+    oaRPCSerializeBool(buf, value.Bool, reverse_bytes_flag);
+    break;
+
+  default:
+    assert("Unkown type!" == NULL);
+  }
+}
+
+const oaChar *oaRPCDeserializeString(const oaRPCBuf *buf, oaRPCSize *offset, oaBool reverse_bytes_flag)
+{
+  oaRPCUInt8 Type;
+  oaRPCSize Size;
+  const oaChar *Ret;
+
+  DESERIALIZE_VALUE_HEADER(buf, Type, Size, offset, reverse_bytes_flag);
+  assert(Type == OA_TYPE_STRING);
+
+  if(Size == 0)
+    return(NULL);
+
+  Ret = (const oaChar *)OARPC_GET_BUF_CONST(buf, *offset);
+  *offset += Size;
+
+  return(Ret);
+}
+
+oaInt oaRPCDeserializeInt(const oaRPCBuf *buf, oaRPCSize *offset, oaBool reverse_bytes_flag)
+{
+  oaRPCUInt8 Type;
+  oaRPCSize Size;
+  oaInt Ret;
+
+  DESERIALIZE_VALUE_HEADER(buf, Type, Size, offset, reverse_bytes_flag);
+  assert(Type == OA_TYPE_INT);
+  assert(Size == sizeof(oaInt));
+
+  Ret = *(oaInt *)OARPC_GET_BUF_CONST(buf, *offset);
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, Ret)
+  *offset += Size;
+
+  return(Ret);
+}
+
+oaFloat oaRPCDeserializeFloat(const oaRPCBuf *buf, oaRPCSize *offset, oaBool reverse_bytes_flag)
+{
+  oaRPCUInt8 Type;
+  oaRPCSize Size;
+  oaFloat Ret;
+
+  DESERIALIZE_VALUE_HEADER(buf, Type, Size, offset, reverse_bytes_flag);
+  assert(Type == OA_TYPE_FLOAT);
+  assert(Size == sizeof(oaFloat));
+
+  Ret = *(oaFloat *)OARPC_GET_BUF_CONST(buf, *offset);
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, Ret)
+  *offset += Size;
+
+  return(Ret);
+}
+
+oaBool oaRPCDeserializeBool(const oaRPCBuf *buf, oaRPCSize *offset, oaBool reverse_bytes_flag)
+{
+  oaRPCUInt8 Type;
+  oaRPCSize Size;
+  oaRPCUInt8 Ret;
+
+  DESERIALIZE_VALUE_HEADER(buf, Type, Size, offset, reverse_bytes_flag);
+  assert(Type == OA_TYPE_BOOL);
+  assert(Size == sizeof(oaRPCUInt8));
+
+  Ret = *(oaRPCUInt8 *)OARPC_GET_BUF_CONST(buf, *offset);
+  OARPC_REVERSE_BYTES(reverse_bytes_flag, Ret)
+  *offset += Size;
+
+  return(Ret ? OA_TRUE : OA_FALSE);
+}
+
+oaValue oaRPCDeserializeValue(const oaRPCBuf *buf, 
+                              oaOptionDataType *type, 
+                              oaRPCSize *offset, 
+                              oaBool reverse_bytes_flag)
+{
+  oaValue Ret;
+  memset(&Ret, 0, sizeof(Ret));
+
+  assert(buf != NULL);
+  assert(type != NULL);
+
+  *type = (oaOptionDataType)oaRPCDeserializeInt(buf, offset, reverse_bytes_flag);
+
+  switch(*type)
+  {
+  case OA_TYPE_INVALID:
+    Ret.Int = 0;
+    break;
+
+  case OA_TYPE_STRING:
+    Ret.String = (oaString)oaRPCDeserializeString(buf, offset, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_INT:
+    Ret.Int = oaRPCDeserializeInt(buf, offset, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_FLOAT:
+    Ret.Float = oaRPCDeserializeFloat(buf, offset, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_ENUM:
+    Ret.Enum = (oaString)oaRPCDeserializeString(buf, offset, reverse_bytes_flag);
+    break;
+
+  case OA_TYPE_BOOL:
+    Ret.Bool = oaRPCDeserializeBool(buf, offset, reverse_bytes_flag);
+    break;
+
+  default:
+    assert("Unkown type!" == NULL);
+  }
+
+  return(Ret);
+}
+

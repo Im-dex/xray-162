@@ -300,315 +300,211 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
-
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
-
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
-
-#include <string.h>
-
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <OpenAutomate_Internal.h>
+#include <windows.h>
+#include <vector>
+#include <map>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+#define DLLEXPORT __declspec(dllexport)
 
-/******************************************************************************* 
- * Types
- ******************************************************************************/
+using namespace std;
 
-typedef enum
+#define PRINT(var) \
+    cerr << __FILE__ << "," << __LINE__ << ": " #var " = " << (var) << endl;
+
+static FILE *LogFile = stderr;
+
+
+BOOL APIENTRY DllMain(HANDLE hModule, 
+                      DWORD  ul_reason_for_call, 
+                      LPVOID lpReserved)
 {
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
 
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
+  return TRUE;
+}
 
 
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
+static oaiFunctionTable FuncTable;
+static int CurrentStage = 0;
+static oaChar BenchmarkName[1024];
+static int NumFrames = 0;
+static time_t StartTime;
+
+
+oaCommandType GetNextCommand(oaCommand *command)
 {
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
+  CurrentStage = CurrentStage % 6;
 
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  switch(CurrentStage)
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
+    case 0:
+      CurrentStage++;
+      return(OA_CMD_GET_ALL_OPTIONS);
 
-typedef enum 
+    case 1:
+      CurrentStage++;
+      return(OA_CMD_GET_CURRENT_OPTIONS);
+
+    case 2:
+      CurrentStage++;
+      return(OA_CMD_SET_OPTIONS);
+
+    case 3:
+      CurrentStage++;
+      return(OA_CMD_GET_BENCHMARKS);
+
+    case 4:
+      CurrentStage++;
+      command->BenchmarkName = BenchmarkName;
+      return(OA_CMD_RUN_BENCHMARK);
+
+    case 5:
+      CurrentStage++;
+      return(OA_CMD_EXIT);
+  }
+
+  return(OA_CMD_EXIT);
+}
+
+void AddOption(const oaNamedOption *option)
 {
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
+  fprintf(LogFile, "IN AddOption: '%s'\n", option->Name);
 
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
+}
 
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
+void AddOptionValue(const OA_CHAR *name, oaOptionDataType value_type, const oaValue *value)
 {
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
+  switch(value_type)
+  {
+    case OA_TYPE_STRING:
+      fprintf(LogFile, "Current option (string)'%s' = %s\n", name, value->String);
+      break;
 
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
+    case OA_TYPE_INT:
+      fprintf(LogFile, "Current option (int)'%s' = %d\n", name, value->Int);
+      break;
 
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
+    case OA_TYPE_FLOAT:
+      fprintf(LogFile, "Current option (float)'%s' = %f\n", name, value->Float);
+      break;
 
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
+    case OA_TYPE_ENUM:
+      fprintf(LogFile, "Current option (enum)'%s' = %s\n", name, value->Enum);
+      break;
 
-typedef struct oaMessageStruct
+    case OA_TYPE_BOOL:
+      fprintf(LogFile, "Current option (bool)'%s' = %d\n", name, value->Bool);
+      break;
+
+    default:
+      fprintf(LogFile, "Current option (unknown type)'%s' = ???", name);
+  }
+}
+
+void AddBenchmark(const oaChar *benchmark_name)
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  fprintf(LogFile, "IN AddBenchmark: %s\n", benchmark_name);
+  OA_STRNCPY(BenchmarkName, benchmark_name, sizeof(BenchmarkName));
+}
 
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
+oaNamedOption *GetNextOption(void)
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  return(NULL);
+}
 
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
+static void StartBenchmark(void)
+{
+  NumFrames = 0;
+  StartTime = time(NULL);
+
+  fprintf(LogFile, "Benchmark started\n", BenchmarkName);
+}
+
+static void DisplayFrame(oaFloat t)
+{
+  NumFrames++;
+}
+
+static void EndBenchmark(void)
+{
+  time_t TotalTime = time(NULL) - StartTime;
+  float AvgFPS;  
+
+
+  if(TotalTime == 0)
+    TotalTime = 1;
+
+  AvgFPS = (float)NumFrames / (float)TotalTime;
   
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
+  fprintf(LogFile, "Benchmark ended\n");
+  fprintf(LogFile, "  Total time = %ds\n", TotalTime);
+  fprintf(LogFile, "  Avg. FPS = %f\n", AvgFPS);
+}
 
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
+static void AddResultValue(const OA_CHAR *name, 
+                           oaOptionDataType value_type,
+                           const oaValue *value)
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  switch(value_type)
+  {
+    case OA_TYPE_STRING:
+      fprintf(LogFile, "Result value (string)'%s' = %s\n", name, value->String);
+      break;
 
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
+    case OA_TYPE_INT:
+      fprintf(LogFile, "Result value (int)'%s' = %d\n", name, value->Int);
+      break;
 
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
+    case OA_TYPE_FLOAT:
+      fprintf(LogFile, "Result value (float)'%s' = %f\n", name, value->Float);
+      break;
 
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
+    case OA_TYPE_ENUM:
+      fprintf(LogFile, "Result value (enum)'%s' = %s\n", name, value->Enum);
+      break;
 
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
+    case OA_TYPE_BOOL:
+      fprintf(LogFile, "Result value (bool)'%s' = %d\n", name, value->Bool);
+      break;
+
+
+    default:
+      fprintf(LogFile, "Result value (unknown type)'%s' = ???", name);
+  }
+}
+
+DLLEXPORT oaiFunctionTableStruct *oaPluginInit(const char *init_str, 
+                                               oaVersion *plugin_version,
+                                               oaVersion app_version)
+{
+  OA_PLUGIN_INIT_VERSION_STRUCT(plugin_version, app_version)
   
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
+  oaiInitFuncTable(&FuncTable);
+  FuncTable.GetNextCommand = GetNextCommand;
+  FuncTable.AddOption = AddOption;
+  FuncTable.AddOptionValue = AddOptionValue;
+  FuncTable.AddBenchmark = AddBenchmark;
+  FuncTable.GetNextOption = GetNextOption;
+  FuncTable.StartBenchmark = StartBenchmark;
+  FuncTable.DisplayFrame = DisplayFrame;
+  FuncTable.EndBenchmark = EndBenchmark;
+  FuncTable.AddResultValue = AddResultValue;
 
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
+  return(&FuncTable);
+}
 
 #ifdef __cplusplus
 }
-#endif
 
 #endif
+
+

@@ -299,316 +299,328 @@
  ******************************************************************************/
 
 
+#include <iostream>
 
-#ifndef _OA_h
-#define _OA_h
+#include <oac/TestBase.h>
+#include <oac/OAUtils.h>
+#include <Windows.h>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+using namespace std;
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
+typedef oacContext::OptionVec OptionVecType;
+typedef map<string, OptionVecType *> OptionMapType;
 
-#include <string.h>
+typedef vector<oacContext::OptionValue> OptionValueVecType;
+typedef map<string, oacContext::OptionValue> OptionValueMapType;
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
+OAC_TEST_DECLARE_CLASS_HEAD(EnumStep, 
+                            "Check enum values are increases in order",
+                            1, 
+                            true) 
 
-#ifdef __cplusplus
-extern "C"
+LARGE_INTEGER freq;
+
+class Runner
 {
-#endif
-
-
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+public:
+  Runner(oacContext* src,LARGE_INTEGER srcfreq)
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
+    Context = src;
+    freq = srcfreq;
+    pNumDisplayFrameCalls = 0;
+  }
+  ~Runner(){}
 
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
+  void SetBench(const string src){BenchName = src;}
+  void SetTarget(const string src){Target = src;}
+  void SetStep(size_t src){Step = src;}
+  size_t GetStep(void){return Step;}
+  const string GetTarget(void){return Target;}
+  string GetTargetValue() 
+  {
+    OptionValueVecType::const_iterator OptionIter = OptionValues.begin();
+    for (;OptionIter != OptionValues.end();OptionIter++)
+    {
+      if (OptionIter->Name == Target)
+        return string(OptionIter->Value.Enum);
+    }
 
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
+  }
   
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
-
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
+  void InitOptValueIter() {OptionValueIter = OptionValues.begin();}
+  void EndOptValueIter() {EndOptionIter = OptionValues.end();}
+  OptionValueVecType::iterator OptionValueIter;
+  OptionValueVecType::const_iterator EndOptionIter;
   
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
+  void StartBenchmark(void) {QueryPerformanceCounter(&start);}
+  void EndBenchmark(void) {QueryPerformanceCounter(&end);}
+  void DisplayFrame(void) {pNumDisplayFrameCalls++;}
+  oaFloat GetPerf(void) {return Perf;}
+  
+  void RunBenchmark()
+  {
+    OptionValueIter = OptionValues.begin();
+    EndOptionIter = OptionValues.end();
 
-typedef enum
+    oaCommand Command;
+    oaInitCommand(&Command);
+    Command.Type = OA_CMD_SET_OPTIONS;
+    Context->IssueCommand(&Command);
+
+    Context->IssueExitAndRestart();
+
+    oaInitCommand(&Command);
+    Command.Type = OA_CMD_RUN_BENCHMARK;
+    Command.BenchmarkName = BenchName.data();
+
+    //OAC_MSG("running benchmark: " << BenchName);
+
+    Context->IssueCommand(&Command);
+
+    oaFloat playtime = oaFloat((end.QuadPart-start.QuadPart)/freq.QuadPart);
+
+    Perf = oaFloat(pNumDisplayFrameCalls/playtime);
+  }
+
+  void SetOptions(OptionMapType Options) 
+  {
+    OptionValues.clear();
+
+    OptionMapType::iterator Option = Options.begin();
+    for (;Option != Options.end();Option++)
+    {
+      oacContext::OptionValue Val;
+      GenerateValue(*Option->second,Val);
+      OptionValues.push_back(Val);
+    }
+  }
+
+private:
+  LARGE_INTEGER freq;
+  oacContext *Context;
+  string BenchName;
+  string Target;
+  size_t Step;
+
+  OptionValueVecType OptionValues;
+
+  unsigned long pNumDisplayFrameCalls;
+  LARGE_INTEGER start,end;
+  oaFloat Perf;
+
+  void GenerateValue(const OptionVecType &option, 
+    oacContext::OptionValue &ret)
+  {
+    assert (option.size() > 0);
+    oaValue Val;
+
+    switch(option[0].DataType)
+    {
+    case OA_TYPE_INT:
+      Val.Int = option[0].MinValue.Int;
+      break;
+
+    case OA_TYPE_FLOAT:
+      Val.Float = option[0].MinValue.Float;
+      break;
+
+    case OA_TYPE_BOOL:
+      Val.Bool = OA_FALSE;
+      break;
+
+    case OA_TYPE_ENUM:
+      if (option[0].Name == Target)
+        Val.Enum = option[Step].Value.Enum;
+      else
+        Val.Enum = option[0].Value.Enum;
+      break;
+
+    case OA_TYPE_STRING:
+      break;
+    }
+
+    ret.Set(option[0].Name,option[0].DataType,&Val);
+  }
+
+};
+
+typedef vector<Runner*> RunnerVector;
+RunnerVector Runners;
+RunnerVector::iterator RunnersIter;
+
+void GenerateRunners(RunnerVector &Runners)
 {
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
+  string BenchName = *Context()->GetBenchmarks().begin();
+  const OptionMapType &OptionMap = Context()->GetAllOptionsMap();
 
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  OptionMapType::const_iterator target = OptionMap.begin();
+  for (;target != OptionMap.end();target++)
+  {
+    if ((*target->second)[0].DataType != OA_TYPE_ENUM)
+      continue;
 
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
+    size_t step = ((*target->second).size()-2)/3;
+    if (step<1)
+      step = 1;
 
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
+    Runner *run = new Runner(Context(),freq);
+    run->SetBench(BenchName);
+    run->SetTarget(target->first);
+    run->SetStep(0);
+    run->SetOptions(OptionMap);
+    Runners.push_back(run);
+    DisplaySetOption(run);
 
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
+    for (size_t i=1;i<(*target->second).size()-1; i+=step)
+    {
+      run = new Runner(Context(),freq);
+      run->SetBench(BenchName);
+      run->SetTarget(target->first);
+      run->SetStep(i);
+      run->SetOptions(OptionMap);
+      Runners.push_back(run);
+      DisplaySetOption(run);
+    }
+
+    run = new Runner(Context(),freq);
+    run->SetBench(BenchName);
+    run->SetTarget(target->first);
+    run->SetStep((*target->second).size()-1);
+    run->SetOptions(OptionMap);
+    Runners.push_back(run);
+    DisplaySetOption(run);
   }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
 }
-#endif
 
-#endif
+void DisplaySetOption(Runner* run)
+{
+  oacContext::OptionValue Option;
+  run->InitOptValueIter();
+  run->EndOptValueIter();
+  for (;run->OptionValueIter != run->EndOptionIter;run->OptionValueIter++)
+  {
+    switch (run->OptionValueIter->Type)
+    {
+    case OA_TYPE_ENUM:
+      OAC_MSG("Setting ENUM option '" << run->OptionValueIter->Name << "' -> " << run->OptionValueIter->Value.Enum);
+      break;
+      /*
+    case OA_TYPE_INT:
+      OAC_MSG("Setting INT option '" << run->OptionValueIter->Name << "' -> " << run->OptionValueIter->Value.Int);
+      break;
+
+    case OA_TYPE_FLOAT:
+      OAC_MSG("Setting FLOAT option '" << run->OptionValueIter->Name << "' -> " << run->OptionValueIter->Value.Float);
+      break;
+
+    case OA_TYPE_BOOL:
+      OAC_MSG("Setting BOOL option '" << run->OptionValueIter->Name << "' -> " << run->OptionValueIter->Value.Bool);
+      break;
+
+    case OA_TYPE_ENUM:
+      OAC_MSG("Setting ENUM option '" << run->OptionValueIter->Name << "' -> " << run->OptionValueIter->Value.Enum);
+      break;
+
+    case OA_TYPE_STRING:
+      break;*/
+    }
+  }
+}
+
+virtual void Run(void)
+{
+  QueryPerformanceFrequency(&freq);
+
+  Runners.clear();
+
+  GenerateRunners(Runners);
+
+  unsigned int total =(unsigned int)Runners.size();
+  unsigned int current = 1;
+
+  OAC_MSG("Total Numbers of Benchmark Run ("<<total<<") generated");
+
+  RunnersIter = Runners.begin();
+
+  for (;RunnersIter != Runners.end();RunnersIter++)
+  {
+    OAC_MSG("Running benchmark ("<<current<<"/"<<total<<")");
+    (*RunnersIter)->RunBenchmark();
+    current++;
+  }
+
+  AssertResult();
+}
+
+void AssertResult(void)
+{
+  if (Runners.size() < 2)
+    return;
+
+  RunnerVector::const_iterator Previous = Runners.begin();
+  RunnerVector::const_iterator Current = Runners.begin()+1;
+
+  for (;Current != Runners.end();Current++)
+  {
+    Runner *Prev = (*Previous);
+    Runner *Curr = (*Current);
+
+    if (Prev->GetTarget() == Curr->GetTarget())
+    {
+      OAC_COND_WARN((Prev->GetPerf() > Curr->GetPerf()),
+                    "Please check ENUM ("<<Prev->GetTarget()<<") is in proper order"
+                    "("<<Prev->GetTargetValue()<<","<<Curr->GetTargetValue()<<") shows "
+                    "("<<Prev->GetPerf()<<","<<Curr->GetPerf()<<")");
+    }
+    Previous = Current;
+  }
+  /*
+  RunnersIter = Runners.begin();
+
+  string target = (*RunnersIter)->GetTarget();
+
+  for (;RunnersIter != Runners.end();RunnersIter++)
+  {
+    if (target)
+    (*RunnersIter)->GetPerf();
+  }*/
+
+}
+
+virtual void StartBenchmark(void)
+{
+  (*RunnersIter)->StartBenchmark();
+}
+
+virtual void EndBenchmark(void)
+{
+  (*RunnersIter)->EndBenchmark();
+}
+
+virtual void DisplayFrame(oaFloat t)
+{
+  (*RunnersIter)->DisplayFrame();
+}
+
+virtual oaNamedOption* GetNextOption(void)
+{
+  static oaNamedOption Option;
+
+  if (RunnersIter == Runners.end())
+    return NULL;
+
+  if ((*RunnersIter)->OptionValueIter == (*RunnersIter)->EndOptionIter)
+    return NULL;
+
+  const char *Name = (*RunnersIter)->OptionValueIter->Name;
+  Option = (*Context()->GetOption(Name))[0];
+  Option.Value = (*RunnersIter)->OptionValueIter->Value;
+
+  (*RunnersIter)->OptionValueIter++;
+
+  return(&Option);
+}
+
+
+
+OAC_TEST_DECLARE_CLASS_TAIL(EnumStep)

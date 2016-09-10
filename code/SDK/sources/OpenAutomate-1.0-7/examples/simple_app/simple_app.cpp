@@ -299,316 +299,518 @@
  ******************************************************************************/
 
 
+#include "settings.h"
 
-#ifndef _OA_h
-#define _OA_h
+using namespace std;
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+static void ParseArgs(int argc, char *argv[]);
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
+static void OAMainLoop(const char *opt);
+static void InstallApp(void);
+static void RunApp(void);
+static void GetAllOptions(void);
+static void GetCurrentOptions(void);
 
-#include <string.h>
+static int OAModeFlag = 0;
+static int InstallModeFlag = 0;
+static char *OAOpt = NULL;
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
+SimpleAppSettings SettingsObj;
 
-#ifdef __cplusplus
-extern "C"
+#define KEYSTR  TEXT("Software\\OpenAutomate\\RegisteredApps\\NVIDIA\\simple_app\\v1.0\\")
+
+const oaChar *Benchmarks[] = {
+                               "forest",
+                               "crates",
+                               "map1",
+                               NULL
+                             };
+oaInt NumBenchmarks = 3;
+
+
+static bool RegisterAppItself()
 {
-#endif
-
-
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  TCHAR exePath[MAX_PATH];
+  if(!GetExePath(exePath))
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
+    fprintf(stderr, "Cannot get exe path\r\n");
+    return false; 
+  }
 
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
+  HKEY hKey;
+  DWORD dwRes = RegOpenKeyEx(
+    HKEY_LOCAL_MACHINE, 
+    KEYSTR, 
+    0, 
+    KEY_WRITE | KEY_READ, 
+    &hKey);
 
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
+  DWORD dwSize = MAX_PATH;
+  TCHAR buf[MAX_PATH];
+  if(dwRes == ERROR_SUCCESS)
+  {
+    dwRes = RegQueryValueEx(
+      hKey,
+      TEXT("INSTALL_ROOT_PATH"),
+      NULL,
+      NULL,
+      (LPBYTE)buf,
+      &dwSize);
+    if(dwRes == ERROR_SUCCESS && !lstrcmpi(buf, exePath))
+    {
+      RegCloseKey(hKey);
+      return true;      
+    }
+  }
+  else
+  {
+    dwRes = RegCreateKeyExA(
+      HKEY_LOCAL_MACHINE,
+      KEYSTR,
+      0,
+      NULL,
+      REG_OPTION_NON_VOLATILE,
+      KEY_WRITE,NULL,
+      &hKey,
+      &dwSize);
+    if(ERROR_SUCCESS != dwRes)
+    {
+      RegCloseKey(hKey);
+      return false;
+    }
+  }
   
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
+  bool bRet = false;
+  do 
+  {
+    dwRes = RegSetValueExA(
+      hKey,
+      TEXT("INSTALL_ROOT_PATH"),
+      0,
+      REG_SZ,
+      (BYTE*)exePath,
+      (DWORD)strlen(exePath));
+    if(ERROR_SUCCESS != dwRes)
+    {
+      fprintf(stderr, "Write INSTALL_ROOT_PATH Failed\r\n");
+      break;
+    }
 
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
+    strcat(exePath, "simple_app.exe");
+    dwRes = RegSetValueExA(
+      hKey,
+      TEXT("ENTRY_EXE"),
+      0,
+      REG_SZ,
+      (BYTE*)exePath,
+      (DWORD)strlen(exePath));
+    if(ERROR_SUCCESS != dwRes)
+    {
+      fprintf(stderr, "Write ENTRY_EXE Failed\r\n");
+      break;
+    }
+    
+    ZeroMemory(buf, sizeof(buf));
+    SYSTEMTIME  tm;
+    GetLocalTime(&tm);
+    sprintf( 
+      buf,
+      "%04d-%02d-%02d %02d:%02d:%02d",
+      tm.wYear,
+      tm.wMonth,
+      tm.wDay,
+      tm.wHour,
+      tm.wMinute,
+      tm.wSecond);
+    dwRes = RegSetValueExA(
+      hKey,
+      TEXT("INSTALL_DATETIME"),
+      0,
+      REG_SZ,
+      (BYTE*)buf,
+      (DWORD)strlen(buf));
+    if(ERROR_SUCCESS != dwRes)
+    {
+      fprintf(stderr, "Write INSTALL_DATETIME Failed\r\n");
+      break;
+    }
+    
+    dwRes = RegSetValueExA(
+      hKey,
+      TEXT("REGION"),
+      0,
+      REG_SZ,
+      (BYTE*)TEXT("en_US"),
+      (DWORD)strlen("en_US"));
+    if(ERROR_SUCCESS != dwRes)
+    {
+      fprintf(stderr, "Write REGION Failed\r\n");
+      break;
+    }  
+    
+    bRet = true;
+  } while(0);
 
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+  RegCloseKey(hKey);
+  return bRet;
 }
-#endif
 
-#endif
+static const char *FormatDataType(oaOptionDataType value_type)
+{
+  switch(value_type)
+  {
+  case OA_TYPE_STRING:
+    return "String";
+  case OA_TYPE_INT:
+    return "Int";
+  case OA_TYPE_FLOAT:
+    return "Float";
+  case OA_TYPE_ENUM:
+    return "Enum";
+  case OA_TYPE_BOOL:
+    return "Bool";
+  default:
+    return "Unknown";
+  }
+}
+
+static const char *FormatCompareOp(oaComparisonOpType op_value)
+{  
+  switch(op_value)
+  {
+  case OA_COMP_OP_EQUAL:
+    return "Equal";
+  case OA_COMP_OP_NOT_EQUAL:
+    return "NotEqual";
+  case OA_COMP_OP_GREATER:
+    return "Greater";
+  case OA_COMP_OP_LESS:
+    return "Less";
+  case OA_COMP_OP_GREATER_OR_EQUAL:
+    return "GreaterOrEqual";
+  case OA_COMP_OP_LESS_OR_EQUAL:
+    return "LessOrEqual";
+  default:
+    return "Unknown";
+  }
+}
+
+static void ConvertOAValue(oaOptionDataType value_type, 
+                           const oaValue *value,
+                           char *result)
+{
+  switch(value_type)
+  {
+  case OA_TYPE_STRING:
+  case OA_TYPE_ENUM:
+    strcpy(result, value->String);
+    break;
+  case OA_TYPE_INT:
+    sprintf(result, "%d", value->Int);
+    break;
+  case OA_TYPE_FLOAT:
+    sprintf(result, "%f", value->Float);
+    break;
+  case OA_TYPE_BOOL:
+    sprintf(result, "%1d", value->Bool);
+    break;
+  default:
+    return;
+  }
+}
+
+static void PrintOptions(const oaNamedOption *option)
+{
+  char buf[MAX_PATH];
+  ConvertOAValue(option->DataType, &option->Value, buf);
+
+  fprintf(stderr, "name=%s,type=%s,value=%s\r\n", option->Name, FormatDataType(option->DataType), buf);
+  if(option->MaxValue.Int && option->MinValue.Int)
+  {
+    fprintf(stderr,"  numsteps=%d", option->NumSteps);
+    ConvertOAValue(option->DataType, &option->MinValue, buf);
+    fprintf(stderr, "minvalue=%s", buf);
+    ConvertOAValue(option->DataType, &option->MaxValue, buf);
+    fprintf(stderr,"maxvalue=%s\r\n", buf);
+  }
+
+  if(option->Dependency.ParentName)
+  {
+    ConvertOAValue(option->Dependency.ComparisonValType, &option->Dependency.ComparisonVal, buf);
+    fprintf(stderr, "  parentname=%s,comparisionop=%s,comparisiontype=%s,comparisionvalue=%s\r\n", 
+      option->Dependency.ParentName,
+      FormatCompareOp(option->Dependency.ComparisonOp),
+      FormatDataType(option->Dependency.ComparisonValType),
+      buf);
+  }
+}
+
+int main(int argc, char *argv[])
+{
+  SetConsoleTitleA("OA - simple application");
+  ParseArgs(argc, argv);
+  
+  SettingsObj.InitOptions();
+
+  if(InstallModeFlag)
+  {
+    InstallApp();
+  }
+  else if(OAModeFlag)
+  {
+    OAMainLoop(OAOpt);
+  }
+  else
+  {
+    RunApp();
+  }
+  
+  return(0);
+}
+
+void GetAllOptions(void)
+{
+  fprintf(stderr, "All Options: \r\n");
+  for(oaInt i=0; i < SettingsObj.GetNumOptions(); ++i)
+  {
+    PrintOptions(SettingsObj.GetOption(i));
+    oaAddOption(SettingsObj.GetOption(i));
+  }
+}
+
+void GetCurrentOptions(void)
+{
+  fprintf(stderr, "Current Options: \r\n");
+
+  map<string, OptionValue>::const_iterator Iter = SettingsObj.GetCurrentOptionMap()->begin();
+  
+  oaNamedOption option;
+  oaInitOption(&option);
+  
+  for(; Iter != SettingsObj.GetCurrentOptionMap()->end(); ++Iter)
+  {
+    // Skip "User/Music Enabled" option of "User/Sound" is disabled
+    if(!strcmp(Iter->second.Name, "User/Music Enabled") &&
+      SettingsObj.GetOptionValue("User/Sound")->Value.Bool == OA_FALSE)
+      continue;
+    
+    option.Name = Iter->second.Name;
+    option.Value = Iter->second.Value;
+    option.DataType = Iter->second.Type;
+    PrintOptions(&option);
+
+    oaAddOptionValue(Iter->second.Name,
+                     Iter->second.Type,
+                     &Iter->second.Value);
+  }
+}
+
+void SetOptions(void)
+{
+  oaNamedOption *Option;
+  
+  fprintf(stderr, "Set Options: \r\n");
+  while((Option = oaGetNextOption()) != NULL)
+  {
+    /*
+     * Set option value to persist for subsequent runs of the game 
+     * to the given value.  Option->Name will be the name of the value, 
+     * and Option->Value will contain the appropriate value.
+     */
+    PrintOptions(Option);
+    SettingsObj.SetOptionValue(Option->Name, Option->DataType, &Option->Value);
+  }
+
+  SettingsObj.WriteOptionsFile();
+}
+
+void GetBenchmarks(void)
+{
+  /* foreach known available benchmark call oaAddBenchmark() with a unique string
+     identifying it */
+  for(oaInt i=0; i < NumBenchmarks; ++i)
+    oaAddBenchmark(Benchmarks[i]);
+}
+
+void RunBenchmark(const oaChar *benchmark_name)
+{
+  oaValue Val;
+  int i;
+
+  bool FoundBenchmark = false;
+  for(i=0; i < NumBenchmarks; ++i)
+    if(!strcmp(Benchmarks[i], benchmark_name))
+    {
+      FoundBenchmark = true;
+      break;
+    }
+
+  /* Check if the requested benchark is valid */
+  if(!FoundBenchmark)
+  {
+    char Msg[1024];
+    sprintf(Msg, "'%s' is not a valid benchmark.", benchmark_name);
+    OA_RAISE_ERROR(INVALID_BENCHMARK, benchmark_name);
+  }
+
+
+  /* Setup everything to run the benchmark */
+
+  /* oaStartBenchmark() must be called right before the first frame */ 
+  oaStartBenchmark();
+
+  /* 
+   * Run the benchmark, and call oaDisplayFrame() right before the final
+   * present call for each frame
+   */
+  for(i=0; i < 50; ++i)
+   {
+    SLEEP(20);
+   
+    oaValue FrameValue;
+    FrameValue.Int = i;
+    oaValue OtherInt;
+    OtherInt.Int = i+1000;
+    oaChar str[100];
+    sprintf(str, "frame number: %d\00", i);
+    oaValue Str;
+    Str.String = str;
+
+    oaAddFrameValue("FrameCount", OA_TYPE_INT, &FrameValue);
+    oaAddFrameValue("OtherInt", OA_TYPE_INT, &OtherInt);
+    oaAddFrameValue("String", OA_TYPE_STRING, &Str);
+
+    oaDisplayFrame((oaFloat)(i * 20) / (oaFloat)1000);
+   }
+
+  /* Return some result values */
+  Val.Int = 18249;
+  oaAddResultValue("Score", OA_TYPE_INT, &Val);
+
+  Val.Float = 29.14;
+  oaAddResultValue("Some other score", OA_TYPE_FLOAT, &Val);
+
+  /* oaStartBenchmark() must be called right after the last frame */ 
+  oaEndBenchmark();
+}
+
+void InstallApp(void)
+{
+  if(!RegisterAppItself())
+  {
+    fprintf(stderr, "Can not install simple_app!\n");
+  }
+  else
+  {
+    fprintf(stderr, "Install simple_app succeed!\n");
+  }
+
+  for(int i = 10; i > 0; --i)
+  {
+    fprintf(stderr, "\r%02u seconds to exit...", i);
+    Sleep(1000);
+  }
+
+  fprintf(stderr, "\n");
+}
+
+void RunApp(void)
+{
+  /* Run the application as it normally would run without -openautomate mode */
+  fprintf(stderr, "- Running application as normal.\n");
+  for(int i = 10; i > 0; --i)
+  {
+    fprintf(stderr, "\r%02u seconds to exit...", i);
+    Sleep(1000);
+  }
+
+  fprintf(stderr, "\n");
+}
+
+#define MSG(msg) \
+  fprintf(stderr, "- %s\n", msg);
+
+void OAMainLoop(const char *opt)
+{
+  oaCommand Command;
+
+  oaVersion Version;
+  if(!oaInit((const oaString)OAOpt, &Version))
+   Error("OA did not initialize properly.");
+
+  while(1)
+   {
+    oaInitCommand(&Command);
+    switch(oaGetNextCommand(&Command))
+     {
+      /* No more commands, exit program */
+      case OA_CMD_EXIT: 
+       return;
+ 
+      /* Run as normal */
+      case OA_CMD_RUN: 
+       RunApp();
+       return;
+
+      /* Enumerate all in-game options */
+      case OA_CMD_GET_ALL_OPTIONS: 
+       GetAllOptions();
+       break;
+
+      /* Return the option values currently set */
+      case OA_CMD_GET_CURRENT_OPTIONS:
+       GetCurrentOptions();
+       break;
+
+      /* Set all in-game options */
+      case OA_CMD_SET_OPTIONS: 
+       SetOptions();
+       break;
+
+      /* Enumerate all known benchmarks */
+      case OA_CMD_GET_BENCHMARKS: 
+       GetBenchmarks();
+       break;
+
+      /* Run benchmark */
+      case OA_CMD_RUN_BENCHMARK: 
+       RunBenchmark(Command.BenchmarkName);
+       break;
+     }
+   }
+}
+
+void ParseArgs(int argc, char *argv[])
+{
+  for(int i=1;  i < argc; ++i)
+   {
+     if(!strcmp(argv[i], "-openautomate"))
+      {
+       i++;
+       if(i >= argc)
+        Error("-openautomate option must have an argument.\n");
+
+       OAModeFlag = 1;
+       OAOpt = argv[i];
+       continue;
+      }
+     else if(!strcmp(argv[i], "-install"))
+     {
+       InstallModeFlag = 1;
+       continue;
+     }
+     else if(!strcmp(argv[i], "-h") ||
+       !strcmp(argv[i], "-help"))
+     {
+       fprintf(stderr, 
+         "Usage: simple_app [-install] [-openautomate oa_args]\n");
+       continue;
+     }
+     
+     Error("Unknown option '%s'\n", argv[i]);
+   }
+}
+
+
+
+

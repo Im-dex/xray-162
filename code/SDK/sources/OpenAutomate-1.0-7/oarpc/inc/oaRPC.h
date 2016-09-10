@@ -300,315 +300,212 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#ifndef _oaRPC_h
+#define _oaRPC_h
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
-
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
-
-#include <string.h>
-
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
+#include <OpenAutomate.h>
+#include <OpenAutomate_Internal.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+/*******************************************************************************
+ *** Macros
+ ******************************************************************************/
+#define OARPC_MAX_CALL_DEPTH 128
 
-/******************************************************************************* 
- * Types
+/*******************************************************************************
+ *** Types
  ******************************************************************************/
 
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
+typedef unsigned char   oaRPCUInt8;
+typedef unsigned short  oaRPCUInt16;
+typedef unsigned long   oaRPCUInt32;
 
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
+typedef oaRPCUInt32     oaRPCSize;
 
 typedef enum
 {
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
-  {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
+  OARPC_ERROR_NONE              = 0,
+  OARPC_ERROR_UNKNOWN_FUNCTION  = 1,
+  OARPC_ERROR_MALFORMED_REQUEST = 2,
+  OARPC_ERROR_NEGOTIATION_FAILED = 3,
+} oaRPCErrorType;
 
 typedef enum 
 {
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
-
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
-  
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
-
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
+  OARPC_TRANSPORT_ERROR_OK            = 0,
+  OARPC_TRANSPORT_ERROR_FAILED,
+  OARPC_TRANSPORT_ERROR_BADTRANSPORT,
+  OARPC_TRANSPORT_ERROR_BADADDR,
+  OARPC_TRANSPORT_ERROR_BADDATA,
+  OARPC_TRANSPORT_ERROR_CANCELED,
+  OARPC_TRANSPORT_ERROR_TIMEOUT,
+  OARPC_TRANSPORT_ERROR_NOMEMORY,
+  OARPC_TRANSPORT_ERROR_ACCESS,
+} oaRPCTransportErrorType;
 
 typedef enum
 {
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
+  OARPC_SERVER_ERROR_OK               = 0,
+  OARPC_SERVER_ERROR_FAILED           = -1,
+  OARPC_SERVER_ERROR_TSFAILED         = -2,
+  OARPC_SERVER_ERROR_CANCELED         = -3,
+  OARPC_SERVER_ERROR_TIMEOUT          = -4,
+  OARPC_SERVER_ERROR_BADREQUEST       = -5,
+  OARPC_SERVER_ERROR_UNKNOWNFUNCTION  = -6,
+  OARPC_SERVER_ERROR_ENDIAN           = -7,
+  OARPC_SERVER_ERROR_BADVERSION       = -8,
 
-typedef struct oaCommandStruct
+} oaRPCServerErrorType;
+
+enum { OARPC_INFINITE  = -1 };
+
+typedef enum
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
+#define OARPC_DECLARE_FUNC(func_name, func_id) \
+   OARPC_FUNC_##func_name = func_id, 
 
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
+#include "oaRPC_Functions.h"
 
-/******************************************************************************* 
- * Macros
+   OARPC_FUNC_END
+} oaRPCFuncType;
+
+typedef struct oaRPCBufStruct
+{
+  oaRPCSize Size;
+  oaRPCSize BufSize;
+  char *Buf;
+} oaRPCBuf;
+
+typedef struct oaRPCTransportStruct
+{
+  oaRPCTransportErrorType (*Send)(
+    void *user_data, 
+    const oaRPCBuf *buf, 
+    int time_out);
+
+  oaRPCTransportErrorType (*Recv)(
+    void     *user_data, 
+    oaRPCBuf *buf, 
+    oaBool   *new_connection, 
+    int      time_out);
+
+  ///< Cancel all pending IO.
+  void (*Cancel)(void *user_data);
+
+  ///< Cleanup current connection context.
+  void (*CleanupConnection)(void *user_data);
+  ///< Cleanup every thing of this transport
+  void (*CleanupAll)(void *user_data);
+
+  void* UserData;
+} oaRPCTransport;
+
+///< Cleanup an initialized transport (of any type, socket, pipe, etc).
+///< Implement in oaRPCCommon.c
+void oaRPCCleanupTransport(oaRPCTransport *transport);
+
+typedef struct oaRPCFunctionTableStruct
+{
+  size_t TableSize;
+
+  oaCommandType (OA_FUNC_DECL *GetNextCommand)(void* user_data, 
+    oaCommand *command);
+  oaNamedOption* (OA_FUNC_DECL *GetNextOption)(void* user_data);
+  void (OA_FUNC_DECL *AddOption)(void* user_data, 
+    const oaNamedOption *option);
+  void (OA_FUNC_DECL *AddOptionValue)(void* user_data, 
+    const oaChar *name,
+    oaOptionDataType value_type,
+    const oaValue *value);
+  void (OA_FUNC_DECL *AddBenchmark)(void* user_data, 
+    const oaChar *benchmark_name);
+  void (OA_FUNC_DECL *AddResultValue)(void* user_data, 
+    const oaChar *name, 
+    oaOptionDataType value_type,
+    const oaValue *value);
+  void (OA_FUNC_DECL *StartBenchmark)(void* user_data);
+  void (OA_FUNC_DECL *DisplayFrame)(void* user_data, oaFloat t);
+  void (OA_FUNC_DECL *EndBenchmark)(void* user_data);
+  void (OA_FUNC_DECL *AddFrameValue)(void* user_data, 
+    const oaChar *name, 
+    oaOptionDataType value_type,
+    const oaValue *value);
+  oaBool (OA_FUNC_DECL *SendSignal)(void* user_data, 
+    oaSignalType signal, 
+    void *param);
+  void* UserData;
+
+} oaRPCFunctionTable;
+
+typedef struct oaRPCServerStruct
+{
+  const oaRPCFunctionTable *FuncTable;
+  oaRPCTransport *Transport;
+  char *LogFilename;
+
+  struct {
+    unsigned long ClientRPCVersionMajor, ClientRPCVersionMinor;
+    unsigned long AppOAVersionMajor, AppOAVersionMinor, AppOABuild, 
+      AppOACustom;
+    unsigned long ClientOAVersionMajor, ClientOAVersionMinor, 
+      ClientOABuild, ClientOACustom;
+  } Versions;
+
+  struct 
+  {
+    oaRPCFuncType Func;
+    const oaRPCBuf *PreResponseBuf;
+  } CallStack[OARPC_MAX_CALL_DEPTH];
+
+  oaInt CurDepth;
+
+  int InternalStatus;
+  int InternalParam;
+  oaBool ReverseBytesFlag;
+} oaRPCServer;
+
+/*******************************************************************************
+ *** RPC Client/Server Init & Cleanup
  ******************************************************************************/
 
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
 
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+const oaiFunctionTable *oaRPCInitClient(oaRPCTransport *transport, 
+                                        const oaVersion *app_oa_version);
 
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+oaRPCServer *oaRPCCreateServer(const oaRPCFunctionTable *func_table, 
+                               oaRPCTransport *transport, 
+                               const char *log_filename);
 
+oaRPCServerErrorType oaRPCRunServer(oaRPCServer *server, int IO_time_out);
+void oaRPCStopServer(oaRPCServer *server);
 
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
+/* oaRPCServerNestCommand() may be called from within GetNextCommand() 
+   callback dispatched by either oaRPCRunServer() or another instance
+   of oaRPCServerNestCommand().  It returns 'command' to the application
+   without having to exit the current invocation of GetNextCommand().
+   Control will be returned the next time the application calls 
+   GetNextCommand() */
+oaRPCServerErrorType oaRPCServerNestCommand(oaRPCServer *server,
+                                            const oaCommand *command);
 
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
+/* Sends the exit command as a response.  It may only be called from within
+   the GetNextCommand() callback.  Returns false on error. */
+oaRPCServerErrorType oaRPCServerSendExitCommand(oaRPCServer *server,
+                                                oaBool (*post_exit_func)(void *),
+                                                void *data);
 
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
+oaBool oaRPCDestroyServer(oaRPCServer *server);
 
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
+oaBool oaRPCCleanup(void);
 
 #ifdef __cplusplus
 }
 #endif
 
+
 #endif
+

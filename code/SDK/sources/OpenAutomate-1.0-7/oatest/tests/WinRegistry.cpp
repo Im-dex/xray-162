@@ -299,316 +299,353 @@
  ******************************************************************************/
 
 
+#include <oac/TestBase.h>
+#include <iostream>
+#include <windows.h>
+#include <tchar.h>
+#include <shlwapi.h>
 
-#ifndef _OA_h
-#define _OA_h
+using namespace std;
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+static bool WinRegistryTest = true;
+// Windows Registry Test Flags
+static std::vector<std::string> InstallCmd;
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
-
-#include <string.h>
-
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
-
-#ifdef __cplusplus
-extern "C"
+bool ExecuteWrapper(const char* exec,const char* param)
 {
-#endif
+  SHELLEXECUTEINFOA execInfo;
+  ZeroMemory(&execInfo,sizeof(execInfo));
 
+  execInfo.cbSize = sizeof(execInfo);
+  execInfo.lpVerb = "open";
+  execInfo.lpFile = exec;
+  execInfo.lpParameters = param;
+  execInfo.nShow = SW_SHOWDEFAULT;
+  execInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
 
-/******************************************************************************* 
- * Types
- ******************************************************************************/
+  bool ret = ShellExecuteExA(&execInfo);
 
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  if (ret)
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
-
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
-
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
-  
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
-
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
+    DWORD ec;
+    do 
+    {
+      GetExitCodeProcess(execInfo.hProcess,&ec);
+      Sleep(500);
+    } while (ec);
   }
 
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+  return ret;
 }
+
+void BackupRegistry(void)
+{
+  ExecuteWrapper("reg","export HKLM\\Software\\Openautomate hklmback.reg /y");
+  SHDeleteKeyA(HKEY_LOCAL_MACHINE,"Software\\Openautomate");
+}
+
+void RestoreRegistry(void)
+{
+  SHDeleteKeyA(HKEY_LOCAL_MACHINE,"Software\\Openautomate");
+  ExecuteWrapper("reg","import hklmback.reg");
+  DeleteFileA("hklmback.reg");
+}
+
+
+OAC_TEST_DECLARE_CLASS_HEAD(WinRegistry, 
+                            "Check aplpication installs windows registry properly",
+                            1, 
+                            true)
+
+const static int MAX_VALUE_NAME = 16383;
+const static int MAX_KEY_LENGTH = 255;
+
+typedef std::basic_string<TCHAR> _tstring;
+enum WinRegKeyDepth{BASE,DEVELOPER,APPLICATION,BUILD};
+
+struct RegItemBase
+{
+  _tstring application;
+  _tstring developer;
+  _tstring region;
+  _tstring path;
+  _tstring execute;
+  _tstring buildVersion;
+  _tstring installTime;
+};
+
+typedef vector<RegItemBase*> RegItemVec;
+RegItemVec RegistryItemlist;
+
+WinRegKeyDepth UnWindDepth(WinRegKeyDepth src)
+{
+  switch (src)
+  {
+  case BASE:
+    return BASE;
+  case DEVELOPER:
+    return BASE;
+  case APPLICATION:
+    return DEVELOPER;
+  case BUILD:
+    return APPLICATION;
+  }
+  return BASE;
+}
+
+WinRegKeyDepth WindDepth  (WinRegKeyDepth src)
+{
+  switch (src)
+  {
+  case BASE:
+    return DEVELOPER;
+  case DEVELOPER:
+    return APPLICATION;
+  case APPLICATION:
+    return BUILD;
+  default:
+    return BUILD;
+  }
+}
+
+_tstring RegReadString(HKEY hKey, LPCTSTR lpKey, LPCTSTR lpValue, DWORD nSize)
+{
+  HKEY key;
+  DWORD dwDisp;
+  LPTSTR lpRet;
+  _tstring value;
+
+  if (RegCreateKeyEx(hKey,lpKey,0,NULL,REG_OPTION_NON_VOLATILE,
+    KEY_READ,NULL,&key,&dwDisp) == ERROR_SUCCESS)
+  {
+    lpRet = (LPTSTR)malloc(sizeof(LPTSTR)*nSize);
+    if (RegQueryValueEx(key,lpValue,0,NULL,(LPBYTE)lpRet,&nSize) == ERROR_SUCCESS)
+      value = lpRet;
+    free (lpRet);
+  }
+  
+  RegCloseKey(key);
+
+  return value;
+}
+
+void ReadWinRegValue(const char* RegistryPath,RegItemBase *item,HKEY RootKey = HKEY_LOCAL_MACHINE)
+{
+  HKEY hTestKey = NULL;
+
+  TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name 
+  DWORD    cchClassName = MAX_PATH;  // size of class string 
+  DWORD    cSubKeys=0;               // number of subkeys 
+  DWORD    cbMaxSubKey;              // longest subkey size 
+  DWORD    cchMaxClass;              // longest class string
+  DWORD    cValues=0;              // number of values for key 
+  DWORD    cchMaxValue;          // longest value name 
+  DWORD    cbMaxValueData;       // longest value data 
+  DWORD    cbSecurityDescriptor; // size of security descriptor 
+  FILETIME ftLastWriteTime;      // last write time
+
+  DWORD    i, retCode;
+
+  TCHAR    achValue[MAX_VALUE_NAME];
+  DWORD    cchValue = MAX_VALUE_NAME;
+
+  if( RegOpenKeyExA( RootKey, RegistryPath,0,KEY_READ,&hTestKey)
+    == ERROR_SUCCESS)
+  {
+    // Get the class name and the value count.
+    retCode = RegQueryInfoKey(
+      hTestKey,                // key handle 
+      achClass,                // buffer for class name
+      &cchClassName,           // size of class string 
+      NULL,                    // reserved 
+      &cSubKeys,               // number of subkeys 
+      &cbMaxSubKey,            // longest subkey size 
+      &cchMaxClass,            // longest class string
+      &cValues,                // number of values for this key 
+      &cchMaxValue,            // longest value name 
+      &cbMaxValueData,         // longest value data 
+      &cbSecurityDescriptor,   // security descriptor 
+      &ftLastWriteTime);       // last write time
+  }
+
+  for (i=0, retCode=ERROR_SUCCESS; i<cValues; i++) 
+  { 
+    cchValue = MAX_VALUE_NAME;
+    achValue[0] = '\0'; 
+    retCode = RegEnumValue(hTestKey, i, 
+      achValue, 
+      &cchValue, 
+      NULL,NULL,NULL,NULL);
+
+    int len; 
+    len = MultiByteToWideChar(CP_ACP, 0, RegistryPath,-1,NULL,0);
+    LPWSTR lpKey = (LPWSTR)malloc(len*sizeof(LPCTSTR)+1);
+    MultiByteToWideChar(CP_ACP, 0, RegistryPath, -1, lpKey, len);
+
+    if (retCode == ERROR_SUCCESS )
+    { 
+      if (_tcscmp(achValue,TEXT("INSTALL_ROOT_PATH")) == 0)
+        item->path = RegReadString(RootKey,lpKey,achValue,8096);
+      else if(_tcscmp(achValue,TEXT("ENTRY_EXE")) == 0)
+        item->execute = RegReadString(RootKey,lpKey,achValue,8096);
+      else if(_tcscmp(achValue,TEXT("REGION")) == 0)
+        item->region = RegReadString(RootKey,lpKey,achValue,8096);
+    }
+
+    free (lpKey);
+  }
+  RegistryItemlist.push_back(item);
+
+  RegCloseKey(hTestKey);
+}
+
+void SearchWinReg (const char* RegistryPath = 
+                   "SOFTWARE\\OpenAutomate\\RegisteredApps",
+                   RegItemBase *item = NULL,
+                   HKEY RootKey = HKEY_LOCAL_MACHINE)
+{
+  static WinRegKeyDepth curDepth = BASE;
+  static RegItemBase* baseItem = new RegItemBase;
+
+  HKEY hTestKey = NULL;
+
+  TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
+  DWORD    cbName;                   // size of name string
+  TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name 
+  DWORD    cchClassName = MAX_PATH;  // size of class string 
+  DWORD    cSubKeys=0;               // number of subkeys 
+  DWORD    cbMaxSubKey;              // longest subkey size 
+  DWORD    cchMaxClass;              // longest class string
+  DWORD    cValues=0;              // number of values for key 
+  DWORD    cchMaxValue;          // longest value name 
+  DWORD    cbMaxValueData;       // longest value data 
+  DWORD    cbSecurityDescriptor; // size of security descriptor 
+  FILETIME ftLastWriteTime;      // last write time
+
+  DWORD    i, retCode;
+
+  DWORD    cchValue = MAX_VALUE_NAME;
+
+  if( RegOpenKeyExA( RootKey, RegistryPath,0,KEY_READ,&hTestKey)
+    == ERROR_SUCCESS)
+  {
+    // Get the class name and the value count.
+    retCode = RegQueryInfoKey(
+      hTestKey,                // key handle 
+      achClass,                // buffer for class name
+      &cchClassName,           // size of class string 
+      NULL,                    // reserved 
+      &cSubKeys,               // number of subkeys 
+      &cbMaxSubKey,            // longest subkey size 
+      &cchMaxClass,            // longest class string
+      &cValues,                // number of values for this key 
+      &cchMaxValue,            // longest value name 
+      &cbMaxValueData,         // longest value data 
+      &cbSecurityDescriptor,   // security descriptor 
+      &ftLastWriteTime);       // last write time
+
+    curDepth = WindDepth(curDepth);
+  }
+
+  string recursiveRegPath;
+
+  for (i = 0; i< cSubKeys; i++)
+  {
+    cbName = MAX_KEY_LENGTH;
+    retCode = RegEnumKeyEx(hTestKey, i,achKey,&cbName,NULL,NULL,NULL,&ftLastWriteTime);
+
+    if (retCode != ERROR_SUCCESS)
+      continue;
+
+    recursiveRegPath = RegistryPath;
+    recursiveRegPath.append("\\");
+
+    int len;
+    len = WideCharToMultiByte(CP_ACP, 0, achKey, -1, NULL, 0, NULL,NULL);
+    char* ctmp = new char[len];
+    WideCharToMultiByte(CP_ACP, 0, achKey, -1, ctmp, len, NULL, NULL);
+    recursiveRegPath.append(ctmp);
+    delete []ctmp;
+
+    switch (curDepth)
+    {
+    case DEVELOPER:
+    case APPLICATION:
+      if (curDepth == DEVELOPER)
+        baseItem->developer = achKey;
+      else if (curDepth == APPLICATION)
+        baseItem->application = achKey;
+      SearchWinReg(recursiveRegPath.c_str(),baseItem);
+      break;
+    case BUILD:
+      baseItem->buildVersion = achKey;
+      ReadWinRegValue(recursiveRegPath.c_str(),new RegItemBase(*baseItem),RootKey);
+      break;
+    }
+  }
+
+  RegCloseKey(hTestKey);
+  curDepth = UnWindDepth(curDepth);
+}
+
+virtual void Run(void)
+{
+#ifdef WIN32
+  RegistryItemlist.clear();
+
+  if (WinRegistryTest == false)
+    return;
+  else
+  {
+    BackupRegistry();
+    ExecuteWrapper(InstallCmd[0].c_str(),InstallCmd[1].c_str());
+    WinRegistryTest = false;
+  }
+  
+  SearchWinReg("SOFTWARE\\OpenAutomate\\RegisteredApps", NULL, HKEY_LOCAL_MACHINE);
+  SearchWinReg("SOFTWARE\\OpenAutomate\\RegisteredApps", NULL, HKEY_CURRENT_USER);
+
+  size_t size = RegistryItemlist.size();
+  OAC_TEST_MSG((size==1 || size==2)
+                     ,"Application generated more than one registry entry");
+
+  if (size==2)
+  {
+    RegItemVec::const_iterator iter = RegistryItemlist.begin();
+    RegItemBase* hklm = *iter++;
+    RegItemBase* hkcu = *iter++;
+
+    OAC_TEST_MSG(hklm->application == hkcu->application,
+                 "[Application] Key is different between HKLM / HKCU");
+    OAC_TEST_MSG(hklm->developer == hkcu->developer,
+                 "[Developer] Key is different between HKLM / HKCU");
+    OAC_TEST_MSG(hklm->buildVersion == hkcu->buildVersion,
+                  "[Build Version] Key is different between HKLM / HKCU");
+    OAC_TEST_MSG(hklm->path == hkcu->path,
+                  "[Path] Value is different between HKLM / HKCU");
+    OAC_TEST_MSG(hklm->region == hkcu->region,
+                  "[Region] Value is different between HKLM / HKCU");
+    OAC_TEST_MSG(hklm->execute == hkcu->execute,
+                  "[Execute] Value is different between HKLM / HKCU");
+    OAC_TEST_MSG(hklm->installTime == hkcu->installTime,
+                  "[InstallTime] Value is different between HKLM / HKCU");    
+  }
+
+  RegItemBase* item = *RegistryItemlist.begin()++;
+
+  OAC_TEST_MSG(item->application.empty() != true, "[Application] Key is empty");
+  OAC_TEST_MSG(item->developer.empty() != true,   "[Developer] Key is empty");
+  OAC_TEST_MSG(item->buildVersion.empty() != true,"[Build Version] Key is empty");
+
+  OAC_TEST_MSG(item->path.empty() != true,        "[Path] Value is empty");
+  OAC_TEST_MSG(item->region.empty() != true,      "[Region] Value is empty");
+  OAC_TEST_MSG(item->execute.empty() != true,     "[Execute] Value is empty");
+  OAC_COND_WARN(item->installTime.empty() != true,"[InstallTime] Value is empty");
+  RestoreRegistry();
+#else
+  OAC_MSG("This test only support WIN32 at this time");
 #endif
 
-#endif
+}
+
+OAC_TEST_DECLARE_CLASS_TAIL(WinRegistry)

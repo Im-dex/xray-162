@@ -300,315 +300,494 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#include <math.h>
+#include <iostream>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+#include <oac/TestBase.h>
+#include <oac/OAUtils.h>
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
+using namespace std;
 
-#include <string.h>
-
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+OAC_TEST_DECLARE_CLASS_HEAD(SetOptions, 
+                            "Basic sanity tests for OA_CMD_SET_OPTIONS",
+                            -1, 
+                            true) 
 
 
-/******************************************************************************* 
- * Types
- ******************************************************************************/
+  typedef oacContext::OptionVec OptionVecType;
+  typedef map<string, OptionVecType *> OptionMapType;
+  typedef vector<oacContext::OptionValue> OptionValueVecType;
+  typedef map<string, oacContext::OptionValue> OptionValueMapType;
 
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  bool IsWithinRange(oaInt x, oaInt a, oaInt b)
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
+    if(a > b)
+    {
+      oaInt Tmp = b;
+      b = a;
+      a = Tmp;
+    }
 
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
+    return(x >= a && x <= b);
+  }
 
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
+  bool IsWithinRange(oaFloat x, oaFloat a, oaFloat b)
+  {
+    if(a > b)
+    {
+      oaFloat Tmp = b;
+      b = a;
+      a = Tmp;
+    }
 
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
+    return(x >= a && x <= b);
+  }
 
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
+  void GenRandInt(const oaNamedOption &option,
+                  oaValue &val)
+  {
+    OAC_TEST_MSG(option.NumSteps >= -1,
+     "NumSteps for integer options must be >= -1.  NumSteps for the option "
+     "named '" << option.Name << "' is " << option.NumSteps);
 
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
+    oaInt Delta = option.MaxValue.Int - option.MinValue.Int;
+    oaInt NumSteps = option.NumSteps;
 
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
+    if(NumSteps > 0)
+    {
+      OAC_COND_WARN((Delta / NumSteps) * NumSteps == Delta,
+        "NumSteps is not evenly divisble into MaxValue - MinValue for option "
+        "named '" << option.Name << "'");
+    }
 
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
+    switch(NumSteps)
+    {
+      case -1:
+        val.Int = (oaInt)(Rand() * (double)0xFFFFFFFF);
+        break;
+    
+      case 0:
+        val.Int = (oaInt)(Rand() * (double)Delta) + option.MinValue.Int;
+        break;
 
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+      default:
+        if(NumSteps > 0)
+          val.Int = ((oaInt)(Delta / NumSteps) * ((oaInt)(Rand()*100000)%NumSteps)) + option.MinValue.Int;
 
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
+        assert(IsWithinRange(val.Int, 
+                             option.MinValue.Int, 
+                             option.MaxValue.Int));
+    }
 
+    OAC_MSG("Setting INT option '" << option.Name << "' -> " << val.Int);
+  }
 
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  void GenRandFloat(const oaNamedOption &option,
+                    oaValue &val)
+  {
+    OAC_TEST_MSG(option.NumSteps >= -1,
+     "NumSteps for float options must be >= -1.  NumSteps for the option "
+     "named '" << option.Name << "' is " << option.NumSteps);
 
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
+    oaFloat Delta = option.MaxValue.Float - option.MinValue.Float;
+    oaInt NumSteps = option.NumSteps;
+
+    switch(NumSteps)
+    {
+      case -1:
+        val.Float = Rand() * 1000000 - 500000;
+        break;
+    
+      case 0:
+        val.Float = Rand() * Delta + option.MinValue.Float;
+        break;
+
+      default:
+        if(NumSteps > 0)
+        {
+          oaFloat Step = floor(Rand() * ((oaFloat)NumSteps + 0.999));
+          val.Float = 
+            (oaFloat)Step * Delta / (oaFloat)NumSteps + option.MinValue.Float;
+
+          assert(IsWithinRange(val.Float, 
+                               option.MinValue.Float, 
+                               option.MaxValue.Float));
+        }
+    }
+
+    OAC_MSG("Setting FLOAT option '" << option.Name << "' -> " << val.Float);
+  }
+
+  void GenRandBool(const oaNamedOption &option,
+                   oaValue &val)
+  {
+    val.Bool = (Rand() >= 0.5) ? OA_TRUE : OA_FALSE;
+    OAC_MSG("Setting BOOL option '" << option.Name << "' -> " << val.Bool);
+  }
+
+  void GenRandEnum(const OptionVecType &option,
+                   oaValue &val)
+  {
+    int Index = (int)(Rand() * ((double)option.size() - 0.001));
+    val.Enum = option[Index].Value.Enum;
+    OAC_COND_WARN(val.Enum != NULL,
+      "Options of type enum type should always have the Value field defined. "
+      "Please check the call to oaAddOption() for the option named '" <<
+      option[0].Name << "'")
+
+    OAC_MSG("Setting ENUM option '" << option[0].Name << 
+            "' -> " << val.Enum);
+  }
+
+  void GenRandString(const oaNamedOption &option,
+                     oaValue &val)
+  {
+    if(Context()->GetOptionValue(option.Name)->Value.String == NULL)
+    {
+      val.String = NULL;
+      OAC_MSG("Keeping STRING option '" << option.Name << 
+            "' -> \"\"");
+
+    }
+    else
+    {
+      val.String = Context()->GetOptionValue(option.Name)->Value.String;
+      OAC_MSG("Keeping STRING option '" << option.Name << 
+            "' -> \"" << val.String <<"\"");
+    }
+  }
+
+  void GenRandOptionValue(const OptionVecType &option,
+                          oacContext::OptionValue &ret)
+  {
+    assert(option.size() > 0);
+
+    oaValue Value;
+
+    switch(option[0].DataType)
+    {
+      case OA_TYPE_INT:
+        GenRandInt(option[0], Value);
+        break;
+
+      case OA_TYPE_FLOAT:
+        GenRandFloat(option[0], Value);
+        break;
+
+      case OA_TYPE_BOOL:
+        GenRandBool(option[0], Value);
+        break;
+
+      case OA_TYPE_ENUM:
+        GenRandEnum(option, Value);
+        break;
+
+      case OA_TYPE_STRING:
+        GenRandString(option[0], Value);
+        break;
+
+      default:
+        OAC_TEST("DATA TYPE NOT HANDLED" == NULL)
+    }
+
+    ret.Set(option[0].Name, option[0].DataType, &Value);
+  }
+
+  void GenRandOptionValues(const OptionMapType &options,
+                           OptionValueVecType &ret,
+                           OptionValueMapType &ret_map)
+  {
+    ret.clear();
+
+    OptionMapType::const_iterator OIter = options.begin();
+    for(; OIter != options.end(); OIter++)
+    {
+      oacContext::OptionValue Val;
+      GenRandOptionValue(*OIter->second, Val);
+      ret.push_back(Val);
+      ret_map[(*OIter->second)[0].Name] = Val;
+    }
+  }
+
+  bool StrsAreEqual(const char *s1, const char *s2)
+  {
+    
+    if(s1 == NULL && s2 == NULL)
+      return true;
+
+    if(s1 == NULL || s2 == NULL)
+      return false;
+
+    return(strcmp(s1, s2) == 0 ? true : false);
+  }
+
   
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
+  void PrintComparedOptions(const oacContext::OptionValue *orig_value, 
+                            const oacContext::OptionValue *cur_value)
+  {
 
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+    switch(orig_value->Type)
+    {
+    case OA_TYPE_ENUM:
+    case OA_TYPE_STRING:
+      if(orig_value->Value.String == NULL &&
+         cur_value->Value.String == NULL )
+      {
+        OAC_MSG("" << oacOAUtils::TypeToStr(orig_value->Type) << 
+        " Option '" << orig_value->Name << "' was set to '' returned as ''");
+      }
+      else if(orig_value->Value.String == NULL)
+      {
+        OAC_MSG("" << oacOAUtils::TypeToStr(orig_value->Type) << 
+        " Option '" << orig_value->Name << "' was set to '' returned as '" 
+        << cur_value->Value.String << "'");
+      }
+      else if(cur_value->Value.String == NULL)
+      {
+        OAC_MSG("" << oacOAUtils::TypeToStr(orig_value->Type) << 
+        " Option '" << orig_value->Name << "' was set to '" 
+        << orig_value->Value.String << "' returned as ''");
+      }
+      else
+      {
+        OAC_MSG("" << oacOAUtils::TypeToStr(orig_value->Type) << 
+        " Option '" << orig_value->Name << "' was set to '" 
+        << orig_value->Value.String << "' returned as '" 
+        << cur_value->Value.String << "'");
+      }
+      break;
+    case OA_TYPE_INT:
+      OAC_MSG("" << oacOAUtils::TypeToStr(orig_value->Type) << 
+        " Option '" << orig_value->Name << "' was set to '" 
+        << orig_value->Value.Int << "' returned as '"<< cur_value->Value.Int
+        << "'");
+      break;
+    case OA_TYPE_FLOAT:
+      OAC_MSG("" << oacOAUtils::TypeToStr(orig_value->Type) << 
+        " Option '" << orig_value->Name << "' was set to '" 
+        << orig_value->Value.Float << "' returned as '"<< cur_value->Value.Float
+        << "'" );
+      break;
+    case OA_TYPE_BOOL:
+      OAC_MSG("" << oacOAUtils::TypeToStr(orig_value->Type) << 
+        " Option '" << orig_value->Name << "' was set to '" 
+        << orig_value->Value.Bool << "' and returned '"<< cur_value->Value.Bool
+        << "'");
+      break;
+    }
 }
-#endif
 
-#endif
+
+  void CompareOptionValue(const oacContext::OptionValue &orig_value)
+  {
+    const oacContext::OptionValue *CurOpt = 
+      Context()->GetOptionValue(orig_value.Name);
+
+    PrintComparedOptions((oacContext::OptionValue*)&orig_value, CurOpt);
+
+    if(CurOpt != NULL)
+    {
+      switch(orig_value.Type)
+      {
+#define COMPARE_VAL(type, capital_type) \
+        case OA_TYPE_##capital_type : \
+          OAC_TEST_MSG(orig_value.Value.type == CurOpt->Value.type,\
+            "Option '" << orig_value.Name << "' of type " #capital_type\
+            " should be set to '" << orig_value.Value.type << "' but is "\
+            "instead set to '" << CurOpt->Value.type << "'") \
+          break;
+        
+        COMPARE_VAL(Int, INT)
+        COMPARE_VAL(Float, FLOAT)
+        COMPARE_VAL(Bool, BOOL)
+
+#define COMPARE_STR_VAL(type, capital_type) \
+        case OA_TYPE_##capital_type : \
+		if(CurOpt->Value.type == NULL && orig_value.Value.type == NULL) \
+    {}\
+	  else if(CurOpt->Value.type == NULL )\
+    {\
+      OAC_TEST_MSG(StrsAreEqual(orig_value.Value.type, CurOpt->Value.type),\
+        "Option '" << orig_value.Name << "' of type " #capital_type\
+        " should be set to '" << orig_value.Value.type << "' but is "\
+        "instead set to ''") \
+    }\
+    else if(orig_value.Value.type == NULL)\
+    {\
+      OAC_TEST_MSG(StrsAreEqual(orig_value.Value.type, CurOpt->Value.type),\
+        "Option '" << orig_value.Name << "' of type " #capital_type\
+        " should be set to '' but is "\
+        "instead set to " << CurOpt->Value.type) \
+    }\
+    else {\
+      OAC_TEST_MSG(StrsAreEqual(orig_value.Value.type, CurOpt->Value.type),\
+        "Option '" << orig_value.Name << "' of type " #capital_type\
+        " should be set to '" << orig_value.Value.type << "' but is "\
+        "instead set to " << CurOpt->Value.type) \
+		}\
+          break;
+        
+        COMPARE_STR_VAL(String, STRING)
+        COMPARE_STR_VAL(Enum, ENUM)
+      }
+    }
+  }
+
+  void CompareOptionValues(const OptionValueVecType &orig_opts)
+  {
+    const std::vector<OptionValue *> &CurOpts = 
+      Context()->GetCurrentOptions(true);
+
+    size_t NumCurOptions = CurOpts.size();
+    size_t NumOrigOptions = orig_opts.size();
+
+    int OrigNumEnabledOpts = 0;
+    int CurNumEnabledOpts = 0;
+
+    vector<oacContext::OptionValue>::const_iterator Iter = orig_opts.begin();
+    for(; Iter != orig_opts.end(); Iter++)
+    {
+      if(OptionIsEnabled(Iter->Name))
+      {
+        CompareOptionValue(*Iter);
+        OrigNumEnabledOpts++;
+      }
+    }
+
+    vector<oacContext::OptionValue *>::const_iterator CurIter = CurOpts.begin();
+    for(; CurIter != CurOpts.end(); *CurIter++)
+    {
+      if(OptionIsEnabled((*CurIter)->Name))
+      {
+        CurNumEnabledOpts++;
+      }
+    }
+
+    OAC_MSG("Total number of Optoins set (" << OrigNumEnabledOpts << "). "
+      "Total number of Options returned ("<< NumCurOptions << ").");
+
+    OAC_MSG("(" << OrigNumEnabledOpts << ") Dependency enabled options "
+      "set. (" << CurNumEnabledOpts << ") Dependency enabled options"
+      " returned.");
+
+    OAC_TEST_MSG(CurNumEnabledOpts == OrigNumEnabledOpts,
+      "The number of current dependency enabled options(" 
+      << CurNumEnabledOpts << ") returned after the application was restarted" 
+      "doesn't match the number of dependency enabled options set before (" 
+      << OrigNumEnabledOpts << ") the restart.")
+
+
+      OAC_COND_WARN(NumCurOptions == OrigNumEnabledOpts,
+      "The number of current options (" << NumCurOptions << ") returned after "
+      "the application was restarted doesn't match the number of options set "
+      "before (" << OrigNumEnabledOpts << ") the restart. This could be due to" 
+      " dependencies.")
+  }
+
+  OptionValueVecType pRandOptions;
+  OptionValueMapType pRandOptionsMap;
+  OptionValueVecType::const_iterator pRandOptionsIter;
+
+  virtual void Run(void)
+  {
+    pRandOptions.clear();
+    
+    GenRandOptionValues(Context()->GetAllOptionsMap(), 
+                        pRandOptions,
+                        pRandOptionsMap);
+
+    pRandOptionsIter = pRandOptions.begin();
+
+    oaCommand Command;
+    oaInitCommand(&Command);
+    Command.Type = OA_CMD_SET_OPTIONS;
+    Context()->IssueCommand(&Command);
+
+    Context()->IssueExitAndRestart();
+
+    CompareOptionValues(pRandOptions);
+  }
+
+  bool OptionIsEnabled(const oaChar *name)
+  {
+    const OptionVecType *Opt = Context()->GetOption(name);
+    OAC_TEST_MSG(Opt != NULL,   
+                 "Option named '" << name << "' is unknown.");
+    if(Opt == NULL)
+      return(false);
+
+    oaOptionDependency Dep = (*Opt)[0].Dependency;
+
+    if(Dep.ParentName == NULL)
+      return(true);
+
+    const OptionVecType *ParentOpt = Context()->GetOption(Dep.ParentName);
+    OAC_TEST_MSG(ParentOpt != NULL,   
+                 "Option named '" << name << "' is unknown.");
+    if(ParentOpt == NULL)
+      return(false);
+
+    OptionValueMapType::const_iterator ParentVal = pRandOptionsMap.find(Dep.ParentName);
+    OAC_TEST_MSG(ParentVal != pRandOptionsMap.end(),   
+                 "Option named '" << name << "' is unknown.");
+    if(ParentVal == pRandOptionsMap.end())
+      return(false);
+
+    return(oacOAUtils::OptionIsEnabled(Dep.ComparisonOp,
+                                       Dep.ComparisonValType,
+                                       ParentVal->second.Value,
+                                       Dep.ComparisonVal));
+  }
+
+  virtual oaNamedOption* GetNextOption(void)
+  {
+    static oaNamedOption Option;
+
+    // Skip passed disabled options
+    while(pRandOptionsIter != pRandOptions.end() &&
+          !OptionIsEnabled(pRandOptionsIter->Name))
+      pRandOptionsIter++;
+          
+    if(pRandOptionsIter == pRandOptions.end())
+      return(NULL);
+
+    const char *Name = pRandOptionsIter->Name;
+    Option = (*Context()->GetOption(Name))[0];
+    Option.Value = pRandOptionsIter->Value;
+
+    pRandOptionsIter++;
+
+    return(&Option);
+  }
+
+  virtual void StartBenchmark(void)
+  {
+    OAC_TEST_MSG(false,"StartBenchmark() Callback called in SetOptions");
+  }
+
+  virtual void DisplayFrame(oaFloat t)
+  {
+    OAC_TEST_MSG(false,"DisplayFrame() Callback called in SetOptions");
+  }
+
+  virtual void EndBenchmark(void)
+  {
+    OAC_TEST_MSG(false,"EndBenchmark() Callback called in SetOptions");
+  }
+
+  virtual void AddResultValue(const oaChar *name, 
+    oaOptionDataType value_type,
+    const oaValue *value)
+  {
+    OAC_TEST_MSG(false,"AddResultValue() Callback called in SetOptions");
+  }
+
+  virtual void AddFrameValue(const oaChar *name, 
+    oaOptionDataType value_type,
+    const oaValue *value)
+  {
+    OAC_TEST_MSG(false,"AddFrameValue() Callback called in SetOptions");
+  }
+
+
+OAC_TEST_DECLARE_CLASS_TAIL(SetOptions)

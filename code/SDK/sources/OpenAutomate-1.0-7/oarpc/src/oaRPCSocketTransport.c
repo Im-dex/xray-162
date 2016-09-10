@@ -300,315 +300,649 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#include <oaRPCInternal.h>
+#include <oaRPCSocketTransport.h>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+#if defined(WIN32) || PLATFORM == OA_WIN32 || PLATFORM == OA_CYGWIN
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
+#endif
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#define IS_SOCKET_VALID( s ) ( (s) != INVALID_SOCKET )
+#define IS_SOCKET_INVALID( s ) ( (s) == INVALID_SOCKET )
+
+enum {
+  EV_READ     = 1,      ///< Ready for read
+  EV_WRITE    = 2,      ///< Ready for write
+  EV_OOB      = 4,      ///< Ready for OOB data
+  EV_ACCEPT   = 8,      ///< (server)Ready for accept new connections
+  EV_CONNECT  = 16,     ///< (client)Connected
+  _EV_MAX_VALUE,
+};
+
+typedef struct SocketDataStruct
+{
+  SOCKET    Socket;
+  SOCKET    ListenSocket;
+  oaBool    Listening;
+  oaRPCBuf  *TmpBuf;
+
+#if defined(WIN32) || PLATFORM == OA_WIN32 || PLATFORM == OA_CYGWIN
+  HANDLE    CancelEvent;
+  HANDLE    SocketEvent;
 #else
-#  define OA_PLATFORM OA_CYGWIN
+#error "Events not implemented on this platform!"
 #endif
+} SocketData;
 
-#include <string.h>
+static void SocketCleanupAll(void *socket);
+static oaBool SocketCleanupConnection(void *socket);
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
-
-#ifdef __cplusplus
-extern "C"
+#if defined(WIN32) || PLATFORM == OA_WIN32 || PLATFORM == OA_CYGWIN
+static int InitCount = 0;
+static oaBool InitSocketEnv()
 {
-#endif
+  WSADATA       WSAData;
 
-
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  if(InitCount == 0)
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
-
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
-
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
-  
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
-
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
+    if( 0 != WSAStartup(MAKEWORD(2,2), &WSAData))
+    {
+      OARPC_WARNING("WSAStartup failed");
+      return OA_FALSE;
+    }
   }
 
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+  InitCount++;
+  return OA_TRUE;
 }
-#endif
+
+static void ExitSocketEnv()
+{
+  assert(InitCount > 0);
+  if(InitCount <= 0)
+    return;
+
+  if(--InitCount == 0)
+    WSACleanup();
+}
+
+static oaRPCTransportErrorType WaitSocket(
+  SocketData*   Socket, 
+  unsigned long io_events,
+  int           time_out_ms)
+{
+  unsigned long     Flag = 0;
+  int               Ret;
+  SOCKET            s = Socket->Socket;
+  WSANETWORKEVENTS  NetworkEvents;
+  HANDLE            Events[2];
+
+  if(io_events & EV_ACCEPT)
+  {
+    if(io_events != (EV_ACCEPT))
+    {
+      OARPC_WARNING("Wrong parameter in WaitSocket\n");
+      return OARPC_TRANSPORT_ERROR_FAILED;
+    }
+
+    Flag = FD_ACCEPT;
+    s = Socket->ListenSocket;
+  }
+  else
+  {
+    if(io_events & EV_READ)
+      Flag |= FD_READ;
+    if(io_events & EV_WRITE)
+      Flag |= FD_WRITE;
+    if(io_events & EV_OOB)
+      Flag |= FD_OOB;
+    if(io_events & EV_ACCEPT)
+      Flag |= FD_ACCEPT;
+    if(io_events & EV_CONNECT)
+      Flag |= FD_CONNECT;
+  }
+
+  if(!Flag || IS_SOCKET_INVALID(s))
+  {
+    OARPC_WARNING("Wrong parameter in WaitSocket\n");
+    return OARPC_TRANSPORT_ERROR_FAILED;
+  }
+
+  Events[0] = Socket->SocketEvent;
+  Events[1] = Socket->CancelEvent;
+
+  do 
+  {
+    if(!WSAResetEvent(Socket->SocketEvent))
+    {
+      OARPC_WARNING("Wrong parameter in WaitSocket\n");
+      return OARPC_TRANSPORT_ERROR_FAILED;
+    }
+
+    if(SOCKET_ERROR == WSAEventSelect( s, Socket->SocketEvent, Flag | FD_CLOSE ))
+    {
+      OARPC_WARNING("Wrong parameter in WaitSocket\n");
+      return OARPC_TRANSPORT_ERROR_FAILED;
+    }
+
+    Ret = WSAWaitForMultipleEvents( 2, Events, FALSE, time_out_ms, FALSE );
+    switch(Ret)
+    {
+    case WSA_WAIT_TIMEOUT: 
+      return OARPC_TRANSPORT_ERROR_TIMEOUT;
+
+    case WSA_WAIT_EVENT_0 + 1:
+      return OARPC_TRANSPORT_ERROR_CANCELED;
+
+    case WSA_WAIT_EVENT_0:
+      break;
+
+    default:
+      return OARPC_TRANSPORT_ERROR_FAILED;
+    }
+
+    memset( &NetworkEvents, 0, sizeof(NetworkEvents) );
+    Ret = WSAEnumNetworkEvents(s, Socket->SocketEvent, &NetworkEvents);
+    if(Ret == SOCKET_ERROR)
+    {
+      OARPC_WARNING("Wrong parameter in WaitSocket\n");
+      return OARPC_TRANSPORT_ERROR_FAILED;
+    }
+
+    if ( NetworkEvents.lNetworkEvents == FD_CLOSE )
+      return OARPC_TRANSPORT_ERROR_FAILED;
+
+    return OARPC_TRANSPORT_ERROR_OK;
+  } while(0);
+
+  return OARPC_TRANSPORT_ERROR_FAILED;
+}
+
+#else
+#define InitSocketEnv()   OA_TRUE
+#define ExitSocketEnv()
+static oaRPCTransportErrorType WaitSocket(
+  SocketData*   Socket, 
+  unsigned long io_events,
+  int           time_out_ms)
+{
+#error "WaitSocket not implemented!"
+}
+
+static unsigned long GetTickCount()
+{
+  struct timespec  cur_time;
+  clock_gettime( CLOCK_REALTIME, &cur_time );
+  return (unsigned long)(cur_time.tv_sec*1000 + cur_time.tv_nsec/1000000);
+}
 
 #endif
+
+static SocketData *SocketInit(void)
+{
+  SocketData    *Socket;
+
+  if(!InitSocketEnv())
+    return NULL;
+
+  Socket = (SocketData *)malloc(sizeof(SocketData));
+  memset(Socket, 0, sizeof(SocketData));
+
+  Socket->Socket        = INVALID_SOCKET;
+  Socket->ListenSocket  = INVALID_SOCKET;
+
+  Socket->TmpBuf = oaRPCAllocBuf();
+  if(!Socket->TmpBuf)
+  {
+    SocketCleanupAll(Socket);
+    return NULL;
+  }
+
+#if defined(WIN32) || PLATFORM == OA_WIN32 || PLATFORM == OA_CYGWIN
+  Socket->CancelEvent   = WSACreateEvent();
+  Socket->SocketEvent   = WSACreateEvent();
+  if(WSA_INVALID_EVENT == Socket->CancelEvent ||
+    WSA_INVALID_EVENT == Socket->SocketEvent)
+  {
+    SocketCleanupAll(Socket);
+    return NULL;
+  }
+#else
+#error "Events not implemented on this platform!"
+#endif
+
+  return(Socket);
+}
+
+static oaBool SocketCleanupConnection(SocketData *socket)
+{
+  SocketData *Socket = (SocketData *)socket;
+
+  assert(Socket != NULL);
+  if(Socket == NULL)
+    return OA_FALSE;
+
+  if(IS_SOCKET_VALID( Socket->Socket) )
+  {
+    closesocket(Socket->Socket);
+    Socket->Socket = INVALID_SOCKET;
+  }
+
+  if(IS_SOCKET_VALID( Socket->ListenSocket))
+    Socket->Listening = OA_TRUE;
+
+  return(OA_TRUE);
+}
+
+static void SocketCleanupAll(SocketData *socket)
+{
+  SocketData *Socket = (SocketData *)socket;
+
+  assert(Socket != NULL);
+  if(Socket == NULL)
+    return;
+
+  SocketCleanupConnection(Socket);
+
+  if(WSA_INVALID_EVENT != Socket->CancelEvent)
+    WSACloseEvent( Socket->CancelEvent );
+
+  if(WSA_INVALID_EVENT != Socket->SocketEvent)
+    WSACloseEvent( Socket->SocketEvent );
+
+  if(Socket->TmpBuf)
+    oaRPCFreeBuf(Socket->TmpBuf);
+
+  if(IS_SOCKET_VALID(Socket->ListenSocket))
+    closesocket(Socket->ListenSocket);
+
+  free(Socket);
+  ExitSocketEnv();
+}
+
+static oaRPCTransportErrorType SocketSend(void *user_data, 
+                                          const oaRPCBuf *buf, 
+                                          int time_out)
+{
+  SocketData    *Socket = (SocketData *)user_data;
+
+  int           Sent, TotalSent, ToSend, BufSize;
+  oaBool        FirstWait = OA_TRUE;
+  unsigned long BeginTime = GetTickCount();
+  int           WaitTime = time_out;
+  int			netOrderTest = 1;
+  oaRPCTransportErrorType Ret;
+
+  assert(Socket != NULL);
+  assert(buf != NULL);
+
+  if(IS_SOCKET_INVALID( Socket->Socket ) )
+    return(OARPC_TRANSPORT_ERROR_BADTRANSPORT);
+
+  TotalSent = 0;
+  BufSize = OARPC_BUF_SIZE(buf);
+
+  oaRPCClearBuf(Socket->TmpBuf);
+
+  /* Place BufSize into network order */
+  if (*((char*)&netOrderTest))
+	OARPC_REVERSE_BYTES(OA_TRUE, BufSize);
+
+  oaRPCPushBuf(Socket->TmpBuf, &BufSize, sizeof(BufSize));
+  oaRPCPushBuf(Socket->TmpBuf, 
+               OARPC_GET_BUF_CONST(buf, 0), 
+               OARPC_BUF_SIZE(buf));
+
+  ToSend = OARPC_BUF_SIZE(Socket->TmpBuf);
+
+  while(ToSend > 0)
+  {
+    Sent = send(
+      Socket->Socket, 
+      OARPC_GET_BUF(Socket->TmpBuf, TotalSent), 
+      ToSend, 
+      0);
+
+    if ( Sent == 0 )
+      return(OARPC_TRANSPORT_ERROR_FAILED);
+
+    if ( Sent > 0 )
+    {
+      TotalSent += Sent;
+      ToSend -= Sent;
+    }
+    else
+    {
+      if ( WSAGetLastError() != WSAEWOULDBLOCK )
+        return OARPC_TRANSPORT_ERROR_FAILED;
+    }
+
+    if(ToSend == 0)
+      return OARPC_TRANSPORT_ERROR_OK;
+
+    // wait...
+    if(!FirstWait && time_out > 0)
+    {
+      WaitTime = time_out - (int)(GetTickCount() - BeginTime);
+      if(WaitTime <= 0)
+        return OARPC_TRANSPORT_ERROR_TIMEOUT;
+    }
+
+    Ret = WaitSocket(Socket, EV_WRITE, WaitTime);
+    FirstWait = OA_FALSE;
+
+    if(Ret != OARPC_TRANSPORT_ERROR_OK)
+      return(Ret);
+  }
+  
+  return(OARPC_TRANSPORT_ERROR_OK);
+}
+
+static oaRPCTransportErrorType AcceptConnection(SocketData *socket, 
+                                                int time_out)
+{
+  oaRPCTransportErrorType ErrCode = OARPC_TRANSPORT_ERROR_OK;
+
+  assert(socket != NULL);
+  assert(IS_SOCKET_VALID( socket->ListenSocket ));
+  assert(IS_SOCKET_INVALID( socket->Socket));
+
+  ErrCode = WaitSocket(socket, EV_ACCEPT, time_out);
+  if(ErrCode != OARPC_TRANSPORT_ERROR_OK)
+    return ErrCode;
+
+  socket->Socket = accept(socket->ListenSocket, NULL, NULL);
+  if(IS_SOCKET_INVALID( socket->Socket ))
+  {
+    OARPC_WARNING("accept failed");
+    return OARPC_TRANSPORT_ERROR_FAILED;
+  }
+
+  return(OARPC_TRANSPORT_ERROR_OK);
+}
+
+static oaRPCTransportErrorType SocketRecv(
+  void *      user_data, 
+  oaRPCBuf *  buf, 
+  oaBool *    new_connection, 
+  int         time_out )
+{
+  oaRPCSize       BufSize;
+  oaRPCSize       NRead;
+  oaRPCSize       TotalRead, TotalLeft;
+  SocketData      *Socket = (SocketData *)user_data;
+  unsigned long   BeginTime = GetTickCount();
+  int             WaitTime = time_out;
+  unsigned int    netOrderTest = 1;
+  oaRPCTransportErrorType Ret;
+
+  *new_connection = OA_FALSE;
+
+  while(1)
+  {
+    if(IS_SOCKET_INVALID( Socket->Socket) )
+    {
+      if(IS_SOCKET_INVALID( Socket->ListenSocket) )
+        return(OARPC_TRANSPORT_ERROR_BADTRANSPORT);
+
+      Ret = AcceptConnection(Socket, time_out);
+      if(OARPC_TRANSPORT_ERROR_OK != Ret)
+        return(Ret);
+
+      *new_connection = OA_TRUE;
+    }
+
+    Ret = WaitSocket(Socket, EV_READ, time_out);
+    if(OARPC_TRANSPORT_ERROR_OK != Ret)
+      return(Ret);
+
+    assert(sizeof(BufSize) == 4);
+    NRead = recv(Socket->Socket, (char *)&BufSize, sizeof(BufSize), 0);
+	
+	/* bufsize is always transmitted network order/big endian. So need to swap if on little endian machine */
+    if (*((char*)&netOrderTest))
+		OARPC_REVERSE_BYTES(1, BufSize);
+    if(NRead == 0)
+    {
+      if( IS_SOCKET_VALID( Socket->ListenSocket) )
+      {
+        /* Connection was closed, so accept a new one and continue as normal */
+        closesocket(Socket->Socket);
+	      Socket->Socket = INVALID_SOCKET;
+        continue;
+      }
+
+      return OARPC_TRANSPORT_ERROR_FAILED;
+    }
+
+    break;
+  }
+
+  if(NRead != 4)
+    return(OARPC_TRANSPORT_ERROR_BADDATA);
+
+  if(BufSize < 1)
+    return(OARPC_TRANSPORT_ERROR_BADDATA);
+
+  oaRPCSetBufSize(buf, BufSize);
+
+  TotalLeft = BufSize;
+  TotalRead = 0;
+  while(TotalLeft > 0)
+  {
+    // wait...
+    if(!time_out > 0)
+    {
+      WaitTime = time_out - (int)(GetTickCount() - BeginTime);
+      if(WaitTime <= 0)
+        return OARPC_TRANSPORT_ERROR_TIMEOUT;
+    }
+
+    Ret = WaitSocket(Socket, EV_READ, WaitTime);
+    if(OARPC_TRANSPORT_ERROR_OK != Ret)
+      return(Ret);
+
+    NRead = recv(Socket->Socket, 
+                 OARPC_GET_BUF(buf, TotalRead), 
+                 TotalLeft, 
+                 0);
+
+    if(NRead < 1)  
+      return(OARPC_TRANSPORT_ERROR_BADDATA);
+
+    TotalRead += NRead;
+    TotalLeft -= NRead;
+  }
+
+  return(OARPC_TRANSPORT_ERROR_OK);
+}
+
+static void SocketCancel(void *user_data)
+{
+  SocketData *Socket = (SocketData *)user_data;
+  WSASetEvent( Socket->CancelEvent );
+}
+
+oaRPCTransportErrorType oaRPCInitSocketServerTransport(
+  oaRPCTransport *transport,
+  int port)
+{
+  SocketData *        Socket;
+  struct addrinfo *   Result = NULL, Hints;
+  char                PortStr[256];
+  int                 Ret;
+
+  oaRPCTransportErrorType ErrCode = OARPC_TRANSPORT_ERROR_OK;
+
+  assert(transport != NULL);
+  assert(port > 0);
+
+  memset(transport, 0, sizeof(oaRPCTransport));
+
+  if((Socket = SocketInit()) == NULL)
+  {
+    OARPC_WARNING("Could not initialize socket library.") 
+    return(OARPC_TRANSPORT_ERROR_FAILED);
+  }
+
+  memset(&Hints, 0, sizeof(Hints));
+  Hints.ai_family = AF_INET;
+  Hints.ai_socktype = SOCK_STREAM;
+  Hints.ai_protocol = IPPROTO_TCP;
+  Hints.ai_flags = AI_PASSIVE;
+
+  sprintf(PortStr, "%d", port);
+
+  if((Ret = getaddrinfo(NULL, PortStr, &Hints, &Result)) != 0) 
+  {
+    OARPC_WARNING("getaddrinfo() failed.");
+    ErrCode = OARPC_TRANSPORT_ERROR_BADADDR;
+    goto failed;
+  }
+
+  Socket->ListenSocket = socket(Result->ai_family, 
+                                Result->ai_socktype, 
+                                Result->ai_protocol);
+
+  if(IS_SOCKET_INVALID( Socket->ListenSocket ) ) 
+  {
+    OARPC_WARNING("Could not open listen socket.");
+    ErrCode = OARPC_TRANSPORT_ERROR_FAILED;
+    goto failed;
+  }
+
+  Ret = bind(Socket->ListenSocket, Result->ai_addr, (int)Result->ai_addrlen);
+  if(Ret == SOCKET_ERROR) 
+  {
+     OARPC_WARNING("bind failed");
+     //closesocket(Socket->ListenSocket);
+     //Socket->ListenSocket = INVALID_SOCKET;
+     ErrCode = OARPC_TRANSPORT_ERROR_BADADDR;
+     goto failed;
+  }
+
+  freeaddrinfo(Result);
+  Result = NULL;
+
+  Ret = listen(Socket->ListenSocket, SOMAXCONN);
+  if(Ret == SOCKET_ERROR) 
+  {
+    OARPC_WARNING("listen failed");
+    ErrCode = OARPC_TRANSPORT_ERROR_FAILED;
+    goto failed;
+  }
+
+  transport->Send               = SocketSend;
+  transport->Recv               = SocketRecv;
+  transport->CleanupConnection  = SocketCleanupConnection;
+  transport->CleanupAll         = SocketCleanupAll;
+  transport->Cancel             = SocketCancel;
+
+  transport->UserData           = (void *)Socket;
+
+  return(OARPC_TRANSPORT_ERROR_OK);
+
+failed:
+  if(Result)
+    freeaddrinfo(Result);
+
+  SocketCleanupAll(Socket);
+  return(ErrCode);
+}
+
+oaRPCTransportErrorType oaRPCInitSocketClientTransport(
+  oaRPCTransport *transport,
+  const char *hostname,
+  int port)
+{
+  SocketData *      Socket;
+  struct addrinfo * Result = NULL, *Ptr, Hints;
+  int               Ret;
+  char              PortStr[256];
+
+  oaRPCTransportErrorType ErrCode = OARPC_TRANSPORT_ERROR_FAILED;
+
+  assert(transport != NULL);
+  assert(port > 0);
+  assert(hostname != NULL);
+
+  memset(transport, 0, sizeof(oaRPCTransport));
+
+  if((Socket = SocketInit()) == NULL)
+  {
+    OARPC_ERROR("Could not initialize socket library.");
+    ErrCode = OARPC_TRANSPORT_ERROR_FAILED;
+    return(OA_FALSE);
+  }
+
+  memset(&Hints, 0, sizeof(Hints));
+  Hints.ai_family = AF_UNSPEC;
+  Hints.ai_socktype = SOCK_STREAM;
+  Hints.ai_protocol = IPPROTO_TCP;
+
+  sprintf(PortStr, "%d", port);
+  Ret = getaddrinfo(hostname, PortStr, &Hints, &Result);
+  if(Ret != 0) 
+  {
+    OARPC_ERROR("getaddrinfo failed");
+    ErrCode = OARPC_TRANSPORT_ERROR_BADADDR;
+    goto failed;
+  }
+
+  // Attempt to connect to an address until one succeeds
+  for(Ptr=Result; Ptr != NULL ; Ptr=Ptr->ai_next) 
+  {
+    Socket->Socket = socket(
+      Ptr->ai_family, 
+      Ptr->ai_socktype, 
+      Ptr->ai_protocol);
+    if(IS_SOCKET_INVALID(Socket->Socket) ) 
+    {
+      OARPC_ERROR("Error at socket()");
+      ErrCode = OARPC_TRANSPORT_ERROR_BADADDR;
+      goto failed;
+    }
+/*
+    ErrCode = WaitSocket(Socket, EV_CONNECT, -1);
+    if(ErrCode != OARPC_TRANSPORT_ERROR_OK)
+      goto failed;
+*/
+    Ret = connect(Socket->Socket, Ptr->ai_addr, (int)Ptr->ai_addrlen);
+    if(Ret == SOCKET_ERROR) 
+    {
+      closesocket(Socket->Socket);
+      Socket->Socket = INVALID_SOCKET;
+      continue;
+    }
+
+    break;
+  }
+
+  if(IS_SOCKET_INVALID( Socket->Socket))
+    goto failed;
+
+  transport->Send               = SocketSend;
+  transport->Recv               = SocketRecv;
+  transport->CleanupConnection  = SocketCleanupConnection;
+  transport->CleanupAll         = SocketCleanupAll;
+  transport->Cancel             = SocketCancel;
+
+  transport->UserData = (void *)Socket;
+
+  freeaddrinfo(Result);
+
+  return(OARPC_TRANSPORT_ERROR_OK);
+
+failed:
+  if(Result)
+    freeaddrinfo(Result);
+
+  SocketCleanupAll(Socket);
+  return(ErrCode);
+}
+

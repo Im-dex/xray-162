@@ -300,315 +300,270 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#include <oac/TestBase.h>
+#include <oac/OAUtils.h>
+#include <vector>
+#include <map>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
-
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
-
-#include <string.h>
-
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+using namespace std;
 
 
-/******************************************************************************* 
- * Types
- ******************************************************************************/
+OAC_TEST_DECLARE_CLASS_HEAD(RunBenchmark, 
+                            "Basic sanity tests for OA_CMD_RUN_BENCHMARK",
+                            1, 
+                            true) 
 
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  enum CallType
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
+    CALL_TYPE_START_BENCHMARK,
+    CALL_TYPE_END_BENCHMARK,
+    CALL_TYPE_DISPLAY_FRAME,
+    CALL_TYPE_ADD_RESULT_VALUE,
+    CALL_TYPE_ADD_FRAME_VALUE,
   };
-} oaValue;
 
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
+  struct Call
+  {
+    Call(CallType type,
+         oaFloat display_frame_time = -1.0)
+    {
+      Type = type;
+      DisplayFrameTime = display_frame_time;
+      ValueType = OA_TYPE_INVALID;
+    }
 
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
+    Call(CallType type,
+         oaOptionDataType value_type,
+         const oaValue *value)
+    {
+      Type = type;
+      ValueType = value_type;
+      Value = *value;
+      if(ValueType == OA_TYPE_STRING || ValueType == OA_TYPE_ENUM)
+      {
+        Value.String = NULL;
+        Value.Enum = NULL;
+        StringValue = value->String;
+      }
+    }
+         
+    CallType Type;
+    oaFloat DisplayFrameTime;
+    oaOptionDataType ValueType;
+    oaValue Value;
+    string StringValue;
+  };
 
 
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  vector<Call> pCalls; 
+  map<string,int> pFrameValueMap;
+  map<string,int> pResultValueMap;
+  string pCurBenchmarkName;
+  bool pTimeIsAlwaysGreater;
+  oaFloat pLastTime;
 
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
-  
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
+  unsigned long pNumStartBenchmarkCalls;
+  unsigned long pNumEndBenchmarkCalls;
+  unsigned long pNumDisplayFrameCalls;
+  unsigned long pNumAddResultValueCalls;
+  unsigned long pNumAddFrameValueCalls;
 
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
 
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
+  virtual void Run(void)
+  {
+    const vector<string> &Benchmarks = Context()->GetBenchmarks();
 
-} oaOptionDependency;
+    vector<string>::const_iterator BMName = Benchmarks.begin();
+    for(; BMName !=  Benchmarks.end(); BMName++)
+    {
+      Clear();
 
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+      pCurBenchmarkName = *BMName;
 
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
+      oaCommand Command;
+      oaInitCommand(&Command);
+      Command.Type = OA_CMD_RUN_BENCHMARK;
+      Command.BenchmarkName = BMName->data();
 
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
+      OAC_MSG("running benchmark: " << *BMName);
 
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
+      Context()->IssueCommand(&Command);
 
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
+      OAC_COND_WARN(pTimeIsAlwaysGreater,
+        "oaDisplayFrame() was called with a 't' value that was <= to "
+        "a 't' value from a previous call to oaDisplayFrame().  This may "
+        " be a bug.");
 
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
+      OAC_MSG("done running benchmark: " << *BMName);
 
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+      CheckSanityOfCalls();
+    }
 
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
+    Clear();
   }
 
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
+  void Clear(void)
+  {
+    pCalls.clear();
+    pFrameValueMap.clear();
+    pResultValueMap.clear();
+    pNumStartBenchmarkCalls = 0;
+    pNumEndBenchmarkCalls = 0;
+    pNumDisplayFrameCalls = 0;
+    pNumAddResultValueCalls = 0;
+    pNumAddFrameValueCalls = 0;
+    pTimeIsAlwaysGreater = true;
   }
 
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
+  void CheckSanityOfCalls(void )
+  {
+    OAC_TEST_MSG(pNumStartBenchmarkCalls == 1,
+      "oaStartBenchmark() should be called exactly once for each benchmark "
+      "run.  The benchmark named '" << pCurBenchmarkName << "' called "
+      "oaStartBenchmark() " << pNumStartBenchmarkCalls << " times.")
+
+    OAC_TEST_MSG(pCalls.size() > 0 && 
+                 pCalls.front().Type == CALL_TYPE_START_BENCHMARK,
+     "First call during a benchmark run should be oaStartBenchmark()")
+
+    OAC_TEST_MSG(pNumEndBenchmarkCalls == 1,
+      "oaEndBenchmark() should be called exactly once for each benchmark "
+      "run.  The benchmark named '" << pCurBenchmarkName << "' called "
+      "oaEndBenchmark() " << pNumEndBenchmarkCalls << " times.")
+
+    OAC_TEST_MSG(pCalls.size() > 1 && 
+                 pCalls.back().Type == CALL_TYPE_END_BENCHMARK,
+     "Last call during a benchmark run should be oaEndBenchmark()")
+
+    OAC_COND_WARN(pNumDisplayFrameCalls > 0,
+      "oaDisplayFrame() was not called.  This may be a result of a bug.")
+
+    CheckAddResultValueCalls();
+
+    CheckAddFrameValueCalls();
   }
 
+  void CheckAddResultValueCalls(void)
+  {
+    // It's o.k. if no oaAddResultValue() calls were ever made
+    if(pNumAddResultValueCalls == 0)
+      return;
 
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
+    // Count up the number of oaAddResultValue() calls right before the last call
+    vector<Call>::const_reverse_iterator Iter = pCalls.rbegin();
+    int Count = 0;
+    Iter++;
+    for(Count=0; Iter != pCalls.rend(); ++Iter)
+      if(Iter->Type == CALL_TYPE_ADD_RESULT_VALUE)
+        Count++;
 
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
+    OAC_TEST_MSG(Count == pNumAddResultValueCalls,
+      "Not all calls to oaAddResultValue() were made right before the call to "
+      "oaEndBenchmark().")
+  }
 
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
+  void CheckAddFrameValueCalls(void)
+  {
+    // It's o.k. if no oaAddFrameValue() calls were ever made
+    if(pNumAddFrameValueCalls == 0)
+      return;
 
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
+    unsigned long CallsPerDisplayFrame = 
+      pNumAddFrameValueCalls / pNumDisplayFrameCalls;
 
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
+    OAC_TEST_MSG(pNumAddFrameValueCalls == 
+                 pNumDisplayFrameCalls * CallsPerDisplayFrame,
+     "The number of calls to oaAddFrameValueCalls (" << pNumAddFrameValueCalls 
+     << ") is not a multiple of the number of calls to oaDisplayFrame() (" <<
+     pNumDisplayFrameCalls << ").  oaAddFrameValue() should be called the same "
+     "number of times before each call to oaDisplayFrame().")
 
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
+     int Count = 0;
+     bool AlreadyComplained = false;
+     vector<Call>::const_iterator Iter = pCalls.begin();
+     for(; Iter != pCalls.end(); ++Iter)
+     {
+       if(Iter->Type == CALL_TYPE_ADD_FRAME_VALUE)
+         Count++;
+       else if(Iter->Type == CALL_TYPE_DISPLAY_FRAME)
+       {
+         if(!AlreadyComplained)
+         {
+           OAC_TEST_MSG(Count == CallsPerDisplayFrame,
+             "All calls to oaAddFrameValue() for a given frame should be done "
+             "before the oaDisplayFrame() call for that frame.");
+           AlreadyComplained = true;
+         }
 
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
+         Count = 0;
+       }
+     }
 
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
+     OAC_TEST_MSG(Count == 0,
+       "No calls to oaAddFrameValue() should be made after the last "
+       "oaDisplayFrame() call")
+  }
 
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
+  virtual void StartBenchmark(void)
+  {
+    pCalls.push_back(Call(CALL_TYPE_START_BENCHMARK));
+    pNumStartBenchmarkCalls++;
+  }
 
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
+  virtual void DisplayFrame(oaFloat t)
+  {
+    if(pNumDisplayFrameCalls > 0 && t <= pLastTime)
+      pTimeIsAlwaysGreater = false;
 
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
+    pCalls.push_back(Call(CALL_TYPE_DISPLAY_FRAME, t));
+    pNumDisplayFrameCalls++;
+    pLastTime = t;
+  }
 
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
+  virtual void EndBenchmark(void)
+  {
+    pCalls.push_back(Call(CALL_TYPE_END_BENCHMARK));
+    pNumEndBenchmarkCalls++;
+  }
 
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
+  virtual void AddResultValue(const oaChar *name, 
+    oaOptionDataType value_type,
+    const oaValue *value)
+  {
+    pCalls.push_back(Call(CALL_TYPE_ADD_RESULT_VALUE, value_type, value));
+    pNumAddResultValueCalls++;
 
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
+    switch(value_type)
+    {
+    case OA_TYPE_ENUM:
+      OAC_MSG("Result "<< oacOAUtils::TypeToStr(value_type) << 
+        " '" << name << "' -> " << value->Enum );
+      break;
+    case OA_TYPE_STRING:
+      OAC_MSG("Result "<< oacOAUtils::TypeToStr(value_type) << 
+        " '" << name << "' -> "<< value->String );
+      break;
+    case OA_TYPE_INT:
+      OAC_MSG("Result "<< oacOAUtils::TypeToStr(value_type) <<
+        " '" << name <<"' -> "<< value->Int );
+      break;
+    case OA_TYPE_FLOAT:
+      OAC_MSG("Result "<< oacOAUtils::TypeToStr(value_type) << 
+        " option '" << name << "' -> " << value->Float );
+      break;
+    case OA_TYPE_BOOL:
+      OAC_MSG("Result "<< oacOAUtils::TypeToStr(value_type) <<
+        " '" << name << "' -> " << value->Bool );
+      break;
+    }
+  }
 
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
+  virtual void AddFrameValue(const oaChar *name, 
+    oaOptionDataType value_type,
+    const oaValue *value)
+  {
+    pCalls.push_back(Call(CALL_TYPE_ADD_FRAME_VALUE, value_type, value));
+    pNumAddFrameValueCalls++;
+  }
 
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+  OAC_TEST_DECLARE_CLASS_TAIL(RunBenchmark)

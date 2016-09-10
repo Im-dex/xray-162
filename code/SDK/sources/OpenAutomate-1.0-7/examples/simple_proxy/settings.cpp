@@ -299,316 +299,503 @@
  ******************************************************************************/
 
 
+#include "settings.h"
 
-#ifndef _OA_h
-#define _OA_h
-
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
-
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
+bool GetExePath(TCHAR* exe_path)
+{
+#if WIN32
+  TCHAR delim = '\\';
 #else
-#  define OA_PLATFORM OA_CYGWIN
+  TCHAR delim = '/';
 #endif
 
-#include <string.h>
-
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  DWORD dwRet;
+  dwRet = GetModuleFileName(NULL, exe_path, MAX_PATH);
+  if ( dwRet == 0 )
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
+    exe_path[0] = '\0';
+    return false;
+  }
 
-typedef enum 
+  int i;
+  for ( i = dwRet; i > 0; i-- )
+  {
+    if ( exe_path[i-1] == delim )
+      break;
+  }
+  exe_path[i] = '\0';
+
+  return true;
+}
+
+void Error(const char *fmt, ...)
+ {
+  va_list AP;
+  va_start(AP, fmt);
+
+  fprintf(stderr, "ERROR: ");
+  vfprintf(stderr, fmt, AP);
+  fprintf(stderr, "\n");
+  exit(-1);
+ }
+
+static int HexCharToInt(unsigned char c)
 {
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
+  if(c >= '0' && c <= '9')
+    return((int)(c - '0'));
 
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
+  c = tolower(c);
+  if(c >= 'a' && c <= 'f')
+    return((int)(c - 'a' + 10));
 
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
+  return(0);
+}
 
-typedef enum
+static int Hex2BytesToInt(const unsigned char *buf)
 {
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
+  return(HexCharToInt(buf[0]) << 4 | HexCharToInt(buf[1]));
+}
 
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
+static oaFloat StrToFloat(const char *buf)
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  size_t Len = strlen(buf);
+  if(Len != sizeof(oaFloat) * 2)
+    return(0.0);
 
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
+  oaFloat Ret;
+  unsigned char *Buf = (unsigned char *)&Ret;
+  for(int i=0; i < sizeof(oaFloat); ++i)
+  {
+    Buf[i] = Hex2BytesToInt((const unsigned char *)buf);
+    buf += 2;
+  }
   
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
+  return(Ret);
+}
 
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
+static void WriteFloat(FILE *fp, oaFloat val)
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  unsigned char *Buf = (unsigned char *)&val;
+  for(int i=0;  i < sizeof(oaFloat); ++i)
+    fprintf(fp, "%02x", Buf[i]);
+}
 
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
+static void StripNewLine(char *str)
+{
+  size_t StrLen = strlen(str);
+  if(StrLen == 0)
+    return;
+  
+  for(size_t i=StrLen-1; i >= 0; ++i)
+    if(str[i] == '\n')
+    {
+      str[i] = 0;
+      break;
+    }
+}
 
-  /* Currently only used for OA_TYPE_ENUM */
+void *Alloc(size_t n)
+{
+  void *Ret = malloc(n);
+  assert(n != NULL);
+
+  AllocBlocks.push_back(Ret);
+  return(Ret);
+}
+
+char *StrDup(const char *str)
+{
+  assert(str != NULL);
+  char *Ret = strdup(str);
+
+  AllocBlocks.push_back(Ret);
+  return(Ret);
+}
+
+SimpleAppSettings::SimpleAppSettings()
+{
+  int NumOptions = 0;
+}
+
+SimpleAppSettings::~SimpleAppSettings()
+{
+  Cleanup();
+}
+
+void SimpleAppSettings::InitOptions(void)
+{
+  {
+    oaNamedOption *Option;
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "User/Resolution";
+    Option->DataType = OA_TYPE_ENUM;
+    Option->Value.Enum = "640x480";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "1024x768";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "1600x1200";
+
+    /* AA (enum) */
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "User/AA";
+    Option->DataType = OA_TYPE_ENUM;
+
+    Option->Value.Enum = "Off";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "2X";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "4X";
+
+    /* Sound (bool) */
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "User/Sound";
+    Option->DataType = OA_TYPE_BOOL;
+
+    /* Music Enabled (bool) */
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "User/Music Enabled";
+    Option->DataType = OA_TYPE_BOOL;
+    Option->Dependency.ParentName = "User/Sound";
+    Option->Dependency.ComparisonOp = OA_COMP_OP_EQUAL;
+    Option->Dependency.ComparisonValType = OA_TYPE_BOOL;
+    Option->Dependency.ComparisonVal.Bool = OA_ON;
+
+    /* Enemy Density (int) */
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "User/Enemy Density";
+    Option->DataType = OA_TYPE_INT;
+    Option->MinValue.Int = 0;
+    Option->MaxValue.Int = 100;
+    Option->NumSteps = 100;
+
+    /* Compression Level (int) */
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "Compression Level";
+    Option->DataType = OA_TYPE_INT;
+    Option->MinValue.Int = 10;
+    Option->MaxValue.Int = 0;
+    Option->NumSteps = 10;
+
+    /* Texture Quality (float) */
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "Texture Quality";
+    Option->DataType = OA_TYPE_FLOAT;
+    Option->MinValue.Float = 0.0;
+    Option->MaxValue.Float = 100.0;
+    Option->NumSteps = 0;
+
+    /* Texture Size (enum) */
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "Texture Size";
+    Option->DataType = OA_TYPE_ENUM;
+    Option->Value.Enum = "128";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "256";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "512";
+
+    ////////////////////////////////////////
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "vid_mode";
+    Option->DataType = OA_TYPE_ENUM;
+    Option->Value.Enum = "640x480";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "1024x768";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "1280x1024";
+
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "r__tf_aniso";
+    Option->DataType = OA_TYPE_INT;
+    Option->MinValue.Int = 0;
+    Option->MaxValue.Int = 100;
+    Option->NumSteps = 100;
+
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "r2_sun_shafts";
+    Option->DataType = OA_TYPE_ENUM;
+    Option->Value.Enum = "High";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "Low";
+
+    Options[NumOptions] = *Option;
+    Option = &Options[NumOptions++];
+    Option->Value.Enum = "Medium";
+
+    Option = &Options[NumOptions++];
+    oaInitOption(Option);
+    Option->Name = "r2_slight_fade";
+    Option->DataType = OA_TYPE_FLOAT;
+    Option->MinValue.Float = 0.0;
+    Option->MaxValue.Float = 100.0;
+    Option->NumSteps = 200;
+    ///////////////////////////////////////
+  }
+
+  //****************************************************************************
+  //*** Init OptionValues
+  //****************************************************************************
+  
+  // Initialize default options
+  for(int i=0; i < NumOptions; ++i)
+  {
+    string Name(Options[i].Name);
+    OptionValueMap[Name].Name = Options[i].Name;
+    OptionValueMap[Name].Type = Options[i].DataType;
+    OptionValueMap[Name].Value = Options[i].Value;
+  }
+
+  InitDefaultOptions();
+  ///////////////////////////////////////////////////////
+  // Load any persistent options if they've been previously set
+  ReadOptionsFile();
+}
+
+void SimpleAppSettings::InitDefaultOptions(void)
+{
   oaValue Value;
 
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
+  Value.Enum = "1024x768";
+  SetOptionValue("User/Resolution", OA_TYPE_ENUM, &Value);
 
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
+  Value.Enum = "4X";
+  SetOptionValue("User/AA", OA_TYPE_ENUM, &Value);
 
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
+  Value.Bool = OA_OFF;
+  SetOptionValue("User/Sound", OA_TYPE_BOOL, &Value);
 
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  Value.Int = 5;
+  SetOptionValue("Compression Level", OA_TYPE_INT, &Value);
 
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
+  Value.Int = 5;
+  SetOptionValue("User/Enemy Density", OA_TYPE_INT, &Value);
 
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
+  Value.Float = 20;
+  SetOptionValue("Texture Quality", OA_TYPE_FLOAT, &Value);
 
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+  Value.Enum = "256";
+  SetOptionValue("Texture Size", OA_TYPE_ENUM, &Value);
 
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+  ///////////////////////////////////////////////////////
+  Value.Enum = "640x480";
+  SetOptionValue("vid_mode", OA_TYPE_ENUM, &Value);
 
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+  Value.Int = 5;
+  SetOptionValue("r__tf_aniso", OA_TYPE_INT, &Value);
 
+  Value.Enum = "Low";
+  SetOptionValue("r2_sun_shafts", OA_TYPE_ENUM, &Value);
 
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+  Value.Float = 3;
+  SetOptionValue("r2_slight_fade", OA_TYPE_FLOAT, &Value);
 }
-#endif
 
-#endif
+void SimpleAppSettings::SetOptionValue(const char *name, 
+                    oaOptionDataType type,
+                    const oaValue *value)
+{
+  string Name(name);
+  assert(OptionValueMap.find(Name) != OptionValueMap.end());
+  assert(OptionValueMap[Name].Type == type);
+
+  switch(type)
+  {
+    case OA_TYPE_STRING:
+      OptionValueMap[Name].Value.String = StrDup(value->String);
+      break;
+
+    case OA_TYPE_ENUM:
+      OptionValueMap[Name].Value.Enum = StrDup(value->Enum);
+      break;
+    
+    default:
+      OptionValueMap[Name].Value = *value;
+  }
+}
+
+
+void SimpleAppSettings::ReadOptionsFile(void)
+{ 
+  TCHAR optionFile[MAX_PATH];
+  if(!GetExePath(optionFile))
+  {
+    fprintf(stderr, "Cannot get exe path\r\n");
+  }
+  strcat(optionFile, OptionsFileName);
+
+
+  FILE *FP = fopen(optionFile, "rb");
+  if(!FP)
+    return;
+
+  fprintf(stderr, "simple_app: Reading options file \"%s\".\n", 
+          optionFile);
+  fflush(stderr);
+
+  char Line[1024];
+  int LineNum = 1;
+  while(fgets(Line, sizeof(Line), FP) != NULL)
+  {
+    StripNewLine(Line);
+    if(Line[0] == 0)
+      continue;
+
+    char *Name = strtok(Line, "\t");
+    char *Value = strtok(NULL, "");
+
+    if(!Name || !Value)
+      Error("Invalid format in options file \"%s\" on line %d\n", 
+            OptionsFileName, 
+            LineNum);
+
+    map<string, OptionValue>::const_iterator OptVal = 
+      OptionValueMap.find(string(Name));
+
+    if(OptVal == OptionValueMap.end())
+      Error("Unknown option \"%s\" defined in options file \"%s\" on line %d.",
+            Name, 
+            OptionsFileName, 
+            LineNum);
+
+    SetOptionValue(Name, OptVal->second.Type, Value);
+
+    LineNum++;
+  }
+
+  fclose(FP);
+} 
+
+
+void SimpleAppSettings::Cleanup(void)
+{
+  vector<void *>::iterator Iter = AllocBlocks.begin();
+  for(; Iter != AllocBlocks.end(); Iter++)
+    free(*Iter);
+
+  AllocBlocks.clear();
+}
+
+
+
+void SimpleAppSettings::WriteOptionsFile(FILE *fp)
+{
+  map<string, OptionValue>::const_iterator Iter = OptionValueMap.begin();
+  for(; Iter != OptionValueMap.end(); ++Iter)
+  {
+    fprintf(fp, "%s\t", Iter->second.Name);
+    switch(Iter->second.Type)
+    {
+      case OA_TYPE_INT:
+        fprintf(fp, "%d", Iter->second.Value.Int);
+        break;
+
+      case OA_TYPE_BOOL:
+        fprintf(fp, "%d", (int)Iter->second.Value.Bool);
+        break;
+
+      case OA_TYPE_FLOAT:
+        WriteFloat(fp, Iter->second.Value.Float);
+        break;
+
+      case OA_TYPE_STRING:
+        fprintf(fp, "%s", Iter->second.Value.String);
+        break;
+
+      case OA_TYPE_ENUM:
+        fprintf(fp, "%s", Iter->second.Value.Enum);
+        break;
+
+    }
+
+    fprintf(fp, "\n");
+  }
+}
+
+void SimpleAppSettings::WriteOptionsFile(void)
+{
+  TCHAR optionFile[MAX_PATH];
+  if(!GetExePath(optionFile))
+  {
+    fprintf(stderr, "Cannot get exe path\r\n");
+  }
+  strcat(optionFile, OptionsFileName);
+  
+  fprintf(stderr, "simple_app: Writing options file \"%s\".\n", 
+          optionFile);
+  fflush(stderr);
+
+  FILE *FP = fopen(optionFile, "wb");
+  if(!FP)
+    Error("Couldn't open \"%s\" for write.\n", optionFile);
+
+  WriteOptionsFile(FP);
+
+  fclose(FP);
+}
+
+void SimpleAppSettings::SetOptionValue(const char *name, 
+                           oaOptionDataType type,
+                           const char *value)
+{
+  assert(name != NULL);
+  assert(type != OA_TYPE_INVALID);
+  assert(value != NULL);
+
+  oaValue Value;
+  switch(type)
+  {
+    case OA_TYPE_INT:
+      Value.Int = atoi(value);
+      break;
+
+    case OA_TYPE_FLOAT:
+      Value.Float = StrToFloat(value);
+      break;
+
+    case OA_TYPE_BOOL:
+      Value.Bool = atoi(value) ? OA_TRUE : OA_FALSE;
+      break;
+
+    case OA_TYPE_STRING:
+      Value.String = (oaString)value;
+      break;
+
+    case OA_TYPE_ENUM:
+      Value.Enum = (oaString)value;
+      break; 
+  }
+
+  SetOptionValue(name, type, &Value);
+}
+ 
+
+

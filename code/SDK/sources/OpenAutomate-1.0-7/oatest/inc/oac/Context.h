@@ -299,316 +299,227 @@
  ******************************************************************************/
 
 
+#ifndef _oac_Context_h
+#define _oac_Context_h
 
-#ifndef _OA_h
-#define _OA_h
+#include <vector>
+#include <map>
+#include <string>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+#include <OpenAutomate.h>
+#include <OpenAutomate_Internal.h>
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
+#include <oaRPC.h>
 
-#include <string.h>
+class oacTestBase;
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
 
-#ifdef __cplusplus
-extern "C"
+//******************************************************************************
+//*** class oacContext
+//******************************************************************************
+class oacContext
 {
-#endif
+public:
 
-
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  class ClientApp
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
+    public:
+      virtual ~ClientApp();
+
+      virtual bool Run(void) = 0;
+      virtual long WaitForExit(void) = 0;
   };
-} oaValue;
-
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
-
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
 
 
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  oacContext(oaRPCServer *server,
+             ClientApp *client_app);
 
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
+  ~oacContext();
+
+  struct OptionValue
+  {
+    OptionValue();
+    OptionValue(const OptionValue &val);
+    ~OptionValue();
+
+    void Set(const oaChar *name,
+             oaOptionDataType value_type,
+             const oaValue *value);
+
+    oaChar *Name;
+    oaOptionDataType Type;
+    oaValue Value;
+  };
+
+  struct TestGroup
+  {
+    TestGroup();
+    TestGroup(bool Modulate){ModulateTests = Modulate;}
+    bool ModulateTests;
+  };
+    
+  // Makes this context the current one for all calls to the static OA 
+  // functions, and runs the client.  Returns false if there's a failure
+  bool Run(void);
+
+  // Adds a test module to the list
+  void AddTest(oacTestBase *test);
+ 
+  // Returns the function table containing pointers to static OA functions.
+  // This table should be returned by the Init() function of an OA plugin.
+  static const oaRPCFunctionTable *GetOAFuncTable(void);
+
+  //****************************************************************************
+  //*** Methods to be used from oaTestBase::Run()
+  //****************************************************************************
+
+  // Sends an OA command to the application.  All subsequent calls made by
+  // the application will be passed to the matching callbacks in the current
+  // test until GetNextCommand() is called.  
+  void IssueCommand(oaCommand *command);
+
+  // Sends the OA_CMD_EXIT command to the application, waits for it to exit,
+  // and restarts it.  This is useful for testing that requires persistence
+  // on the application's part between runs.  
+  void IssueExitAndRestart(void);
+
+  // Returns an array of all the available options.  If the command 
+  // OA_CMD_GET_ALL_OPTIONS was never issued or force_cmd = true, it will 
+  // issue it  to the and cache the results for future calls to GetAllOptions().
+  const std::vector<oaNamedOption> &GetAllOptions(bool force_cmd = false);
   
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
+  // Returns a map where the key is the key is the option name, and value
+  // is a vector of oaNamedOptions.  This is useful when dealing with enum
+  // options, since there will be multiple oaNamedOption objects for each
+  // enum option.
+  typedef std::vector<oaNamedOption> OptionVec;
+  const std::map<std::string, OptionVec *> &
+	GetAllOptionsMap(bool force_cmd = false);
 
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
+  // Returns the specified option by name.  Semantics are the same as 
+  // GetAllOptions().  Returns NULL if no option with that name exists.
+  const OptionVec *GetOption(const oaChar *name, bool force_cmd = false);
+  const OptionVec *GetOption(const std::string &name, bool force_cmd = false);
 
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
+  // Similar to GetAllOptions(), but for OA_CMD_GET_CURRENT_OPTIONS
+  const std::vector<OptionValue *> &GetCurrentOptions(bool force_cmd = false);
 
-} oaOptionDependency;
+  const std::map<std::string, OptionValue *> &
+    GetCurrentOptionsMap(bool force_cmd = false);
 
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  // Returns the specified option by name.  Semantics are the same as 
+  // GetCurrentOptions. Returns NULL if no option with that name exists.
+  const OptionValue *GetOptionValue(const oaChar *name, 
+                                    bool force_cmd = false);
+  const OptionValue *GetOptionValue(const std::string &name, 
+                                    bool force_cmd = false);
 
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
+  // Similar to GetAllOptions(), but for OA_CMD_GET_BENCHMARKS
+  const std::vector<std::string> &GetBenchmarks(bool force_cmd = false);
 
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
+  // returns a random value from 0.0 to 1.0.  Tests should use this random
+  // number generator, to ensure determinism in the test results.
+  double Rand(void);
 
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
+  void SRand(unsigned long seed);
 
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
+  void Loop(int loop_count);
 
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
+  void ModulateLoop(int loop_number);
 
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  // Used to gather version info from server.
+  oaRPCServer * GetCurrentServer(){return pServer;}
 
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
+  bool ParseActiveTestList(char *test_list);
 
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
+  std::vector<TestGroup*> pTestGroups;
+  void ClearTestGroups(void);
 
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+private:
 
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+  enum StateType
+  {
+    STATE_INVALID = 0,
+    STATE_INIT,
+    STATE_RUNNING_TEST,
+    STATE_ISSUING_COMMAND,
+    STATE_FINISHED,
+  };
 
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
+  enum CallbackType
+  {
+#define OAC_DECLARE_CALLBACK(func_name, func_id) \
+    OAC_FUNC_##func_name = func_id,
+#include <oac/OACallbackDefs.h>
+  };
+
+  void RunTests(void);
+
+  StateType State() const;
+  void PushState(StateType state);
+  void PopState(void);
+  void ChangeState(StateType state);
+
+  std::vector<char *> pActiveTests;
+  std::vector<oacTestBase *> pTests;
+  std::vector<oacTestBase *>::iterator pCurrentTest;
+
+  bool IsAModule(char* module_name);
+  bool IsTestActive(oacTestBase * test);
+
+  bool pHaveBenchmarks;
+  std::vector<std::string> pBenchmarks;
+  void ClearBenchmarks(void);
+
+  bool pHaveAllOptions;
+  std::vector<oaNamedOption> pAllOptions;
+  std::map<std::string, OptionVec *> pAllOptionsMap;
+  void ClearAllOptions(void);
+
+  bool pHaveCurrentOptions;
+  std::vector<OptionValue *> pCurrentOptions;
+  std::map<std::string, OptionValue *> pCurrentOptionsMap;
+  void ClearCurrentOptions(void);
 
 
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
+  std::vector<StateType> pState;
+  oaCommandType pCurrentCommand;
 
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
+  oaRPCServer *pServer;
+  ClientApp *pClientApp;
 
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
+  unsigned long pRandSeed;
+  int pTestLoops;
+  int pBeginModulatingLoop;
 
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
+  static oacContext *pCurrent;
+  static oaRPCFunctionTable pFuncTable;
+  static oaInt pCallCount;
 
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
+  //****************************************************************************
+  //*** OA callbacks
+  //****************************************************************************
 
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
-}
-#endif
+  static oaCommandType GetNextCommand(void* context, oaCommand *command);
+  static oaNamedOption* GetNextOption(void* context);
+  static void AddOption(void* context, const oaNamedOption *option);
+  static void AddOptionValue(void* context, 
+                             const oaChar *name,
+                             oaOptionDataType value_type,
+                             const oaValue *value);
+  static void AddBenchmark(void* context, const oaChar *benchmark_name);
+  static oaBool SendSignal(void* context, oaSignalType signal, void *param);
+  static void StartBenchmark(void* context);
+  static void DisplayFrame(void* context, oaFloat t);
+  static void EndBenchmark(void* context);
+  static void AddResultValue(void* context, 
+                             const oaChar *name, 
+                             oaOptionDataType value_type,
+                             const oaValue *value);
+  static void AddFrameValue(void* context, 
+                            const oaChar *name, 
+                            oaOptionDataType value_type,
+                            const oaValue *value);
+};
 
 #endif

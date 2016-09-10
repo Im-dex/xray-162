@@ -1,0 +1,1179 @@
+<HTML>
+
+<HEAD>
+<TITLE>OpenAutomate SDK</TITLE>
+
+</HEAD>
+
+<BODY>
+
+
+
+
+
+<BLOCKQUOTE>
+<UL>
+ <LI><A HREF="#1" CLASS="toc-item">简介
+
+</A></LI>
+ <LI><A HREF="#2" CLASS="toc-item">需求
+
+</A></LI>
+ <LI><A HREF="#3" CLASS="toc-item">实现
+
+</A></LI>
+     <UL>
+      <LI><A HREF="#4" CLASS="toc-item">命令行选项
+
+</A></LI>
+      <LI><A HREF="#5" CLASS="toc-item">OpenAutomate命令循环
+
+</A></LI>
+      <LI><A HREF="#6" CLASS="toc-item">Openautomate命令
+
+</A></LI>
+          <UL>
+           <LI><A HREF="#7" CLASS="toc-item">OA_CMD_EXIT
+
+</A></LI>
+           <LI><A HREF="#8" CLASS="toc-item">OA_CMD_RUN
+
+</A></LI>
+           <LI><A HREF="#9" CLASS="toc-item">OA_CMD_GET_ALL_OPTIONS
+
+</A></LI>
+           <LI><A HREF="#10" CLASS="toc-item">OA_CMD_GET_CURRENT_OPTIONS
+
+</A></LI>
+           <LI><A HREF="#11" CLASS="toc-item">OA_CMD_SET_OPTIONS         
+
+</A></LI>
+           <LI><A HREF="#12" CLASS="toc-item">OA_CMD_GET_BENCHMARKS      
+
+</A></LI>
+           <LI><A HREF="#13" CLASS="toc-item">OA_CMD_RUN_BENCHMARK       
+
+</A></LI>
+          </UL>
+      <LI><A HREF="#14" CLASS="toc-item">枚举选项
+
+</A></LI>
+          <UL>
+           <LI><A HREF="#15" CLASS="toc-item">对OA_TYPE_ENUM调用oaAddOption()
+
+</A></LI>
+           <LI><A HREF="#16" CLASS="toc-item">数值类型
+
+</A></LI>
+           <LI><A HREF="#17" CLASS="toc-item">选项名字空间
+
+</A></LI>
+           <LI><A HREF="#18" CLASS="toc-item">选项依赖性
+
+</A></LI>
+          </UL>
+      <LI><A HREF="#19" CLASS="toc-item">信号
+
+</A></LI>
+      <LI><A HREF="#20" CLASS="toc-item">与SDK一起编译
+
+</A></LI>
+      <LI><A HREF="#21" CLASS="toc-item">示例程序
+
+</A></LI>
+      <LI><A HREF="#22" CLASS="toc-item">为OpenAutomate注册程序
+
+</A></LI>
+          <UL>
+           <LI><A HREF="#23" CLASS="toc-item">Unicode和字符串
+
+</A></LI>
+           <LI><A HREF="#24" CLASS="toc-item">用于注册/注销程序的帮助函数
+
+</A></LI>
+           <LI><A HREF="#25" CLASS="toc-item">卸载程序
+
+</A></LI>
+           <LI><A HREF="#26" CLASS="toc-item">注册文件格式
+
+</A></LI>
+          </UL>
+      <LI><A HREF="#27" CLASS="toc-item">在程序中集成OpenAutomate
+
+</A></LI>
+          <UL>
+           <LI><A HREF="#28" CLASS="toc-item">通过包含头文件/源文件来集成OpenAutomate
+
+</A></LI>
+          </UL>
+     </UL>
+</UL>
+
+<HR SIZE="1" NOSHADE>
+
+<H1><A NAME="简介"><A NAME="1">简介
+
+</A></A></H1>
+<P>
+这里是OpenAutomate SDK的帮助文档.OpenAutomate SDK的设计思想是尽可能的便于使用和集成.在您的程序使用它,NVIDIA就能针对硬件提出优化措施,最大限度的帮您提升用户体验. SDK中的源代码部分包含了所有需要加入程序中的代码.SDK中的源代码部分包含了所有需要加入程序中的代码.
+
+
+</P>
+<P>
+对于常见问题,请参考<A TARGET="_top" HREF="FAQ.html">常见问题解答</A>.
+
+
+</P>
+<P>
+在程序中使用OpenAutomate SDK, 以便让VIDIA帮您: 
+
+
+</P>
+<UL>
+<LI>
+对于运行于特定平台的用户, 枚举所有可行的设置选项
+
+</LI>
+<LI>
+枚举当前设置选项
+
+</LI>
+<LI>
+连续切换设置选项
+
+</LI>
+<LI>
+枚举所有可用的benchmark(<B>benchmark</B>可以简单理解成任何可用的测试)
+
+</LI>
+<LI>
+运行benchmark
+ 
+</LI>
+</UL>
+<P>
+这样,NVIDIA就能在测试中心中高效的测试您的程序性能.通过不断切换设置选项,我们还能帮您寻找发布时的最佳设置选项.
+
+
+</P>
+
+<H1><A NAME="需求"><A NAME="2">需求
+
+</A></A></H1>
+<P>
+您的程序必须有以下内容,才能与OpenAutomate兼容:
+
+
+</P>
+<UL>
+<LI>
+加入一个带单一参数的命令行选项'-openautomate', 以允许程序以OpenAutomate模式运行
+
+</LI>
+<LI>
+有一个枚举所有可用设置选项的方法
+
+</LI>
+<LI>
+设置选项(比如GUI中的菜单)要以清晰直观的方式向最终用户说明内容.(请参考本文中的<A HREF="#选项名字空间">选项名字空间</A>章节)
+
+</LI>
+<LI>
+有一个枚举所有可用设置选项的方法
+
+</LI>
+<LI>
+有一个可以连续改变设置选项的方法
+
+</LI>
+<LI>
+有一个枚举benchmark的方法
+
+</LI>
+<LI>
+有一个运行benchmark的方法
+
+</LI>
+<LI>
+有一个正常运行程序的方法
+
+</LI>
+<LI>
+如果程序出错,请返回一个非零值
+
+</LI>
+<LI>
+在安装时,程序必须遵循OpenAutomate标准在系统中注册.
+
+</LI>
+<LI>
+程序必须通过所有OpenAutomate一致性测试(conformance test)(请参考<A TARGET="_top" HREF="oatest.html">oatest</A>文档)
+
+</LI>
+</UL>
+
+<H1><A NAME="实现"><A NAME="3">实现
+
+</A></A></H1>
+
+<H2><A NAME="命令行选项"><A NAME="4">命令行选项
+
+</A></A></H2>
+<P>
+使用OpenAutomate的程序必须增加一个命令行选项 <B>-openautomate</B>,并接受一个字符串作为参数(不能缺省).
+
+
+</P>
+<P>
+形式如下:
+
+
+</P>
+<PRE>    app.exe -openautomate opaque_opt_str
+</PRE><P>
+一旦检测到这个命令行参数,程序必须首先调用<B>oaInit()</B>,并将一个字符串作为参数传入,作为OpenAutomate模式运行的参数.
+
+
+</P>
+
+<H2><A NAME="OPENAUTOMATE命令循环"><A NAME="5">OpenAutomate命令循环
+
+</A></A></H2>
+<P>
+<B>oaInit()</B>被调用之后,程序必须立刻进入OpenAutomate命令循环.不断调用<B>oaGetNextCommand()</B>直到返回<B>OA_CMD_EXIT</B>或者<B>OA_CMD_RUN</B>.
+下面是一个例子:
+
+
+</P>
+<PRE>   while(1)
+   {
+
+      oaInitCommand(&Command);
+      switch(oaGetNextCommand(&Command))
+      {
+
+        /* 退出程序 */
+        case OA_CMD_EXIT: 
+         return;
+
+        /* 正常运行 */
+        case OA_CMD_RUN: 
+         RunApp();
+         return;
+
+        /* 枚举所有游戏设置 */
+        case OA_CMD_GET_ALL_OPTIONS: 
+         GetAllOptions();
+         break;
+
+        /* 返回当前设置值 */
+        case OA_CMD_GET_CURRENT_OPTIONS:
+         GetCurrentOptions();
+         break;
+
+        /* 设置所有选项 */
+        case OA_CMD_SET_OPTIONS: 
+         SetOptions();
+         break;
+
+        /* 枚举所有benchmark */
+        case OA_CMD_GET_BENCHMARKS: 
+         GetBenchmarks();
+         break;
+
+        /* 运行benchmark */
+        case OA_CMD_RUN_BENCHMARK: 
+         RunBenchmark(Command.BenchmarkName);
+         break;
+
+      }
+   }
+</PRE>
+<H2><A NAME="OPENAUTOMATE命令"><A NAME="6">Openautomate命令
+
+</A></A></H2>
+<P>
+您的程序中必须支持以下所有七个命令:  
+
+
+</P>
+
+<H3><A NAME="OA_CMD_EXIT"><A NAME="7">OA_CMD_EXIT
+
+</A></A></H3>
+<P>
+立刻清理并退出程序.
+
+
+</P>
+
+<H3><A NAME="OA_CMD_RUN"><A NAME="8">OA_CMD_RUN
+
+</A></A></H3>
+<P>
+象非OpenAutomate模式一样正常运行程序.注意:用户选择退出时并不要立刻结束进程,而应该清理并返回到命令循环,继续调用<B>oaGetNextCommand()</B>.
+
+
+</P>
+
+<H3><A NAME="OA_CMD_GET_ALL_OPTIONS"><A NAME="9">OA_CMD_GET_ALL_OPTIONS
+
+</A></A></H3>
+<P>
+返回所有对于当前用户可用的设置选项.对于每一个选项,调用<B>oaAddOption()</B>.对于类型为<B>OA_TYPE_ENUM</B>的选项,应该对每一种枚举值都调用一次<B>oaAddOption()</B>.参见本文中的<A HREF="#枚举选项">枚举选项</A>章节以获取更多信息.
+
+
+</P>
+
+<H3><A NAME="OA_CMD_GET_CURRENT_OPTIONS"><A NAME="10">OA_CMD_GET_CURRENT_OPTIONS
+
+</A></A></H3>
+<P>
+对于每一种可用选项,程序应该调用<B>oaAddOptionValue()</B>,以枚举当前程序设置.
+
+
+</P>
+
+<H3><A NAME="OA_CMD_SET_OPTIONS"><A NAME="11">OA_CMD_SET_OPTIONS         
+
+</A></A></H3>
+<P>
+您应当连续调用<B>oaGetNextOption()</B>直到该函数返回<B>NULL</B>,并将返回的<B>oaNamedOption</B>结构体指针的相关域设置为选项值.
+
+
+</P>
+<PRE>   while((Option = oaGetNextOption()) != NULL)
+   {
+
+      /*
+       * 在此处设置选项值
+       * Option->Name为值的名称, 
+       * Option->Value存放合适的值.
+       */
+
+   }
+</PRE>
+<H3><A NAME="OA_CMD_GET_BENCHMARKS"><A NAME="12">OA_CMD_GET_BENCHMARKS      
+
+</A></A></H3>
+<P>
+枚举所有已知的benchmark.
+
+
+</P>
+<P>
+每一个benchmark应该用一个独特的字符串来加以区分.对于每一个benchmark,调用<B>oaAddbenchmark()</B>.
+
+
+</P>
+
+<H3><A NAME="OA_CMD_RUN_BENCHMARK"><A NAME="13">OA_CMD_RUN_BENCHMARK       
+
+</A></A></H3>
+<P>
+根据oaGetNextCommand()中返回结构体中<B>BenchmarkName</B>域的值,运行指定的benchmark.程序必须调用3个回调函数:
+
+
+</P>
+<UL>
+<LI>
+void oaStartBenchmark(void)
+
+</LI>
+<P>
+在benchmark将要开始之前(第一帧的任何CPU或是GPU计算之前),调用<B>oaStartbenchmark()</B>.
+
+
+</P>
+<LI>
+void oaDisplayFrame(oaInt frame)
+
+</LI>
+<P>
+在每一帧present之前调用这个函数.
+
+
+</P>
+<P>
+非实时程序则不用调用这个函数,它们只需要调用<B>oaStartbenchmark()</B>和<B>oaEndbenchmark()</B>.
+
+
+</P>
+<LI>
+void oaEndBenchmark(void)
+
+</LI>
+<P>
+在最后一帧结束渲染之后调用这个函数.
+
+
+</P>
+</UL>
+<P>
+此外,您可以调用<B>oaAddResultValue()</B>或是<B>oaAddFrameValue()</B>来获取benchmark分数以及其他测试结果.
+
+
+</P>
+<P>
+只能在最后一帧<B>oaDisplayFrame()</B>返回之后,<B>oaEndBenchmark()</B>调用之前使用<B>oaAddResultValue()</B>.<B>oaAddFrameValue()</B>可以在每帧调用<B>oaDisplayFrame()</B>之前使用.
+
+
+</P>
+
+<H2><A NAME="枚举选项"><A NAME="14">枚举选项
+
+</A></A></H2>
+<P>
+OpenAutomate SDK支持的选项数据类型包括:
+
+
+</P>
+<UL>
+<LI>
+OA_TYPE_STRING
+
+</LI>
+<P>
+字符串
+
+
+</P>
+<LI>
+OA_TYPE_INT
+
+</LI>
+<P>
+整数 
+
+
+</P>
+<LI>
+OA_TYPE_FLOAT
+
+</LI>
+<P>
+单精度浮点数 
+
+
+</P>
+<LI>
+OA_TYPE_ENUM
+
+</LI>
+<P>
+枚举值
+
+
+</P>
+<LI>
+OA_TYPE_BOOL
+
+</LI>
+<P>
+布尔值
+
+
+</P>
+</UL>
+<P>
+对于除了<B>OA_TYPE_ENUM之外</B>的所有数据类型的选项,都必须调用一次<B>oaAddOption()</B>.
+
+
+</P>
+<P>
+<B>oaAddOption()</B> 接受一个指向<B>oaNameOption</B>结构体的指针作为输入.您必须使用<B>oaInitOption()</B>函数来初始化这个结构体.所有选项都必须初始化以下域:
+
+
+</P>
+<UL>
+<LI>
+DataType
+
+</LI>
+<P>
+选项的数据类型(例: OA_TYPE_INT)
+
+
+</P>
+<LI>
+Name
+
+</LI>
+<P>
+一个字符串,包含提供给最终用户的显示参数名.
+
+
+</P>
+</UL>
+
+<H3><A NAME="对OA_TYPE_ENUM调用OAADDOPTION()"><A NAME="15">对OA_TYPE_ENUM调用oaAddOption()
+
+</A></A></H3>
+<P>
+如果选项的类型为<B>OA_TYPE_ENUM</B>,则必须对所有可能的枚举值单独调用一次<B>oaAddOption()</B>.这时,域<B>Value.Enum</B>必须设置为对应的枚举值.
+
+
+</P>
+<P>
+例如:一个名为Resoluion的选项包括640x480,1024x768和1600x1200.代码如下:
+
+
+</P>
+<PRE>   {
+
+     oaNamedOptionStruct Option; 
+
+     oaInitOption(&Option);
+     Option.Name = "Resolution";
+     Option.DataType = OA_TYPE_ENUM;
+
+     Option.Value.Enum = "640x480";
+     oaAddOption(&Option);
+
+     Option.Value.Enum = "1024x768";
+     oaAddOption(&Option);
+
+     Option.Value.Enum = "1600x1200";
+     oaAddOption(&Option);
+
+   }
+</PRE><P>
+如果可能,您应该对所有的枚举值排序,这样第一个枚举值代表<B>低质量</B>而最后一个枚举值代表<B>高质量</B>.对于<B>质量"</B>来说,排序的顺序很随意, 而对于<B>分辨率(Resolution)</B>这种选项来说,顺序就很显然了.
+
+
+</P>
+
+<H3><A NAME="数值类型"><A NAME="16">数值类型
+
+</A></A></H3>
+<P>
+类型为<B>OA_TYPE_INT</B>和<B>OA_TYPE_FLOAT</B>的选项在默认状态下,应该是在一个连续的开区间中的.通过设置<B>NumSteps</B>,<B>MinValue</B>和<B>MaxValue</B>域可以限制数值的步长和区间.<B>NumSteps</B>可以设置为:
+
+
+</P>
+<UL>
+<LI>
+NumSteps = -1
+
+</LI>
+<P>
+开区间
+
+
+</P>
+<LI>
+NumSteps = 0
+
+</LI>
+<P>
+连续闭区间
+
+
+</P>
+<LI>
+NumSteps > 0
+
+</LI>
+<P>
+区间被分为NumSteps个点
+
+
+</P>
+</UL>
+<P>
+根据选项值的不同类型<B>OA_TYPE_INT</B>或<B>OA_TYPE_FLOAT</B>,您必须将<B>MinValue.Int</B>和<B>MaxValue.Int</B>或者<B>MinValue.Float</B>以及<B>MaxValue.Float</B>设置为合理的值.
+
+
+</P>
+<P>
+例如:一个浮点数参数<B>Quality</B>的值域为<B>[1.0,5.0]</B>,步长为<B>0.25</B>(值为<B>1.0,1.25,1.75,2.0,...,4.75,5.0</B>)可以用以下代码来表述:
+
+
+</P>
+<PRE>   {
+
+     oaNamedOptionStruct Option; 
+
+     oaInitOption(&Option);
+     Option.Name = "Quality";
+     Option.DataType = OA_TYPE_FLOAT;
+
+     Option.NumSteps = 16;
+     Option.MinValue.Float = 1.0;
+     Option.MaxValue.Float = 5.0;
+     oaAddOption(&Option);
+
+   }
+</PRE>
+<H3><A NAME="选项名字空间"><A NAME="17">选项名字空间
+
+</A></A></H3>
+<P>
+选项可以被分组为多层名字空间.与传统文件系统路径的命名约定一样,可以在选项名中使用保留分隔符<B>/</B>来进行标示.
+
+
+</P>
+<P>
+如果不使用多层命名空间,在不以OpenAutomate模式运行时,所有的选项对于最终用户都是可见的.
+
+
+</P>
+<P>
+如果使用了多层命名空间,您必须小心管理,以便将需要和不需要暴露给最终用户的选项清楚的区分开来.
+
+
+</P>
+<P>
+位于顶层名字空间<B>User/</B>的选项是对最终用户直接可见的, 其他选项是不直接可见的.
+
+
+</P>
+<P>
+选项名中的特殊字符/可以以转义字符<B>//</B>的方式来表示.例如:<B>User/In//Out</B>表示命名空间<B>User</B>下的一个叫做<B>In/Out</B>的选项.
+
+
+</P>
+
+<H3><A NAME="选项依赖性"><A NAME="18">选项依赖性
+
+</A></A></H3>
+<P>
+程序中常有些选项,只有在某些父选项值满足特定条件的情况下才可开启.OpenAutomate SDK支持选项依赖性,但是依赖性条件必须可以如下形式来进行表述:
+
+
+</P>
+<PRE>    ParentVal EXP Constant
+</PRE><P>
+这里<B>ParentVal</B>父选项的值,<B>Constant</B>是某些与<B>ParentVal</B>类型相同的常量值,<B>EXP</B> 是以下几种之一:
+
+
+</P>
+<UL>
+<LI>
+OA_COMP_OP_EQUAL
+
+</LI>
+<P>
+相等(<B>==</B>)
+
+
+</P>
+<LI>
+OA_COMP_OP_NOT_EQUAL
+
+</LI>
+<P>
+不等(<B>!=</B>)
+
+
+</P>
+<LI>
+OA_COMP_OP_GREATER
+
+</LI>
+<P>
+大于(<B>&gt;</B>)
+
+
+</P>
+<LI>
+OA_COMP_OP_LESS
+
+</LI>
+<P>
+小于(<B>&lt;</B>)
+
+
+</P>
+<LI>
+OA_COMP_OP_GREATER_OR_EQUAL
+
+</LI>
+<P>
+大于或等于(<B>&gt;=</B>)
+
+
+</P>
+<LI>
+OA_COMP_OP_LESS_OR_EQUAL
+
+</LI>
+<P>
+小于或等于(<B>&lt;=</B>)
+
+
+</P>
+</UL>
+<P>
+您可以通过设置<B>Dependency.ParentName</B>,<B>Dependency.ComparisonVal</B>,和<B>Dependency.ComparisonOp</B>这几个子域来表述依赖关系.
+
+
+</P>
+<P>
+例如,一个叫做<B>Volume</B>的选项依赖于一个叫做<B>Sound Enable</B>的选项等于<B>OA_ON</B>才能开启, 可以表示为:
+
+
+</P>
+<PRE>   {
+
+     oaNamedOptionStruct Option; 
+
+     oaInitOption(&Option);
+     Option.Name = "Volume";
+     Option.DataType = OA_TYPE_FLOAT;
+
+     Option.Dependency.ParentName = "Sound Enabled";
+     Option.Dependency.ComparisonOp = OA_COMP_OP_EQUAL;
+     Option.Dependency.ComparisonVal.Bool = OA_ON;
+
+     Option.MinValue.Float = 0;
+     Option.MaxValue.Float = 10;
+     Option.NumSteps = 0;
+
+     oaAddOption(&Option);
+
+   }
+</PRE>
+<H2><A NAME="信号"><A NAME="19">信号
+
+</A></A></H2>
+<P>
+在整个运行过程中,程序可以通过调用<B>oaSendSignal()</B>函数发送多种信号:
+
+
+</P>
+<PRE>    oaBool oaSendSignal(oaSignalType signal, void *param);
+</PRE><P>
+一些信号可能需要一个参数<B>param</B>.对于不需要参数的函数,将<B>param</B>设置为<B>NULL</B>就可以了.
+
+
+</P>
+<P>
+可用的信号包括:
+
+
+</P>
+<DL>
+<DT><STRONG><B>OA_SIGNAL_SYSTEM_REBOOT</B>
+
+</STRONG></DT>
+<DD>
+
+<P>
+某些benchmark或者测试需要重启之后继续进行.这个信号表示需要程序安全地重启.在调用<B>oaSendSignal()</B>返回之后,程序必须:
+
+
+</P>
+<OL>
+<LI>
+清理并保存benchmark状态
+
+</LI>
+<LI>
+正常结束进程
+
+</LI>
+<LI>
+在程序下一次以相同的命令行参数运行的时候,继续从上次保存的地方继续运行benchmark.
+
+</LI>
+<P>
+发送<B>OA_SIGNAL_SYSTEM_REBOOT</B>信号时,<B>oaSendSignal()</B>的<B>param</B>参数必须为<B>NULL</B>. 
+
+
+</P>
+</OL>
+<DT><STRONG><B>OA_SIGNAL_ERROR</B>
+
+</STRONG></DT>
+<DD>
+
+<P>
+这个信号表示出现了异常.<B>param</B>必须为一个指向<B>oaMessage</B>的有效指针.<B>oaMessage</B>对象中的<B>Error</B>域必须被设置为<B>oaErrorType</B>类型的合理值,<B>Messag</B>e域必须为空或者指向一条错误信息.在设置这些域值之前,必需先调用<B>oaInitMessage</B>以完成初始化.这个信号也可用于传达警告(非严重错误),或者日志信息.这样做的时候,必须将<B>oaMessage</B>对象的<B>Error域</B>值分别设置为<B>OA_ERROR_WARNING</B>或者<B>OA_ERROR_LOG</B>.
+
+
+</P>
+<P>
+下面这些约定宏可用于发出错误/警告/日志信号:
+
+
+</P>
+<PRE>    OA_RAISE_ERROR(error_type, message_str) 
+    OA_RAISE_WARNING(message_str) 
+    OA_RAISE_LOG(message_str) 
+</PRE></DD></DL>
+
+<H2><A NAME="与SDK一起编译"><A NAME="20">与SDK一起编译
+
+</A></A></H2>
+<P>
+将程序与SDK一起编译非常简单.只需要将SDK中的三个文件加入到您的工程中就可以了:
+
+
+</P>
+<PRE>   inc/OpenAutomate.h
+   inc/OpenAutomate_Internal.h
+   src/OpenAutomate.c
+</PRE><P>
+<B>inc/OpenAutomate.h</B>是您程序中唯一需要包含的文件.  
+
+
+</P>
+
+<H2><A NAME="示例程序"><A NAME="21">示例程序
+
+</A></A></H2>
+<P>
+SDK中<B>examples/simple_app/simple_app.cpp</B>展示了一个嵌入了OpenAutomate的简单程序.要编译这个程序,您可以简单地装载预置的<B>OpenAutomate.sln</B>并加入插件<B>simple_plugin.dll</B>,然后选择编译全部.编译出的二进制文件存放在SDK根目录下的<B>debug</B>或是<B>release</B>子文件夹中.编译完成后,您可以用以下命令行参数来直接运行示例程序:
+
+
+</P>
+<PRE>    .\exe\simple_app.exe -openautomate plugins\simple_plugin.dll
+</PRE><P>
+<B>simple_plugin.dll</B>将通过命令来运行<B>simple_app</B>,然后将结果写回到<B>stderr中</B>.输出结果大概是这个样子的: 
+
+
+</P>
+<PRE>    simple_app: Reading options file ".simple_app_options.txt".
+    IN AddOption: 'User/Resolution'
+    IN AddOption: 'User/Resolution'
+    IN AddOption: 'User/Resolution'
+    IN AddOption: 'User/AA'
+    IN AddOption: 'User/AA'
+    IN AddOption: 'User/AA'
+    IN AddOption: 'User/Sound'
+    IN AddOption: 'User/Music Enabled'
+    IN AddOption: 'User/Enemy Density'
+    IN AddOption: 'Compression Level'
+    IN AddOption: 'Texture Quality'
+    IN AddOption: 'Texture Size'
+    IN AddOption: 'Texture Size'
+    IN AddOption: 'Texture Size'
+    Current option (int)'Compression Level' = 10
+    Current option (float)'Texture Quality' = 19.402985
+    Current option (enum)'Texture Size' = 128
+    Current option (enum)'User/AA' = Off
+    Current option (int)'User/Enemy Density' = 83
+    Current option (bool)'User/Music Enabled' = 1
+    Current option (enum)'User/Resolution' = 1024x768
+    Current option (bool)'User/Sound' = 1
+    simple_app: Writing options file ".simple_app_options.txt".
+    IN AddBenchmark: forest
+    IN AddBenchmark: crates
+    IN AddBenchmark: map1
+    Benchmark started
+    Result value (int)'Score' = 18249
+    Result value (float)'Some other score' = 29.140000
+    Benchmark ended
+      Total time = 1s
+      Avg. FPS = 50.000000
+</PRE>
+<H2><A NAME="为OPENAUTOMATE注册程序"><A NAME="22">为OpenAutomate注册程序
+
+</A></A></H2>
+<P>
+集成了OpenAutomate的程序(即启用了OpenAutomate--<B>OpenAutomate Enabled</B>)必须在安装到系统的时候注册,这样在必要的时候这些程序就能很方便的被找到,而不用扫描整个文件系统.
+
+
+</P>
+<P>
+注册程序时,您只需要简单的写入一个名称-值对,或者创建注册表项(仅对于Windows系统).
+
+
+</P>
+<P>
+系统会在多个根目录下搜索启用了OpenAutomate的程序,然后创建一个可用应用程序列表.搜索的时候会遵循优先级来进行,如果一个相同的程序在不同的根多次注册,则高优先级的记录会覆盖低优先级的记录.
+
+
+</P>
+<P>
+从高到低优先级的搜索位置如下:
+
+
+</P>
+<UL>
+<LI>
+<B>Filesystem</B>: <B>&lt;ENV{OPENAUTOMATE_DIR}&gt;</B>/OpenAutomate/RegisteredApps/<B>&lt;DEV_NAME&gt;</B>/<B>&lt;APP_NAME&gt;</B>/<B>&lt;APP_BUILD_NAME&gt;</B>
+
+</LI>
+<LI>
+<B>Filesystem</B>: <B>&lt;HOME&gt;</B>/OpenAutomate/RegisteredApps/<B>&lt;DEV_NAME&gt;</B>/<B>&lt;APP_NAME&gt;</B>/<B>&lt;APP_BUILD_NAME&gt;</B>
+
+</LI>
+<LI>
+<B>Filesystem</B>: <B>&lt;SYSTEM_ROOT&gt;</B>/OpenAutomate/RegisteredApps/<B>&lt;DEV_NAME&gt;</B>/<B>&lt;APP_NAME&gt;</B>/<B>&lt;APP_BUILD_NAME&gt;</B>
+
+</LI>
+<LI>
+<B>Registry</B>: HKEY_CURRENT_USER\SOFTWARE\OpenAutomate\RegisteredApps\<B>&lt;DEV_NAME&gt;</B>\<B>&lt;APP_NAME&gt;</B>\<B>&lt;APP_BUILD_NAME&gt;</B>
+
+</LI>
+<LI>
+<B>Registry</B>: HKEY_LOCAL_MACHINE\SOFTWARE\OpenAutomate\RegisteredApps\<B>&lt;DEV_NAME&gt;</B>\<B>&lt;APP_NAME&gt;</B>\<B>&lt;APP_BUILD_NAME&gt;</B>
+
+</LI>
+</UL>
+<P>
+其中:
+
+
+</P>
+<UL>
+<LI>
+&lt;HOME&gt;
+
+</LI>
+<P>
+当前用户的根目录(如:<B>C:\用户\用户名</B> 或 <B>C:\Users\User</B>)
+
+
+</P>
+<LI>
+&lt;SYSTEM_ROOT&gt; 
+
+</LI>
+<P>
+系统根目录
+
+
+</P>
+<LI>
+&lt;DEV_NAME&gt;
+
+</LI>
+<P>
+应用程序开发商名(如NVIDIA)
+
+
+</P>
+<LI>
+&lt;APP_NAME&gt; 
+
+</LI>
+<P>
+应用程序名(如simple_app).
+
+
+</P>
+<LI>
+&lt;APP_BUILD_NAME&gt; 
+
+</LI>
+<P>
+应用程序版本名(如v1.1, 080511, ...)
+
+
+</P>
+</UL>
+<P>
+如果要使用文件系统注册,您必须在一个指定的路径(如:<B>&lt;HOME&gt;</B>/.openautomate/<B>&lt;DEV_NAME&gt;</B>/<B>&lt;APP_NAME&gt;</B>/<B>&lt;APP_BUILD_NAME&gt;</B>)下创建文件.<A HREF="#注册文件格式">文件格式</A>将稍后详述.然后将名称-值对存储在此文件中.
+
+
+</P>
+<P>
+如果要使用Windows注册表来注册,先在上述指定路径下创建一个键,然后将名称-值对作为键值附在这个键下.
+
+
+</P>
+<P>
+您必须定义这些名称-值对:
+
+
+</P>
+<UL>
+<LI>
+<B>INSTALL_ROOT_PATH</B>
+
+</LI>
+<P>
+程序安装的绝对路径
+
+
+</P>
+<LI>
+<B>ENTRY_EXE</B>
+
+</LI>
+<P>
+能够通过附加 <B>-openautomate</B> 命令行选项来以OpenAutomate模式启动的应用程序的绝对路径.
+
+
+</P>
+<LI>
+<B>INSTALL_DATETIME</B>
+
+</LI>
+<P>
+用<B>ISO8601</B>格式描述的程序安装日期和时间.
+
+
+</P>
+<P>
+格式为:
+
+
+</P>
+<P>
+<B>&lt;date&gt; &lt;time&gt;</B>
+
+
+</P>
+<P>
+<B>&lt;date&gt;</B>格式为: <B>[YYYY]-[MM]-[DD]</B>
+
+
+</P>
+<P>
+<B>&lt;time&gt;</B>格式为: <B>[hh]:[mm]:[ss]</B> 必须为<B>24</B>小时制
+
+
+</P>
+<P>
+例如:
+2010-05-17 23:04:33
+表示当地时间2010年5月17日晚23点04分33秒
+
+
+</P>
+<LI>
+<B>REGION</B>
+
+</LI>
+<P>
+以<B>RFC3066</B>格式描述的当前版本所支持的地区/语言列表.如果支持多个地区/语言,可以使用<B>|</B>字符来分隔.
+
+
+</P>
+</UL>
+
+<H3><A NAME="UNICODE和字符串"><A NAME="23">Unicode和字符串
+
+</A></A></H3>
+<P>
+OpenAutomate函数接受或是返回的所有字符串都假设为以UTF-8格式编码的字符串.这样可以简化插件的开发,同时也能支持所有语言.并且不用做任何修改,即可以与标准ASCII字符串兼容.
+
+
+</P>
+
+<H3><A NAME="用于注册/注销程序的帮助函数"><A NAME="24">用于注册/注销程序的帮助函数
+
+</A></A></H3>
+<P>
+SDK中提供了一些用于帮助程序注册/注销的函数.您可以免费直接使用它们,或是参考它们来编写自己的函数.如需更多信息,请参见<B>OpenAutomateUtil.h</B>和<B>OpenAutomateUtil.c</B>文件
+
+
+</P>
+
+<H3><A NAME="卸载程序"><A NAME="25">卸载程序
+
+</A></A></H3>
+<P>
+在程序卸载的时候,您必须将所有注册文件或是注册项一并删除.
+
+
+</P>
+
+<H3><A NAME="注册文件格式"><A NAME="26">注册文件格式
+
+</A></A></H3>
+<UL>
+<LI>
+文件必须以UTF-8格式进行编码以支持扩展字符
+
+</LI>
+<LI>
+文件的前5个字节必须为文件保留字'OAREG'
+
+</LI>
+<LI>
+文件保留字之后是文件格式的版本号,然后是新的一行
+
+</LI>
+<LI>
+忽略空白行(只包含空白字符 空格,退格,换行)
+
+</LI>
+<LI>
+非空白行必须存储名称-值对
+
+</LI>
+<P>
+格式为: &lt;NAME&gt; : &lt;VALUE&gt;
+
+
+</P>
+<P>
+&lt;NAME&gt;和&lt;VALUE&gt;符号之前和之后的所有空白字符都会被忽略.
+
+
+</P>
+</UL>
+<P>
+下面是一个注册文件的例子:
+
+
+</P>
+<PRE>    OAREG 1.0 
+
+    INSTALL_ROOT_PATH: c:\Program Files\My Company\My Game
+    ENTRY_EXE:         c:\Program Files\My Company\My Game\Bin\mygame.exe -i -o
+    INSTALL_DATETIME:  2008-05-31 15:01:02
+    REGION:            en_US|ko_KR
+</PRE>
+<H2><A NAME="在程序中集成OPENAUTOMATE"><A NAME="27">在程序中集成OpenAutomate
+
+</A></A></H2>
+<P>
+OpenAutomate SDK可以以多种方式集成到游戏程序中.您可以选择合适的方式来集成.例如:
+
+
+</P>
+<UL>
+<LI>
+在项目中包含OpenAutomate.c文件,然后在所有需要调用OpenAutomate的C/C++文件中添加"#include SDKPATH/OpenAutomate.h"
+
+</LI>
+<LI>
+在游戏解决方案中包含OpenAutomate项目,然后将最终结果与OpenAutomate库链接.
+
+</LI>
+
+<H3><A NAME="通过包含头文件/源文件来集成OPENAUTOMATE"><A NAME="28">通过包含头文件/源文件来集成OpenAutomate
+
+</A></A></H3>
+</UL>
+<P>
+这是最简单也是推荐的集成方式.您不用创建额外的工程,不会有任何项目设置上的问题,也不会因为无法链接到OpenAutomate而头痛.我们推荐使用如下步骤来集成OpenAutomate到您的项目中:
+
+
+</P>
+<UL>
+<LI>
+将OpenAutomate SDK解压到某个文件夹,例如\ThirdParty\OpenAutomate.要升级到OpenAutomate的新版本,只需要将文件夹整体替换即可.ThirdParty文件夹下可能有OpenAutomate的多个版本,将最新版本的文件夹命名为'OpenAutomate'(不带版本名),这样更新OpenAutomate时您就不需要再更改项目设置
+
+</LI>
+<LI>
+所有使用OpenAutomate的c/c++文件都必须包含<OpenAutomate\OpenAutomate.h>头文件(假设OpenAutomate位于诸如ThirdParty\OpenAutomate的地方,并且项目的包含路径中有ThirdParty)
+
+</LI>
+<LI>
+将OpenAutomate.c文件放到程序项目中(或者其他库的项目中).只能被包含一次
+
+</LI>
+<LI>
+在游戏程序中添加与OpenAutomate协作的代码
+
+</LI>
+</UL>
+<P>
+<B>如果这个过程中出现了任何警告或是编译错误,请与帮助您的DevTech工程师联系.</B>
+
+
+</P>
+
+</BLOCKQUOTE>
+
+
+
+</BODY>
+

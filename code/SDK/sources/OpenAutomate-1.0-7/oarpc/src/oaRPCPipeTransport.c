@@ -300,315 +300,509 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#include <oaRPCInternal.h>
+#include <oaRPCPipeTransport.h>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+#if defined(WIN32) || PLATFORM == OA_WIN32 || PLATFORM == OA_CYGWIN
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
+#define _WIN32_WINNT 0x500
+#include <windows.h>
+#include <Sddl.h>
 
-#include <string.h>
+typedef oaRPCTransportErrorType   PipeErr;
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
-
-#ifdef __cplusplus
-extern "C"
+typedef struct PipeDataStruct
 {
-#endif
+  HANDLE        Pipe;         ///< The pipe handle
+  oaRPCBuf      *TmpBuf;      ///< TmpBuf used
+  oaBool        IsServer;     ///< Is Pipe server
+  oaBool        IsConnected;  ///< Is pipe connected ( for server )
+
+  HANDLE        CancelEvent;  ///< Cancel event.
+  HANDLE        CompleteEvent;///< (Write) complete event.
+  char          PipeName[10];  ///< Saved pipe name "\\.\pipe\*"
+} PipeData;
+
+enum 
+{ 
+  DEF_BUF_SIZE = 4096,
+};
+
+static PipeErr InitTransport(oaRPCTransport*  transport, 
+                             const char*      pipename, 
+                             oaBool           is_server);
+
+static HANDLE PipeCreateServer(const char* pipename);
+
+static PipeErr PipeSend(void*           user_data, 
+                        const oaRPCBuf* buf, 
+                        int             time_out);
+
+static PipeErr PipeRecv(void*     user_data, 
+                        oaRPCBuf* buf, 
+                        oaBool*   new_connection, 
+                        int       time_out);
+
+static void PipeCancel(void *user_data);
+static void PipeCleanupConnection(void *user_data);
+static void PipeCleanupAll(void *user_data);
+static PipeErr PipeWait(PipeData* pipe, int time_out);
+static PipeErr PipeAccept(PipeData* pipe, int time_out);
+static PipeErr PipeRecvData(PipeData* pipe,
+                            void*     buf,
+                            oaRPCSize recv_length, 
+                            oaRPCSize time_out);
 
 
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
+PipeErr oaRPCInitPipeServerTransport(oaRPCTransport*  transport, 
+                                     const char*      pipename)
 {
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
-  {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
-
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
-
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
-  
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
-
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+  return InitTransport(transport, pipename, OA_TRUE);
 }
-#endif
 
-#endif
+PipeErr oaRPCInitPipeClientTransport(oaRPCTransport*  transport,
+                                     const char*      pipename)
+{
+  return InitTransport(transport, pipename, OA_FALSE);
+}
+
+static PipeErr InitTransport(oaRPCTransport*  transport, 
+                             const char*      pipename, 
+                             oaBool           is_server)
+{
+  PipeErr     ret     = OARPC_TRANSPORT_ERROR_OK;
+  PipeData*   pipe    = NULL;
+  const char* prefix  = "\\\\.\\pipe\\";
+
+  if(!transport)
+    return OARPC_TRANSPORT_ERROR_BADTRANSPORT;
+  if(!pipename)
+    return OARPC_TRANSPORT_ERROR_BADADDR;
+
+  do
+  {
+    pipe = (PipeData*)malloc(sizeof(PipeData) + strlen(pipename));
+    if(!pipe)
+      break;
+
+    pipe->Pipe        = INVALID_HANDLE_VALUE;
+    pipe->TmpBuf      = NULL;
+    pipe->IsServer    = is_server;
+    pipe->IsConnected = OA_FALSE;
+    pipe->CancelEvent = NULL;
+
+    pipe->TmpBuf = oaRPCAllocBuf();
+    if(!pipe->TmpBuf)
+    {
+      ret = OARPC_TRANSPORT_ERROR_NOMEMORY;
+      break;
+    }
+
+    if(0 == strnicmp(prefix, pipename, strlen(prefix)))
+    {
+      strcpy(pipe->PipeName, pipename);
+    }
+    else
+    {
+      strcpy(pipe->PipeName, prefix);
+      strcat(pipe->PipeName, pipename);
+    }
+
+    pipe->CancelEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    if(NULL == pipe->CancelEvent)
+    {
+      ret = OARPC_TRANSPORT_ERROR_NOMEMORY;
+      break;
+    }
+
+    pipe->CompleteEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    if(NULL == pipe->CompleteEvent)
+    {
+      ret = OARPC_TRANSPORT_ERROR_NOMEMORY;
+      break;
+    }
+
+    if(is_server)
+    {
+      pipe->Pipe = PipeCreateServer(pipe->PipeName);
+    }
+    else
+    {
+      pipe->Pipe = CreateFileA( 
+        pipe->PipeName, // pipe name 
+        GENERIC_READ | GENERIC_WRITE, 
+        0,              // no sharing 
+        NULL,           // default security attributes
+        OPEN_EXISTING,  // opens existing pipe 
+        FILE_FLAG_OVERLAPPED | FILE_FLAG_WRITE_THROUGH,
+        NULL);          // no template file
+
+      pipe->IsConnected = (INVALID_HANDLE_VALUE != pipe->Pipe);
+    }
+    if(INVALID_HANDLE_VALUE == pipe->Pipe)
+    {
+      ret = OARPC_TRANSPORT_ERROR_ACCESS;
+      break;
+    }
+
+    transport->Send               = PipeSend;
+    transport->Recv               = PipeRecv;
+    transport->Cancel             = PipeCancel;
+    transport->CleanupConnection  = PipeCleanupConnection;
+    transport->CleanupAll         = PipeCleanupAll;
+
+    transport->UserData           = pipe;
+    return OARPC_TRANSPORT_ERROR_OK;
+
+  } while(0);
+
+  if(pipe)
+  {
+    if(pipe->CompleteEvent)
+      CloseHandle(pipe->CancelEvent);
+    if(pipe->CancelEvent)
+      CloseHandle(pipe->CancelEvent);
+    if(pipe->Pipe)
+      CloseHandle(pipe->Pipe);
+
+    if(pipe->TmpBuf)
+      oaRPCFreeBuf(pipe->TmpBuf);
+
+    free(pipe);
+  }
+
+  return ret;
+}
+
+static HANDLE PipeCreateServer(const char* pipename)
+{
+  BOOL                ret;
+  const char*         sd            = "D:(A;OICI;GA;;;WD)";
+
+  SECURITY_ATTRIBUTES sa;
+  HANDLE              result        = INVALID_HANDLE_VALUE;
+
+  sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+  sa.lpSecurityDescriptor = NULL;
+  sa.bInheritHandle = FALSE;
+
+  ret = ConvertStringSecurityDescriptorToSecurityDescriptorA(
+    sd,
+    SDDL_REVISION_1,
+    &sa.lpSecurityDescriptor, 
+    NULL);
+
+  if(!ret)
+    return INVALID_HANDLE_VALUE;
+
+  result = CreateNamedPipeA(
+    pipename,
+    PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED,
+    PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
+    PIPE_UNLIMITED_INSTANCES,
+    DEF_BUF_SIZE,
+    DEF_BUF_SIZE,
+    NMPWAIT_USE_DEFAULT_WAIT,
+    &sa);
+
+  if(sa.lpSecurityDescriptor)
+    LocalFree(sa.lpSecurityDescriptor);
+
+  return result;
+}
+
+static PipeErr PipeSend(void* user_data, const oaRPCBuf* buf, int time_out)
+{
+  PipeData*     pipe = (PipeData*)user_data;
+  oaRPCSize     buf_size, to_send, total_sent, sent;
+  OVERLAPPED    ol;
+  BOOL          success;
+  PipeErr       ret;
+  unsigned long begin_wait;
+
+  assert(pipe != NULL);
+  assert(buf != NULL);
+
+  if(!pipe->IsConnected)
+    return OARPC_TRANSPORT_ERROR_BADTRANSPORT;
+
+  buf_size = OARPC_BUF_SIZE(buf);
+  oaRPCClearBuf(pipe->TmpBuf);
+  oaRPCPushBuf(pipe->TmpBuf, &buf_size, sizeof(buf_size));
+  oaRPCPushBuf(pipe->TmpBuf, 
+    OARPC_GET_BUF_CONST(buf, 0), 
+    OARPC_BUF_SIZE(buf));
+
+  to_send = OARPC_BUF_SIZE(pipe->TmpBuf);
+  total_sent = 0;
+  begin_wait = GetTickCount();
+
+  while(to_send > total_sent)
+  {
+    memset(&ol, 0, sizeof(ol));
+    ol.hEvent = pipe->CompleteEvent;
+    ResetEvent(pipe->CompleteEvent);
+    ResetEvent(pipe->CancelEvent);
+
+    success = WriteFile(
+      pipe->Pipe,
+      OARPC_GET_BUF(pipe->TmpBuf, total_sent), 
+      to_send,
+      &sent,
+      &ol );
+
+    if(!success)
+    {
+      if ( GetLastError() != ERROR_IO_PENDING )
+        return OARPC_TRANSPORT_ERROR_FAILED;
+
+      ret = PipeWait(pipe, time_out);
+      if(OARPC_TRANSPORT_ERROR_OK != ret)
+        return ret;
+
+      if(!GetOverlappedResult(pipe->Pipe, &ol, &sent, FALSE))
+      {
+        // should not be here.
+        return OARPC_TRANSPORT_ERROR_FAILED;
+      }
+    }
+
+    total_sent += sent;
+    assert(to_send >= total_sent);
+
+    // wait...
+    if(time_out > 0)
+    {
+      time_out -= (int)(GetTickCount() - begin_wait);
+      if(time_out <= 0)
+        return OARPC_TRANSPORT_ERROR_TIMEOUT;
+    }
+  }
+
+  return OARPC_TRANSPORT_ERROR_OK;
+}
+
+static PipeErr PipeRecv(void*     user_data, 
+                        oaRPCBuf* buf, 
+                        oaBool*   new_connection, 
+                        int       time_out)
+{
+  oaRPCSize       buf_size;
+  PipeData*       pipe = (PipeData *)user_data;
+  unsigned long   begin_wait;
+  PipeErr         ret;
+
+  if(new_connection)
+    *new_connection = OA_FALSE;
+
+  begin_wait = GetTickCount();
+
+  if(!pipe->IsConnected)
+  {
+    assert(pipe->IsServer);
+    if(!pipe->IsServer)
+      return OARPC_TRANSPORT_ERROR_BADTRANSPORT;
+
+    ret = PipeAccept(pipe, time_out);
+    if(OARPC_TRANSPORT_ERROR_OK != ret)
+      return(ret);
+
+    *new_connection = OA_TRUE;
+  }
+
+  ret = PipeRecvData(pipe, &buf_size, sizeof(buf_size), time_out);
+  if(OARPC_TRANSPORT_ERROR_OK != ret)
+    return(ret);
+
+  if(time_out > 0)
+  {
+    time_out -= (int)(GetTickCount() - begin_wait);
+    if(time_out <= 0)
+      return OARPC_TRANSPORT_ERROR_TIMEOUT;
+  }
+
+  if(buf_size < 1)
+    return(OARPC_TRANSPORT_ERROR_BADDATA);
+  oaRPCSetBufSize(buf, buf_size);
+
+  return PipeRecvData(pipe, OARPC_GET_BUF(buf, 0), buf_size, time_out);
+}
+
+
+static void PipeCancel(void *user_data)
+{
+  PipeData* pipe = (PipeData*)user_data;
+  SetEvent(pipe->CancelEvent);
+}
+
+static void PipeCleanupConnection(void* user_data)
+{
+  PipeData* pipe = (PipeData*)user_data;
+
+  if(INVALID_HANDLE_VALUE != pipe->Pipe)
+  {
+    CloseHandle(pipe->Pipe);
+    pipe->Pipe = INVALID_HANDLE_VALUE;
+  }
+
+  pipe->IsConnected = OA_FALSE;
+  if(pipe->IsServer)
+    pipe->Pipe = PipeCreateServer(pipe->PipeName);
+}
+
+static void PipeCleanupAll(void* user_data)
+{
+  PipeData* pipe = (PipeData*)user_data;
+
+  assert(pipe != NULL);
+  if(pipe == NULL)
+    return;
+
+  if(pipe->CancelEvent)
+    CloseHandle( pipe->CancelEvent );
+
+  if(pipe->CompleteEvent)
+    CloseHandle( pipe->CompleteEvent);
+
+  if(INVALID_HANDLE_VALUE != pipe->Pipe)
+    CloseHandle(pipe->Pipe);
+
+  if(pipe->TmpBuf)
+    oaRPCFreeBuf(pipe->TmpBuf);
+
+  free(pipe);
+}
+
+static PipeErr PipeWait(PipeData* pipe, int time_out)
+{
+  DWORD   ret;
+  HANDLE  events[2];
+
+  events[0] = pipe->CompleteEvent;
+  events[1] = pipe->CancelEvent;
+  ret = WaitForMultipleObjects(2, events, FALSE, time_out);  
+
+  switch(ret)
+  {
+  case WAIT_TIMEOUT:
+    return OARPC_TRANSPORT_ERROR_TIMEOUT;
+
+  case WAIT_OBJECT_0:
+    return OARPC_TRANSPORT_ERROR_OK;
+
+  case WAIT_OBJECT_0 + 1:
+    return OARPC_TRANSPORT_ERROR_CANCELED;
+  }
+
+  return OARPC_TRANSPORT_ERROR_FAILED;
+}
+
+static PipeErr PipeAccept(PipeData* pipe, int time_out)
+{
+  OVERLAPPED    ol;
+  BOOL          success;
+  DWORD         last_err;
+  PipeErr       ret = OARPC_TRANSPORT_ERROR_OK;
+
+  assert(pipe->IsServer);
+  assert(!pipe->IsConnected);
+
+  memset(&ol, 0, sizeof(ol));
+  ol.hEvent = pipe->CompleteEvent;
+  ResetEvent(pipe->CompleteEvent);
+  ResetEvent(pipe->CancelEvent);
+  success = ConnectNamedPipe( pipe->Pipe, &ol);
+
+  if(!success)
+  {
+    last_err = GetLastError();
+    switch(last_err)
+    {
+    case ERROR_IO_PENDING:
+      ret = PipeWait(pipe, time_out);
+      if(OARPC_TRANSPORT_ERROR_OK == ret)
+      {
+        success = ConnectNamedPipe(pipe->Pipe, NULL);
+        last_err = GetLastError();
+        if(success || ERROR_PIPE_CONNECTED != last_err)
+          ret = OARPC_TRANSPORT_ERROR_FAILED;
+      }
+      break;
+
+    case ERROR_PIPE_CONNECTED:
+      break;
+
+    default:
+      ret = OARPC_TRANSPORT_ERROR_FAILED;
+      break;
+    }
+  }
+
+  if(OARPC_TRANSPORT_ERROR_OK == ret)
+    pipe->IsConnected = OA_TRUE;
+
+  return ret;
+}
+
+static PipeErr PipeRecvData(PipeData* pipe,
+                            void*     buf,
+                            oaRPCSize recv_length, 
+                            oaRPCSize time_out)
+{
+  char*       p = (char*)buf;
+  oaRPCSize   to_recv = recv_length;
+  oaRPCSize   total_recved, read;
+  OVERLAPPED  ol;
+  BOOL        success;
+  PipeErr     ret;
+  DWORD       begin_wait;
+
+  total_recved  = 0;
+  begin_wait    = GetTickCount();
+
+  while(total_recved < to_recv)
+  {
+    memset(&ol, 0, sizeof(ol));
+    ol.hEvent = pipe->CompleteEvent;
+    ResetEvent(pipe->CompleteEvent);
+    ResetEvent(pipe->CancelEvent);
+
+    success = ReadFile(
+      pipe->Pipe,
+      p + total_recved,
+      to_recv, 
+      &read, 
+      &ol);
+
+    if(!success)
+    {
+      if(GetLastError() != ERROR_IO_PENDING)
+        return OARPC_TRANSPORT_ERROR_FAILED;
+
+      ret = PipeWait(pipe, time_out);
+      if(OARPC_TRANSPORT_ERROR_OK != ret)
+        return ret;
+
+      if(!GetOverlappedResult(pipe->Pipe, &ol, &read, FALSE))
+      {
+        // should not be here.
+        return OARPC_TRANSPORT_ERROR_FAILED;
+      }
+    }
+
+    total_recved += read;
+
+    if(time_out > 0)
+    {
+      time_out -= (int)(GetTickCount() - begin_wait);
+      if(time_out <= 0)
+        return OARPC_TRANSPORT_ERROR_TIMEOUT;
+    }
+  }
+
+  return OARPC_TRANSPORT_ERROR_OK;
+}
+
+#else
+#error pipe transport not implemented on this platform.
+#endif // WIN32

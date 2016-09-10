@@ -300,315 +300,365 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
+#include <oaRPC.h>
+#include <oaRPCSocketTransport.h>
+#include <OpenAutomate.h>
+#include <OpenAutomate_Internal.h>
 
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
-#endif
+#define ERROR(msg) \
+         Error(__FILE__, __LINE__, (msg));
 
-#include <string.h>
+using namespace std;
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
+//******************************************************************************
+//*** Prototypes
+//******************************************************************************
 
-#ifdef __cplusplus
-extern "C"
+static void Error(const char *file, int line, const char *msg);
+void ParseArgs(int argc, char *argv[]);
+
+static oaCommandType GetNextCommand(void* user_data,
+                                    oaCommand *command);
+static oaNamedOption* GetNextOption(void* user_data);
+static void AddOption(void* user_data, 
+                      const oaNamedOption *option);
+static void AddOptionValue(void* user_data, 
+                           const oaChar *name,
+                           oaOptionDataType value_type,
+                           const oaValue *value);
+static void AddBenchmark(void* user_data, 
+                         const oaChar *benchmark_name);
+static void AddResultValue(void* user_data, 
+                           const oaChar *name, 
+                           oaOptionDataType value_type,
+                           const oaValue *value);
+static void StartBenchmark(void* user_data);
+static void DisplayFrame(void* user_data, oaFloat t);
+static void EndBenchmark(void* user_data);
+static void AddFrameValue(void* user_data, 
+                          const oaChar *name, 
+                          oaOptionDataType value_type,
+                          const oaValue *value);
+static oaBool SendSignal(void* user_data, 
+                         oaSignalType signal, 
+                         void *param);
+
+//******************************************************************************
+//*** Globals
+//******************************************************************************
+
+static const char *CommandExe;
+static const char *TextLogFilename = NULL;
+static int Port = 6969;
+static bool RPCInitialized = false;
+static bool NoExit  = false;
+static char *OAOpt = NULL;
+
+//******************************************************************************
+//*** Callbacks
+//******************************************************************************
+oaCommandType GetNextCommand(void* user_data, 
+                             oaCommand *command)
 {
-#endif
+  oaiFunctionTable *func_table;
 
-
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
-{
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
-
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
-  {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
-
-typedef enum 
-{
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
-
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
-
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
-{
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
-
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
-
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
-
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
-
-typedef struct oaMessageStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
-  
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
-
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
-
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
-
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
-
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
-{
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
-
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
-void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
-
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
-
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
-
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
-void oaAddResultValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
-
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
-
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
-
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
-
-#ifdef __cplusplus
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->GetNextCommand);
+  return func_table->GetNextCommand(command);
 }
-#endif
 
-#endif
+oaNamedOption* GetNextOption(void* user_data)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->GetNextOption);
+  return func_table->GetNextOption();
+}
+
+void AddOption(void* user_data, 
+               const oaNamedOption *option)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->AddOption);
+  return func_table->AddOption(option);
+}
+
+void AddOptionValue(void* user_data, 
+                    const oaChar *name,
+                    oaOptionDataType value_type,
+                    const oaValue *value)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->AddOptionValue);
+  return func_table->AddOptionValue(name, value_type, value);
+}
+
+void AddBenchmark(void* user_data, 
+                  const oaChar *benchmark_name)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->AddBenchmark);
+  return func_table->AddBenchmark(benchmark_name);
+}
+
+void AddResultValue(void* user_data, 
+                    const oaChar *name, 
+                    oaOptionDataType value_type,
+                    const oaValue *value)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->AddResultValue);
+  return func_table->AddResultValue(name, value_type, value);
+}
+
+void StartBenchmark(void* user_data)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->StartBenchmark);
+  func_table->StartBenchmark();
+}
+
+void DisplayFrame(void* user_data, oaFloat t)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->DisplayFrame);
+  return func_table->DisplayFrame(t);
+}
+
+void EndBenchmark(void* user_data)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->EndBenchmark);
+  func_table->EndBenchmark();
+}
+
+void AddFrameValue(void* user_data, 
+                   const oaChar *name, 
+                   oaOptionDataType value_type,
+                   const oaValue *value)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->AddFrameValue);
+  return func_table->AddFrameValue(name, value_type, value);
+}
+
+oaBool SendSignal(void* user_data, 
+                  oaSignalType signal, 
+                  void *param)
+{
+  oaiFunctionTable *func_table;
+
+  func_table = (oaiFunctionTable *)user_data;
+  assert(func_table->SendSignal);
+  return func_table->SendSignal(signal, param);
+}
+
+//******************************************************************************
+//*** Main
+//******************************************************************************
+int main(int argc, char* argv[])
+{
+  char ErrorMsg[4096];
+  oaRPCTransport Transport;
+  oaRPCTransportErrorType tsRet;
+  oaRPCServerErrorType    svrRet;
+
+  ParseArgs(argc, argv);
+
+  oaVersion Version;
+  if(oaInit((const oaString)OAOpt, &Version) != OA_TRUE)
+    ERROR("OpenAutomate failed to initialize.")
+
+  tsRet = oaRPCInitSocketServerTransport(&Transport, Port);
+  if(tsRet != OARPC_TRANSPORT_ERROR_OK)
+  {
+    sprintf(ErrorMsg, 
+      "Couldn't start server on tcp port %d, err = %d", 
+      Port,
+      tsRet); 
+    ERROR(ErrorMsg)
+  }
+
+  RPCInitialized = true;
+
+  oaiFunctionTable* func_table = oaiGetCurrentFuncTable();
+
+  oaRPCFunctionTable rpc_func_table;
+  memset(&rpc_func_table, 0, sizeof(rpc_func_table));
+  rpc_func_table.UserData = func_table;
+  if(func_table->GetNextCommand)
+    rpc_func_table.GetNextCommand = GetNextCommand;
+  if(func_table->GetNextOption)
+    rpc_func_table.GetNextOption = GetNextOption;
+  if(func_table->AddOption)
+    rpc_func_table.AddOption = AddOption;
+  if(func_table->AddOptionValue)
+    rpc_func_table.AddOptionValue = AddOptionValue;
+  if(func_table->AddBenchmark)
+    rpc_func_table.AddBenchmark = AddBenchmark;
+  if(func_table->AddResultValue)
+    rpc_func_table.AddResultValue = AddResultValue;
+  if(func_table->StartBenchmark)
+    rpc_func_table.StartBenchmark = StartBenchmark;
+  if(func_table->DisplayFrame)
+    rpc_func_table.DisplayFrame = DisplayFrame;
+  if(func_table->EndBenchmark)
+    rpc_func_table.EndBenchmark = EndBenchmark;
+  if(func_table->AddFrameValue)
+    rpc_func_table.AddFrameValue = AddFrameValue;
+  if(func_table->SendSignal)
+    rpc_func_table.SendSignal = SendSignal;
+
+  oaRPCServer *Server = oaRPCCreateServer(&rpc_func_table, 
+                                          &Transport, 
+                                          TextLogFilename);
+  while(1)
+  {
+    svrRet = oaRPCRunServer(Server, OARPC_INFINITE);
+
+    if(OARPC_SERVER_ERROR_OK != svrRet || !NoExit)
+      break;
+  }
+
+  oaRPCDestroyServer(Server);
+
+  oaRPCCleanupTransport(&Transport);
+  oaRPCCleanup();
+
+  return(0);
+}
+
+void Error(const char *file, int line, const char *msg)
+{
+  fprintf(stderr, "ERROR: %s\n", msg);
+  fflush(stderr);
+
+  if(RPCInitialized)
+    oaRPCCleanup();
+
+  exit(1);
+}
+
+//******************************************************************************
+//*** Functions
+//******************************************************************************
+
+
+const char *Basename(const char *cmd)
+{
+  int Len = (int)strlen(cmd);
+
+  if(Len <= 0)
+    return(cmd);
+
+  for(int i=Len-1; i > 0; --i)
+    if(cmd[i] == '/' || cmd [i] == '\\')
+    {
+      if(i + 1 < Len)
+        return(&cmd[i+1]);
+      break;
+    }
+
+  return(cmd);
+}
+
+void Usage(bool verbose = false)
+{
+  cerr << "Usage: " << Basename(CommandExe) << " [-h|-help] [-port <num>] "
+       << "[-noexit] [-log <file>] <oa_option>" << endl;
+  
+ #define INDENT "         "
+
+  if(verbose)
+  {
+    cerr << 
+      INDENT "oa_option   : Same as what's passed to -openautomate for the\n" 
+      INDENT "              OA enabled application.\n" 
+      INDENT "-port <num> : Same as what's passed to -openautomate for the\n" 
+      INDENT "              OA enabled application. Default is 6969.\n"
+      INDENT "-noexit     : Doesn't exit when the OA_CMD_EXIT command is\n"
+      INDENT "              issued.  Instead it just keeps on accepting new\n" 
+      INDENT "              TCP connections, and continues as normal.\n" 
+      INDENT "-log <file> : Writes out a log of requests and response to the\n"
+      INDENT "              given file.\n"
+      ;
+  }
+
+  exit(1);
+}
+
+void ParseArgs(int argc, char *argv[])
+{
+  CommandExe = argv[0];
+  int i;
+
+  for(i=1;  i < argc; ++i)
+  {
+    if(argv[i][0] != '-' || !strcmp(argv[i], "--"))
+      break;
+
+    if(!strcmp(argv[i], "-help") || !strcmp(argv[i], "-h"))
+      Usage(true);
+    else if(!strcmp(argv[i], "-port"))
+    {
+      i++;
+      if(i >= argc)
+      {
+        cerr << "ERROR: -port must have argument <num>" << argv[i] << endl;
+        Usage();
+      }
+
+      Port = atoi(argv[i]);
+      if(Port < 1)
+        ERROR("port must be greater than 1")
+    }
+    else if(!strcmp(argv[i], "-log"))
+    {
+      i++;
+      if(i >= argc)
+      {
+        cerr << "ERROR: -log must have argument <file>" << argv[i] << endl;
+        Usage();
+      }
+
+      TextLogFilename = argv[i];
+    }
+    else if(!strcmp(argv[i], "-noexit"))
+    {
+      NoExit = true;
+    }
+    else
+    {
+      cerr << "ERROR: Unknown option " << argv[i] << endl;
+      Usage();
+    }
+  }
+
+  if(i == argc)
+    Usage();
+
+  OAOpt = argv[i++];
+}
+
+

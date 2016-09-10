@@ -300,315 +300,467 @@
 
 
 
-#ifndef _OA_h
-#define _OA_h
+#include "../inc/OpenAutomate.h"
+#include "../inc/OpenAutomate_Internal.h"
+#include <string.h>
+#include <stdlib.h>
 
-#define OA_WIN32  1
-#define OA_CYGWIN 2
-#define OA_LINUX  3
-#define OA_DARWIN 4
-
-/* Automatic Platform detection */
-#if defined(WIN32)
-#  define OA_PLATFORM OA_WIN32
-#  pragma warning(disable:4995)
-#  pragma warning(disable:4996) 
-#  pragma pack(push,8)
-#else
-#  define OA_PLATFORM OA_CYGWIN
+#ifdef WIN32
+#include <windows.h>
 #endif
 
-#include <string.h>
+#ifdef _WIN64
+typedef __int64 OA_NATIVE_INT;
+#elif WIN32
+typedef int __w64 OA_NATIVE_INT;
+#else
+#include <dlfcn.h>
+typedef oaInt OA_NATIVE_INT;
+#endif
+/*
+#ifdef WIN32
+# include <windows.h>
+typedef int __w64 OA_NATIVE_INT;
+#elif _WIN64
+typedef __int64 OA_NATIVE_INT;
+#else
+# include <dlfcn.h>
+typedef oaInt OA_NATIVE_INT;
+#endif*/
 
-#define OA_CHAR char
-#define OA_STRCPY strcpy
-#define OA_STRNCPY strncpy
-#define OA_STRLEN strlen
+#define OA_MAX_PATH_LENGTH  2048
+#define OA_MIN(a, b) ((a) < (b) ? (a) : (b))
+
+/*******************************************************************************
+* Prototypes
+*******************************************************************************/
+
+static void Cleanup(void);
+static oaBool ParseInitStr(const oaChar *init_str, 
+                           oaChar *plugin_path, 
+                           oaChar *opt);
+
+static oaChar* SearchAndReplace(const oaChar* src, 
+                                oaChar* search, 
+                                oaChar* replace);
+static oaBool LoadPlugin(void);
+
+/*******************************************************************************
+* Global Variables
+*******************************************************************************/
+
+static oaiPluginInitFunc PluginInitFunc = NULL;
+static oaiFunctionTable FuncTable;
+static oaBool InitFlag = OA_FALSE;
+static oaChar *PluginPath = NULL;
+static oaChar *Opt = NULL;
+static oaVersion PluginVersion, OAVersion;
+
+#ifdef WIN32
+static HMODULE PluginHandle = NULL;
+#else
+static void *PluginHandle = NULL;
+#endif
+
+/*******************************************************************************
+* Public Functions
+*******************************************************************************/
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-
-/******************************************************************************* 
- * Types
- ******************************************************************************/
-
-typedef enum
+oaBool oaInit(const oaChar *init_str, oaVersion *version)
 {
-  OA_FALSE = 0,
-  OA_OFF   = 0,
-  OA_TRUE  = 1,
-  OA_ON    = 1
-} oaBool;
+  size_t InitStrLen;
+  oaiFunctionTable *PluginFuncTable;
 
-typedef OA_CHAR oaChar;
-typedef oaChar *oaString;
-typedef long int oaInt;
-typedef double oaFloat;
-
-
-/* 
- * Used for by oaInit to return the version number of the API.  The version
- * number will be equivalent to (Major + .001 * Minor).  Versions of the API
- * with differing major numbers are incompatible, whereas versions where only
- * the minor number differ are.
- */
-typedef struct oaVersionStruct
-{
-  oaInt Major;  
-  oaInt Minor; 
-  oaInt Custom;
-  oaInt Build;
-} oaVersion;
- 
-
-typedef enum
-{
-  OA_TYPE_INVALID  = 0,
-  OA_TYPE_STRING  = 1,
-  OA_TYPE_INT     = 2,
-  OA_TYPE_FLOAT   = 3,
-  OA_TYPE_ENUM    = 4,
-  OA_TYPE_BOOL    = 5
-} oaOptionDataType;
-
-typedef enum
-{
-  OA_COMP_OP_INVALID           = 0,
-  OA_COMP_OP_EQUAL             = 1,
-  OA_COMP_OP_NOT_EQUAL         = 2,
-  OA_COMP_OP_GREATER           = 3,
-  OA_COMP_OP_LESS              = 4,
-  OA_COMP_OP_GREATER_OR_EQUAL  = 5,
-  OA_COMP_OP_LESS_OR_EQUAL     = 6,
-} oaComparisonOpType;
-
-typedef struct oaValueStruct
-{
-  union
+  if(InitFlag)
   {
-    oaString String;      
-    oaInt Int;
-    oaFloat Float;
-    oaString Enum;
-    oaBool Bool;
-  };
-} oaValue;
+    OA_ERROR("oaInit() called more than once.");
+    Cleanup();
+    return(OA_FALSE);
+  }
 
-typedef enum 
+  InitStrLen = OA_STRLEN(init_str);
+  PluginPath = (oaChar *)malloc((InitStrLen+1)*sizeof(oaChar));
+  Opt = (oaChar *)malloc((InitStrLen+1)*sizeof(oaChar));
+
+  if(!ParseInitStr(init_str, PluginPath, Opt))
+  {
+    OA_ERROR("Couldn't parse initialization string.");
+    Cleanup();
+    return(OA_FALSE);
+  }
+
+  PluginInitFunc = NULL;
+  memset(&FuncTable, 0, sizeof(FuncTable));
+
+  if(!LoadPlugin())
+  {
+    OA_ERROR("Couldn't load the plugin.");
+    Cleanup();
+    return(OA_FALSE);
+  }
+
+  OA_ASSERT(PluginInitFunc);
+  OA_INIT_VERSION_STRUCT(OAVersion)
+
+  PluginFuncTable = PluginInitFunc(Opt, &PluginVersion, OAVersion);
+
+  if(PluginVersion.Major < OA_MIN_REQUIRED_VERSION_MAJOR ||
+     PluginVersion.Major == OA_MIN_REQUIRED_VERSION_MAJOR &&
+     PluginVersion.Minor < OA_MIN_REQUIRED_VERSION_MINOR)
+  {
+    oaChar ErrorStr[1024];
+    sprintf(ErrorStr, 
+            "Minimum required version is %d.%d.  "
+            "Plugin version is %d.%d.", 
+            OA_MIN_REQUIRED_VERSION_MAJOR, 
+            OA_MIN_REQUIRED_VERSION_MINOR,
+            PluginVersion.Major,
+            PluginVersion.Minor);
+
+    OA_ERROR(ErrorStr);
+    Cleanup();
+    return(OA_FALSE);
+  }
+
+  if(!PluginFuncTable || !PluginFuncTable->GetNextCommand)
+  {
+    OA_ERROR("Plugin is misconfigured.");
+    Cleanup();
+    return(OA_FALSE);
+  }
+
+  memcpy(&FuncTable, 
+         PluginFuncTable, 
+         OA_MIN(sizeof(FuncTable), PluginFuncTable->TableSize));
+
+  InitFlag = OA_TRUE;
+
+  *version = OAVersion;
+
+  return(OA_TRUE);
+}
+
+#define INIT_CHECK_RET(ret) \
+  if(!InitFlag) \
+  { \
+    OA_ERROR("OA not initialized."); \
+    return ret; \
+  }
+
+#define INIT_CHECK() \
+  if(!InitFlag) \
+  { \
+    OA_ERROR("OA not initialized."); \
+    return; \
+  }
+
+void oaInitCommand(oaCommand *command)
 {
-  OA_SIGNAL_SYSTEM_UNDEFINED = 0x0,  /* Should never be used */
+  OA_ASSERT(command);
 
-  /* used for errors, warnings, and log messages */
-  OA_SIGNAL_ERROR     = 0x1,         
+  memset(command, 0, sizeof(oaCommand));
+  command->StructSize = sizeof(oaCommand);
+}
 
-  /* requests a reboot of the system */
-  OA_SIGNAL_SYSTEM_REBOOT    = 0xF,
-} oaSignalType;
-
-typedef enum
+oaCommandType oaGetNextCommand(oaCommand *command)
 {
-  OA_ERROR_NONE                 = 0x00, /* no error */
-  OA_ERROR_WARNING              = 0x01, /* not an error, just a warning*/
-  OA_ERROR_LOG                  = 0x02, /* not an error, just a log message */
+  oaCommandType NextCommand;
 
-  OA_ERROR_INVALID_OPTION       = 0x10, /* option is invalid (wrong name) */
-  OA_ERROR_INVALID_OPTION_VALUE = 0x11, /* option value is out of range */
+  OA_ASSERT(command);
 
-  OA_ERROR_INVALID_BENCHMARK    = 0x21, /* chosen benchmark is invalid */
+  INIT_CHECK_RET(OA_CMD_EXIT);
+  OA_ASSERT(FuncTable.GetNextCommand);
 
-  OA_ERROR_OTHER                = 0xFF, /* unknown error */
-} oaErrorType;
+  NextCommand = FuncTable.GetNextCommand(command);
 
-typedef struct oaMessageStruct
+  if(NextCommand == OA_CMD_EXIT) 
+    Cleanup();
+
+  command->Type = NextCommand;
+  return NextCommand;
+}
+
+oaNamedOption *oaGetNextOption(void)
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  oaErrorType Error;     /* Only used for OA_SIGNAL_ERROR */ 
-  const oaChar *Message; 
-} oaMessage;
-
-
-/* Used when a parameter is only enabled if another parameter value meets
-   a certain condition.  For example, the "AA Level" parameter may only be
-   enabled if the "AA" parameter is equal to "On" */
-typedef struct oaOptionDependencyStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
-
-  /* Name of the parent parameter the param will be dependent on */
-  const oaChar *ParentName;
+  INIT_CHECK_RET(NULL);
   
-  /* The operator used to compare the parent value with ComparisonVal */
-  oaComparisonOpType ComparisonOp;
+  if(FuncTable.GetNextOption)
+    return(FuncTable.GetNextOption());
 
-  /* The value compared against the parents value.  It must be the same type */
-  oaValue ComparisonVal;
+  return(NULL);
+}
 
-  /* Data type of the comparison value */
-  oaOptionDataType ComparisonValType;  
-
-} oaOptionDependency;
-
-typedef struct oaNamedOptionStruct
+void oaInitOption(oaNamedOption *option)
 {
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  OA_ASSERT(option);
 
-  oaOptionDataType DataType;  
-  const oaChar *Name;             
+  memset(option, 0, sizeof(oaNamedOption));
+  option->StructSize = sizeof(oaNamedOption);
+  option->NumSteps = -1;
 
-  /* Currently only used for OA_TYPE_ENUM */
-  oaValue Value;
+  option->Dependency.StructSize = sizeof(oaOptionDependency);
+}
 
-  /* Used only for numeric types OA_TYPE_INT and OA_TYPE_FLOAT */
-  oaValue MinValue;
-  oaValue MaxValue;
-
-  /* determines the allowable values for an option given min/max              */
-  /*   NumSteps == -1  range is [-inf, inf]                                   */
-  /*   NumSteps ==  0  range is continuous within [MinValue, MaxValue]        */
-  /*   NumSteps >   0  assumes NumSteps uniform increments between min/max    */
-  /*                   eg, if min = 0, max = 8, and NumSteps = 4, then our    */
-  /*                   option can accept any value in the set {0, 2, 4, 6, 8} */
-  oaInt NumSteps;   
-  
-  /* If Dependency is defined, the parameter is only enabled if the 
-     condition defined within OptionDependency is true */
-  oaOptionDependency Dependency;
-} oaNamedOption;
-
-typedef enum
+void oaAddOption(const oaNamedOption *option)
 {
-  OA_CMD_EXIT                = 0, /* The app should exit */
-  OA_CMD_RUN                 = 1, /* Run as normal */
-  OA_CMD_GET_ALL_OPTIONS     = 2, /* Return all available options to OA */
-  OA_CMD_GET_CURRENT_OPTIONS = 3, /* Return the option values currently set */
-  OA_CMD_SET_OPTIONS         = 4, /* Persistantly set given options */
-  OA_CMD_GET_BENCHMARKS      = 5, /* Return all known benchmark names to OA */
-  OA_CMD_RUN_BENCHMARK       = 6, /* Run a given benchmark */
-} oaCommandType;
+  INIT_CHECK();
 
-typedef struct oaCommandStruct
-{
-  oaInt StructSize; /* Size in bytes of the whole struct */
+  if(FuncTable.AddOption)
+    FuncTable.AddOption(option);
+}
 
-  oaCommandType Type;
-  const oaChar *BenchmarkName;  /* used for OA_CMD_RUN_BENCHMARK */
-} oaCommand;
-
-/******************************************************************************* 
- * Macros
- ******************************************************************************/
-
-#define OA_RAISE_ERROR(error_type, message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_##error_type; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_WARNING(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_WARNING; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-#define OA_RAISE_LOG(message_str) \
-  { \
-    oaMessage Message; \
-    oaInitMessage(&Message); \
-    Message.Error = OA_ERROR_LOG; \
-    Message.Message = message_str; \
-    oaSendSignal(OA_SIGNAL_ERROR, &Message); \
-  }
-
-
-/******************************************************************************* 
- * Functions
- ******************************************************************************/
-
-/* Called when initializing OA mode.  init_str should be the string passed
-   to the app as an option to the -openautomate command-line option */
-oaBool oaInit(const oaChar *init_str, oaVersion *version);
-
-/* Resets all values in the command to defaults */
-void oaInitCommand(oaCommand *command);
-
-/* Returns the next command for the app to execute.  If there are no commands
-   left OA_CMD_EXIT will be returned. */
-oaCommandType oaGetNextCommand(oaCommand *command);
-
-/* Returns the next option for the app to set when in OA_CMD_SET_OPTIONS */
-oaNamedOption *oaGetNextOption(void);
-
-/* Resets all values in option to defaults */
-void oaInitOption(oaNamedOption *option);
-
-/* Adds an option to the option list when in OA_CMD_GET_ALL_OPTIONS */
-void oaAddOption(const oaNamedOption *option);
-
-/* Adds an option value to the option value list when in 
-   OA_CMD_GET_CURRENT_OPTIONS */
 void oaAddOptionValue(const oaChar *name, 
-                      oaOptionDataType value_type,
-                      const oaValue *value);
+                      oaOptionDataType value_type, 
+                      const oaValue *value)
+{
+  INIT_CHECK();
 
-/* Adds a benchmark name to the list when in OA_CMD_GET_BENCHMARKS mode */
-void oaAddBenchmark(const oaChar *benchmark_name);
+  if(FuncTable.AddOptionValue)
+    FuncTable.AddOptionValue(name, value_type, value);
+}
 
-/* Allows the application to send various signals.  Some signals may have 
-   associated an associated parameter, passed in via the void *param.  See
-   the the "Signals" section of the documentation for more info. Returns
-   true if the signal was handled*/
-oaBool oaSendSignal(oaSignalType signal, void *param);
+void oaAddBenchmark(const oaChar *benchmark_name)
+{
+  INIT_CHECK();
 
-/* Resets all values in option to defaults */
-void oaInitMessage(oaMessage *message);
+  if(FuncTable.AddBenchmark)
+    FuncTable.AddBenchmark(benchmark_name);
+}
 
-/******************************************************************************* 
- * Callback functions for benchmark mode
- ******************************************************************************/
-
-/* The application should call this right before the benchmark starts.  It 
-   should be called before any CPU or GPU computation is done for the first 
-   frame. */
-void oaStartBenchmark(void);
-
-/* This should be called right before the final present call for each frame is 
-   called. The t parameter should be set to the point in time the frame is 
-   related to, in the application's time scale.*/
-void oaDisplayFrame(oaFloat t);
-
-/* Adds an optional result value from a benchmark run.  It can be called 
-   multiple times, but 'name' must be different each time.  Also, it must be 
-   called after the last call to oaDisplayFrame(), and before oaEndBenchmark() 
-   */
 void oaAddResultValue(const oaChar *name, 
                       oaOptionDataType value_type,
-                      const oaValue *value);
+                      const oaValue *value)
+{
+  INIT_CHECK();
 
-/* Similar to oaAddResultValue(), but called per frame.  This call should be 
-   made once for each value, before each call to oaDisplayFrame() */
-void oaAddFrameValue(const oaChar *name, 
-                     oaOptionDataType value_type,
-                     const oaValue *value);
+  if(FuncTable.AddResultValue)
+    FuncTable.AddResultValue(name, value_type, value);
+}
 
-/* This should be called after the last frame is rendered in the benchmark */
-void oaEndBenchmark(void);
+oaBool oaSendSignal(oaSignalType signal, void *param)
+{
+  INIT_CHECK_RET(OA_FALSE);
 
-#if defined(WIN32)
-#  pragma pack(pop)
-#endif
+  if(FuncTable.SendSignal)
+    return(FuncTable.SendSignal(signal, param));
+
+  return(OA_FALSE);
+}
+
+void oaInitMessage(oaMessage *message)
+{
+  memset(message, 0, sizeof(oaMessage)); 
+  message->StructSize = sizeof(oaMessage);
+}
+
+void oaStartBenchmark(void)
+{
+  INIT_CHECK();
+
+  if(FuncTable.StartBenchmark)
+    FuncTable.StartBenchmark();
+}
+
+void oaDisplayFrame(oaFloat t)
+{
+  INIT_CHECK();
+
+  if(FuncTable.DisplayFrame)
+    FuncTable.DisplayFrame(t);
+}
+
+void oaEndBenchmark(void)
+{
+  INIT_CHECK();
+
+  if(FuncTable.EndBenchmark)
+    FuncTable.EndBenchmark();
+}
+
+
+oaiFunctionTable *oaiGetCurrentFuncTable(void)
+{
+  INIT_CHECK_RET(NULL);
+
+  return(&FuncTable);
+}
+
 
 #ifdef __cplusplus
 }
 #endif
 
+/*******************************************************************************
+* Private Functions
+*******************************************************************************/
+
+static void Cleanup(void)
+{
+  if(PluginPath)
+  {
+    free(PluginPath);
+    PluginPath = NULL;
+  }
+
+  if(Opt)
+  {
+    free(Opt);
+    Opt = NULL;
+  }
+
+  InitFlag = OA_FALSE;
+  PluginInitFunc = NULL;
+  memset(&FuncTable, 0, sizeof(FuncTable));
+
+  if(PluginHandle)
+  {
+#ifdef WIN32
+    FreeLibrary(PluginHandle);
+#else
+    dlclose(PluginHandle);
 #endif
+    PluginHandle = NULL;
+  }
+}
+
+static oaBool ParseInitStr(const oaChar *init_str, 
+                           oaChar *plugin_path, 
+                           oaChar *opt)
+{
+  oaChar* InitStr = SearchAndReplace(init_str, "%20", " ");
+
+  int i=0;
+  for(i=0; InitStr[i]; ++i)
+  {
+    if(InitStr[i] == ';')
+    {break;}
+  }
+
+  OA_STRNCPY(plugin_path,InitStr,((i+1)*sizeof(oaChar)));
+
+  plugin_path[i] = 0;
+
+  if(InitStr[i] == ';')
+  {
+    OA_STRCPY(opt, InitStr + i + 1);
+  }
+  else
+    opt[0] = 0;
+
+  return(OA_TRUE);
+}
+
+static oaChar* SearchAndReplace(const oaChar* src, oaChar* search, oaChar* replace)
+{
+  const oaChar* Src1;
+  const oaChar* Src2;
+  oaChar* ReturnStr;
+  oaChar* Dest;
+  OA_NATIVE_INT Num;
+  size_t SourceLen = OA_STRLEN(src);
+  size_t SearchLen = OA_STRLEN(search);
+  size_t ReplaceLen = OA_STRLEN(replace);
+  size_t NewLen = 0;
+  int SearchCnt = 0;
+
+  Src1 = src;
+
+  while ((Src2 = strstr(Src1, search)))
+  { 
+    Src1 = Src2 + ReplaceLen;
+    SearchCnt++;
+  }
+
+  NewLen = SourceLen - SearchCnt*SearchLen + SearchCnt*ReplaceLen;
+ 
+  ReturnStr = (oaChar*) malloc((NewLen+1)*sizeof(oaChar));
+
+  Src1 = src;
+  Dest = ReturnStr;
+
+  while ((Src2 = strstr (Src1, search)))
+  {
+    Num = Src2 - Src1;
+    memcpy (Dest, Src1, Num);
+
+    Src1 = Src2 + SearchLen;
+
+    Dest += Num;
+    memcpy(Dest, replace, ReplaceLen);
+    Dest += ReplaceLen;
+  }
+
+  //OA_STRNCPY(Dest,Src1,((NewLen+1)*sizeof(oaChar)));
+  OA_STRCPY(Dest,Src1);
+
+  return ReturnStr;
+}
+
+static oaBool LoadPlugin(void)
+{
+#ifdef WIN32
+  WCHAR WidePluginPath[OA_MAX_PATH_LENGTH];
+
+  int Length = MultiByteToWideChar(CP_UTF8, 0, 
+    PluginPath, (int)OA_STRLEN(PluginPath)+1, 
+    WidePluginPath, OA_MAX_PATH_LENGTH);
+
+  if( Length==0 )
+  {
+    DWORD Error = GetLastError();
+    if(Error == ERROR_INSUFFICIENT_BUFFER )
+      OA_ERROR("OpenAutomate MultiByteToWideChar returned error: ERROR_INSUFFICIENT_BUFFER\n")
+    else if( Error == ERROR_INVALID_FLAGS )
+      OA_ERROR("OpenAutomate MultiByteToWideChar returned error: ERROR_INVALID_FLAGS\n")
+    else if( Error == ERROR_INVALID_PARAMETER  )
+      OA_ERROR("OpenAutomate MultiByteToWideChar returned error: ERROR_INVALID_PARAMETER\n")
+    else if( Error == ERROR_NO_UNICODE_TRANSLATION )
+      OA_ERROR("OpenAutomate MultiByteToWideChar returned error: ERROR_NO_UNICODE_TRANSLATION\n")
+
+    if( OA_STRLEN(PluginPath)==0 )
+      OA_ERROR("OpenAutomate PluginPath was undefined\n");
+
+    return(OA_FALSE);
+  }
+  else 
+    PluginHandle = LoadLibraryW(WidePluginPath);
+#else
+  PluginHandle = dlopen(PluginPath, RTLD_LAZY);
+#endif
+
+  if(!PluginHandle)
+  {
+    fprintf(stderr, "OpenAutomate Failed loading: '%s'\n", PluginPath);
+    return(OA_FALSE);
+  }
+
+  PluginInitFunc = 
+#ifdef WIN32
+    (oaiPluginInitFunc)GetProcAddress(PluginHandle, OA_PLUGIN_INIT_FUNC);
+#else
+    (oaiPluginInitFunc)dlsym(PluginHandle, OA_PLUGIN_INIT_FUNC);
+#endif
+
+  if(!PluginInitFunc)
+  {
+    OA_ERROR("Plugin does not have the correct entry point.");
+    return(OA_FALSE);
+  }
+
+  return(OA_TRUE);
+}
+
+void oaAddFrameValue(const oaChar *name, 
+                     oaOptionDataType value_type,
+                     const oaValue *value)
+{
+  INIT_CHECK();
+
+  if(FuncTable.AddFrameValue)
+    FuncTable.AddFrameValue(name, value_type, value);
+}
