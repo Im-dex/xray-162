@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="xrRender_R2"
 	ProjectGUID="{963BA4E5-499A-454D-B002-1D5ECE0527A6}"
 	RootNamespace="xrRender_R2"
@@ -47,7 +47,7 @@
 				Optimization="0"
 				EnableFiberSafeOptimizations="true"
 				AdditionalIncludeDirectories="../../../sdk/include/stlport;../../../sdk/include/"
-				PreprocessorDefinitions="WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R2_EXPORTS;_SECURE_SCL=0;USE_RESOURCE_DEBUGGER"
+				PreprocessorDefinitions="ATIMGPUD_DLL;WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R2_EXPORTS;_SECURE_SCL=0;USE_RESOURCE_DEBUGGER"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -78,7 +78,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="nvapi.lib atimgpud_s_x86.lib"
+				AdditionalDependencies="nvapi.lib"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\sdk\libraries;..\..\..\..\libraries"
@@ -148,7 +148,7 @@
 				EnableFiberSafeOptimizations="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="../../../sdk/include/stlport;../../../sdk/include/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;XRRENDER_R2_EXPORTS;_SECURE_SCL=0"
+				PreprocessorDefinitions="ATIMGPUD_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL;XRRENDER_R2_EXPORTS;_SECURE_SCL=0"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -179,7 +179,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nvapi.lib atimgpud_s_x86.lib"
+				AdditionalDependencies="nvapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\sdk\libraries;..\..\..\..\libraries"
 				GenerateDebugInformation="true"
@@ -250,7 +250,7 @@
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="true"
 				AdditionalIncludeDirectories="../../../sdk/include/stlport;../../../sdk/include/"
-				PreprocessorDefinitions="MIXED;WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R2_EXPORTS;_SECURE_SCL=0"
+				PreprocessorDefinitions="ATIMGPUD_DLL;MIXED;WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R2_EXPORTS;_SECURE_SCL=0"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="true"
@@ -279,7 +279,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="nvapi.lib atimgpud_s_x86.lib"
+				AdditionalDependencies="nvapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\sdk\libraries;..\..\..\..\libraries"
 				GenerateDebugInformation="true"

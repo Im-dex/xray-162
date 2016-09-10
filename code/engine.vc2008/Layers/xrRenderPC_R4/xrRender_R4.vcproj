@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="xrRender_R4"
 	ProjectGUID="{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}"
 	RootNamespace="xrRender_R4"
@@ -44,7 +44,7 @@
 				Optimization="0"
 				EnableFiberSafeOptimizations="true"
 				AdditionalIncludeDirectories="../../../sdk/include/stlport;../../../sdk/include/"
-				PreprocessorDefinitions="MSAA_DX10_1;MSAA_SAMPLES=4;USE_MSAA;GBUFFER_OPTIMIZATION;WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R4_EXPORTS;_SECURE_SCL=0;USE_DX11;USE_RESOURCE_DEBUGGER"
+				PreprocessorDefinitions="ATIMGPUD_DLL;MSAA_DX10_1;MSAA_SAMPLES=4;USE_MSAA;GBUFFER_OPTIMIZATION;WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R4_EXPORTS;_SECURE_SCL=0;USE_DX11;USE_RESOURCE_DEBUGGER"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -75,7 +75,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies="dxguid.lib d3dx11.lib d3d11.lib dxgi.lib D3DCompiler.lib nvapi.lib atimgpud_s_x86.lib dxerr.lib d3d10.lib"
+				AdditionalDependencies="dxguid.lib d3dx11.lib d3d11.lib dxgi.lib D3DCompiler.lib nvapi.lib dxerr.lib d3d10.lib"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\sdk\libraries;..\..\..\..\libraries"
@@ -145,7 +145,7 @@
 				EnableFiberSafeOptimizations="true"
 				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (March 2009)\Include&quot;;../../../sdk/include/stlport;../../../sdk/include/"
-				PreprocessorDefinitions="USE_DX11;WIN32;NDEBUG;_WINDOWS;_USRDLL;XRRENDER_R4_EXPORTS;_SECURE_SCL=0"
+				PreprocessorDefinitions="ATIMGPUD_DLL;USE_DX11;WIN32;NDEBUG;_WINDOWS;_USRDLL;XRRENDER_R4_EXPORTS;_SECURE_SCL=0"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -176,7 +176,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib d3dx11.lib D3DCompiler.lib d3d11.lib dxgi.lib nvapi.lib atimgpud_s_x86.lib dxerr.lib d3d10.lib"
+				AdditionalDependencies="dxguid.lib d3dx11.lib D3DCompiler.lib d3d11.lib dxgi.lib nvapi.lib dxerr.lib d3d10.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (March 2009)\Lib\x86\&quot;;..\..\..\sdk\libraries;..\..\..\..\libraries;"
 				GenerateDebugInformation="true"
@@ -247,7 +247,7 @@
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="true"
 				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (March 2009)\Include&quot;;../../../sdk/include/stlport;../../../sdk/include/;."
-				PreprocessorDefinitions="MIXED;WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R4_EXPORTS;_SECURE_SCL=0;USE_DX11"
+				PreprocessorDefinitions="ATIMGPUD_DLL;MIXED;WIN32;DEBUG;_WINDOWS;_USRDLL;XRRENDER_R4_EXPORTS;_SECURE_SCL=0;USE_DX11"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="true"
@@ -276,7 +276,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxguid.lib d3dx11.lib D3DCompiler.lib d3d11.lib dxgi.lib nvapi.lib atimgpud_s_x86.lib dxerr.lib d3d10.lib"
+				AdditionalDependencies="dxguid.lib d3dx11.lib D3DCompiler.lib d3d11.lib dxgi.lib nvapi.lib dxerr.lib d3d10.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (March 2009)\Lib\x86\&quot;;..\..\..\sdk\libraries;..\..\..\..\libraries;"
 				GenerateDebugInformation="true"
