@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="xrXMLParser"
 	ProjectGUID="{94A1C366-3D19-48E6-8170-4ADC2E70DF98}"
 	TargetFrameworkVersion="131072"
@@ -77,7 +77,7 @@
 				ProgramDataBaseFileName="$(IntDir)/"
 				WarningLevel="4"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="2"
 			/>
@@ -188,7 +188,7 @@
 				ProgramDataBaseFileName="$(IntDir)/"
 				WarningLevel="4"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="2"
 			/>
@@ -292,7 +292,7 @@
 				ProgramDataBaseFileName="$(IntDir)/"
 				WarningLevel="4"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 				CompileAs="2"
 			/>

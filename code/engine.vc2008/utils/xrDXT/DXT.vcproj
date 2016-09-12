@@ -93,7 +93,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\sdk\libraries;..\..\..\..\libraries"
-				IgnoreDefaultLibraryNames="libcmt.lib msvcp71.lib"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				GenerateMapFile="false"
@@ -198,7 +198,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\sdk\libraries;..\..\..\..\libraries"
-				IgnoreDefaultLibraryNames="libcmt.lib msvcp80.lib"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 				MapFileName=""
@@ -406,10 +406,6 @@
 			</File>
 			<File
 				RelativePath=".\nvdxt_options.h"
-				>
-			</File>
-			<File
-				RelativePath=".\nvDXTlibMTDLL.lib"
 				>
 			</File>
 			<File
