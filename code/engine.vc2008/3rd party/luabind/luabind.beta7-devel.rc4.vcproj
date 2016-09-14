@@ -12,9 +12,6 @@
 		<Platform
 			Name="Win32"
 		/>
-		<Platform
-			Name="Xbox 360"
-		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -199,146 +196,6 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
-		<Configuration
-			Name="Release|Xbox 360"
-			OutputDirectory="../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			IntermediateDirectory="../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			ConfigurationType="4"
-			UseOfMFC="-1"
-			UseOfATL="0"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLX360CompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="../../../include/stlport;../../../include;"
-				PreprocessorDefinitions="_XBOX;NDEBUG;LUABIND_BUILDING;_SECURE_SCL=0;_HAS_ITERATOR_DEBUGGING=0"
-				StringPooling="true"
-				MinimalRebuild="false"
-				ExceptionHandling="0"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				FloatingPointModel="2"
-				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="pch.h"
-				WarningLevel="4"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4530;4100;4714;4127"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="../../../libraries/$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-			<DebuggerTool
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug|Xbox 360"
-			OutputDirectory="../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			IntermediateDirectory="../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			ConfigurationType="4"
-			UseOfMFC="-1"
-			UseOfATL="0"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLX360CompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="../../../include/stlport;../../../include;"
-				PreprocessorDefinitions="_XBOX;DEBUG;LUABIND_BUILDING;_SECURE_SCL=0;_HAS_ITERATOR_DEBUGGING=0;"
-				StringPooling="false"
-				MinimalRebuild="true"
-				ExceptionHandling="0"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				FloatingPointModel="2"
-				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="pch.h"
-				WarningLevel="4"
-				DebugInformationFormat="4"
-				DisableSpecificWarnings="4100"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="../../../libraries/$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-			<DebuggerTool
-			/>
-		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -445,22 +302,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\main.cpp"
@@ -481,22 +322,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test.hpp"
@@ -511,22 +336,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -553,22 +362,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_attributes.cpp"
@@ -587,22 +380,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 					/>
 				</FileConfiguration>
 			</File>
@@ -625,22 +402,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_construction.cpp"
@@ -659,22 +420,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 					/>
 				</FileConfiguration>
 			</File>
@@ -697,22 +442,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_free_functions.cpp"
@@ -731,22 +460,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 					/>
 				</FileConfiguration>
 			</File>
@@ -769,22 +482,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_implicit_cast.cpp"
@@ -803,22 +500,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 					/>
 				</FileConfiguration>
 			</File>
@@ -841,22 +522,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_lua_classes.cpp"
@@ -875,22 +540,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 					/>
 				</FileConfiguration>
 			</File>
@@ -913,22 +562,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_object.cpp"
@@ -947,22 +580,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 					/>
 				</FileConfiguration>
 			</File>
@@ -985,22 +602,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_policies.cpp"
@@ -1019,22 +620,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 					/>
 				</FileConfiguration>
 			</File>
@@ -1057,22 +642,7 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
+
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_separate_registration.cpp"
@@ -1093,22 +663,7 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
+
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_separation.cpp"
@@ -1129,22 +684,7 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
+
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_typetraits.cpp"
@@ -1165,22 +705,7 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
+
 			</File>
 			<File
 				RelativePath=".\luabind\test\test_yield.cpp"
@@ -1201,22 +726,7 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
+
 			</File>
 		</Filter>
 		<Filter
@@ -1244,22 +754,7 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
+
 				</File>
 			</Filter>
 			<Filter
@@ -1284,22 +779,7 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
+
 				</File>
 			</Filter>
 			<Filter
@@ -1328,22 +808,7 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
+
 				</File>
 			</Filter>
 			<Filter
@@ -1368,22 +833,7 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
+
 				</File>
 			</Filter>
 			<Filter
@@ -1408,22 +858,7 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
+
 				</File>
 			</Filter>
 			<Filter
@@ -1448,22 +883,7 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-						/>
-					</FileConfiguration>
+
 				</File>
 			</Filter>
 		</Filter>
@@ -1830,22 +1250,7 @@
 					UsePrecompiledHeader="1"
 				/>
 			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Xbox 360"
-				>
-				<Tool
-					Name="VCCLX360CompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Xbox 360"
-				>
-				<Tool
-					Name="VCCLX360CompilerTool"
-					UsePrecompiledHeader="1"
-				/>
-			</FileConfiguration>
+			
 		</File>
 		<File
 			RelativePath=".\pch.h"

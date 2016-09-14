@@ -12,9 +12,6 @@
 		<Platform
 			Name="Win32"
 		/>
-		<Platform
-			Name="Xbox 360"
-		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -315,279 +312,6 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
-		<Configuration
-			Name="Debug|Xbox 360"
-			OutputDirectory="..\..\..\binaries\$(PlatformName)"
-			IntermediateDirectory="..\..\..\intermediate\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="-1"
-			UseOfATL="0"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLX360CompilerTool"
-				Optimization="0"
-				EnableIntrinsicFunctions="false"
-				FavorSizeOrSpeed="0"
-				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="../../sdk/include/"
-				PreprocessorDefinitions="DEBUG;_XBOX;XBOX;_USRDLL;XRCORE_EXPORTS;_SECURE_SCL=0"
-				StringPooling="false"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				SmallerTypeCheck="false"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				FloatingPointModel="2"
-				ForceConformanceInForLoopScope="false"
-				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile="$(IntDir)/$(ProjectName).pch"
-				AssemblerListingLocation="$(IntDir)/"
-				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)/"
-				BrowseInformation="0"
-				WarningLevel="4"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCX360LinkerTool"
-				IgnoreImportLibrary="true"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\sdk\libraries;..\..\..\libraries"
-				GenerateDebugInformation="true"
-				GenerateMapFile="false"
-				MapFileName=""
-				MapExports="false"
-				ImportLibrary="..\..\..\libraries\$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCX360ImageTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCX360DeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-			<DebuggerTool
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Xbox 360"
-			OutputDirectory="..\..\..\binaries\$(PlatformName)"
-			IntermediateDirectory="..\..\..\intermediate\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="-1"
-			UseOfATL="0"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLX360CompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				EnableFiberSafeOptimizations="true"
-				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="../../sdk/include/"
-				PreprocessorDefinitions="NDEBUG;_XBOX;XBOX;_USRDLL;XRCORE_EXPORTS;_SECURE_SCL=0"
-				StringPooling="true"
-				ExceptionHandling="0"
-				RuntimeLibrary="2"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				FloatingPointModel="2"
-				ForceConformanceInForLoopScope="false"
-				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile="$(IntDir)/$(ProjectName).pch"
-				AssemblerOutput="4"
-				AssemblerListingLocation="$(IntDir)/"
-				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)/"
-				BrowseInformation="0"
-				WarningLevel="4"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCX360LinkerTool"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\sdk\libraries;..\..\..\libraries"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
-				GenerateMapFile="false"
-				MapFileName=""
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="1"
-				ImportLibrary="..\..\..\libraries\$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCX360ImageTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCX360DeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-			<DebuggerTool
-			/>
-		</Configuration>
-		<Configuration
-			Name="Mixed|Xbox 360"
-			OutputDirectory="..\..\..\binaries\$(PlatformName)"
-			IntermediateDirectory="..\..\..\intermediate\$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="-1"
-			UseOfATL="0"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLX360CompilerTool"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="../../sdk/include/"
-				PreprocessorDefinitions="MIXED,DEBUG;_XBOX;XBOX;_USRDLL;XRCORE_EXPORTS;_SECURE_SCL=0"
-				StringPooling="true"
-				RuntimeLibrary="2"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="false"
-				FloatingPointModel="2"
-				ForceConformanceInForLoopScope="false"
-				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile="$(IntDir)/$(ProjectName).pch"
-				AssemblerOutput="0"
-				AssemblerListingLocation="$(IntDir)/"
-				ObjectFile="$(IntDir)/"
-				ProgramDataBaseFileName="$(IntDir)/"
-				BrowseInformation="0"
-				WarningLevel="4"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCX360LinkerTool"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\sdk\libraries;..\..\..\libraries"
-				GenerateDebugInformation="true"
-				GenerateMapFile="false"
-				MapFileName="$(OutDir)/$(ProjectName).map"
-				ImportLibrary="..\..\..\libraries\$(ProjectName).lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCX360ImageTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCX360DeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-			<DebuggerTool
-			/>
-		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -631,31 +355,6 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-						ShowIncludes="false"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
 						UsePrecompiledHeader="1"
 						ShowIncludes="false"
 					/>
@@ -911,13 +610,6 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="FileSystem_borland.cpp"
@@ -986,30 +678,7 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
+				
 			</File>
 			<File
 				RelativePath=".\LocatorAPI_Notifications.h"
@@ -1038,42 +707,10 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="log.cpp"
 				>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="log.h"
@@ -1186,22 +823,6 @@
 						AssemblerOutput="4"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						AssemblerOutput="4"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						AssemblerOutput="4"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="xrMemory_pso_Fill.cpp"
@@ -1222,22 +843,7 @@
 						AssemblerOutput="4"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						AssemblerOutput="4"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						AssemblerOutput="4"
-					/>
-				</FileConfiguration>
+				
 			</File>
 			<File
 				RelativePath="xrMemory_pso_Fill32.cpp"
@@ -1258,22 +864,7 @@
 						AssemblerOutput="4"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						AssemblerOutput="4"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-						AssemblerOutput="4"
-					/>
-				</FileConfiguration>
+				
 			</File>
 			<File
 				RelativePath=".\xrMemory_pure.h"
@@ -1413,30 +1004,7 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
+				
 			</File>
 			<File
 				RelativePath="xrDebug.h"
@@ -1449,14 +1017,6 @@
 			<File
 				RelativePath=".\xrDebugNew.cpp"
 				>
-				<FileConfiguration
-					Name="Mixed|Xbox 360"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLX360CompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<Filter
 				Name="BlackBox"
@@ -1487,33 +1047,6 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
 							UsePrecompiledHeader="0"
 							WarningLevel="0"
 						/>
@@ -1549,33 +1082,6 @@
 							WarningLevel="0"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\blackbox\BugslayerUtil.h"
@@ -1607,33 +1113,6 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
 							UsePrecompiledHeader="0"
 							WarningLevel="0"
 						/>
@@ -1675,35 +1154,7 @@
 							WarningLevel="0"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
+					
 				</File>
 				<File
 					RelativePath=".\blackbox\DiagAssert.h"
@@ -1735,33 +1186,6 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
 							UsePrecompiledHeader="0"
 							WarningLevel="0"
 						/>
@@ -1801,33 +1225,6 @@
 							WarningLevel="0"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\blackbox\NT4ProcessInfo.cpp"
@@ -1859,33 +1256,6 @@
 							WarningLevel="0"
 						/>
 					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\blackbox\stdafx_.cpp"
@@ -1913,33 +1283,6 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
 							UsePrecompiledHeader="0"
 							ObjectFile="$(IntDir)/$(InputName)1.obj"
 						/>
@@ -1979,33 +1322,6 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
-							UsePrecompiledHeader="0"
-							WarningLevel="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Mixed|Xbox 360"
-						>
-						<Tool
-							Name="VCCLX360CompilerTool"
 							UsePrecompiledHeader="0"
 							WarningLevel="0"
 						/>
@@ -2140,33 +1456,6 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								WarningLevel="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Xbox 360"
-							>
-							<Tool
-								Name="VCCLX360CompilerTool"
-								UsePrecompiledHeader="0"
-								WarningLevel="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox 360"
-							>
-							<Tool
-								Name="VCCLX360CompilerTool"
-								UsePrecompiledHeader="0"
-								WarningLevel="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Mixed|Xbox 360"
-							>
-							<Tool
-								Name="VCCLX360CompilerTool"
 								UsePrecompiledHeader="0"
 								WarningLevel="0"
 							/>
