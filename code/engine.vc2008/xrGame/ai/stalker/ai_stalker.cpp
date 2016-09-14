@@ -38,6 +38,7 @@
 #include "../../memory_manager.h"
 #include "../../sight_manager.h"
 #include "../../ai_object_location.h"
+#include "../../ai_object_location_impl.h"
 #include "../../stalker_movement_manager_smart_cover.h"
 #include "../../entitycondition.h"
 #include "../../../xrServerEntities/script_engine.h"

@@ -140,7 +140,7 @@
 #define QEPSILON				0.00001f
 
 template <class T>
-struct XRCORE_API _quaternion {
+struct _quaternion {
 public:
 	typedef T				TYPE;
 	typedef _quaternion<T>	Self;
@@ -439,6 +439,9 @@ public:
 
 typedef _quaternion<float>	Fquaternion;
 typedef _quaternion<double>	Dquaternion;
+
+template struct XRCORE_API _quaternion<float>;
+template struct XRCORE_API _quaternion<double>;
 
 template <class T>
 BOOL	_valid			(const _quaternion<T>& s)	{ return _valid(s.x) && _valid(s.y) && _valid(s.z) && _valid(s.w);	}

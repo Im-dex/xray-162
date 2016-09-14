@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="ode"
 	ProjectGUID="{1BF75FEB-87DD-486C-880B-227987D191C2}"
 	Keyword="AtlProj"
@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\..\..\..\..\binaries"
-			IntermediateDirectory="..\..\..\..\..\..\..\intermediate\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfATL="1"
@@ -129,8 +129,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\..\..\..\..\binaries"
-			IntermediateDirectory="..\..\..\..\..\..\..\intermediate\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfATL="0"
@@ -249,8 +249,8 @@
 		</Configuration>
 		<Configuration
 			Name="Mixed|Win32"
-			OutputDirectory="..\..\..\..\..\..\..\binaries"
-			IntermediateDirectory="..\..\..\..\..\..\..\intermediate\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfATL="1"

@@ -2,6 +2,7 @@
 #include "helicopter.h"
 //#include "level.h"
 #include "script_game_object.h"
+#include "script_game_object_impl.h"
 //#include "game_object_space.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "../xrEngine/LightAnimLibrary.h"

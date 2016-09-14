@@ -74,7 +74,7 @@ public:
 	virtual void Execute(LPCSTR args) {
 		string_path fn;
 		if (args&&args[0])	xr_sprintf	(fn,sizeof(fn),"%s.dump",args);
-		else				strcpy_s_s	(fn,sizeof(fn),"x:\\$memory$.dump");
+		else				strcpy_s	(fn,sizeof(fn),"x:\\$memory$.dump");
 		Memory.mem_statistic				(fn);
 //		g_pStringContainer->dump			();
 //		g_pSharedMemoryContainer->dump		();

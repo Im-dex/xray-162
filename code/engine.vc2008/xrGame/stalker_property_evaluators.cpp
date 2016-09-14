@@ -11,6 +11,7 @@
 #include "ai/stalker/ai_stalker.h"
 #include "stalker_decision_space.h"
 #include "script_game_object.h"
+#include "script_game_object_impl.h"
 #include "ai/ai_monsters_misc.h"
 #include "inventory.h"
 #include "alife_simulator.h"

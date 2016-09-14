@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="crypto"
 	ProjectGUID="{FA169092-EA3E-40C1-8E5A-A2B575700FE8}"
 	RootNamespace="crypto"
@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\..\binaries"
-			IntermediateDirectory="..\..\..\..\intermediate\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="..\..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -91,8 +91,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\..\libraries"
-			IntermediateDirectory="..\..\..\..\intermediate\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="..\..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="1"

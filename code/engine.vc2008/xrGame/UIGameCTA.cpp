@@ -39,6 +39,7 @@
 #include "ui/UIActorMenu.h"
 #include "ui/UISkinSelector.h"
 #include "ui/UIHelper.h"
+//#include <functional>
 
 #define CTA_GAME_WND_XML	"ui_game_cta.xml"
 
@@ -582,7 +583,7 @@ void CUIGameCTA::SetPlayerItemsToBuyMenu()
 		for( ; ISlot<=ESlot; ++ISlot)
 			BuyMenuItemInserter(actor->inventory().ItemFromSlot(ISlot));
 
-		std::for_each(
+		/*std::for_each(
 			actor->inventory().m_belt.begin(),
 			actor->inventory().m_belt.end(),
 			std::bind1st(
@@ -591,8 +592,18 @@ void CUIGameCTA::SetPlayerItemsToBuyMenu()
 				),
 				this
 			)
-		);
-		std::for_each(
+		);*/
+		for (TIItemContainer::const_iterator i = actor->inventory().m_belt.begin();
+			 i != actor->inventory().m_belt.end(); i++)
+		{
+			BuyMenuItemInserter(*i);
+		}
+		/*for (const auto& item : actor->inventory().m_belt)
+		{
+			BuyMenuItemInserter(item);
+		}*/
+
+		/*std::for_each(
 			actor->inventory().m_ruck.begin(),
 			actor->inventory().m_ruck.end(),
 			std::bind1st(
@@ -601,15 +612,34 @@ void CUIGameCTA::SetPlayerItemsToBuyMenu()
 				),
 				this
 			)
-		);
-		std::for_each(add_ammo.begin(), add_ammo.end(),
+		);*/
+		for (TIItemContainer::const_iterator i = actor->inventory().m_ruck.begin();
+			 i != actor->inventory().m_ruck.end(); i++)
+		{
+			BuyMenuItemInserter(*i);
+		}
+		/*for (const auto& item : actor->inventory().m_ruck)
+		{
+			BuyMenuItemInserter(item);
+		}*/
+
+		/*std::for_each(add_ammo.begin(), add_ammo.end(),
 			std::bind1st(
 				std::mem_fun<void, CUIGameCTA, aditional_ammo_t::value_type const &>(
 					&CUIGameCTA::AdditionalAmmoInserter
 				), 
 				this
 			)
-		);
+		);*/
+		for (aditional_ammo_t::const_iterator i = add_ammo.begin();
+			 i != add_ammo.end(); i++)
+		{
+			AdditionalAmmoInserter(*i);
+		}
+		/*for (const auto& i : add_ammo)
+		{
+			AdditionalAmmoInserter(i);
+		}*/
 	} else
 	{
 		SetPlayerDefItemsToBuyMenu();

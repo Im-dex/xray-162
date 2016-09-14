@@ -11,6 +11,7 @@
 #include "eatable_item_object.h"
 #include "Missile.h"
 #include "ui/UIMpTradeWnd.h"
+#include <functional>
 
 #define UNBUYABLESLOT		20
 
@@ -237,14 +238,22 @@ void game_cl_Deathmatch::SetBuyMenuItems		(PRESET_ITEMS* pItems, BOOL OnlyPreset
 			}
 		};
 
-		std::for_each(add_ammo.begin(), add_ammo.end(),
+		/*std::for_each(add_ammo.begin(), add_ammo.end(),
 			std::bind1st(
 				std::mem_fun<void, game_cl_Deathmatch, aditional_ammo_t::value_type const &>(
 					&game_cl_Deathmatch::AdditionalAmmoInserter
 				), 
 				this
 			)
-		);
+		);*/
+		for(aditional_ammo_t::const_iterator i = add_ammo.begin(); i != add_ammo.end(); i++)
+		{
+			AdditionalAmmoInserter(*i);
+		}
+		/*for (const auto& i : add_ammo)
+		{
+			AdditionalAmmoInserter(i);
+		}*/
 	}
 	else
 	{

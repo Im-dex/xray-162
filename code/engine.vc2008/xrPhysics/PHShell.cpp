@@ -1039,14 +1039,17 @@ void CPHShell::SetCallbacks( )
 	{
 		IKinematics &K;
 		set_bone_reference( IKinematics &K_ ): K( K_ ){}
-		void operator() ( u16 id )
+#if _MSC_VER > 1500
+		set_bone_reference(set_bone_reference&& other) noexcept : K(other.K) {}
+#endif
+		void operator() ( u16 id ) const
 		{
 			CBoneInstance &bi  = K.LL_GetBoneInstance(id);
 			if(!bi.callback() || bi.callback_type() != bctPhysics  )
 			{
 				CPHElement *root_e = get_physics_parent( K, id );
 				if( root_e && K.LL_GetBoneVisible( id ) )
-					bi.set_callback( bctPhysics, 0, cast_PhysicsElement( root_e ) );
+					bi.set_callback( bctPhysics, NULL, cast_PhysicsElement( root_e ) );
 			}
 		}
 	};

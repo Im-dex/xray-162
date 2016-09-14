@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="lua.JIT.1.1.4"
 	ProjectGUID="{F6C4F74A-152C-4612-9E3B-D02346234855}"
 	RootNamespace="lua"
@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			IntermediateDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				OutputFile="../../../../binaries/$(ProjectName).dll"
+				OutputFile="$(OutDir)$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -111,8 +111,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			IntermediateDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -161,7 +161,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
-				OutputFile="../../../../binaries/$(ProjectName).dll"
+				OutputFile="$(OutDir)$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"

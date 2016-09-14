@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			IntermediateDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -77,7 +77,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="../../../../binaries/$(ProjectName).dll"
+				OutputFile="$(OutDir)$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../libraries/"
 				GenerateDebugInformation="true"
@@ -115,8 +115,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
-			IntermediateDirectory="../../../../intermediate/$(PlatformName)/$(ConfigurationName)/$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -165,7 +165,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="../../../../binaries/$(ProjectName).dll"
+				OutputFile="$(OutDir)$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../libraries/"
 				GenerateDebugInformation="true"

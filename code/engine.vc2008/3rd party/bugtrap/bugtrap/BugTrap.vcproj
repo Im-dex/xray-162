@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\..\..\binaries"
-			IntermediateDirectory="..\..\..\..\..\intermediate\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -112,8 +112,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\..\..\binaries"
-			IntermediateDirectory="..\..\..\..\..\intermediate\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(STALKER_COP_DIR)bin\$(ConfigurationName)\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>

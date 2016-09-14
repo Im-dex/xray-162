@@ -13,7 +13,7 @@
 
 namespace debug {
 
-#ifdef DEBUG
+#if 0 // DEBUG
 	namespace detail {
 
 		template <typename T1, typename T2>

@@ -10,6 +10,7 @@
 #include "ef_storage.h"
 #include "ai_space.h"
 #include "script_game_object.h"
+#include "script_game_object_impl.h"
 #include "entity_alive.h"
 #include "script_engine.h"
 #include "ef_base.h"

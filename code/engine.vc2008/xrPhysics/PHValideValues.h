@@ -3,6 +3,31 @@
 
 #include "mathutilsode.h"
 #include "ph_valid_ode.h"
+
+#if _MSC_VER <= 1500
+
+namespace local {
+	template <typename Input, typename Size, typename Output>
+	Output copy_n(Input first, Size count, Output result)
+	{
+		if (count > 0)
+		{
+			*result++ = *first;
+
+			for (Size i = 1; i < count; ++i)
+			{
+				*result++ = *++first;
+			}
+		}
+
+		return result;
+	}
+}
+
+#else
+	using namespace local = std;
+#endif
+
 class CSafeValue
 {
 		float						m_safe_value				;
@@ -86,13 +111,13 @@ public:
 	IC	void	create					(dBodyID b)
 	{
 		R_ASSERT(dBodyStateValide(b));
-		std::copy_n( dBodyGetRotation(b), sizeof(rotation)/sizeof(dReal), rotation );
+		local::copy_n( dBodyGetRotation(b), sizeof(rotation)/sizeof(dReal), rotation );
 		new_state(b);
 	}
 	IC  void	set_rotation ( const dMatrix3 r )
 	{
 		VERIFY( sizeof(rotation) == sizeof(dMatrix3) );
-		std::copy_n( r, sizeof(rotation)/sizeof(dReal), rotation );
+		local::copy_n( r, sizeof(rotation)/sizeof(dReal), rotation );
 	}
 	IC	void	new_state				(dBodyID b)
 	{

@@ -1,5 +1,3 @@
-#ifndef _STL_EXT_type_traits
-#define _STL_EXT_type_traits
 #pragma once
 
 // 1. class or not class
@@ -50,5 +48,3 @@ struct	is_polymorphic			{
 		result	= is_pm_classify<is_class<T>::result> :: _detail<T> :: result
 	};
 };
-
-#endif

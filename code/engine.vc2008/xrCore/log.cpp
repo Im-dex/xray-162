@@ -59,6 +59,7 @@ void AddOne				(const char *split)
 	if (LogExecCB&&LogCB)LogCB(split);
 
 	logCS.Leave				();
+	FlushLog();
 }
 
 void Log				(const char *s) 

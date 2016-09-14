@@ -21,8 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ProjectDir)..\..\..\libraries"
-			IntermediateDirectory="$(ProjectDir)..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			CharacterSet="1"
 			>
@@ -148,8 +148,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ProjectDir)..\..\..\libraries"
-			IntermediateDirectory="$(ProjectDir)..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -271,8 +271,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug Multithreaded|Win32"
-			OutputDirectory="$(ProjectDir)..\..\..\libraries"
-			IntermediateDirectory="$(ProjectDir)..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			CharacterSet="1"
 			>
@@ -398,8 +398,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release Multithreaded|Win32"
-			OutputDirectory="$(ProjectDir)..\..\..\libraries"
-			IntermediateDirectory="$(ProjectDir)..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -521,8 +521,8 @@
 		</Configuration>
 		<Configuration
 			Name="DebugMT_oaMan|Win32"
-			OutputDirectory="$(ProjectDir)..\..\..\libraries"
-			IntermediateDirectory="$(ProjectDir)..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			CharacterSet="1"
 			>
@@ -642,8 +642,8 @@
 		</Configuration>
 		<Configuration
 			Name="ReleaseMT_oaMan|Win32"
-			OutputDirectory="$(ProjectDir)..\..\..\libraries"
-			IntermediateDirectory="$(ProjectDir)..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\..\libraries\"
+			IntermediateDirectory="..\..\..\..\..\intermediate\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
