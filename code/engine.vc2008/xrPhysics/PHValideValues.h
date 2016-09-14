@@ -25,7 +25,7 @@ namespace local {
 }
 
 #else
-	using namespace local = std;
+	namespace local = std;
 #endif
 
 class CSafeValue

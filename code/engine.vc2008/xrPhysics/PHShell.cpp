@@ -1039,7 +1039,9 @@ void CPHShell::SetCallbacks( )
 	{
 		IKinematics &K;
 		set_bone_reference( IKinematics &K_ ): K( K_ ){}
-#if _MSC_VER > 1500
+#if _MSC_VER > 1500 && _MSC_VER < 1900
+		set_bone_reference(set_bone_reference&& other) : K(other.K) {}
+#else if _MSC_VER >= 1900
 		set_bone_reference(set_bone_reference&& other) noexcept : K(other.K) {}
 #endif
 		void operator() ( u16 id ) const

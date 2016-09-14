@@ -9,6 +9,8 @@
 #define object_type_traits_h_included
 #pragma once
 
+#include <type_traits>
+
 //#define USE_BOOST
 
 #ifdef USE_BOOST
@@ -119,6 +121,7 @@
 			enum { value = true}; 
 		};
 
+#if _MSC_VER < 1600
 
 		template <typename T>
 		struct is_pointer {
@@ -128,7 +131,7 @@
 			enum { value = sizeof(detail::yes) == sizeof(select(detail::other<T>()))};
 		};
 
-		template <typename T>
+			template <typename T>
 		struct is_reference {
 			template <typename P> static detail::yes select(detail::other<P&>);
 			static detail::no select(...);
@@ -161,7 +164,34 @@
 			};
 		};
 
-		template <template <typename _1> class T1, typename T2, typename T3>
+		template <template <typename _1> class T1, typename T2>
+		struct is_base_and_derived_or_same_from_template {
+			template <typename P>
+			static detail::yes	select(T1<P>*);
+			static detail::no	select(...);
+
+			enum { value = sizeof(detail::yes) == sizeof(select((T2*)0))};
+		};
+#else
+	using std::is_pointer;
+	using std::is_reference;
+	using std::is_same;
+
+	template <typename _T1, typename _T2>
+	struct is_base_and_derived
+	{
+		typedef typename std::remove_const<_T1>::type T1;
+		typedef typename std::remove_const<_T2>::type T2;
+
+		enum
+		{
+			value = std::is_class<T1>::value && std::is_class<T2>::value && std::is_base_of<T1, T2>::value
+		};
+	};
+#endif
+
+	// TODO: unused
+/*		template <template <typename _1> class T1, typename T2, typename T3>
 		struct is_base_and_derived_or_same_for_template_template_1_1 {
 			template <typename P>
 			static typename _if<
@@ -172,8 +202,20 @@
 			>::result			select(T1<P>*);
 			static detail::no	select(...);
 
+#if _MSC_VER >= 1600
+			enum { value = sizeof(detail::yes) == sizeof(select(static_cast<T2*>(nullptr)))};
+#else
 			enum { value = sizeof(detail::yes) == sizeof(select((T2*)0))};
-		};
+#endif
+		};*/
+
+		/*template <template <class A> class T1, typename T2>
+		struct is_base_and_derived_or_same_from_template {
+			enum
+			{
+				value = std::is_base_of<T1<A>, T2>::value
+			};
+		};*/
 
 		template <template <typename _1> class T1, typename T2>
 		struct is_base_and_derived_or_same_from_template {
@@ -181,7 +223,13 @@
 			static detail::yes	select(T1<P>*);
 			static detail::no	select(...);
 
+#if _MSC_VER < 1600
 			enum { value = sizeof(detail::yes) == sizeof(select((T2*)0))};
+#else
+			enum {
+				value = std::is_same<detail::yes, decltype(select(static_cast<T2*>(nullptr)))>::value
+			};
+#endif
 		};
 
 		declare_has(iterator);

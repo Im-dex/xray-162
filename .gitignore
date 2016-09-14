@@ -1,6 +1,10 @@
 *.ncb
 *.suo
 *.user
+*.sdf
+*.opensdf
+*.cache
+*.ipch
 
 binaries/
 intermediate/
