@@ -5,7 +5,7 @@
 #include "os_clipboard.h"
 
 #include <sal.h>
-#include "dxerr.h"
+//#include "dxerr.h"
 
 #pragma warning(push)
 #pragma warning(disable:4995)
@@ -207,7 +207,7 @@ void xrDebug::backend	(const char *expression, const char *description, const ch
 #	ifdef USE_OWN_ERROR_MESSAGE_WINDOW
 		int					result = 
 			MessageBox(
-				GetTopWindow(NULL),
+				/*GetTopWindow(NULL)*/nullptr,
 				assertion_info,
 				"Fatal Error",
 				MB_CANCELTRYCONTINUE|MB_ICONERROR|MB_SYSTEMMODAL
@@ -251,10 +251,10 @@ LPCSTR xrDebug::error2string	(long code)
 	LPCSTR				result	= 0;
 	static	string1024	desc_storage;
 
-#ifdef _M_AMD64
+/*#ifdef _M_AMD64
 #else
 	result				= DXGetErrorDescription	(code);
-#endif
+#endif*/
 	if (0==result)
 	{
 		FormatMessage	(FORMAT_MESSAGE_FROM_SYSTEM,0,code,0,desc_storage,sizeof(desc_storage)-1,0);
