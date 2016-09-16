@@ -5,6 +5,8 @@
 *.opensdf
 *.cache
 *.ipch
+*.db
+*.opendb
 
 binaries/
 intermediate/
