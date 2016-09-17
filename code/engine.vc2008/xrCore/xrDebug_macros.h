@@ -75,16 +75,4 @@
 #define todo( x )  message( __FILE__LINE__" TODO :   " #x "\n" ) 
 #define fixme( x )  message( __FILE__LINE__" FIXME:   " #x "\n" ) 
 
-#if _MSC_VER >= 1600
-#	define STATIC_CHECK(expr, msg) static_assert(expr, #msg)
-#else
-//--------- static assertion
-template<bool>	struct CompileTimeError;
-template<>		struct CompileTimeError<true>	{};
-#define STATIC_CHECK(expr, msg) \
-{ \
-	CompileTimeError<((expr) != 0)> ERROR_##msg; \
-	(void)ERROR_##msg; \
-}
-#endif
 #endif // xrDebug_macrosH

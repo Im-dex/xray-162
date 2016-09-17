@@ -44,19 +44,7 @@
 	};
 
 	template <typename T1, typename T2>
-	struct is_type {
-		template <typename T>
-		struct selector {
-			enum { value = false, };
-		};
-
-		template <>
-		struct selector<T1> {
-			enum { value = true, };
-		};
-
-		enum { value = selector<T2>::value, };
-	};
+    using is_type = std::is_same<T1, T2>;
 
 	template <typename T>
 	struct type {
@@ -189,33 +177,6 @@
 		};
 	};
 #endif
-
-	// TODO: unused
-/*		template <template <typename _1> class T1, typename T2, typename T3>
-		struct is_base_and_derived_or_same_for_template_template_1_1 {
-			template <typename P>
-			static typename _if<
-				is_base_and_derived<P,T3>::value ||
-				is_same<P,T3>::value,
-				detail::yes,
-				detail::no
-			>::result			select(T1<P>*);
-			static detail::no	select(...);
-
-#if _MSC_VER >= 1600
-			enum { value = sizeof(detail::yes) == sizeof(select(static_cast<T2*>(nullptr)))};
-#else
-			enum { value = sizeof(detail::yes) == sizeof(select((T2*)0))};
-#endif
-		};*/
-
-		/*template <template <class A> class T1, typename T2>
-		struct is_base_and_derived_or_same_from_template {
-			enum
-			{
-				value = std::is_base_of<T1<A>, T2>::value
-			};
-		};*/
 
 		template <template <typename _1> class T1, typename T2>
 		struct is_base_and_derived_or_same_from_template {
