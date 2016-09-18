@@ -91,7 +91,7 @@ namespace SmartDynamicCast {
 
 			typedef typename 
 				selector<
-					is_type<Base,typename Head::Head>::value
+					std::is_same_v<Base,typename Head::Head>
 				>::result result;
 		};
 
@@ -264,7 +264,7 @@ namespace SmartDynamicCast {
 
 				typedef typename
 					selector<
-						is_type<Loki::NullType,search_result>::value
+						std::is_same_v<Loki::NullType,search_result>
 					>::result result;
 			};
 
@@ -282,7 +282,7 @@ namespace SmartDynamicCast {
 					typedef typename list_iterator<Tail>::result result;
 				};
 
-				typedef typename _selector<!is_type<Loki::NullType,helper_result>::value>::result result;
+				typedef typename _selector<!std::is_same_v<Loki::NullType,helper_result>>::result result;
 			};
 
 			template <>
@@ -301,7 +301,7 @@ namespace SmartDynamicCast {
 						typedef typename list_iterator<Tail>::result result;
 					};
 
-					typedef typename _selector2<!is_type<Loki::NullType,helper_result>::value>::result result;
+					typedef typename _selector2<!std::is_same_v<Loki::NullType,helper_result>>::result result;
 				};
 
 				template <>
@@ -346,7 +346,7 @@ namespace SmartDynamicCast {
 
 			typedef typename 
 				_selector<
-					!is_type<Loki::NullType,nearest>::value
+					!std::is_same_v<Loki::NullType,nearest>
 				>::result result;
 		};
 

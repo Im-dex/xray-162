@@ -881,7 +881,7 @@ CRenderTarget::CRenderTarget		()
 			descHBAO.CPUAccessFlags = 0;
 			descHBAO.MiscFlags = 0;
 			
-			it = TEX_jitter_count-1;
+			const auto it = TEX_jitter_count-1;
 			subData[it].pSysMem = tempDataHBAO;
 			subData[it].SysMemPitch = descHBAO.Width*sampleSize * sizeof(float);
 			

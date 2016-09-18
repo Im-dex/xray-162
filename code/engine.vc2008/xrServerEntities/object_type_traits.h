@@ -23,9 +23,9 @@
 	#define declare_has(a) \
 		template <typename T>\
 		struct has_##a {\
-			template <typename P> static detail::yes	select(detail::other<typename P::a>*);\
-			template <typename P> static detail::no	select(...);\
-			enum { value = sizeof(detail::yes) == sizeof(select<T>(0)) };\
+			template <typename P> static std::true_type  select(detail::other<typename P::a>*);\
+			template <typename P> static std::false_type select(...);\
+			static constexpr auto value = std::is_same<std::true_type, decltype(select<T>(nullptr))>::value;\
 		};
 
 	template <bool expression, typename T1, typename T2>
@@ -43,154 +43,36 @@
 		typedef typename selector<expression>::result result;
 	};
 
-	template <typename T1, typename T2>
-    using is_type = std::is_same<T1, T2>;
-
-	template <typename T>
-	struct type {
-		typedef T result;
-	};
-
 	namespace object_type_traits {
 		namespace detail {
-			struct yes {char a[1];};
-			struct no  {char a[2];};
 			template <typename T> struct other{};
 		};
 
-		template <typename T> struct remove_pointer{
-			typedef T type;
-		};
+	    using std::is_pointer;
+	    using std::is_reference;
+	    using std::is_same;
+        using std::remove_pointer;
+        using std::remove_reference;
+        using std::remove_const;
+        using std::is_void;
+        using std::is_const;
 
-		template <typename T> struct remove_pointer<T*>{
-			typedef T type;
-		};
+	    template <typename _T1, typename _T2>
+	    struct is_base_and_derived
+	    {
+		    using T1 = std::remove_const_t<_T1>;
+		    using T2 = std::remove_const_t<_T2>;
 
-		template <typename T> struct remove_pointer<T* const>{
-			typedef T type;
-		};
-
-		template <typename T> struct remove_reference{
-			typedef T type;
-		};
-
-		template <typename T> struct remove_reference<T&>{
-			typedef T type;
-		};
-
-		template <typename T> struct remove_reference<T const &>{
-			typedef T type;
-		};
-
-		template <typename T> struct remove_const{
-			typedef T type; 
-		};
-
-		template <typename T> struct remove_const<T const>{
-			typedef T type; 
-		};
-
-		template <typename T>
-		struct is_void {
-			template <typename P>
-			struct select		{enum { value = false}; };
-			
-			template <>
-			struct select<void> {enum { value = true}; };
-			
-			enum { value = select<T>::value};
-		};
-
-		template <typename T> struct is_const{
-			enum { value = false}; 
-		};
-
-		template <typename T> struct is_const<T const>{
-			enum { value = true}; 
-		};
-
-#if _MSC_VER < 1600
-
-		template <typename T>
-		struct is_pointer {
-			template <typename P> static detail::yes select(detail::other<P*>);
-			static detail::no select(...);
-
-			enum { value = sizeof(detail::yes) == sizeof(select(detail::other<T>()))};
-		};
-
-			template <typename T>
-		struct is_reference {
-			template <typename P> static detail::yes select(detail::other<P&>);
-			static detail::no select(...);
-
-			enum { value = sizeof(detail::yes) == sizeof(select(detail::other<T>()))};
-		};
-
-		template <typename _T1, typename _T2>
-		struct is_same {
-			typedef typename remove_const<_T1>::type T1;
-			typedef typename remove_const<_T2>::type T2;
-
-			enum { value = is_type<T1,T2>::value };
-		};
-
-		template <typename _T1, typename _T2>
-		struct is_base_and_derived {
-			typedef typename remove_const<_T1>::type T1;
-			typedef typename remove_const<_T2>::type T2;
-
-			static detail::yes	select(T1*);
-			static detail::no	select(...);
-
-			enum { 
-				value = 
-					is_class<T1>::result && 
-					is_class<T2>::result && 
-					!is_same<T1,T2>::value &&
-					sizeof(detail::yes) == sizeof(select((T2*)(0)))
-			};
-		};
+            static constexpr auto value = std::is_class<T1>::value && std::is_class<T2>::value && std::is_base_of<T1, T2>::value;
+	    };
 
 		template <template <typename _1> class T1, typename T2>
 		struct is_base_and_derived_or_same_from_template {
 			template <typename P>
-			static detail::yes	select(T1<P>*);
-			static detail::no	select(...);
+			static std::true_type	select(T1<P>*);
+			static std::false_type	select(...);
 
-			enum { value = sizeof(detail::yes) == sizeof(select((T2*)0))};
-		};
-#else
-	using std::is_pointer;
-	using std::is_reference;
-	using std::is_same;
-
-	template <typename _T1, typename _T2>
-	struct is_base_and_derived
-	{
-		typedef typename std::remove_const<_T1>::type T1;
-		typedef typename std::remove_const<_T2>::type T2;
-
-		enum
-		{
-			value = std::is_class<T1>::value && std::is_class<T2>::value && std::is_base_of<T1, T2>::value
-		};
-	};
-#endif
-
-		template <template <typename _1> class T1, typename T2>
-		struct is_base_and_derived_or_same_from_template {
-			template <typename P>
-			static detail::yes	select(T1<P>*);
-			static detail::no	select(...);
-
-#if _MSC_VER < 1600
-			enum { value = sizeof(detail::yes) == sizeof(select((T2*)0))};
-#else
-			enum {
-				value = std::is_same<detail::yes, decltype(select(static_cast<T2*>(nullptr)))>::value
-			};
-#endif
+            static constexpr auto value = is_same<std::true_type, decltype(select(static_cast<T2*>(nullptr)))>::value;
 		};
 
 		declare_has(iterator);
