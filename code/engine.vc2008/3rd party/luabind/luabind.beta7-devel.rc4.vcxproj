@@ -88,7 +88,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\libraries\$(Configuration);..\..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../binaries/$(TargetName).pdb</ProgramDatabaseFile>
       <GenerateMapFile>false</GenerateMapFile>
@@ -127,7 +127,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\libraries\$(Configuration);..\..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../binaries/$(TargetName).pdb</ProgramDatabaseFile>
       <GenerateMapFile>false</GenerateMapFile>
@@ -161,7 +161,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\libraries\$(Configuration);..\..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>../../../../binaries/$(TargetName).pdb</ProgramDatabaseFile>
       <GenerateMapFile>false</GenerateMapFile>
@@ -427,12 +427,6 @@
   <ItemGroup>
     <None Include="luabind\doc\docs.html" />
     <None Include="luabind\doc\index.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\luajit\lua.JIT.1.1.4.vcxproj">
-      <Project>{f6c4f74a-152c-4612-9e3b-d02346234855}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

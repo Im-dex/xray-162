@@ -117,7 +117,7 @@
 /ignore:4075 %(AdditionalOptions)</AdditionalOptions>
       <ShowProgress>NotSet</ShowProgress>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
       <MapFileName>
@@ -177,7 +177,7 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386  %(AdditionalOptions)</AdditionalOptions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
       <MapFileName>$(OutDir)$(ProjectName).map</MapFileName>
@@ -241,7 +241,7 @@
     <Link>
       <AdditionalOptions>/MACHINE:I386  %(AdditionalOptions)</AdditionalOptions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <GenerateMapFile>false</GenerateMapFile>
@@ -5606,10 +5606,6 @@
     </ProjectReference>
     <ProjectReference Include="..\3rd party\luabind\luabind.beta7-devel.rc4.vcxproj">
       <Project>{cc52e0b3-cc35-4934-9302-035b748f3f2c}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\3rd party\luajit\lua.JIT.1.1.4.vcxproj">
-      <Project>{f6c4f74a-152c-4612-9e3b-d02346234855}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\3rd party\ode\contrib\msvc7\ode_default\default.vcxproj">

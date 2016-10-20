@@ -93,7 +93,7 @@
     <Link>
       <AdditionalDependencies>dxguid.lib;d3dcompiler.lib;d3d10.lib;d3dx10.lib;dxgi.lib;nvapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\..\sdk\libraries;..\..\..\sdk\libraries\$(Configuration);..\..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\..\sdk\libraries;..\..\..\sdk\libraries\$(Configuration);..\..\..\..\libraries\$(Configuration);..\..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
       <MapFileName>
@@ -142,7 +142,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>dxguid.lib;d3dcompiler.lib;d3d10.lib;d3dx10.lib;dxgi.lib;nvapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\..\sdk\libraries;..\..\..\sdk\libraries\$(Configuration);..\..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\..\sdk\libraries;..\..\..\sdk\libraries\$(Configuration);..\..\..\..\libraries\$(Configuration);..\..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <GenerateMapFile>false</GenerateMapFile>
@@ -191,7 +191,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>dxguid.lib;d3dcompiler.lib;d3d10.lib;d3dx10.lib;dxgi.lib;nvapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\..\sdk\libraries;..\..\..\sdk\libraries\$(Configuration);..\..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\..\sdk\libraries;..\..\..\sdk\libraries\$(Configuration);..\..\..\..\libraries\$(Configuration);..\..\..\sdk\libraries\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>false</GenerateMapFile>
       <MapFileName>$(OutDir)$(ProjectName).map</MapFileName>
