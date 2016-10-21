@@ -7,8 +7,6 @@
 #ifndef DOORS_DOOR_H_INCLUDED
 #define DOORS_DOOR_H_INCLUDED
 
-#include <boost/noncopyable.hpp>
-
 class CPhysicObject;
 
 namespace doors {
@@ -16,10 +14,14 @@ namespace doors {
 class actor;
 enum door_state;
 
-class door : private boost::noncopyable {
+class door {
 public:
 						door				( CPhysicObject* object );
+                        door(const door&) = delete;
 						~door				( );
+
+                        door& operator= (const door&) = delete;
+
 	void				change_state		( actor* initiator, door_state state );
 	void 				on_change_state		( door_state const state );
 #ifdef DEBUG

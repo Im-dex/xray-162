@@ -7,7 +7,6 @@
 #ifndef DOORS_MANAGER_H_INCLUDED
 #define DOORS_MANAGER_H_INCLUDED
 
-#include <boost/noncopyable.hpp>
 #include "quadtree.h"
 #include "doors.h"
 
@@ -18,10 +17,14 @@ namespace doors {
 class actor;
 class door;
 
-class manager : private boost::noncopyable {
+class manager {
 public:
 				manager					( Fbox const& bounding_box );
+                manager(const manager&) = delete;
 				~manager				( );
+
+    manager&    operator=               (const manager&) = delete;
+
 	door*		register_door			( CPhysicObject& object );
 	void		unregister_door			( door*& door );
 	void		on_door_is_open			( door* door );

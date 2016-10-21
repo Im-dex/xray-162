@@ -9,16 +9,17 @@
 #ifndef RAT_STATE_BASE_H_INCLUDED
 #define RAT_STATE_BASE_H_INCLUDED
 
-#include <boost/noncopyable.hpp>
-
 class CAI_Rat;
 
-class rat_state_base : private boost::noncopyable {
+class rat_state_base {
 private:
 	CAI_Rat	*m_object;
 
 public:
 	IC				rat_state_base	();
+
+    rat_state_base(const rat_state_base& other) = delete;
+    rat_state_base& operator=(const rat_state_base& other) = delete;
 			void	construct		(CAI_Rat *object);
 	virtual	void	initialize		() = 0;
 	virtual	void	execute			() = 0;

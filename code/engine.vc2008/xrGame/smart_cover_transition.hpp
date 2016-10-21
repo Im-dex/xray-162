@@ -20,8 +20,7 @@ namespace transitions {
 class animation_action;
 
 class action :
-	private debug::make_final<action>,
-	private boost::noncopyable 
+	private debug::make_final<action>
 {
 
 public:
@@ -34,6 +33,9 @@ private:
 
 public:
 								action					(luabind::object const &table);
+
+    action(const action& other) = delete;
+    action& operator=(const action& other) = delete;
 								~action					();
 			bool				applicable				() const;
 			animation_action const	&animation			() const;

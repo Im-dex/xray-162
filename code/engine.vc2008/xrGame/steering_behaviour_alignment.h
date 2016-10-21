@@ -18,11 +18,13 @@ namespace steering_behaviour {
 
 class alignment : 
 	public base,
-	private debug::make_final<alignment>,
-	private boost::noncopyable 
+	private debug::make_final<alignment>
 {
 public:
 						alignment	(CAI_Rat const *object);
+
+    alignment(const alignment& other) = delete;
+    alignment& operator=(const alignment& other) = delete;
 	virtual	Fvector		direction	();
 
 private:

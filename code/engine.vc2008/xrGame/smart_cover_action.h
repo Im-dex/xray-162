@@ -8,7 +8,6 @@
 #ifndef SMART_COVER_ACTION_H_INCLUDED
 #define SMART_COVER_ACTION_H_INCLUDED
 
-#include <boost/noncopyable.hpp>
 #include "smart_cover_detail.h"
 #include "script_space_forward.h"
 #include "ai_monster_space.h"
@@ -17,9 +16,7 @@
 
 namespace smart_cover{
 
-class action :
-	private debug::make_final<action>,
-	private boost::noncopyable
+class action : debug::make_final<action>
 {
 private:
 	class animation_predicate {
@@ -29,7 +26,7 @@ private:
 		{
 			return			(lhs._get() < rhs._get());
 		}
-};
+    };
 
 public:
 	typedef xr_vector<shared_str>												Animations;
@@ -43,6 +40,9 @@ private:
 
 public:
 							action				(luabind::object const &description);
+
+    action(const action& other) = delete;
+    action& operator=(const action& other) = delete;
 							~action				();
 	IC	bool		const	&movement			() const;
 	IC	Fvector		const	&target_position	() const;

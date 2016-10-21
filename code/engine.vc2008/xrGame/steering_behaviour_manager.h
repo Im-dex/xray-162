@@ -9,7 +9,6 @@
 #ifndef STEERING_BEHAVIOUR_MANAGER_H_INCLUDED
 #define STEERING_BEHAVIOUR_MANAGER_H_INCLUDED
 
-#include <boost/noncopyable.hpp>
 #include "smart_cover_detail.h"
 
 class CAI_Rat;
@@ -18,11 +17,12 @@ class CAI_Rat;
 // #include "../../../steering_behaviour_cohesion.h"
 // #include "../../../steering_behaviour_alignment.h"
 // #include "../../../steering_behaviour_separation.h"	private boost::noncopyable,
-	private debug::make_final<manager>,
-	private boost::noncopyable 
+private debug::make_final<manager>
 {
 public:
 					manager			(CAI_Rat const *object);
+                    manager(const& manager) = delete;
+                    const& operator= (const manager&) = delete;
 					~manager		();
 			void	add				(base *behaviour, float const &factor);
 			void	remove			(base *behaviour);

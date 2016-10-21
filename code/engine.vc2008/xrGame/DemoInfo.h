@@ -1,7 +1,6 @@
 #ifndef DEMOINFO_H
 #define DEMOINFO_H
 
-#include <boost/noncopyable.hpp>
 #include "script_export_space.h"
 
 class CStreamReader;
@@ -15,7 +14,7 @@ struct game_PlayerState;
 //void stream_read_demostring	(CStreamReader* stream, shared_str & dest_rest, u32 max_size = STREAM_DEMOSTRING_MAX_SIZE);
 //void stream_write_demostring(IWriter* writer, shared_str const & string_to_write, u32 max_size = STREAM_DEMOSTRING_MAX_SIZE);
 
-class demo_player_info : private boost::noncopyable
+class demo_player_info
 {
 private:
 	shared_str	m_name;
@@ -27,6 +26,8 @@ private:
 	u8			m_rank;
 public:
 	demo_player_info();
+    demo_player_info(const demo_player_info& other) = delete;
+    demo_player_info& operator=(const demo_player_info& other) = delete;
 	~demo_player_info();
 
 	void	read_from_file		(CStreamReader* file_to_read);
@@ -50,7 +51,7 @@ add_to_type_list(demo_player_info)
 #undef script_type_list
 #define script_type_list save_type_list(demo_player_info)
 
-class demo_info : private boost::noncopyable
+class demo_info
 {
 private:
 	typedef xr_vector<demo_player_info*>	players_coll_t;
@@ -64,6 +65,8 @@ private:
 	
 public:
 	demo_info	();
+    demo_info(const demo_info& other) = delete;
+    demo_info& operator=(const demo_info& other) = delete;
 	~demo_info	();
 
 	typedef bool (*sorting_less_comparator)(demo_player_info const *, demo_player_info const*);

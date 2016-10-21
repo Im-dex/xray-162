@@ -10,7 +10,6 @@
 #define AIMERS_BASE_H_INCLUDED
 
 #include "../include/xrrender/animation_motion.h"
-#include <boost/noncopyable.hpp>
 
 class CGameObject;
 class IKinematics;
@@ -18,7 +17,7 @@ class IKinematicsAnimated;
 
 namespace aimers {
 
-class base : private boost::noncopyable
+class base
 {
 public:
 							base			(
@@ -27,6 +26,9 @@ public:
 								bool animation_start,
 								Fvector const& target
 							);
+
+                            base(const base&) = delete;
+                            base& operator= (const base&) = delete;
 
 protected:
 	template <u32 bone_count0, u32 bone_count1>

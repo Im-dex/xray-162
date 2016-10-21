@@ -3,7 +3,7 @@
 
 #include "traffic_optimization.h"
 
-class last_updates_cache : private boost::noncopyable
+class last_updates_cache
 {
 public:
 	static u32 const cache_entities_size = 32;
@@ -17,6 +17,8 @@ public:
 	typedef last_update_t last_updates_cache_t[cache_entities_size];
 
 			last_updates_cache	();
+            last_updates_cache(const last_updates_cache&) = delete;
+            last_updates_cache& operator= (const last_updates_cache&) = delete;
 			~last_updates_cache	()	{};
 
 	u16		add_update			(u16 const entity_id, NET_Packet const & update);

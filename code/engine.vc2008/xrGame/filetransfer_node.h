@@ -2,15 +2,16 @@
 #define FILETRANSFER_NODE
 
 #include "filetransfer_common.h"
-#include <boost/noncopyable.hpp>
 
 namespace file_transfer
 {
 
-class file_reader : private boost::noncopyable
+class file_reader
 {
 public:
 					file_reader			() {};
+                    file_reader(const file_reader&) = delete;
+                    file_reader& operator= (const file_reader&) = delete;
 	virtual			~file_reader		() {};
 	
 	virtual	bool	make_data_packet	(NET_Packet & packet, u32 chunk_size) = 0;

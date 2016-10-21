@@ -16,8 +16,7 @@ namespace smart_cover {
 namespace transitions {
 
 class animation_action :
-	private debug::make_final<animation_action>,
-	private boost::noncopyable 
+	private debug::make_final<animation_action>
 {
 private:
 	Fvector									m_position;
@@ -32,6 +31,9 @@ public:
 												MonsterSpace::EBodyState const& body_state,
 												MonsterSpace::EMovementType const& movement_type
 											);
+
+    animation_action(const animation_action& other) = delete;
+    animation_action& operator=(const animation_action& other) = delete;
 	IC	bool								has_animation	() const;
 	IC	Fvector const&						position		() const;
 	IC	shared_str const&					animation_id	() const;

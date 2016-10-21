@@ -11,15 +11,6 @@
 
 #include <type_traits>
 
-//#define USE_BOOST
-
-#ifdef USE_BOOST
-#	include <boost/type_traits/is_base_and_derived.hpp>
-#	include <boost/type_traits/is_pointer.hpp>
-#	include <boost/type_traits/remove_pointer.hpp>
-#	include <boost/type_traits/remove_const.hpp>
-	namespace object_type_traits = boost;
-#else
 	#define declare_has(a) \
 		template <typename T>\
 		struct has_##a {\
@@ -104,5 +95,4 @@
 //			};
 //		};
 	};
-#endif
 #endif //	object_type_traits_h_included

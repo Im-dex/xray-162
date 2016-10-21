@@ -10,9 +10,8 @@
 #include "game_cl_base_weapon_usage_statistic.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "game_cl_mp.h"
-#include <boost/noncopyable.hpp>
 
-class statistic_sync_quard : private boost::noncopyable
+class statistic_sync_quard
 {
 	xrCriticalSection & m_mutex;
 public:
@@ -21,6 +20,8 @@ public:
 	{
 		m_mutex.Enter();
 	}
+    statistic_sync_quard(const statistic_sync_quard&) = delete;
+    statistic_sync_quard& operator= (const statistic_sync_quard&) = delete;
 	~statistic_sync_quard()
 	{
 		m_mutex.Leave();

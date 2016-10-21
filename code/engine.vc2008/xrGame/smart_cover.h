@@ -8,7 +8,6 @@
 #ifndef SMART_COVER_H_INCLUDED
 #define SMART_COVER_H_INCLUDED
 
-#include <boost/noncopyable.hpp>
 #include "smart_cover_description.h"
 #include "cover_point.h"
 #include "smart_cover_loophole.h"
@@ -28,8 +27,7 @@ struct loophole_data {
 
 class cover : 
 	public  CCoverPoint,
-	private debug::make_final<cover>, 
-	private boost::noncopyable 
+	private debug::make_final<cover>
 {
 public:
 	typedef intrusive_ptr<
@@ -59,7 +57,11 @@ private:
 			void				vertex					(loophole const &loophole, loophole_data &loophole_data);
 public:
 								cover					(object const &object, DescriptionPtr description, bool is_combat_cover, bool can_fire, luabind::object const &loopholes);
+                                cover(const cover&) = delete;
 								~cover					();
+
+    cover&                      operator=               (const cover&) = delete;
+
 	IC		Loopholes const		&loopholes				() const;
 	IC		object const		&object					() const;
 	IC		Fvector				fov_position			(loophole const &loophole) const;

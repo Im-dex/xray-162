@@ -1,7 +1,6 @@
 #ifndef SCREENSHOT_SERVER
 #define SCREENSHOT_SERVER
 #include "file_transfer.h"
-#include <boost/noncopyable.hpp>
 
 enum clientdata_event_t
 {
@@ -13,7 +12,7 @@ enum clientdata_event_t
 	e_configs_error_notif
 };
 
-class clientdata_proxy : boost::noncopyable
+class clientdata_proxy
 {
 private:
 	ClientID						m_admin_id;		//for file transfer
@@ -32,6 +31,8 @@ private:
 	clientdata_proxy() {};
 public:
 	clientdata_proxy(file_transfer::server_site* ft_server);
+    clientdata_proxy(const clientdata_proxy&) = delete;
+    clientdata_proxy& operator= (const clientdata_proxy&) = delete;
 	~clientdata_proxy();
 
 	void make_screenshot	(ClientID const & admin_id, ClientID const & cheater_id);
