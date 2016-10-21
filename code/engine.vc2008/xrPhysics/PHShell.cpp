@@ -35,7 +35,7 @@
 #include "PHElementInline.h"
 #include "PhysicsShellAnimator.h"
 #include "phshellbuildjoint.h"
-#include <boost/noncopyable.hpp>
+
 #ifdef DEBUG
 #include	"debug_output.h"
 #endif
@@ -1035,7 +1035,7 @@ void CPHShell::SetCallbacks( )
 	};
 	std::for_each( elements.begin(), elements.end(), set_bone_callback() );
 
-	struct set_bone_reference: private boost::noncopyable
+	struct set_bone_reference
 	{
 		IKinematics &K;
 		set_bone_reference( IKinematics &K_ ): K( K_ ){}
@@ -1044,6 +1044,9 @@ void CPHShell::SetCallbacks( )
 #else if _MSC_VER >= 1900
 		set_bone_reference(set_bone_reference&& other) noexcept : K(other.K) {}
 #endif
+	    set_bone_reference(const set_bone_reference& other1) = delete;
+	    set_bone_reference& operator=(const set_bone_reference& other1) = delete;
+
 		void operator() ( u16 id ) const
 		{
 			CBoneInstance &bi  = K.LL_GetBoneInstance(id);

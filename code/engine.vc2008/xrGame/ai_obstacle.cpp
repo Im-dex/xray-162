@@ -12,7 +12,6 @@
 #include "level_graph.h"
 #include "GameObject.h"
 #include "../Include/xrRender/Kinematics.h"
-#include <boost/crc.hpp>
 
 #include "../xrEngine/bone.h"
 
@@ -257,15 +256,12 @@ void ai_obstacle::compute_impl		()
 		}
 	}
 
-//	VERIFY						(m_area.empty());
 	if (m_area.empty()) {
 		m_crc					= 0;
 		return;
 	}
 
-	boost::crc_32_type			temp;
-	temp.process_block			(&*m_area.begin(),&*m_area.end());
-	m_crc						= temp.checksum();
+	m_crc = crc32(m_area.data(), m_area.size());;
 }
 
 void ai_obstacle::on_move			()
