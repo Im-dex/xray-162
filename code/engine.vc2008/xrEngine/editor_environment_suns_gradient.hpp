@@ -11,8 +11,6 @@
 
 #ifdef INGAME_EDITOR
 
-#include <boost/noncopyable.hpp>
-
 namespace editor {
 
 class property_holder;
@@ -23,9 +21,11 @@ namespace suns {
 
 class manager;
 
-class gradient : private boost::noncopyable {
+class gradient {
 public:
 					gradient	();
+                    gradient(const gradient&) = delete;
+                    gradient& operator= (const gradient&) = delete;
 			void	load		(CInifile& config, shared_str const& section);
 			void	save		(CInifile& config, shared_str const& section);
 			void	fill		(manager const& manager, editor::property_holder* holder, editor::property_holder_collection* collection);

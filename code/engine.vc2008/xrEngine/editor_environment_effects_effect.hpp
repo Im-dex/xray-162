@@ -11,7 +11,6 @@
 
 #ifdef INGAME_EDITOR
 
-#include <boost/noncopyable.hpp>
 #include "../include/editor/property_holder.hpp"
 #include "environment.h"
 
@@ -26,11 +25,12 @@ class manager;
 
 class effect :
 	public CEnvAmbient::SEffect,
-	public editor::property_holder_holder,
-	private boost::noncopyable
+	public editor::property_holder_holder
 {
 public:
 							effect		(manager const& manager, shared_str const& id);
+                            effect(const effect&) = delete;
+                            effect& operator= (const effect&) = delete;
 	virtual					~effect		();
 			void			load		(CInifile& config);
 			void			save		(CInifile& config);

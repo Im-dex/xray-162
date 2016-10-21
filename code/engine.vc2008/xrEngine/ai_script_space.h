@@ -17,8 +17,6 @@
 //#define LUABIND_NO_EXCEPTIONS
 
 extern "C" {
-	//#define BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-
 	#include <lua/lua.h>
 	#include <lua/lualib.h>
 	#include <lua/lauxlib.h>
