@@ -27,7 +27,7 @@ public:
 
 	IC	SelfRef	null		()							{ min.set(0.f,0.f);	max.set(0.f,0.f);				return *this;	};
 	IC	SelfRef	identity	()							{ min.set(-0.5,-0.5,-0.5);	max.set(0.5,0.5,0.5);	return *this;	};
-	IC	SelfRef	invalidate	()							{ min.set(type_max(T),type_max(T)); max.set(type_min(T),type_min(T)); return *this;	}
+	IC	SelfRef	invalidate	()							{ min.set(type_max<T>,type_max<T>); max.set(type_min<T>,type_min<T>); return *this;	}
 
 	IC	SelfRef	shrink		(T s)						{ min.add(s); max.sub(s);				return *this;	};
 	IC	SelfRef	shrink		(const Tvector& s)			{ min.add(s); max.sub(s);				return *this;	};

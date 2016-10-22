@@ -123,7 +123,7 @@ bool stalker_movement_manager_obstacles::can_build_restricted_path	(const obstac
 			level_path().dest_vertex_id(),
 			&m_temp_path,
 			evaluator_type(
-				type_max(_dist_type),
+				type_max<_dist_type>,
 				_iteration_type(-1),
 				4096
 			)
