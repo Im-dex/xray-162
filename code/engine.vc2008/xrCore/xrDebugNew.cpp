@@ -35,7 +35,7 @@ extern bool shared_str_initialized;
 
 #ifndef _M_AMD64
 #	ifndef __BORLANDC__
-#		pragma comment(lib,"dxerr.lib")
+#		pragma comment(lib,"dxerr2015.lib")
 #	endif
 #endif
 

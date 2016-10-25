@@ -19,7 +19,7 @@
 #pragma warning(pop)
 
 #pragma comment(lib,"d3dx9.lib")
-#pragma comment(lib,"dxerr.lib")
+#pragma comment(lib,"dxerr2015.lib")
 
 // Warnings
 #pragma warning (disable : 4786 )		// too long names

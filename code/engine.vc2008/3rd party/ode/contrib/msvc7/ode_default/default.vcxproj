@@ -13,10 +13,6 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Template|Win32">
-      <Configuration>Template</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>ode</ProjectName>
@@ -42,9 +38,6 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfAtl>Static</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />

@@ -10,7 +10,7 @@
 #pragma warning(push)
 #pragma warning(disable:4995)
 #include <malloc.h>
-#include "dxerr.h"
+#include "dxerr/dxerr.h"
 
 //#pragma warning(pop)
 
@@ -437,7 +437,7 @@ if(!psNET_direct_connect)
 	net_Disconnected= FALSE;
 
 	//---------------------------
-	string1024 tmp="";
+	
 //	HRESULT CoInitializeExRes = CoInitializeEx(NULL, 0);
 //	if (CoInitializeExRes != S_OK && CoInitializeExRes != S_FALSE)
 //	{
@@ -450,7 +450,7 @@ if(!psNET_direct_connect)
 	//---------------------------	
 	if (CoCreateInstanceRes != S_OK)
 	{
-		DXTRACE_ERR(tmp, CoCreateInstanceRes );
+		DXTRACE_ERR(L"", CoCreateInstanceRes );
 		CHK_DX(CoCreateInstanceRes );
 	}	
 	//---------------------------
@@ -648,8 +648,7 @@ if(!psNET_direct_connect)
 					Msg("! IPureClient : port %d is BUSY!", c_port);
 
 //				const char* x = DXGetErrorString9(res);
-				string1024 tmp = "";
-				DXTRACE_ERR(tmp, res);
+				DXTRACE_ERR(L"", res);
 #endif				
 				c_port++;
 			}
@@ -698,8 +697,7 @@ if(!psNET_direct_connect)
 		_RELEASE					(pHostAddress);
 #ifdef DEBUG	
 //		const char* x = DXGetErrorString9(res);
-		string1024 tmp = "";
-		DXTRACE_ERR(tmp, res);
+		DXTRACE_ERR(L"", res);
 #endif
 		switch (res)
 		{
@@ -879,8 +877,7 @@ HRESULT	IPureClient::net_Handler(u32 dwMessageType, PVOID pMessage)
 //					const char* x = DXGetErrorString9(pMsg->hResultCode);
 					if (pMsg->hResultCode != S_OK)
 					{
-						string1024 tmp="";
-						DXTRACE_ERR(tmp, pMsg->hResultCode);
+						DXTRACE_ERR(L"", pMsg->hResultCode);
 					}					
 #endif
 					if (pMsg->dwApplicationReplyDataSize)
@@ -973,8 +970,7 @@ void	IPureClient::SendTo_LL(void* data, u32 size, u32 dwFlags, u32 dwTimeout)
 	{
 		Msg	("! ERROR: Failed to send net-packet, reason: %s",::Debug.error2string(hr));
 //		const char* x = DXGetErrorString9(hr);
-		string1024 tmp="";
-		DXTRACE_ERR(tmp, hr);
+		DXTRACE_ERR(L"", hr);
 	}
 
 //	UpdateStatistic();

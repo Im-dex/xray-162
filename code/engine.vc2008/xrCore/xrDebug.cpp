@@ -7,7 +7,7 @@
 #include "resource.h"
 #include "dbghelp.h"
  
-#include "dxerr.h"
+#include "dxerr/dxerr.h"
 
 #ifdef __BORLANDC__
 	#include "d3d9.h"
@@ -24,7 +24,7 @@
 #else
 #define DEBUG_INVOKE	__asm		{ int 3 }
 #ifndef __BORLANDC__
-	#pragma comment			(lib,"dxerr.lib")
+	#pragma comment			(lib,"dxerr2015.lib")
 #endif
 #endif
 

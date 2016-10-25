@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "dxerr.h"
+#include "dxerr/dxerr.h"
 #include "NET_Common.h"
 #include "net_server.h"
 #include <functional>
@@ -302,9 +302,6 @@ IPureServer::EConnect IPureServer::Connect(LPCSTR options, GameDescriptionData &
 if(!psNET_direct_connect)
 {
 	//---------------------------
-#ifdef DEBUG
-	string1024 tmp;
-#endif // DEBUG
 //	HRESULT CoInitializeExRes = CoInitializeEx(NULL, 0);	
 //	if (CoInitializeExRes != S_OK && CoInitializeExRes != S_FALSE)
 //	{
@@ -317,7 +314,7 @@ if(!psNET_direct_connect)
 	//---------------------------	
 	if (CoCreateInstanceRes != S_OK)
 	{
-		DXTRACE_ERR(tmp, CoCreateInstanceRes );
+		DXTRACE_ERR(L"", CoCreateInstanceRes );
 		CHK_DX(CoCreateInstanceRes );
 	}	
 	//---------------------------

@@ -66,6 +66,7 @@
 
 
 #if defined(WIN32) || defined(_WIN32_WCE)
+#define NOMINMAX
 #include <windows.h>
 #include <tchar.h>
 #endif

@@ -41,7 +41,7 @@ void dxObjectSpaceRender::dbgRender()
 	}
 	q_debug.boxes.clear();
 
-	for (i=0; i<dbg_S.size(); i++)
+	for (std::size_t i=0; i<dbg_S.size(); i++)
 	{
 		std::pair<Fsphere,u32>& P = dbg_S[i];
 		Fsphere&	S = P.first;

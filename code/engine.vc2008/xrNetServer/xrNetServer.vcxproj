@@ -105,6 +105,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -112,7 +113,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;dxerr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;dxerr2015.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -168,6 +169,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -175,7 +177,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;dxerr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;dxerr2015.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -210,8 +212,8 @@
       <StringPooling>false</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FloatingPointModel>Fast</FloatingPointModel>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
@@ -233,7 +235,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/MACHINE:I386 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>Ws2_32.lib;dxerr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;dxerr2015.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;..\..\sdk\libraries;..\..\sdk\libraries\$(Configuration);..\..\..\libraries\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>

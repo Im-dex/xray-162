@@ -122,6 +122,24 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|Win32'">..\..\..\intermediate\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|Win32'">false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Dedicated|Win32'">
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|Win32'">
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Mixed_Dedicated|Win32'">
+    <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions>/Zm200  %(AdditionalOptions)</AdditionalOptions>
@@ -183,6 +201,10 @@
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <CustomBuildStep>
+      <Command>copy /Y "$(ProjectDir)..\..\sdk\binaries\x86\lua.JIT.2.0.4.dll" "$(OutDir)lua.JIT.2.0.4.dll"</Command>
+      <Outputs>$(OutDir)lua.JIT.2.0.4.dll</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">
     <ClCompile>
@@ -239,6 +261,10 @@
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <CustomBuildStep>
+      <Command>copy /Y "$(ProjectDir)..\..\sdk\binaries\x86\lua.JIT.2.0.4.dll" "$(OutDir)lua.JIT.2.0.4.dll"</Command>
+      <Outputs>$(OutDir)lua.JIT.2.0.4.dll</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -304,6 +330,10 @@
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <CustomBuildStep>
+      <Command>copy /Y "$(ProjectDir)..\..\sdk\binaries\x86\lua.JIT.2.0.4.dll" "$(OutDir)lua.JIT.2.0.4.dll"</Command>
+      <Outputs>$(OutDir)lua.JIT.2.0.4.dll</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Dedicated|Win32'">
     <ClCompile>
@@ -366,6 +396,10 @@
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <CustomBuildStep>
+      <Command>copy /Y "$(ProjectDir)..\..\sdk\binaries\x86\lua.JIT.2.0.4.dll" "$(OutDir)lua.JIT.2.0.4.dll"</Command>
+      <Outputs>$(OutDir)lua.JIT.2.0.4.dll</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Mixed_Dedicated|Win32'">
     <ClCompile>
@@ -425,6 +459,10 @@
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <CustomBuildStep>
+      <Command>copy /Y "$(ProjectDir)..\..\sdk\binaries\x86\lua.JIT.2.0.4.dll" "$(OutDir)lua.JIT.2.0.4.dll"</Command>
+      <Outputs>$(OutDir)lua.JIT.2.0.4.dll</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Dedicated|Win32'">
     <ClCompile>
@@ -487,6 +525,10 @@
     <Manifest>
       <AdditionalManifestFiles>as-invoker-manifest-part.xml;%(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
+    <CustomBuildStep>
+      <Command>copy /Y "$(ProjectDir)..\..\sdk\binaries\x86\lua.JIT.2.0.4.dll" "$(OutDir)lua.JIT.2.0.4.dll"</Command>
+      <Outputs>$(OutDir)lua.JIT.2.0.4.dll</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="_d3d_extensions.h" />

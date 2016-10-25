@@ -98,7 +98,7 @@ void SetThreadName( DWORD dwThreadID , LPCSTR szThreadName )
   }
 }
 
-DWORD ttapi_Init( _processor_info* ID )
+DWORD ttapi_Init( processor_info* ID )
 {
 	if ( ttapi_initialized )
 		return ttapi_workers_count;
