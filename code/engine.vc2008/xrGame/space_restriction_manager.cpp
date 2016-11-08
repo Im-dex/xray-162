@@ -105,7 +105,7 @@ IC	void CSpaceRestrictionManager::collect_garbage				()
 	SPACE_RESTRICTIONS::iterator	I = m_space_restrictions.begin(), J;
 	SPACE_RESTRICTIONS::iterator	E = m_space_restrictions.end();
 	for ( ; I != E; ) {
-		if (!(*I).second->m_ref_count && (Device.dwTimeGlobal >= (*I).second->m_last_time_dec + time_to_delete)) {
+		if ((*I).second->released() && (Device.dwTimeGlobal >= (*I).second->m_last_time_dec + time_to_delete)) {
 			J						= I;
 			++I;
 			xr_delete				((*J).second);

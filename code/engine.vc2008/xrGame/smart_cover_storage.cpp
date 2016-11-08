@@ -66,9 +66,9 @@ storage::~storage					()
 void storage::collect_garbage		()
 {
 	struct garbage {
-		static	IC	bool	predicate	(::description* const &object)
+		static	bool	predicate	(::description* const &object)
 		{
-			if (object->m_ref_count)
+			if (!object->released())
 				return		(false);
  
 			if (Device.dwTimeGlobal < object->m_last_time_dec + time_to_delete)

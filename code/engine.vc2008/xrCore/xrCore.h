@@ -35,6 +35,9 @@
 	#endif
 	#define _HAS_EXCEPTIONS		1	// STL
 	#define XRAY_EXCEPTIONS		1	// XRAY
+
+    #define XR_NOEXCEPT noexcept
+    #define XR_NOEXCEPT_OP(x) noexcept(x)
 #else
 	// "release"
 	#if defined(_CPPUNWIND) && !defined __BORLANDC__
@@ -44,6 +47,9 @@
 	#define XRAY_EXCEPTIONS		0	// XRAY
 	#define LUABIND_NO_EXCEPTIONS
 	#pragma warning(disable:4530)
+
+    #define XR_NOEXCEPT throw()
+    #define XR_NOEXCEPT_OP(x)
 #endif
 
 #if !defined(_MT)
