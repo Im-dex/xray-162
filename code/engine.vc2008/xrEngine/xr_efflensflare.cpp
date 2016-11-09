@@ -114,7 +114,7 @@ void CLensFlareDescriptor::OnDeviceCreate()
 	// shaders
 	m_Gradient.m_pRender->CreateShader(*m_Gradient.shader,*m_Gradient.texture);
 	m_Source.m_pRender->CreateShader(*m_Source.shader,*m_Source.texture);
-	for (FlareIt it=m_Flares.begin(); it!=m_Flares.end(); it++) 
+	for (auto it=m_Flares.begin(); it!=m_Flares.end(); it++) 
 		it->m_pRender->CreateShader(*it->shader,*it->texture);
 	/*
 	m_Gradient.hShader	= CreateShader	(*m_Gradient.texture,*m_Gradient.shader);
@@ -128,7 +128,7 @@ void CLensFlareDescriptor::OnDeviceDestroy()
 	// shaders
 	m_Gradient.m_pRender->DestroyShader();
 	m_Source.m_pRender->DestroyShader();
-	for (FlareIt it=m_Flares.begin(); it!=m_Flares.end(); it++)
+	for (auto it=m_Flares.begin(); it!=m_Flares.end(); it++)
 		it->m_pRender->DestroyShader();
 	/*
     m_Gradient.hShader.destroy	();
@@ -557,7 +557,7 @@ void CLensFlare::Render(BOOL bSun, BOOL bFlares, BOOL bGradient)
 shared_str CLensFlare::AppendDef(CEnvironment& environment, CInifile* pIni, LPCSTR sect)
 {
 	if (!sect||(0==sect[0])) return "";
-    for (LensFlareDescIt it=m_Palette.begin(); it!=m_Palette.end(); it++)
+    for (auto it=m_Palette.begin(); it!=m_Palette.end(); it++)
     	if (0==xr_strcmp(*(*it)->section,sect)) return sect;
 
 	environment.add_flare(m_Palette, sect); 
@@ -571,14 +571,14 @@ void CLensFlare::OnDeviceCreate()
 	m_pRender->OnDeviceCreate();
 
 	// palette
-    for (LensFlareDescIt it=m_Palette.begin(); it!=m_Palette.end(); it++)
+    for (auto it=m_Palette.begin(); it!=m_Palette.end(); it++)
         (*it)->OnDeviceCreate();
 }
 
 void CLensFlare::OnDeviceDestroy()
 {
 	// palette
-    for (LensFlareDescIt it=m_Palette.begin(); it!=m_Palette.end(); it++)
+    for (auto it=m_Palette.begin(); it!=m_Palette.end(); it++)
         (*it)->OnDeviceDestroy();
 
 	// VS

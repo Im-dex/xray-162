@@ -105,15 +105,15 @@ public:
 									else return spot_names[ALife::eRelationTypeLast];};
 	};
 	//зарегистрировать драку (реакция на Hit в EntityAlive)
-	void FightRegister (u16 attacker, u16 defender, ALife::ERelationType defender_to_attacker, float hit_amount);
-	void UpdateFightRegister ();
+    static void FightRegister (u16 attacker, u16 defender, ALife::ERelationType defender_to_attacker, float hit_amount);
+    static void UpdateFightRegister ();
 
 private:
-	DEFINE_VECTOR(FIGHT_DATA, FIGHT_VECTOR, FIGHT_VECTOR_IT);
+	using FIGHT_VECTOR = xr_vector<FIGHT_DATA>;
 	static FIGHT_VECTOR*						m_fight_registry;
 	static FIGHT_VECTOR&						fight_registry();
-	
-	FIGHT_DATA*									FindFight(u16 object_id, bool by_attacker/* = true*/);
+
+    static FIGHT_DATA*									FindFight(u16 object_id, bool by_attacker/* = true*/);
 	static RELATION_MAP_SPOTS*					m_spot_names;
 public:
 	const shared_str&							GetSpotName			(ALife::ERelationType& type);

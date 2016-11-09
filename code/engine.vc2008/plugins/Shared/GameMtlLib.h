@@ -132,7 +132,7 @@ public:
     void 				FillProp		(PropItemVec& values, ListItem* owner);
 #endif
 };
-DEFINE_VECTOR(SGameMtl*,GameMtlVec,GameMtlIt);
+using GameMtlVec = xr_vector<SGameMtl*>;
 
 struct ECORE_API SGameMtlPair{
 	friend class CGameMtlLibrary;
@@ -200,7 +200,7 @@ public:
 #endif
 };
 
-DEFINE_VECTOR(SGameMtlPair*,GameMtlPairVec,GameMtlPairIt);
+using GameMtlPairVec = xr_vector<SGameMtlPair*>;
 
 class ECORE_API CGameMtlLibrary{
 	int					material_index;

@@ -42,7 +42,7 @@ void CAnomalyDetector::update_schedule()
 	temp_in_restrictors.reserve(m_storage.size());
 	
 	// add new restrictions
-	for (ANOMALY_INFO_VEC_IT it = m_storage.begin(); it != m_storage.end(); it++) {
+	for (auto it = m_storage.begin(); it != m_storage.end(); it++) {
 		if (it->time_registered == 0) {
 			temp_in_restrictors.push_back(it->object->ID());
 			it->time_registered = time();
@@ -53,7 +53,7 @@ void CAnomalyDetector::update_schedule()
 
 	// remove old restrictions
 	temp_in_restrictors.clear();
-	for (ANOMALY_INFO_VEC_IT it = m_storage.begin(); it != m_storage.end(); it++) {
+	for (auto it = m_storage.begin(); it != m_storage.end(); it++) {
 		if (it->time_registered + m_time_to_rememeber < time()) {
 			temp_in_restrictors.push_back(it->object->ID());
 		}
@@ -86,7 +86,7 @@ void CAnomalyDetector::on_contact(CObject *obj)
 	if (Level().space_restriction_manager().restriction_presented(
 		m_object->control().path_builder().restrictions().in_restrictions(),custom_zone->cName())) return;
 
-	ANOMALY_INFO_VEC_IT it = std::find(m_storage.begin(), m_storage.end(), custom_zone);	
+    auto it = std::find(m_storage.begin(), m_storage.end(), custom_zone);
 	if (it != m_storage.end()) return;
 
 	SAnomalyInfo			info;

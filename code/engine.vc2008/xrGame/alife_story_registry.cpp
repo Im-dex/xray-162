@@ -25,7 +25,7 @@ void CALifeStoryRegistry::add				(ALife::_STORY_ID id, CSE_ALifeDynamicObject *o
 	Msg("Adding Story item ID [%u], Object [%s] at level [%s]",id, object->name_replace(), *ai().game_graph().header().level(ai().game_graph().vertex(object->m_tGraphID)->level_id()).name());
 #endif
 
-	ALife::STORY_P_PAIR_IT	I = m_objects.find(id);
+    auto	I = m_objects.find(id);
 	if (I != m_objects.end()) {
 		R_ASSERT2			(no_assert,"Specified story object is already in the Story registry!");
 		return;

@@ -60,7 +60,7 @@ bool	pred_find_elem(const CCF_Skeleton::SElement& E, u16 elem){
 }
 bool CCF_Skeleton::_ElementCenter(u16 elem_id, Fvector& e_center)
 {
-	ElementVecIt it = std::lower_bound(elements.begin(),elements.end(),elem_id,pred_find_elem);
+    auto it = std::lower_bound(elements.begin(),elements.end(),elem_id,pred_find_elem);
 	if (it->elem_id==elem_id){
 		it->center(e_center);
 		return true;
@@ -136,7 +136,7 @@ void CCF_Skeleton::BuildState()
 		}
 	}
 
-	for (ElementVecIt I=elements.begin(); I!=elements.end(); I++){
+	for (auto I=elements.begin(); I!=elements.end(); I++){
 		if (!I->valid())		continue;
 		SBoneShape&	shape		= K->LL_GetData(I->elem_id).shape;
 		Fmatrix					ME,T,TW;
@@ -229,7 +229,7 @@ BOOL CCF_Skeleton::_RayQuery( const collide::ray_defs& Q, collide::rq_results& R
 	}
 
 	BOOL bHIT			= FALSE;
-	for (ElementVecIt I=elements.begin(); I!=elements.end(); I++){
+	for (auto I=elements.begin(); I!=elements.end(); I++){
 		if (!I->valid())continue;
 		bool res		= false;
 		float range		= Q.range;

@@ -463,14 +463,14 @@ void WeaponUsageStatistic::ChangePlayerName( LPCSTR from, LPCSTR to )
 {
 	statistic_sync_quard syncg(m_mutex);
 	if ( !CollectData() ) return;
-	PLAYERS_STATS_it pPlayerI = FindPlayer( from );
+	auto pPlayerI = FindPlayer( from );
 	pPlayerI->PName = to;
 }
 
 WEAPON_STATS_it	Player_Statistic::FindPlayersWeapon	(LPCSTR WeaponName)
 {
 	R_ASSERT(WeaponName);
-	WEAPON_STATS_it pWeaponI = std::find(aWeaponStats.begin(), aWeaponStats.end(), WeaponName);
+    auto pWeaponI = std::find(aWeaponStats.begin(), aWeaponStats.end(), WeaponName);
 	if (pWeaponI == aWeaponStats.end() || !((*pWeaponI) == WeaponName))
 	{
 		aWeaponStats.push_back(Weapon_Statistic(WeaponName));		
@@ -502,8 +502,8 @@ void WeaponUsageStatistic::RemoveBullet(ABULLETS_it& Bullet_it)
 	statistic_sync_quard syncg(m_mutex);
 	if (!Bullet_it->Removed || Bullet_it->HitRefCount!=Bullet_it->HitResponds) return;
 	//-------------------------------------------------------------
-	PLAYERS_STATS_it PlayerIt = FindPlayer(*(Bullet_it->FirerName));
-	WEAPON_STATS_it WeaponIt = PlayerIt->FindPlayersWeapon(*(Bullet_it->WeaponName));
+	auto PlayerIt = FindPlayer(*(Bullet_it->FirerName));
+    auto WeaponIt = PlayerIt->FindPlayersWeapon(*(Bullet_it->WeaponName));
 	HITS_VEC_it HitIt;
 	if (WeaponIt->FindHit(Bullet_it->Bullet.m_dwID, HitIt))
 	{
@@ -619,7 +619,7 @@ void WeaponUsageStatistic::OnBullet_Check_Request(SHit* pHDS)
 	u32 BulletID = pHDS->BulletID;
 	u32 SenderID = pHDS->SenderID;
 
-	BChA_it pSenderI	= std::find(m_Requests.begin(), m_Requests.end(), SenderID);
+	auto pSenderI	= std::find(m_Requests.begin(), m_Requests.end(), SenderID);
 	if (pSenderI == m_Requests.end() || (*pSenderI) != SenderID)
 	{
 		m_Requests.push_back(Bullet_Check_Array(SenderID));
@@ -637,7 +637,7 @@ void WeaponUsageStatistic::OnBullet_Check_Result(bool Result)
 	if (OnClient()) return;
 	if (m_dwLastRequestSenderID)
 	{
-		BChA_it pSenderI	= std::find(m_Requests.begin(), m_Requests.end(), m_dwLastRequestSenderID);
+        auto pSenderI	= std::find(m_Requests.begin(), m_Requests.end(), m_dwLastRequestSenderID);
 		if (pSenderI != m_Requests.end() && (*pSenderI) == m_dwLastRequestSenderID)
 		{
 			(*pSenderI).Requests.back().Result = Result;

@@ -35,7 +35,7 @@ namespace PS
             BOOL			Equal				(const SEffect&);
 #endif
 		};
-		DEFINE_VECTOR(SEffect*,EffectVec,EffectIt);
+		using EffectVec = xr_vector<SEffect*>;
 		EffectVec			m_Effects;
 #ifdef _EDITOR
 // change Equal if variables changed 
@@ -70,7 +70,7 @@ namespace PS
 		float				m_CurrentTime;
 		Fvector				m_InitialPosition;
 	public:
-    	DEFINE_VECTOR(dxRender_Visual*,VisualVec,VisualVecIt);
+    	using VisualVec = xr_vector<dxRender_Visual*>;
     	struct SItem		{
         	dxRender_Visual*	_effect;
             VisualVec		_children_related;
@@ -99,11 +99,11 @@ namespace PS
             void			OnFrame			(u32 u_dt, const CPGDef::SEffect& def, Fbox& box, bool& bPlaying);
 
             u32				ParticlesCount	();
-            BOOL			IsPlaying		();
+            BOOL			IsPlaying		() const;
             void			Play			();
             void			Stop			(BOOL def_stop);
         };
-        DEFINE_VECTOR(SItem,SItemVec,SItemVecIt)
+        using SItemVec = xr_vector<SItem>;
 		SItemVec			items;
 	public:
 		enum{

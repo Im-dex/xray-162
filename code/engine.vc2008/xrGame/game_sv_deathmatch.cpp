@@ -2024,7 +2024,7 @@ void game_sv_Deathmatch::OnPostCreate(u16 eid_who)
 	for (u32 j=0; j<m_AnomalySetsList.size(); j++)
 	{
 		ANOMALIES* Anomalies = &(m_AnomalySetsList[j]);
-		ANOMALIES_it It = std::find(Anomalies->begin(), Anomalies->end(),pCustomZone->name_replace());
+        auto It = std::find(Anomalies->begin(), Anomalies->end(),pCustomZone->name_replace());
 		if (It != Anomalies->end())
 		{
 			m_AnomalyIDSetsList[j].push_back(eid_who);

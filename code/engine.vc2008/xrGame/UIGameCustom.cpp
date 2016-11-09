@@ -412,8 +412,8 @@ void CMapListHelper::Load()
 	FS_FileSet			fset;
 	FS.file_list		(fset,"$game_levels$",FS_ListFiles,"*level.ltx");
 
-	FS_FileSetIt fit	= fset.begin();
-	FS_FileSetIt fit_e	= fset.end();
+    auto fit	= fset.begin();
+    auto fit_e	= fset.end();
 
 	for( ;fit!=fit_e; ++fit)
 	{
@@ -427,8 +427,8 @@ void CMapListHelper::Load()
 	xr_string prev_root				= game_levels->m_Root;
 	game_levels->_set_root			(tmp_entrypoint);
 
-	CLocatorAPI::archives_it it		= FS.m_archives.begin();
-	CLocatorAPI::archives_it it_e	= FS.m_archives.end();
+    auto it		= FS.m_archives.begin();
+    auto it_e	= FS.m_archives.end();
 
 	for(;it!=it_e;++it)
 	{

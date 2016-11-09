@@ -30,7 +30,7 @@ struct ECORE_API st_WB{
 			st_WB	(u16 b, float w):bone(b),weight(w){;}
 	void	set		(u16 b, float w){bone=b;weight=w;}
 };
-DEFINE_VECTOR(st_WB,WBVec,WBIt);
+using WBVec = xr_vector<st_WB>;
 struct ECORE_API st_VertexWB:public WBVec{
 protected:
 	static bool compare_by_weight(const st_WB& a, const st_WB& b)
@@ -64,7 +64,7 @@ public:
 //		sort_by_bone	(); // need only for export (before add vertex sort_by_bone)
 	}
 };
-DEFINE_VECTOR(st_VertexWB,VWBVec,VWBIt);
+using VWBVec = xr_vector<st_VertexWB>;
 
 struct ECORE_API st_VMapPt{
 	int				vmap_index;	// ссылка на мапу
@@ -117,7 +117,7 @@ struct st_VMapPtLst{
 	u8				count;
 	st_VMapPt*		pts;
 };
-DEFINE_VECTOR		(st_VMapPtLst,VMRefsVec,VMRefsIt);
+using VMRefsVec = xr_vector<st_VMapPtLst>;
 
 struct ECORE_API st_SVert{
 	Fvector			offs;
@@ -171,9 +171,9 @@ struct ECORE_API st_MeshOptions{
 };
 #pragma pack( pop )
 
-DEFINE_VECTOR		(IntVec,AdjVec,AdjIt);
-DEFINE_VECTOR		(st_VMap*,VMapVec,VMapIt);
-DEFINE_MAP			(CSurface*,IntVec,SurfFaces,SurfFacesPairIt);
+using AdjVec = xr_vector<IntVec>;
+using VMapVec = xr_vector<st_VMap*>;
+using SurfFaces = xr_map<CSurface* , IntVec>;
 
 //refs
 struct st_RenderBuffer;
@@ -322,7 +322,7 @@ public:
     bool 			BoxPick					(const Fbox& box, const Fmatrix& inv_parent, SBoxPickInfoVec& pinf);
 	bool            FrustumPick				(const CFrustum& frustum, const Fmatrix& parent);
     void            FrustumPickFaces		(const CFrustum& frustum, const Fmatrix& parent, U32Vec& fl);
-    bool			CHullPickMesh			(PlaneVec& pl, const Fmatrix& parent);
+    bool			CHullPickMesh			(xr_vector<Fplane>& pl, const Fmatrix& parent);
 	void 			GetTiesFaces			(int start_id, U32Vec& fl, float fSoftAngle, bool bRecursive);
 #endif
 

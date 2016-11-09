@@ -16,7 +16,7 @@ bool CHairsZone::BlowoutState()
 
 void CHairsZone::CheckForAwaking()
 {
-	for(OBJECT_INFO_VEC_IT it = m_ObjectInfoMap.begin(); 
+	for(auto it = m_ObjectInfoMap.begin();
 		m_ObjectInfoMap.end() != it; ++it) 
 	{
 		CObject* pObject = (*it).object;

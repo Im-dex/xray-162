@@ -365,7 +365,7 @@ void CEnvDescriptorMixer::clear	()
 {
 	m_pDescriptorMixer->Clear();
 	/*
-	std::pair<u32,ref_texture>	zero = mk_pair(u32(0),ref_texture(0));
+	std::pair<u32,ref_texture>	zero = std::make_pair(u32(0),ref_texture(0));
 	sky_r_textures.clear		();
 	sky_r_textures.push_back	(zero);
 	sky_r_textures.push_back	(zero);
@@ -393,17 +393,17 @@ void CEnvDescriptorMixer::lerp	(CEnvironment* , CEnvDescriptor& A, CEnvDescripto
 	m_pDescriptorMixer->lerp(&*A.m_pDescriptor, &*B.m_pDescriptor);
 	/*
 	sky_r_textures.clear		();
-	sky_r_textures.push_back	(mk_pair(0,A.sky_texture));
-	sky_r_textures.push_back	(mk_pair(1,B.sky_texture));
+	sky_r_textures.push_back	(std::make_pair(0,A.sky_texture));
+	sky_r_textures.push_back	(std::make_pair(1,B.sky_texture));
 
 	sky_r_textures_env.clear	();
 
-	sky_r_textures_env.push_back(mk_pair(0,A.sky_texture_env));
-	sky_r_textures_env.push_back(mk_pair(1,B.sky_texture_env));
+	sky_r_textures_env.push_back(std::make_pair(0,A.sky_texture_env));
+	sky_r_textures_env.push_back(std::make_pair(1,B.sky_texture_env));
 
 	clouds_r_textures.clear		();
-	clouds_r_textures.push_back	(mk_pair(0,A.clouds_texture));
-	clouds_r_textures.push_back	(mk_pair(1,B.clouds_texture));
+	clouds_r_textures.push_back	(std::make_pair(0,A.clouds_texture));
+	clouds_r_textures.push_back	(std::make_pair(1,B.clouds_texture));
 	*/
 
 	weight					=	f;
@@ -483,7 +483,7 @@ void CEnvDescriptorMixer::lerp	(CEnvironment* , CEnvDescriptor& A, CEnvDescripto
 //-----------------------------------------------------------------------------
 CEnvAmbient* CEnvironment::AppendEnvAmb		(const shared_str& sect)
 {
-	for (EnvAmbVecIt it=Ambients.begin(); it!=Ambients.end(); it++)
+	for (auto it=Ambients.begin(); it!=Ambients.end(); it++)
 		if ((*it)->name().equal(sect))
 			return						(*it);
 
@@ -548,7 +548,7 @@ void    CEnvironment::load_level_specific_ambients ()
 			TRUE,
 			FALSE);
 
-	for ( EnvAmbVecIt I=Ambients.begin(), E=Ambients.end(); I!=E; ++I )
+	for ( auto I=Ambients.begin(), E=Ambients.end(); I!=E; ++I )
 	{
 		CEnvAmbient* ambient = *I;
 
@@ -627,8 +627,8 @@ void CEnvironment::load_weathers		()
 	FS.file_list_close				(file_list);
 
 	// sorting weather envs
-	EnvsMapIt _I=WeatherCycles.begin();
-	EnvsMapIt _E=WeatherCycles.end();
+	auto _I=WeatherCycles.begin();
+	auto _E=WeatherCycles.end();
 	for (; _I!=_E; _I++){
 		R_ASSERT3	(_I->second.size()>1,"Environment in weather must >=2",*_I->first);
 		std::sort(_I->second.begin(),_I->second.end(),sort_env_etl_pred);
@@ -709,8 +709,8 @@ void CEnvironment::load_weather_effects	()
 #endif // #if 0
 
 	// sorting weather envs
-	EnvsMapIt _I=WeatherFXs.begin();
-	EnvsMapIt _E=WeatherFXs.end();
+	auto _I=WeatherFXs.begin();
+	auto _E=WeatherFXs.end();
 	for (; _I!=_E; _I++){
 		R_ASSERT3	(_I->second.size()>1,"Environment in weather must >=2",*_I->first);
 		std::sort	(_I->second.begin(),_I->second.end(),sort_env_etl_pred);
@@ -734,12 +734,11 @@ void CEnvironment::load		()
 
 void CEnvironment::unload	()
 {
-	EnvsMapIt _I,_E;
 	// clear weathers
-	_I		= WeatherCycles.begin();
-	_E		= WeatherCycles.end();
+	auto _I		= WeatherCycles.begin();
+	auto _E		= WeatherCycles.end();
 	for (; _I!=_E; _I++){
-		for (EnvIt it=_I->second.begin(); it!=_I->second.end(); it++)
+		for (auto it=_I->second.begin(); it!=_I->second.end(); it++)
 			xr_delete	(*it);
 	}
 
@@ -748,12 +747,12 @@ void CEnvironment::unload	()
 	_I		= WeatherFXs.begin();
 	_E		= WeatherFXs.end();
 	for (; _I!=_E; _I++){
-		for (EnvIt it=_I->second.begin(); it!=_I->second.end(); it++)
+		for (auto it=_I->second.begin(); it!=_I->second.end(); it++)
 			xr_delete	(*it);
 	}
 	WeatherFXs.clear		();
 	// clear ambient
-	for (EnvAmbVecIt it=Ambients.begin(); it!=Ambients.end(); it++)
+	for (auto it=Ambients.begin(); it!=Ambients.end(); it++)
 		xr_delete		(*it);
 	Ambients.clear		();
 	// misc

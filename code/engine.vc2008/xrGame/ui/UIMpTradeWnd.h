@@ -35,8 +35,7 @@ private:
 };
 
 
-DEF_VECTOR(ITEMS_vec,SBuyItemInfo*);
-typedef ITEMS_vec::const_iterator ITEMS_vec_cit;
+using ITEMS_vec = xr_vector<SBuyItemInfo*>;
 
 class CUIMpTradeWnd :	public IBuyWnd, 
 						public CUIWndCallback

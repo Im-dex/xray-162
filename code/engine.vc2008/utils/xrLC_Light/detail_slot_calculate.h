@@ -7,7 +7,7 @@
 #ifndef DETAIL_SLOT_CALCULATE_H_INCLUDED
 #define DETAIL_SLOT_CALCULATE_H_INCLUDED
 
-DEFINE_VECTOR(u32,DWORDVec,DWORDIt);
+using DWORDVec = xr_vector<u32>;
 namespace CDB
 {
 	class  COLLIDER;

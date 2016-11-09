@@ -20,12 +20,12 @@ void CMonsterSquad::RegisterMember(CEntity *pE)
 {
 	// Добавить цель
 	SMemberGoal			G;
-	m_goals.insert		(mk_pair(pE, G));
+	m_goals.insert		(std::make_pair(pE, G));
 	
 	// Добавить команду
 	SSquadCommand		C;
 	C.type				= SC_NONE;
-	m_commands.insert	(mk_pair(pE, C));
+	m_commands.insert	(std::make_pair(pE, C));
 	
 	// установить лидера
 	if (!leader) leader = pE;
@@ -34,7 +34,7 @@ void CMonsterSquad::RegisterMember(CEntity *pE)
 void CMonsterSquad::RemoveMember(CEntity *pE)
 {
 	// удалить из целей
-	MEMBER_GOAL_MAP_IT it_goal = m_goals.find(pE);
+	auto it_goal = m_goals.find(pE);
 	if (it_goal == m_goals.end()) return;	
 	m_goals.erase(it_goal);
 
@@ -62,7 +62,7 @@ bool CMonsterSquad::SquadActive()
 
 	// проверить количество живых объектов в группе
 	u32 alive_num = 0;
-	for (MEMBER_GOAL_MAP_IT it = m_goals.begin(); it != m_goals.end(); it++) 
+	for (auto it = m_goals.begin(); it != m_goals.end(); it++)
 		if (it->first->g_Alive()) alive_num++;
 	
 	if (alive_num < 2) return false;
@@ -76,7 +76,7 @@ u8 CMonsterSquad::squad_alife_count()
 
 	// проверить количество живых объектов в группе
 	u8 alive_num = 0;
-	for (MEMBER_GOAL_MAP_IT it = m_goals.begin(); it != m_goals.end(); it++) 
+	for (auto it = m_goals.begin(); it != m_goals.end(); it++)
 		if (it->first->g_Alive()) alive_num++;
 
 	if (alive_num < 2) return u8(0);
@@ -86,7 +86,7 @@ u8 CMonsterSquad::squad_alife_count()
 
 void CMonsterSquad::UpdateGoal(CEntity *pE, const SMemberGoal &goal)
 {
-	MEMBER_GOAL_MAP_IT it = m_goals.find(pE);
+    auto it = m_goals.find(pE);
 	VERIFY(it != m_goals.end());
 
 	it->second = goal;
@@ -94,7 +94,7 @@ void CMonsterSquad::UpdateGoal(CEntity *pE, const SMemberGoal &goal)
 
 void CMonsterSquad::InformSquadAboutEnemy(CEntityAlive const * const enemy)
 {
-	for ( MEMBER_GOAL_MAP_IT	it	=	m_goals.begin();
+	for (auto	it	=	m_goals.begin();
 								it	!=	m_goals.end();
 							  ++it )
 	{
@@ -118,7 +118,7 @@ void CMonsterSquad::UpdateCommand(const CEntity *pE, const SSquadCommand &com)
 
 SMemberGoal &CMonsterSquad::GetGoal(CEntity *pE)
 {
-	MEMBER_GOAL_MAP_IT it = m_goals.find(pE);
+    auto it = m_goals.find(pE);
 	VERIFY(it != m_goals.end());
 
 	return it->second;
@@ -149,7 +149,7 @@ void CMonsterSquad::UpdateSquadCommands()
 	}
 
 	// Удалить все цели, объекты которых невалидны или ушли в оффлайн
-	for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal) {
+	for (auto it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal) {
 		SMemberGoal goal = it_goal->second;
 		if (!goal.entity || goal.entity->getDestroy()) {
 			it_goal->second.type = MG_None;
@@ -163,7 +163,7 @@ void CMonsterSquad::UpdateSquadCommands()
 void CMonsterSquad::remove_links(CObject *O)
 {
 	// Удалить все цели, объекты которых невалидны или ушли в оффлайн
-	for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal) {
+	for (auto it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal) {
 		SMemberGoal goal = it_goal->second;
 		if (goal.entity == O) {
 			it_goal->second.entity	= 0;
@@ -202,12 +202,12 @@ void CMonsterSquad::lock_cover(u32 node)
 
 void CMonsterSquad::unlock_cover(u32 node)
 {
-	NODES_VECTOR_IT it = std::find(m_locked_covers.begin(), m_locked_covers.end(), node);
+    auto it = std::find(m_locked_covers.begin(), m_locked_covers.end(), node);
 	if (it != m_locked_covers.end())
 		m_locked_covers.erase(it);
 }
 
-u8 CMonsterSquad::get_index(CEntity *m_object)
+u8 CMonsterSquad::get_index(CEntity *m_object) const
 {
 	return m_object->cast_entity_alive()->m_squad_index;
 }
@@ -216,7 +216,7 @@ u8 CMonsterSquad::get_count(const CEntity *object, float radius)
 {
 	u8 count = 0;
 
-	for (MEMBER_GOAL_MAP_IT it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal) {
+	for (auto it_goal = m_goals.begin(); it_goal != m_goals.end(); ++it_goal) {
 		SMemberGoal goal = it_goal->second;
 		if ((goal.entity != 0) && (goal.entity != object) && (goal.entity->g_Alive())) {
 			if (goal.entity->Position().distance_to(object->Position()) < radius) count++;
@@ -249,7 +249,7 @@ void CMonsterSquad::lock_corpse(const CEntityAlive *corpse)
 
 void CMonsterSquad::unlock_corpse(const CEntityAlive *corpse)
 {
-	CORPSES_VECTOR_IT it = std::find(m_locked_corpses.begin(), m_locked_corpses.end(), corpse);
+    auto it = std::find(m_locked_corpses.begin(), m_locked_corpses.end(), corpse);
 	if (it != m_locked_corpses.end())
 		m_locked_corpses.erase(it);
 }

@@ -148,27 +148,27 @@ namespace ALife {
 
 	IC EHitType	g_tfString2HitType(LPCSTR caHitType)
 	{
-		if (!stricmp(caHitType,"burn"))
+		if (!_stricmp(caHitType,"burn"))
 			return(eHitTypeBurn);
-		else if (!stricmp(caHitType,"light_burn"))
+		else if (!_stricmp(caHitType,"light_burn"))
 			return(eHitTypeLightBurn);
-		else if (!stricmp(caHitType,"shock"))
+		else if (!_stricmp(caHitType,"shock"))
 				return(eHitTypeShock);
-		else if (!stricmp(caHitType,"strike"))
+		else if (!_stricmp(caHitType,"strike"))
             	return(eHitTypeStrike);
-		else if (!stricmp(caHitType,"wound"))
+		else if (!_stricmp(caHitType,"wound"))
 				return(eHitTypeWound);
-		else if (!stricmp(caHitType,"radiation"))
+		else if (!_stricmp(caHitType,"radiation"))
 				return(eHitTypeRadiation);
-		else if (!stricmp(caHitType,"telepatic"))
+		else if (!_stricmp(caHitType,"telepatic"))
 				return(eHitTypeTelepatic);
-		else if (!stricmp(caHitType,"fire_wound"))
+		else if (!_stricmp(caHitType,"fire_wound"))
 				return(eHitTypeFireWound);
-		else if (!stricmp(caHitType,"chemical_burn"))
+		else if (!_stricmp(caHitType,"chemical_burn"))
 				return(eHitTypeChemicalBurn);
-		else if (!stricmp(caHitType,"explosion"))
+		else if (!_stricmp(caHitType,"explosion"))
 				return(eHitTypeExplosion);
-		else if (!stricmp(caHitType,"wound_2"))
+		else if (!_stricmp(caHitType,"wound_2"))
 				return(eHitTypeWound_2);
 		else
 				FATAL	("Unsupported hit type!");
@@ -185,14 +185,15 @@ xr_token							hit_types_token							[ ];
 		return get_token_name(hit_types_token, tHitType);
 	}
 #endif
-	DEFINE_VECTOR	(int,						INT_VECTOR,						INT_IT);
-	DEFINE_VECTOR	(_OBJECT_ID,				OBJECT_VECTOR,					OBJECT_IT);
-	DEFINE_VECTOR	(CSE_ALifeInventoryItem*,	ITEM_P_VECTOR,					ITEM_P_IT);
-	DEFINE_VECTOR	(CSE_ALifeItemWeapon*,		WEAPON_P_VECTOR,				WEAPON_P_IT);
-	DEFINE_VECTOR	(CSE_ALifeSchedulable*,		SCHEDULE_P_VECTOR,				SCHEDULE_P_IT);
+	using INT_VECTOR = xr_vector<int>;
+	using OBJECT_VECTOR = xr_vector<_OBJECT_ID>;
+    using OBJECT_IT = OBJECT_VECTOR::iterator;
+	using ITEM_P_VECTOR = xr_vector<CSE_ALifeInventoryItem*>;
+	using WEAPON_P_VECTOR = xr_vector<CSE_ALifeItemWeapon*>;
+	using SCHEDULE_P_VECTOR = xr_vector<CSE_ALifeSchedulable*>;
 
-	DEFINE_MAP		(_OBJECT_ID,				CSE_ALifeDynamicObject*,		D_OBJECT_P_MAP,				D_OBJECT_P_PAIR_IT);
-	DEFINE_MAP		(_STORY_ID,					CSE_ALifeDynamicObject*,		STORY_P_MAP,				STORY_P_PAIR_IT);
+	using D_OBJECT_P_MAP = xr_map<_OBJECT_ID , CSE_ALifeDynamicObject*>;
+	using STORY_P_MAP = xr_map<_STORY_ID , CSE_ALifeDynamicObject*>;
 };
 
 #endif //XRAY_ALIFE_SPACE

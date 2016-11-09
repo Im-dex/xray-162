@@ -84,7 +84,7 @@ static const WORD identboxindiceswire[identboxindexwirecount] = {
 
 #define SIGN(x) ((x<0)?-1:1)
 
-DEFINE_VECTOR(FVF::L,FLvertexVec,FLvertexIt)
+using FLvertexVec = xr_vector<FVF::L>;
 
 static FLvertexVec 	m_GridPoints;
 
@@ -1093,7 +1093,7 @@ void CDrawUtilities::DrawGrid()
     u32 vBase;
 	// fill VB
 	FVF::L*	pv	= (FVF::L*)Stream->Lock(m_GridPoints.size(),vs_L->vb_stride,vBase);
-    for (FLvertexIt v_it=m_GridPoints.begin(); v_it!=m_GridPoints.end(); v_it++,pv++) pv->set(*v_it);
+    for (auto v_it=m_GridPoints.begin(); v_it!=m_GridPoints.end(); v_it++,pv++) pv->set(*v_it);
 	Stream->Unlock(m_GridPoints.size(),vs_L->vb_stride);
 	// Render it as triangle list
     Fmatrix ddd;

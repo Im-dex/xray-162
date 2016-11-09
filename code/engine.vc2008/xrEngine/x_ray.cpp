@@ -1349,8 +1349,8 @@ int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
 
 	SECUROM_MARKER_SECURITY_ON(7)
 
-	CLocatorAPI::archives_it it		= FS.m_archives.begin();
-	CLocatorAPI::archives_it it_e	= FS.m_archives.end();
+	auto it		= FS.m_archives.begin();
+	auto it_e	= FS.m_archives.end();
 	bool arch_res					= false;
 
 	for(;it!=it_e;++it)
@@ -1360,7 +1360,7 @@ int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
 		{
 			LPCSTR ln = A.header->r_string("header", "level_name");
 			LPCSTR lv = A.header->r_string("header", "level_ver");
-			if ( 0==stricmp(ln,name) && 0==stricmp(lv,ver) )
+			if ( 0==_stricmp(ln,name) && 0==_stricmp(lv,ver) )
 			{
 				FS.LoadArchive(A);
 				arch_res = true;
@@ -1395,8 +1395,8 @@ int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
 
 CInifile*  CApplication::GetArchiveHeader(LPCSTR name, LPCSTR ver)
 {
-	CLocatorAPI::archives_it it		= FS.m_archives.begin();
-	CLocatorAPI::archives_it it_e	= FS.m_archives.end();
+	auto it		= FS.m_archives.begin();
+	auto it_e	= FS.m_archives.end();
 
 	for(;it!=it_e;++it)
 	{
@@ -1404,12 +1404,12 @@ CInifile*  CApplication::GetArchiveHeader(LPCSTR name, LPCSTR ver)
 
 		LPCSTR ln = A.header->r_string("header", "level_name");
 		LPCSTR lv = A.header->r_string("header", "level_ver");
-		if ( 0==stricmp(ln,name) && 0==stricmp(lv,ver) )
+		if ( 0==_stricmp(ln,name) && 0==_stricmp(lv,ver) )
 		{
 			return A.header;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void CApplication::LoadAllArchives()

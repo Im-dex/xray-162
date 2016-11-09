@@ -34,7 +34,7 @@ struct SGameTaskKey : public IPureSerializeObject<IReader,IWriter>,public IPureD
 	virtual void 	destroy								();
 };
 
-DEFINE_VECTOR (SGameTaskKey, vGameTasks, vGameTasks_it);
+using vGameTasks = xr_vector<SGameTaskKey>;
 
 struct CGameTaskRegistry : public CALifeAbstractRegistry<u16, vGameTasks> 
 {

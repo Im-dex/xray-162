@@ -2,7 +2,7 @@
 #define FixedVectorH
 #pragma once
 
-template <class T, const int dim>
+template <class T, std::size_t dim>
 class svector 
 {
 public:

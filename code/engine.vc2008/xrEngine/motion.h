@@ -38,7 +38,7 @@ struct st_BoneMotion
     void        SetName(LPCSTR nm)	{	name=nm;	}
 };
 // vector по костям
-DEFINE_VECTOR(st_BoneMotion,BoneMotionVec,BoneMotionIt);
+using BoneMotionVec = xr_vector<st_BoneMotion>;
 
 //--------------------------------------------------------------------------
 class ENGINE_API CCustomMotion

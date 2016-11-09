@@ -500,7 +500,7 @@ void CUIMainIngameWnd::TurnOffWarningIcon(EWarningIcons icon)
 void CUIMainIngameWnd::SetFlashIconState_(EFlashingIcons type, bool enable)
 {
 	// ¬ключаем анимацию требуемой иконки
-	FlashingIcons_it icon = m_FlashingIcons.find(type);
+    auto icon = m_FlashingIcons.find(type);
 	R_ASSERT2(icon != m_FlashingIcons.end(), "Flashing icon with this type not existed");
 	icon->second->Show(enable);
 }
@@ -538,7 +538,7 @@ void CUIMainIngameWnd::InitFlashingIcons(CUIXml* node)
 
 void CUIMainIngameWnd::DestroyFlashingIcons()
 {
-	for (FlashingIcons_it it = m_FlashingIcons.begin(); it != m_FlashingIcons.end(); ++it)
+	for (auto it = m_FlashingIcons.begin(); it != m_FlashingIcons.end(); ++it)
 	{
 		DetachChild(it->second);
 		xr_delete(it->second);
@@ -549,7 +549,7 @@ void CUIMainIngameWnd::DestroyFlashingIcons()
 
 void CUIMainIngameWnd::UpdateFlashingIcons()
 {
-	for (FlashingIcons_it it = m_FlashingIcons.begin(); it != m_FlashingIcons.end(); ++it)
+	for (auto it = m_FlashingIcons.begin(); it != m_FlashingIcons.end(); ++it)
 	{
 		it->second->Update();
 	}

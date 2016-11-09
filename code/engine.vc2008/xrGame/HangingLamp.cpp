@@ -354,10 +354,10 @@ void CHangingLamp::CreateBody(CSE_ALifeObjectHangingLamp	*lamp)
 			_GetItem					(fixed_bones,i,fixed_bone)			;
 			u16 fixed_bone_id=pKinematics->LL_BoneID(fixed_bone)			;
 			R_ASSERT2(BI_NONE!=fixed_bone_id,"wrong fixed bone")			;
-			bone_map.insert(mk_pair(fixed_bone_id,physicsBone()))			;
+			bone_map.insert(std::make_pair(fixed_bone_id,physicsBone()))			;
 		}
 	}else{
-		bone_map.insert(mk_pair(pKinematics->LL_GetBoneRoot(),physicsBone()))			;
+		bone_map.insert(std::make_pair(pKinematics->LL_GetBoneRoot(),physicsBone()))			;
 	}
 
 	phys_shell_verify_object_model ( *this );
@@ -370,7 +370,7 @@ void CHangingLamp::CreateBody(CSE_ALifeObjectHangingLamp	*lamp)
 	m_pPhysicsShell->SetAirResistance();//0.0014f,1.5f
 
 /////////////////////////////////////////////////////////////////////////////
-	BONE_P_PAIR_IT i=bone_map.begin(),e=bone_map.end();
+    auto i=bone_map.begin(),e=bone_map.end();
 	for(;i!=e;i++){
 		CPhysicsElement* fixed_element=i->second.element;
 		///R_ASSERT2(fixed_element,"fixed bone has no physics");

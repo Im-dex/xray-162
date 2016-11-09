@@ -5,7 +5,7 @@
 #include "..\..\..\editors\ECore\Editor\EditMesh.h"
 #include "FS2.h"
 
-int FindLPCSTR(LPCSTRVec& vec, LPCSTR key){
+int FindLPCSTR(xr_vector<LPCSTR>& vec, LPCSTR key){
 	for (LPCSTRIt it=vec.begin(); it!=vec.end(); it++)
 		if (0==xr_strcmp(*it,key)) return it-vec.begin();
 	return -1;
@@ -15,7 +15,7 @@ bool CEditableObject::ExportLWO(LPCSTR fname)
 {
 	CLWMemoryStream* F = xr_new<CLWMemoryStream>();
 
-	LPCSTRVec images;
+	xr_vector<LPCSTR> images;
 
 	F->begin_save();
 		// tags

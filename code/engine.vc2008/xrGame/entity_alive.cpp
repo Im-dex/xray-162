@@ -483,7 +483,7 @@ void CEntityAlive::UpdateFireParticles()
 	
 //	WOUND_VECTOR_IT last_it;
 
-	for(WOUND_VECTOR_IT it = m_ParticleWounds.begin(); 
+	for(auto it = m_ParticleWounds.begin();
 					  it != m_ParticleWounds.end();)
 	{
 		CWound* pWound = *it;
@@ -551,7 +551,7 @@ void CEntityAlive::UpdateBloodDrops()
 
 //	WOUND_VECTOR_IT last_it;
 
-	for(WOUND_VECTOR_IT it = m_BloodWounds.begin(); 
+	for(auto it = m_BloodWounds.begin();
 		it != m_BloodWounds.end();)
 	{
 		CWound* pWound = *it;

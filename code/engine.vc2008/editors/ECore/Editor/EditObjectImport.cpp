@@ -21,7 +21,7 @@ extern "C" {
 	extern "C" __declspec(dllimport) void LWO_CloseFile(lwObject *new_obj);
 #endif
 
-DEFINE_MAP(void*,int,VMIndexLink,VMIndexLinkIt);
+using VMIndexLink = xr_map<void*, int>;
 
 bool CompareFunc(const st_VMapPt& vm0, const st_VMapPt& vm1){
 	return vm0.vmap_index<vm1.vmap_index;

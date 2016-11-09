@@ -57,7 +57,7 @@ public:
 
 struct SThunderboltCollection
 {
-	DEFINE_VECTOR(SThunderboltDesc*,DescVec,DescIt);
+    using DescVec = xr_vector<SThunderboltDesc*>;
 	DescVec			  			palette;
 	shared_str					section;
 public:
@@ -73,7 +73,7 @@ class ENGINE_API CEffect_Thunderbolt
 {
 	friend class dxThunderboltRender;
 protected:
-	DEFINE_VECTOR(SThunderboltCollection*,CollectionVec,CollectionVecIt);
+    using CollectionVec = xr_vector<SThunderboltCollection*>;
 	CollectionVec				collection;
 	SThunderboltDesc*			current;
 private:
@@ -111,7 +111,7 @@ private:
 //	float						p_sun_color;
 //	float						p_fog_color;
 private:
-	BOOL						RayPick				(const Fvector& s, const Fvector& d, float& range);
+    static BOOL						RayPick				(const Fvector& s, const Fvector& d, float& range);
     void						Bolt				(shared_str id, float period, float life_time);
 public:                     
 								CEffect_Thunderbolt	(); 

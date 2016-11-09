@@ -61,8 +61,8 @@ u32 dwfGetIDByLevelName(CInifile *Ini, LPCSTR caLevelName)
 	return				(u32(-1));
 }
 
-DEFINE_MAP		(u32,					::CLevelGameGraph*,		GRAPH_P_MAP,			GRAPH_P_PAIR_IT);
-DEFINE_MAP_PRED	(LPSTR,					SConnectionVertex,		VERTEX_MAP,				VERTEX_PAIR_IT,	CCompareVertexPredicate);
+using GRAPH_P_MAP = xr_map<u32 , ::CLevelGameGraph*>;
+using VERTEX_MAP = xr_map<LPSTR, SConnectionVertex, CCompareVertexPredicate>;
 
 typedef struct tagSDynamicGraphVertex {
 	Fvector						tLocalPoint;
@@ -76,8 +76,8 @@ typedef struct tagSDynamicGraphVertex {
 	CGameGraph::CEdge			*tpaEdges;
 } SDynamicGraphVertex;
 
-DEFINE_VECTOR(SDynamicGraphVertex,		GRAPH_VERTEX_VECTOR,	GRAPH_VERTEX_IT);
-DEFINE_VECTOR(CGameGraph::CEdge,	GRAPH_EDGE_VECTOR,		GRAPH_EDGE_IT);
+using GRAPH_VERTEX_VECTOR = xr_vector<SDynamicGraphVertex>;
+using GRAPH_EDGE_VECTOR = xr_vector<CGameGraph::CEdge>;
 
 class CLevelGameGraph {
 public:
@@ -250,7 +250,7 @@ public:
 							}
 
 						if (ok) {
-							m_tVertexMap.insert			(mk_pair(S,T));
+							m_tVertexMap.insert			(std::make_pair(S,T));
 							i++;
 						}
 					}
@@ -590,7 +590,7 @@ CGraphMerger::CGraphMerger(
 		);
 		dwOffset					+= tpLevelGraph->m_tpGraph->header().vertex_count();
 		R_ASSERT2					(tpGraphs.find(tLevel.id()) == tpGraphs.end(),"Level ids _MUST_ be different!");
-		tpGraphs.insert				(mk_pair(tLevel.id(),tpLevelGraph));
+		tpGraphs.insert				(std::make_pair(tLevel.id(),tpLevelGraph));
 		tGraphHeader.m_levels.insert(std::make_pair(tLevel.id(),tLevel));
 	}
 	

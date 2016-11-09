@@ -46,7 +46,7 @@ private:
 	CUIStatic*			m_favorite_weapon_bckgrnd;
 	CUIStatic*			m_favorite_weapon_icon;
 
-	DEFINE_VECTOR		(CUIAchievements*, ACHIEVES_VEC, ACHIEVES_VEC_IT);
+	using ACHIEVES_VEC = xr_vector<CUIAchievements*>;
 	ACHIEVES_VEC		m_achieves_vec;
 
 	enum				{ max_stat_info = 15 };

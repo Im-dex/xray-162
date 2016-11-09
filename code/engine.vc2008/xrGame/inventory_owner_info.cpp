@@ -49,7 +49,7 @@ bool CInventoryOwner::OnReceiveInfo(shared_str info_id) const
 	VERIFY( info_id.size() );
 	//добавить запись в реестр
 	KNOWN_INFO_VECTOR& known_info = m_known_info_registry->registry().objects();
-	KNOWN_INFO_VECTOR_IT it = std::find_if(known_info.begin(), known_info.end(), CFindByIDPred(info_id));
+    auto it = std::find_if(known_info.begin(), known_info.end(), CFindByIDPred(info_id));
 	if( known_info.end() == it)
 		known_info.push_back(/*INFO_DATA(*/info_id/*, Level().GetGameTime())*/);
 	else
@@ -90,7 +90,7 @@ void CInventoryOwner::OnDisableInfo(shared_str info_id) const
 
 	KNOWN_INFO_VECTOR& known_info = m_known_info_registry->registry().objects();
 
-	KNOWN_INFO_VECTOR_IT it = std::find_if(known_info.begin(), known_info.end(), CFindByIDPred(info_id));
+    auto it = std::find_if(known_info.begin(), known_info.end(), CFindByIDPred(info_id));
 	if( known_info.end() == it)	return;
 	known_info.erase(it);
 }

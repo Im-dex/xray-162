@@ -361,7 +361,7 @@ struct SAAParam {
 	float		dist;
 };
 
-DEFINE_VECTOR(SAAParam, AA_VECTOR, AA_VECTOR_IT);
+using AA_VECTOR = xr_vector<SAAParam>;
 
 struct SCurrentAnimationInfo {
 	shared_str		name;
@@ -407,18 +407,18 @@ enum EHitSide {
 };
 
 
-DEFINE_VECTOR	(SAnimItem*,		ANIM_ITEM_VECTOR,		ANIM_ITEM_VECTOR_IT);
-DEFINE_VECTOR	(STransition,		TRANSITION_ANIM_VECTOR, TRANSITION_ANIM_VECTOR_IT);
-DEFINE_MAP		(EAction,			SMotionItem,			MOTION_ITEM_MAP,			MOTION_ITEM_MAP_IT);
-DEFINE_VECTOR	(EMotionAnim,		SEQ_VECTOR,				SEQ_VECTOR_IT);
-DEFINE_VECTOR	(SAttackAnimation,	ATTACK_ANIM,			ATTACK_ANIM_IT);
-DEFINE_VECTOR	(SReplacedAnim,		REPLACED_ANIM,			REPLACED_ANIM_IT);
+using ANIM_ITEM_VECTOR = xr_vector<SAnimItem*>;
+using TRANSITION_ANIM_VECTOR = xr_vector<STransition>;
+using MOTION_ITEM_MAP = xr_map<EAction , SMotionItem>;
+using SEQ_VECTOR = xr_vector<EMotionAnim>;
+using ATTACK_ANIM = xr_vector<SAttackAnimation>;
+using REPLACED_ANIM = xr_vector<SReplacedAnim>;
 
-DEFINE_MAP		(u16,				t_fx_index,				FX_MAP_U16,					FX_MAP_U16_IT);	
-DEFINE_MAP		(shared_str,			t_fx_index,				FX_MAP_STRING,				FX_MAP_STRING_IT);
+using FX_MAP_U16 = xr_map<u16 , t_fx_index>;
+using FX_MAP_STRING = xr_map<shared_str , t_fx_index>;
 
 
-DEFINE_VECTOR	(SEQ_VECTOR, VELOCITY_CHAIN_VEC, VELOCITY_CHAIN_VEC_IT);
+using VELOCITY_CHAIN_VEC = xr_vector<SEQ_VECTOR>;
 
 
 struct SVelocity {
@@ -477,7 +477,8 @@ struct SMonsterEnemy {
 
 class CEntityAlive;
 
-DEFINE_MAP(const CEntityAlive *,SMonsterEnemy,ENEMIES_MAP, ENEMIES_MAP_IT);
+using ENEMIES_MAP = xr_map<const CEntityAlive * , SMonsterEnemy>;
+using ENEMIES_MAP_IT = ENEMIES_MAP::iterator;
 
 struct SMonsterCorpse {
 	Fvector position;
@@ -485,9 +486,8 @@ struct SMonsterCorpse {
 	TTime	time;
 };
 
-DEFINE_MAP(const CEntityAlive *,SMonsterCorpse,CORPSE_MAP, CORPSE_MAP_IT);
-
-
+using CORPSE_MAP = xr_map<const CEntityAlive * , SMonsterCorpse>;
+using CORPSE_MAP_IT = CORPSE_MAP::iterator;
 
 struct SMonsterHit {
 	CObject		*object;
@@ -500,7 +500,7 @@ struct SMonsterHit {
 	}
 };
 
-DEFINE_VECTOR(SMonsterHit,MONSTER_HIT_VECTOR, MONSTER_HIT_VECTOR_IT);
+using MONSTER_HIT_VECTOR = xr_vector<SMonsterHit>;
 
 
 enum EDangerType {
@@ -511,8 +511,4 @@ enum EDangerType {
 	eNone
 };
 
-DEFINE_MAP(MotionID, shared_str, ANIM_TO_MOTION_MAP, ANIM_TO_MOTION_MAP_IT);
-
-
-
-
+using ANIM_TO_MOTION_MAP = xr_map<MotionID , shared_str>;

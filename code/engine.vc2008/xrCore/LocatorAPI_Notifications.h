@@ -32,8 +32,8 @@ private:
         fastdelegate::FastDelegate0<>	FChangeEvent;
 		BOOL 						bRecurse;
     };
-    DEFINE_VECTOR			(HANDLE,HANDLEVec,HANDLEIt);
-    DEFINE_VECTOR			(Path,PathVec,PathIt);
+    using HANDLEVec = xr_vector<HANDLE>;
+    using PathVec = xr_vector<Path>;
     PathVec					events;
 public:
 	void* 					FMutex;

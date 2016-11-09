@@ -59,7 +59,7 @@ void CPhraseDialogManager::InitDialog (CPhraseDialogManager* dialog_partner, DIA
 
 void CPhraseDialogManager::AddDialog(DIALOG_SHARED_PTR& phrase_dialog)
 {
-	DIALOG_VECTOR_IT it = std::find(m_ActiveDialogs.begin(), m_ActiveDialogs.end(), phrase_dialog);
+    auto it = std::find(m_ActiveDialogs.begin(), m_ActiveDialogs.end(), phrase_dialog);
 	THROW(m_ActiveDialogs.end() == it);
 	m_ActiveDialogs.push_back(phrase_dialog);
 }
@@ -70,7 +70,7 @@ void CPhraseDialogManager::ReceivePhrase(DIALOG_SHARED_PTR& phrase_dialog)
 
 void CPhraseDialogManager::SayPhrase(DIALOG_SHARED_PTR& phrase_dialog, const shared_str& phrase_id)
 {
-	DIALOG_VECTOR_IT it = std::find(m_ActiveDialogs.begin(), m_ActiveDialogs.end(), phrase_dialog);
+    auto it = std::find(m_ActiveDialogs.begin(), m_ActiveDialogs.end(), phrase_dialog);
 	THROW(m_ActiveDialogs.end() != it);
 
 	THROW(phrase_dialog->IsWeSpeaking		(this));

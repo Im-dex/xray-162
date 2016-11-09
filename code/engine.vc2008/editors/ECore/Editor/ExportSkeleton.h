@@ -67,8 +67,8 @@ struct ECORE_API SSkelFace{
 	WORD		v[3];
 };
 
-DEFINE_VECTOR(SSkelVert,SkelVertVec,SkelVertIt);
-DEFINE_VECTOR(SSkelFace,SkelFaceVec,SkelFaceIt);
+using SkelVertVec = xr_vector<SSkelVert>;
+using SkelFaceVec = xr_vector<SSkelFace>;
 
 class ECORE_API CSkeletonCollectorPacked
 {
@@ -165,7 +165,7 @@ protected:
             }
         }
     };
-	DEFINE_VECTOR		(SSplit,SplitVec,SplitIt);
+	using SplitVec = xr_vector<SSplit>;
 	SplitVec			m_Splits;
     Fbox 				m_Box;
 //----------------------------------------------------

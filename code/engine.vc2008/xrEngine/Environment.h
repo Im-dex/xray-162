@@ -65,7 +65,7 @@ public:
 
 		INGAME_EDITOR_VIRTUAL	~SEffect				()	{}
 	};
-	DEFINE_VECTOR(SEffect*,EffectVec,EffectVecIt);
+	using EffectVec = xr_vector<SEffect*>;
 	struct SSndChannel
 	{
 		shared_str				m_load_section;
@@ -85,7 +85,7 @@ public:
 	protected:
 		xr_vector<ref_sound>	m_sounds;
 	};
-	DEFINE_VECTOR(SSndChannel*,SSndChannelVec,SSndChannelVecIt);
+	using SSndChannelVec = xr_vector<SSndChannel*>;
 protected:
 	shared_str				m_load_section;
 
@@ -215,9 +215,9 @@ class ENGINE_API	CEnvironment
 		{	return xr_strcmp(x,y)<0;	}
 	};
 public:
-	DEFINE_VECTOR			(CEnvAmbient*,EnvAmbVec,EnvAmbVecIt);
-	DEFINE_VECTOR			(CEnvDescriptor*,EnvVec,EnvIt);
-	DEFINE_MAP_PRED			(shared_str,EnvVec,EnvsMap,EnvsMapIt,str_pred);
+	using EnvAmbVec = xr_vector<CEnvAmbient*>;
+	using EnvVec = xr_vector<CEnvDescriptor*>;
+	using EnvsMap = xr_map<shared_str, EnvVec, str_pred>;
 private:
 	// clouds
 	FvectorVec				CloudsVerts;

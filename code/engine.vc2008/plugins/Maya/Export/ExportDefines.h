@@ -24,7 +24,7 @@ struct SXRShaderData
 	BOOL		double_side;
 	SXRShaderData():double_side(FALSE),name(""),tex_name(""),eng_name("default"),comp_name("default"),gmat_name("default"){};
 };
-DEFINE_VECTOR(SXRShaderData,XRShaderDataVec,XRShaderDataIt);
+using XRShaderDataVec = xr_vector<SXRShaderData>;
 
 extern MStatus	parseShader	(MObject &src, SXRShaderData& d);
 extern MObject	findShader	(MObject& setNode, SXRShaderData& d);

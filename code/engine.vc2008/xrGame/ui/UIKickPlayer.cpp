@@ -141,7 +141,7 @@ void CUIKickPlayer::OnBtnCancel()
 
 IC bool	DM_Compare_Players(game_PlayerState* v1, game_PlayerState* v2);
 
-DEFINE_VECTOR	(game_PlayerState*,ItemVec,ItemIt);
+using ItemVec = xr_vector<game_PlayerState*>;
 
 void CUIKickPlayer::Update()
 {

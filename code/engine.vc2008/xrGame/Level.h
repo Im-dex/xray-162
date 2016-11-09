@@ -60,6 +60,94 @@ namespace file_transfer
 class CLevel					: public IGame_Level, public IPureClient
 {
 	#include "Level_network_Demo.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	void						ClearAllObjects			();
 private:
 #ifdef DEBUG
@@ -112,8 +200,8 @@ public:
 	////////////// network ////////////////////////
 	u32							GetInterpolationSteps	();
 	void						SetInterpolationSteps	(u32 InterpSteps);
-	bool						InterpolationDisabled	();
-	void						ReculcInterpolationSteps();
+    static bool						InterpolationDisabled	();
+	void						ReculcInterpolationSteps() const;
 	u32							GetNumCrSteps			() const	{return m_dwNumSteps; };
 	void						SetNumCrSteps			( u32 NumSteps );
 	static void 				PhisStepsCallback		( u32 Time0, u32 Time1 );
@@ -137,7 +225,7 @@ private:
 	u32							m_dwNumSteps;
 	bool						m_bIn_CrPr;
 
-	DEF_VECTOR					(OBJECTS_LIST, CGameObject*);
+	using OBJECTS_LIST = xr_vector<CGameObject*>;
 
 	OBJECTS_LIST				pObjects4CrPr;
 	OBJECTS_LIST				pActors4CrPr;
@@ -165,7 +253,7 @@ private:
 	void						SendClientDigestToServer		();
 	shared_str					m_client_digest;	//for screenshots
 public:
-	shared_str const			get_cdkey_digest() const { return m_client_digest; };
+	shared_str get_cdkey_digest() const { return m_client_digest; };
 private:
 	bool						m_bConnectResultReceived;
 	bool						m_bConnectResult;
@@ -177,7 +265,7 @@ public:
 public:
 	//////////////////////////////////////////////	
 	// static particles
-	DEFINE_VECTOR				(CParticlesObject*,POVec,POIt);
+	using POVec = xr_vector<CParticlesObject*>;
 	POVec						m_StaticParticles;
 
 	game_cl_GameState			*game;
@@ -193,7 +281,7 @@ public:
 
 private:
 	// preload sounds registry
-	DEFINE_MAP					(shared_str,ref_sound,SoundRegistryMap,SoundRegistryMapIt);
+    using SoundRegistryMap = xr_map<shared_str, ref_sound>;
 	SoundRegistryMap			sound_registry;
 
 public:

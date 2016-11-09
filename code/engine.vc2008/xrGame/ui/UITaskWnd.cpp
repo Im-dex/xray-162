@@ -178,7 +178,7 @@ void CUITaskWnd::ReloadTaskInfo()
 		m_btn_focus->Show(true);
 
 	Locations map_locs			= Level().MapManager().Locations();
-	Locations_it b				= map_locs.begin(), 
+    auto b				= map_locs.begin(),
 				 e				= map_locs.end();
 	for(;b!=e;b++)
 	{
@@ -272,7 +272,7 @@ void CUITaskWnd::TaskSetTargetMap( CGameTask* task )
 	}
 }
 
-void CUITaskWnd::TaskShowMapSpot( CGameTask* task, bool show )
+void CUITaskWnd::TaskShowMapSpot( CGameTask* task, bool show ) const
 {
 	if (!task || !m_bSecondaryTasksEnabled)
 	{
@@ -301,12 +301,12 @@ void CUITaskWnd::OnTask1DbClicked( CUIWindow* ui, void* d )
 	TaskSetTargetMap( task );
 }
 
-void CUITaskWnd::ShowMapLegend( bool status )
+void CUITaskWnd::ShowMapLegend( bool status ) const
 {
 	m_map_legend_wnd->Show( status );
 }
 
-void CUITaskWnd::Switch_ShowMapLegend()
+void CUITaskWnd::Switch_ShowMapLegend() const
 {
 	m_map_legend_wnd->Show( !m_map_legend_wnd->IsShown() );
 }
@@ -333,7 +333,7 @@ void CUITaskWnd::OnShowQuestNpcs(CUIWindow* ui, void* d)
 }
 // --------------------------------------------------------------------------------------------------
 CUITaskItem::CUITaskItem() :
-	m_owner(NULL),
+	m_owner(nullptr),
 	m_hint_wt(500),
 	show_hint(false),
 	show_hint_can(false)
@@ -350,7 +350,7 @@ void CUITaskItem::Init(CUIXml& uiXml, LPCSTR path)
 	m_hint_wt						= uiXml.ReadAttribInt(path, 0, "hint_wt", 500);
 
 	string256		buff;
-	CUIStatic* S					= NULL;
+	CUIStatic* S					= nullptr;
 
 	strconcat( sizeof(buff), buff, path, ":t_icon" );
 	if ( uiXml.NavigateToNode( buff ) )

@@ -4,7 +4,7 @@
 
 
 // Igor DEFINE_VECTOR(ref_shader, SHADER_VECTOR, SHADER_VECTOR_IT);
-DEFINE_VECTOR(shared_str, STR_VECTOR, STR_VECTOR_IT);
+using STR_VECTOR = xr_vector<shared_str>;
 
 
 class MONSTER_COMMUNITY;
@@ -93,7 +93,7 @@ public:
 	virtual ICollisionHitCallback			*get_collision_hit_callback	()						;
 	virtual void							set_collision_hit_callback	(ICollisionHitCallback *cc);
 protected:
-	DEFINE_VECTOR				(CWound*, WOUND_VECTOR, WOUND_VECTOR_IT);
+	using WOUND_VECTOR = xr_vector<CWound*>;
 	WOUND_VECTOR				m_ParticleWounds;
 
 
@@ -131,7 +131,7 @@ protected:
 	static FactoryPtr<IWallMarkArray>	*m_pBloodDropsVector;
 	//список ран с которых капает кровь
 	
-	DEFINE_VECTOR				(CWound*, WOUND_VECTOR, WOUND_VECTOR_IT);
+	using WOUND_VECTOR = xr_vector<CWound*>;
 	WOUND_VECTOR				m_BloodWounds;
 	//размер раны, чтоб начала капать кровь
 	static float				m_fStartBloodWoundSize;

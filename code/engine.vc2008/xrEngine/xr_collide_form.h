@@ -129,7 +129,7 @@ public:
 		BOOL			valid		() const									{return (elem_id!=(u16(-1)))&&(type!=0);}
 		void			center		(Fvector& center) const;
 	};
-	DEFINE_VECTOR		(SElement,ElementVec,ElementVecIt);
+    using ElementVec = xr_vector<SElement>;
 private:
 	u64					vis_mask;
 	ElementVec			elements;

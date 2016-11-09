@@ -14,14 +14,14 @@ struct CSaver {
 	template <typename T>
 	struct CHelper1 {
 		template <bool a>
-		IC	static void save_data(const T &data, M &stream, const P &p)
+		static void save_data(const T &data, M &stream, const P &p)
 		{
-			STATIC_CHECK				(!is_polymorphic<T>::result,Cannot_save_polymorphic_classes_as_binary_data);
+            static_assert(!std::is_polymorphic_v<T>, "Cannot save polymorphic classes as binary data");
 			stream.w					(&data,sizeof(T));
 		}
 
 		template <>
-		IC	static void save_data<true>(const T &data, M &stream, const P &p)
+		static void save_data<true>(const T &data, M &stream, const P &p)
 		{
 			T* data1 = const_cast<T*>(&data);
 			data1->save	(stream);
@@ -32,7 +32,7 @@ struct CSaver {
 	struct CHelper {
 
 		template <bool pointer>
-		IC	static void save_data(const T &data, M &stream, const P &p)
+		static void save_data(const T &data, M &stream, const P &p)
 		{
 			CHelper1<T>::save_data<
 				object_type_traits::is_base_and_derived_or_same_from_template<
@@ -43,7 +43,7 @@ struct CSaver {
 		}
 
 		template <>
-		IC	static void save_data<true>(const T &data, M &stream, const P &p)
+		static void save_data<true>(const T &data, M &stream, const P &p)
 		{
 			CSaver<M,P>::save_data	(*data,stream,p);
 		}

@@ -63,7 +63,7 @@ void dxLensFlareRender::Render(CLensFlare &owner, BOOL bSun, BOOL bFlares, BOOL 
 			vecDx.normalize		(owner.vecAxis);
 			vecDy.crossproduct	(vecDx, owner.vecDir);
 			if (owner.m_Current->m_Flags.is(CLensFlareDescriptor::flFlare)){
-				for (CLensFlareDescriptor::FlareIt it=owner.m_Current->m_Flares.begin(); it!=owner.m_Current->m_Flares.end(); it++){
+				for (auto it=owner.m_Current->m_Flares.begin(); it!=owner.m_Current->m_Flares.end(); it++){
 					CLensFlareDescriptor::SFlare&	F = *it;
 					vec.mul				(owner.vecAxis, F.fPosition);
 					vec.add				(owner.vecCenter);

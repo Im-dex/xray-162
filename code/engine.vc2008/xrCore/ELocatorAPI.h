@@ -13,7 +13,7 @@ class XRCORE_API CLocatorAPI
 	friend class FS_Path;
 public:
 private:
-	DEFINE_MAP_PRED				(LPCSTR,FS_Path*,PathMap,PathPairIt,pred_str);
+	using PathMap = xr_map<LPCSTR, FS_Path*, pred_str>;
 	PathMap						pathes;
 public:
 	enum{

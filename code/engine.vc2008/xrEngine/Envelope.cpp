@@ -23,13 +23,13 @@ void  CEnvelope::ClearAndFree()
 
 void CEnvelope::Clear()
 {
-	for (KeyIt k_it=keys.begin(); k_it!=keys.end(); k_it++)
+	for (auto k_it=keys.begin(); k_it!=keys.end(); k_it++)
 		xr_delete(*k_it);
 }
 
 void CEnvelope::FindNearestKey(float t, KeyIt& min_k, KeyIt& max_k, float eps)
 {
-	for (KeyIt k_it=keys.begin(); k_it!=keys.end(); k_it++){
+	for (auto k_it=keys.begin(); k_it!=keys.end(); k_it++){
     	if (fsimilar((*k_it)->time,t,eps)){
         	max_k = k_it+1;
         	min_k = (k_it==keys.begin())?k_it:k_it-1;

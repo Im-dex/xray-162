@@ -282,8 +282,8 @@ void CGamePersistent::WeathersUpdate()
 		CEnvAmbient* env_amb		= _env->env_ambient;
 		if (env_amb) {
 			CEnvAmbient::SSndChannelVec& vec	= current_env->env_ambient->get_snd_channels();
-			CEnvAmbient::SSndChannelVecIt I		= vec.begin();
-			CEnvAmbient::SSndChannelVecIt E		= vec.end();
+            auto I		= vec.begin();
+            auto E		= vec.end();
 			
 			for (u32 idx=0; I!=E; ++I,++idx) {
 				CEnvAmbient::SSndChannel& ch	= **I;

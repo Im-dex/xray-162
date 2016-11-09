@@ -99,7 +99,7 @@ void CGameObject::reinit	()
         ai_location().reinit	();
 
 	// clear callbacks	
-	for (CALLBACK_MAP_IT it = m_callbacks->begin(); it != m_callbacks->end(); ++it) it->second.clear();
+	for (auto it = m_callbacks->begin(); it != m_callbacks->end(); ++it) it->second.clear();
 }
 
 void CGameObject::reload	(LPCSTR section)

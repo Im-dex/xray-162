@@ -10,7 +10,7 @@ void dxWallMarkArray::Copy(IWallMarkArray &_in)
 
 dxWallMarkArray::~dxWallMarkArray()
 {
-	for (ShaderIt it=m_CollideMarks.begin(); it != m_CollideMarks.end(); ++it)
+	for (auto it=m_CollideMarks.begin(); it != m_CollideMarks.end(); ++it)
 		it->destroy();
 }
 

@@ -260,7 +260,7 @@ public:
 
 
 private:
-	DEFINE_VECTOR			(SFlameElement*, FLAME_ELEMS_VEC, FLAME_ELEMS_IT);
+	using FLAME_ELEMS_VEC = xr_vector<SFlameElement*>;
 	FLAME_ELEMS_VEC			m_flames;
 
 public:	

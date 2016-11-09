@@ -152,7 +152,7 @@ void CCarLights::ParseDefinitions()
 void CCarLights::Update()
 {
 	VERIFY(!physics_world()->Processing());
-	LIGHTS_I i =m_lights.begin(),e=m_lights.end();
+    auto i =m_lights.begin(),e=m_lights.end();
 	for(;i!=e;++i) (*i)->Update();
 }
 
@@ -160,7 +160,7 @@ void CCarLights::SwitchHeadLights()
 {
 	
 	VERIFY(!physics_world()->Processing());
-	LIGHTS_I i =m_lights.begin(),e=m_lights.end();
+    auto i =m_lights.begin(),e=m_lights.end();
 	for(;i!=e;++i) (*i)->Switch();
 }
 
@@ -168,33 +168,33 @@ void CCarLights::TurnOnHeadLights()
 {
 
 	VERIFY(!physics_world()->Processing());
-	LIGHTS_I i =m_lights.begin(),e=m_lights.end();
+    auto i =m_lights.begin(),e=m_lights.end();
 	for(;i!=e;++i) (*i)->TurnOn();
 }
 void CCarLights::TurnOffHeadLights()
 {
 	VERIFY(!physics_world()->Processing());
-	LIGHTS_I i =m_lights.begin(),e=m_lights.end();
+    auto i =m_lights.begin(),e=m_lights.end();
 	for(;i!=e;++i) (*i)->TurnOff();
 }
 
 bool CCarLights::IsLight(u16 bone_id)
 {
-	SCarLight* light=NULL;
+	SCarLight* light= nullptr;
 	return findLight(bone_id,light);
 }
 bool CCarLights::findLight(u16 bone_id,SCarLight* &light)
 {
-	LIGHTS_I i,e=m_lights.end();
+    auto e=m_lights.end();
 	SCarLight find_light;
 	find_light.bone_id=bone_id;
-	i=std::find_if(m_lights.begin(),e,SFindLightPredicate(&find_light));
+    auto i=std::find_if(m_lights.begin(),e,SFindLightPredicate(&find_light));
 	light=*i;
 	return i!=e;
 }
 CCarLights::~CCarLights()
 {
-	LIGHTS_I i =m_lights.begin(),e=m_lights.end();
+    auto i =m_lights.begin(),e=m_lights.end();
 	for(;i!=e;++i) xr_delete(*i);
 	m_lights.clear();
 }

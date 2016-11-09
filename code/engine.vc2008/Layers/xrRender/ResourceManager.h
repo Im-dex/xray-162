@@ -27,24 +27,25 @@ private:
 		R_constant_setup*	cs;
 	};
 public:
-	DEFINE_MAP_PRED(const char*,IBlender*,		map_Blender,	map_BlenderIt,		str_pred);
-	DEFINE_MAP_PRED(const char*,CTexture*,		map_Texture,	map_TextureIt,		str_pred);
-	DEFINE_MAP_PRED(const char*,CMatrix*,		map_Matrix,		map_MatrixIt,		str_pred);
-	DEFINE_MAP_PRED(const char*,CConstant*,		map_Constant,	map_ConstantIt,		str_pred);
-	DEFINE_MAP_PRED(const char*,CRT*,			map_RT,			map_RTIt,			str_pred);
+	using map_Blender = xr_map<const char*, IBlender*, str_pred>;
+	using map_Texture = xr_map<const char*, CTexture*, str_pred>;
+	using map_Matrix = xr_map<const char*, CMatrix*, str_pred>;
+	using map_Constant = xr_map<const char*, CConstant*, str_pred>;
+	using map_RT = xr_map<const char*, CRT*, str_pred>;
 	//	DX10 cut DEFINE_MAP_PRED(const char*,CRTC*,			map_RTC,		map_RTCIt,			str_pred);
-	DEFINE_MAP_PRED(const char*,SVS*,			map_VS,			map_VSIt,			str_pred);
+	using map_VS = xr_map<const char*, SVS*, str_pred>;
+
 #if defined(USE_DX10) || defined(USE_DX11)
-	DEFINE_MAP_PRED(const char*,SGS*,			map_GS,			map_GSIt,			str_pred);
+    using map_GS = xr_map<const char*, SGS*, str_pred>;
 #endif	//	USE_DX10
 #ifdef USE_DX11
-	DEFINE_MAP_PRED(const char*, SHS*,			map_HS,			map_HSIt,			str_pred);
-	DEFINE_MAP_PRED(const char*, SDS*,			map_DS,			map_DSIt,			str_pred);
-	DEFINE_MAP_PRED(const char*, SCS*,			map_CS,			map_CSIt,			str_pred);
+    using map_HS = xr_map<const char*, SHS*, str_pred>;
+    using map_DS = xr_map<const char*, SDS*, str_pred>;
+    using map_CS = xr_map<const char*, SCS*, str_pred>;
 #endif
 
-	DEFINE_MAP_PRED(const char*,SPS*,			map_PS,			map_PSIt,			str_pred);
-	DEFINE_MAP_PRED(const char*,texture_detail,	map_TD,			map_TDIt,			str_pred);
+	using map_PS = xr_map<const char*, SPS*, str_pred>;
+	using map_TD = xr_map<const char*, texture_detail, str_pred>;
 private:
 	// data
 	map_Blender											m_blenders;
@@ -207,7 +208,7 @@ public:
 	Shader*			Create					(LPCSTR s_shader=0, LPCSTR s_textures=0,	LPCSTR s_constants=0,	LPCSTR s_matrices=0);
 	Shader*			Create					(IBlender*	B,		LPCSTR s_shader=0,		LPCSTR s_textures=0,	LPCSTR s_constants=0, LPCSTR s_matrices=0);
 	void			Delete					(const Shader*		S	);
-	void			RegisterConstantSetup	(LPCSTR name,		R_constant_setup* s)	{	v_constant_setup.push_back(mk_pair(shared_str(name),s));	}
+	void			RegisterConstantSetup	(LPCSTR name,		R_constant_setup* s)	{	v_constant_setup.push_back(std::make_pair(shared_str(name),s));	}
 
 	SGeometry*		CreateGeom				(D3DVERTEXELEMENT9* decl, ID3DVertexBuffer* vb, ID3DIndexBuffer* ib);
 	SGeometry*		CreateGeom				(u32 FVF				, ID3DVertexBuffer* vb, ID3DIndexBuffer* ib);

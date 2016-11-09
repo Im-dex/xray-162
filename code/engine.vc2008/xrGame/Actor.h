@@ -552,7 +552,7 @@ virtual	bool				can_validate_position_on_spawn	(){return false;}
 	u32						m_dwILastUpdateTime;
 
 	//---------------------------------------------
-	DEF_DEQUE		(PH_STATES, SPHNetState);
+	using PH_STATES = xr_deque<SPHNetState>;
 	PH_STATES				m_States;
 	u16						m_u16NumBones;
 	void					net_ExportDeadBody		(NET_Packet &P);

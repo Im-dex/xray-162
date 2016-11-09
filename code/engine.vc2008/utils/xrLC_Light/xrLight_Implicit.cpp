@@ -20,14 +20,7 @@
 
 extern "C" bool __declspec(dllimport) __stdcall DXTCompress(LPCSTR out_name, u8* raw_data, u8* normal_map, u32 w, u32 h, u32 pitch, STextureParams* fmt, u32 depth);
 
-
-
-DEF_MAP(Implicit,u32,ImplicitDeflector);
-
-
-
-
-
+using Implicit = xr_map<u32, ImplicitDeflector>;
 
 
 void		ImplicitExecute::read			( INetReader	&r )
@@ -211,7 +204,7 @@ void ImplicitLightingExec(BOOL b_net)
 			ImplicitDeflector	ImpD;
 			ImpD.texture		= T;
 			ImpD.faces.push_back(F);
-			calculator.insert	(mk_pair(Tid,ImpD));
+			calculator.insert	(std::make_pair(Tid,ImpD));
 			not_clear.push_back	(Tid);
 		} else {
 			ImplicitDeflector&	ImpD = it->second;

@@ -77,7 +77,7 @@ vGameTasks&	CGameTaskManager::GetGameTasks	()
 CGameTask* CGameTaskManager::HasGameTask(const shared_str& id, bool only_inprocess)
 {
 	FindTaskByID key(id, only_inprocess);
-	vGameTasks_it it = std::find_if(GetGameTasks().begin(),GetGameTasks().end(),key);
+    auto it = std::find_if(GetGameTasks().begin(),GetGameTasks().end(),key);
 	if( it!=GetGameTasks().end() )
 		return (*it).game_task;
 	
@@ -253,8 +253,8 @@ void CGameTaskManager::MapLocationRelcase(CMapLocation* ml)
 
 CGameTask* CGameTaskManager::HasGameTask(const CMapLocation* ml, bool only_inprocess)
 {
-	vGameTasks_it it		= GetGameTasks().begin();
-	vGameTasks_it it_e		= GetGameTasks().end();
+    auto it		= GetGameTasks().begin();
+    auto it_e		= GetGameTasks().end();
 
 	for(; it!=it_e; ++it)
 	{
@@ -353,8 +353,8 @@ char* sTaskStates[]=
 
 void CGameTaskManager::DumpTasks()
 {
-	vGameTasks_it it			= GetGameTasks().begin();
-	vGameTasks_it it_e			= GetGameTasks().end();
+    auto it			= GetGameTasks().begin();
+    auto it_e			= GetGameTasks().end();
 	for(; it!=it_e; ++it)
 	{
 		const CGameTask* gt = (*it).game_task;

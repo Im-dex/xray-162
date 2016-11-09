@@ -126,16 +126,16 @@ public:
 #endif
 };
 
-DEFINE_VECTOR	(CSurface*,SurfaceVec,SurfaceIt);
-DEFINE_VECTOR	(CEditableMesh*,EditMeshVec,EditMeshIt);
-DEFINE_VECTOR	(COMotion*,OMotionVec,OMotionIt);
-DEFINE_VECTOR	(CSMotion*,SMotionVec,SMotionIt);
+using SurfaceVec = xr_vector<CSurface*>;
+using EditMeshVec = xr_vector<CEditableMesh*>;
+using OMotionVec = xr_vector<COMotion*>;
+using SMotionVec = xr_vector<CSMotion*>;
 
 struct ECORE_API SBonePart{
 	shared_str 		alias;
     RStringVec 		bones;
 };
-DEFINE_VECTOR(SBonePart,BPVec,BPIt);
+using BPVec = xr_vector<SBonePart>;
 
 const u32 FVF_SV	= D3DFVF_XYZ | D3DFVF_TEX1 | D3DFVF_NORMAL;
 

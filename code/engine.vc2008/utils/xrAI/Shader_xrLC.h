@@ -46,7 +46,7 @@ public:
 	}
 };
 
-DEFINE_VECTOR(Shader_xrLC,Shader_xrLCVec,Shader_xrLCIt);
+using Shader_xrLCVec = xr_vector<Shader_xrLC>;
 class Shader_xrLC_LIB
 {
 	Shader_xrLCVec			library;

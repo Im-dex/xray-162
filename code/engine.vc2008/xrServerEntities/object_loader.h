@@ -14,14 +14,14 @@ struct CLoader {
 	template <typename T>
 	struct CHelper1 {
 		template <bool a>
-		IC	static void load_data(T &data, M &stream, const P &p)
+		static void load_data(T &data, M &stream, const P &p)
 		{
-			STATIC_CHECK				(!is_polymorphic<T>::result,Cannot_load_polymorphic_classes_as_binary_data);
+            static_assert(!std::is_polymorphic_v<T>, "Cannot load polymorphic classes as binary data");
 			stream.r					(&data,sizeof(T));
 		}
 
 		template <>
-		IC	static void load_data<true>(T &data, M &stream, const P &p)
+		static void load_data<true>(T &data, M &stream, const P &p)
 		{
 			T* data1 = const_cast<T*>(&data);
 			data1->load	(stream);
@@ -32,7 +32,7 @@ struct CLoader {
 	struct CHelper {
 
 		template <bool pointer>
-		IC	static void load_data(T &data, M &stream, const P &p)
+		static void load_data(T &data, M &stream, const P &p)
 		{
 			CHelper1<T>::load_data<
 				object_type_traits::is_base_and_derived_or_same_from_template<
@@ -43,7 +43,7 @@ struct CLoader {
 		}
 
 		template <>
-		IC	static void load_data<true>(T &data, M &stream, const P &p)
+		static void load_data<true>(T &data, M &stream, const P &p)
 		{
 			CLoader<M,P>::load_data	(*(data = xr_new<object_type_traits::remove_pointer<T>::type>()),stream,p);
 		}

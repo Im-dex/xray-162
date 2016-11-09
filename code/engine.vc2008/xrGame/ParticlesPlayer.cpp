@@ -15,7 +15,7 @@ static void generate_orthonormal_basis(const Fvector& dir,Fmatrix &result)
 }
 CParticlesPlayer::SParticlesInfo* CParticlesPlayer::SBoneInfo::FindParticles(const shared_str& ps_name)
 {
-	for (ParticlesInfoListIt it=particles.begin(); it!=particles.end(); it++)
+	for (auto it=particles.begin(); it!=particles.end(); it++)
 		if (it->ps && it->ps->Name()==ps_name) return &(*it);
 	return 0;
 }
@@ -41,7 +41,7 @@ void CParticlesPlayer::SBoneInfo::StopParticles(const shared_str& ps_name, bool 
 
 void CParticlesPlayer::SBoneInfo::StopParticles(u16 sender_id, bool bDestroy)
 {
-	for (ParticlesInfoListIt it=particles.begin(); it!=particles.end(); it++)
+	for (auto it=particles.begin(); it!=particles.end(); it++)
 		if (it->sender_id==sender_id){
 			if(!bDestroy)
 				it->ps->Stop();
@@ -102,11 +102,11 @@ void	CParticlesPlayer::net_DestroyParticles	()
 {
 	VERIFY(m_self_object);
 
-	for(BoneInfoVecIt b_it=m_Bones.begin(); b_it!=m_Bones.end(); b_it++)
+	for(auto b_it=m_Bones.begin(); b_it!=m_Bones.end(); b_it++)
 	{
 		SBoneInfo& b_info	= *b_it;
 
-		for (ParticlesInfoListIt p_it=b_info.particles.begin(); p_it!=b_info.particles.end(); p_it++)
+		for (auto p_it=b_info.particles.begin(); p_it!=b_info.particles.end(); p_it++)
 		{
 			SParticlesInfo& p_info	= *p_it;
 			CParticlesObject::Destroy(p_info.ps);
@@ -165,7 +165,7 @@ void CParticlesPlayer::StartParticles(const shared_str& ps_name, const Fmatrix& 
 {
 	CObject* object					= m_self_object;
 	VERIFY(object);
-	for(BoneInfoVecIt it = m_Bones.begin(); it!=m_Bones.end(); it++){
+	for(auto it = m_Bones.begin(); it!=m_Bones.end(); it++){
 		
 		SParticlesInfo &particles_info	=*it->AppendParticles(object,ps_name);
 		particles_info.sender_id	= sender_id;
@@ -195,7 +195,7 @@ void CParticlesPlayer::StartParticles(const shared_str& ps_name, const Fvector& 
 void CParticlesPlayer::StopParticles(u16 sender_id, u16 bone_id, bool bDestroy)
 {
 	if (BI_NONE==bone_id){
-		for(BoneInfoVecIt it=m_Bones.begin(); it!=m_Bones.end(); it++)
+		for(auto it=m_Bones.begin(); it!=m_Bones.end(); it++)
 			it->StopParticles	(sender_id, bDestroy);
 	}else{
 		SBoneInfo* bi			= get_bone_info(bone_id); VERIFY(bi);
@@ -207,7 +207,7 @@ void CParticlesPlayer::StopParticles(u16 sender_id, u16 bone_id, bool bDestroy)
 void CParticlesPlayer::StopParticles(const shared_str& ps_name, u16 bone_id, bool bDestroy)
 {
 	if (BI_NONE==bone_id){
-		for(BoneInfoVecIt it=m_Bones.begin(); it!=m_Bones.end(); it++)
+		for(auto it=m_Bones.begin(); it!=m_Bones.end(); it++)
 			it->StopParticles	(ps_name, bDestroy);
 	}else{
 		SBoneInfo* bi			= get_bone_info(bone_id); VERIFY(bi);
@@ -220,7 +220,7 @@ void CParticlesPlayer::StopParticles(const shared_str& ps_name, u16 bone_id, boo
 void CParticlesPlayer::AutoStopParticles(const shared_str& ps_name, u16 bone_id,u32 life_time)
 {
 	if (BI_NONE==bone_id){
-		for(BoneInfoVecIt it=m_Bones.begin(); it!=m_Bones.end(); it++)
+		for(auto it=m_Bones.begin(); it!=m_Bones.end(); it++)
 		{
 			SParticlesInfo* pInfo = it->FindParticles	(ps_name);
 			if(pInfo) pInfo->life_time = life_time;
@@ -246,10 +246,10 @@ void CParticlesPlayer::UpdateParticles()
     CObject* object			= m_self_object;
 	VERIFY	(object);
 
-	for(BoneInfoVecIt b_it=m_Bones.begin(); b_it!=m_Bones.end(); b_it++){
+	for(auto b_it=m_Bones.begin(); b_it!=m_Bones.end(); b_it++){
 		SBoneInfo& b_info	= *b_it;
 
-		for (ParticlesInfoListIt p_it=b_info.particles.begin(); p_it!=b_info.particles.end(); p_it++){
+		for (auto p_it=b_info.particles.begin(); p_it!=b_info.particles.end(); p_it++){
 			SParticlesInfo& p_info	= *p_it;
 			if(!p_info.ps) continue;
 			//обновить позицию партиклов
@@ -275,7 +275,7 @@ void CParticlesPlayer::UpdateParticles()
 				m_bActiveBones  = true;
 		}
 
-		ParticlesInfoListIt RI=std::remove_if(b_info.particles.begin(),b_info.particles.end(),SRP());
+        auto RI=std::remove_if(b_info.particles.begin(),b_info.particles.end(),SRP());
 		b_info.particles.erase(RI,b_info.particles.end());
 	}
 }

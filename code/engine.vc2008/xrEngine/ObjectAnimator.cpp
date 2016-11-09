@@ -25,7 +25,7 @@ CObjectAnimator::~CObjectAnimator()
 
 void CObjectAnimator::Clear()
 {
-	for(MotionIt m_it=m_Motions.begin(); m_it!=m_Motions.end(); m_it++)
+	for(auto m_it=m_Motions.begin(); m_it!=m_Motions.end(); m_it++)
 		xr_delete		(*m_it);
 	m_Motions.clear		();
     SetActiveMotion		(0);
@@ -88,7 +88,7 @@ void CObjectAnimator::Update(float dt)
 COMotion* CObjectAnimator::Play(bool loop, LPCSTR name)
 {
 	if (name&&name[0]){
-		MotionIt it = std::lower_bound(m_Motions.begin(),m_Motions.end(),name,motion_find_pred);
+        auto it = std::lower_bound(m_Motions.begin(),m_Motions.end(),name,motion_find_pred);
         if ((it!=m_Motions.end())&&(0==xr_strcmp((*it)->Name(),name))){
             bLoop 		= loop;
             SetActiveMotion(*it);
@@ -96,7 +96,7 @@ COMotion* CObjectAnimator::Play(bool loop, LPCSTR name)
             return 		*it;
         }else{
             Debug.fatal	(DEBUG_INFO,"OBJ ANIM::Cycle '%s' not found.",name);
-            return NULL;
+            return nullptr;
         }
     }else{
         if (!m_Motions.empty()){
@@ -106,7 +106,7 @@ COMotion* CObjectAnimator::Play(bool loop, LPCSTR name)
             return 		m_Motions.front();
         }else{
             Debug.fatal	(DEBUG_INFO,"OBJ ANIM::Cycle '%s' not found.",name);
-            return NULL;
+            return nullptr;
         }
     }
 }
@@ -117,7 +117,7 @@ void CObjectAnimator::Stop()
 	m_MParam.Stop		();
 }
 
-float CObjectAnimator::GetLength		()
+float CObjectAnimator::GetLength		() const
 {
 	if(!m_Current) return 0.0f;
 	float res = m_Current->Length()/m_Current->FPS();

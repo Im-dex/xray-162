@@ -262,8 +262,8 @@ void game_cl_Deathmatch::SetBuyMenuItems		(PRESET_ITEMS* pItems, BOOL OnlyPreset
 		pCurBuyMenu->GetWeaponIndexByName("mp_wpn_knife", KnifeSlot, KnifeIndex);
 		//---------------------------------------------------------
 		PRESET_ITEMS		TmpPresetItems;
-		PRESET_ITEMS_it		It = pItems->begin();
-		PRESET_ITEMS_it		Et = pItems->end();
+        auto		It = pItems->begin();
+        auto		Et = pItems->end();
 		for ( ; It != Et; ++It) 
 		{
 			PresetItem PIT = *It;
@@ -294,7 +294,7 @@ void game_cl_Deathmatch::CheckItem			(PIItem pItem, PRESET_ITEMS* pPresetItems, 
 		if (pAmmo->m_boxCurr != pAmmo->m_boxSize) return;
 	}
 	//-----------------------------------------------------	
-	PRESET_ITEMS_it PresetItemIt = std::find(pPresetItems->begin(), pPresetItems->end(), BigID);
+    auto PresetItemIt = std::find(pPresetItems->begin(), pPresetItems->end(), BigID);
 	if (OnlyPreset)
 	{		
 		if (PresetItemIt == pPresetItems->end()) return;
@@ -302,7 +302,7 @@ void game_cl_Deathmatch::CheckItem			(PIItem pItem, PRESET_ITEMS* pPresetItems, 
 
 	if (SlotID == INV_SLOT_2)
 	{
-		PRESET_ITEMS_it DefPistolIt = std::find(PlayerDefItems.begin(), PlayerDefItems.end(), BigID);
+        auto DefPistolIt = std::find(PlayerDefItems.begin(), PlayerDefItems.end(), BigID);
 		if (DefPistolIt != PlayerDefItems.end() && PresetItemIt == pPresetItems->end()) return;
 	}
 	
@@ -476,8 +476,8 @@ void				game_cl_Deathmatch::LoadDefItemsForRank(IBuyWnd* pBuyMenu)
 	pCurBuyMenu->GetWeaponIndexByName("mp_wpn_knife", KnifeSlot, KnifeIndex);
 	//---------------------------------------------------------
 	PRESET_ITEMS		TmpPresetItems;
-	PRESET_ITEMS_it		It = PlayerDefItems.begin();
-	PRESET_ITEMS_it		Et = PlayerDefItems.end();
+    auto		It = PlayerDefItems.begin();
+    auto		Et = PlayerDefItems.end();
 	for ( ; It != Et; ++It) 
 	{
 		PresetItem PIT = *It;
