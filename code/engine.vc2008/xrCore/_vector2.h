@@ -17,10 +17,10 @@ public:
 	IC SelfRef set(int _u, int _v)					{ x=T(_u); y=T(_v);				return *this;	}
 	IC SelfRef set(const Self &p)					{ x=p.x; y=p.y;					return *this;	}
 	IC SelfRef abs(const Self &p)					{ x=_abs(p.x); y=_abs(p.y);		return *this;	}
-	IC SelfRef min(const Self &p)					{ x=_min(x,p.x); y=_min(y,p.y);	return *this;	}
-	IC SelfRef min(T _x, T _y)						{ x=_min(x,_x);  y=_min(y,_y);	return *this;	}
-	IC SelfRef max(const Self &p)					{ x=_max(x,p.x); y=_max(y,p.y);	return *this;	}
-	IC SelfRef max(T _x, T _y)						{ x=_max(x,_x);  y=_max(y,_y);	return *this;	}
+	IC SelfRef min(const Self &p)					{ x=std::min(x,p.x); y=std::min(y,p.y);	return *this;	}
+	IC SelfRef min(T _x, T _y)						{ x=std::min(x,_x);  y=std::min(y,_y);	return *this;	}
+	IC SelfRef max(const Self &p)					{ x=std::max(x,p.x); y=std::max(y,p.y);	return *this;	}
+	IC SelfRef max(T _x, T _y)						{ x=std::max(x,_x);  y=std::max(y,_y);	return *this;	}
 	IC SelfRef sub(const T p)						{ x-=p; y-=p;					return *this;	}
 	IC SelfRef sub(const Self &p)					{ x-=p.x; y-=p.y;				return *this;	}
 	IC SelfRef sub(const Self &p1, const Self &p2)	{ x=p1.x-p2.x; y=p1.y-p2.y;		return *this;	}

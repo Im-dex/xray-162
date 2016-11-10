@@ -119,7 +119,7 @@ void xrLoad(LPCSTR name, bool draft_mode)
 					F->r			(&TEX,sizeof(TEX));
 
 					b_BuildTexture	BT;
-					CopyMemory		(&BT,&TEX,sizeof(TEX));
+                    std::memcpy(&BT,&TEX,sizeof(TEX));
 
 					// load thumbnail
 					string128		&N = BT.name;

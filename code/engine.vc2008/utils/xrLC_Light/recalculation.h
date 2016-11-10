@@ -56,7 +56,7 @@ IC void set_slot_calculated( int x, int z )
 	void	write			( IWriter	&w ) const ;
 private:
 	void	load_calculation_params			();
-	void	setup_recalculationflags_file	( u32 check_sum );
+	void	setup_recalculationflags_file	( u32 check_sum ) const;
 	void	check_load						( u32 check_sum );
 	void	check_files						( u32 check_sum );
 };

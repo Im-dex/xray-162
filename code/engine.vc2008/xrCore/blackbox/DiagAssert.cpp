@@ -491,8 +491,8 @@ static DWORD ConvertAddress ( DWORD dwAddr , LPTSTR szOutBuff )
 
     LPTSTR pCurrPos = szOutBuff ;
 
-    ZeroMemory ( pIHS , MAX_PATH + sizeof ( IMAGEHLP_SYMBOL ) ) ;
-    ZeroMemory ( &stIHM , sizeof ( IMAGEHLP_MODULE ) ) ;
+    std::memset( pIHS , 0, MAX_PATH + sizeof ( IMAGEHLP_SYMBOL ) ) ;
+    std::memset( &stIHM , 0, sizeof ( IMAGEHLP_MODULE ) ) ;
 
     pIHS->SizeOfStruct = sizeof ( IMAGEHLP_SYMBOL ) ;
     pIHS->Address = dwAddr ;
@@ -542,7 +542,7 @@ static DWORD ConvertAddress ( DWORD dwAddr , LPTSTR szOutBuff )
         // If I got a symbol, give the source and line a whirl.
         IMAGEHLP_LINE stIHL ;
 
-        ZeroMemory ( &stIHL , sizeof ( IMAGEHLP_LINE ) ) ;
+        std::memset( &stIHL , 0, sizeof ( IMAGEHLP_LINE ) ) ;
 
         stIHL.SizeOfStruct = sizeof ( IMAGEHLP_LINE ) ;
 
@@ -633,7 +633,7 @@ void DoStackTrace ( LPTSTR szString  ,
         STACKFRAME stFrame ;
         DWORD      dwMachine ;
 
-        ZeroMemory ( &stFrame , sizeof ( STACKFRAME ) ) ;
+        std::memset( &stFrame , 0, sizeof ( STACKFRAME ) ) ;
 
         stFrame.AddrPC.Mode = AddrModeFlat ;
 

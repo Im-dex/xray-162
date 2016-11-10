@@ -368,7 +368,7 @@ void CRenderTarget::accum_direct_cascade	( u32 sub_phase, Fmatrix& xform, Fmatri
 		u32		i_offset;
 		{
 			u16*	pib					= RCache.Index.Lock	(sizeof(facetable)/sizeof(u16),i_offset);
-			CopyMemory					(pib,&facetable,sizeof(facetable));
+            std::memcpy(pib,&facetable,sizeof(facetable));
 			RCache.Index.Unlock			(sizeof(facetable)/sizeof(u16));
 
 			//corners

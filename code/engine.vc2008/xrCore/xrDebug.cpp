@@ -73,9 +73,9 @@ static INT_PTR CALLBACK DialogProc	( HWND hw, UINT msg, WPARAM wp, LPARAM lp )
 
 void xrDebug::backend(const char* reason, const char* expression, const char *argument0, const char *argument1, const char* file, int line, const char *function, bool &ignore_always)
 {
-	static	xrCriticalSection	CS;
+	static	std::recursive_mutex	CS;
 
-	CS.Enter			();
+    std::lock_guard<decltype(CS)> lock(CS);
 
 	// Log
 	string1024			tmp;
@@ -106,14 +106,12 @@ void xrDebug::backend(const char* reason, const char* expression, const char *ar
 	case -1:
 	case IDC_STOP:
 		if (bException)		TerminateProcess(GetCurrentProcess(),3);
-		else				RaiseException	(0, 0, 0, NULL);
+		else				RaiseException	(0, 0, 0, nullptr);
 		break;
 	case IDC_DEBUG:
  		DEBUG_INVOKE;
 		break;
 	}
-
-	CS.Leave			();
 }
 
 LPCSTR xrDebug::error2string	(long code)

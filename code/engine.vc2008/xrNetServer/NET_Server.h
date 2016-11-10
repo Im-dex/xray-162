@@ -175,7 +175,7 @@ protected:
 	ip_filter						m_ip_filter;
 
 	// 
-	xrCriticalSection		csMessage;
+	std::recursive_mutex		csMessage;
 
 	void					client_link_aborted	(ClientID ID);
 	void					client_link_aborted	(IClient* C);
@@ -260,7 +260,7 @@ public:
 	void					ForEachClientDo	(ActionFunctor & action)			{ net_players.ForEachClientDo(action); }
 	template<typename SenderFunctor>
 	void					ForEachClientDoSender(SenderFunctor & action)		{ 
-																					csMessage.Enter();
+                                                                                    std::lock_guard<decltype(csMessage)> lock(csMessage);
 #ifdef DEBUG
 																					sender_functor_invoked = true;
 #endif //#ifdef DEBUG
@@ -268,7 +268,6 @@ public:
 #ifdef DEBUG
 																					sender_functor_invoked = false;
 #endif //#ifdef DEBUG
-																					csMessage.Leave();
 																				}
 	//template<typename ActionFunctor>
 	//void					ForEachDisconnectedClientDo(ActionFunctor & action) { net_players.ForEachDisconnectedClientDo(action); };

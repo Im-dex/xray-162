@@ -503,7 +503,7 @@ bool CScriptEngine::no_file_exists	(LPCSTR file_name, u32 string_length)
 void CScriptEngine::add_no_file		(LPCSTR file_name, u32 string_length)
 {
 	m_last_no_file_length	= string_length;
-	CopyMemory				(m_last_no_file,file_name,(string_length+1)*sizeof(char));
+    std::memcpy(m_last_no_file,file_name,(string_length+1)*sizeof(char));
 }
 
 void CScriptEngine::collect_all_garbage	()

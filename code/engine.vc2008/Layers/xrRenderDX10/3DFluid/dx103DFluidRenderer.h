@@ -50,7 +50,7 @@ private:
 	{
 		Fvector3	m_vLightIntencity;
 
-		void Reset() { ZeroMemory(this, sizeof(*this));}
+		void Reset() { std::memset(this,0,sizeof(*this));}
 	};
 
 private:

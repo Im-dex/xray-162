@@ -62,7 +62,7 @@ namespace CDB
 			S_forcedword		= u32(-1)
 		};
 	private:
-		xrCriticalSection		cs;
+		mutable std::recursive_mutex		cs;
 		Opcode::OPCODE_Model*	tree;
 		u32						status;		// 0=ready, 1=init, 2=building
 
@@ -86,9 +86,8 @@ namespace CDB
 			if (S_READY!=status)
 			{
 				Log						("! WARNING: syncronized CDB::query");
-				xrCriticalSection*	C	= (xrCriticalSection*) &cs;
-				C->Enter				();
-				C->Leave				();
+                cs.lock();
+                cs.unlock();
 			}
 		}
 

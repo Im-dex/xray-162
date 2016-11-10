@@ -160,7 +160,7 @@ D3D_TEXTURE_ADDRESS_MODE	ConvertTextureAddressMode(D3DTEXTUREADDRESS Mode)
 
 void ResetDescription( D3D_RASTERIZER_DESC &desc )
 {
-	ZeroMemory(&desc, sizeof(desc));
+    std::memset(&desc,0,sizeof(desc));
 	desc.FillMode = D3D_FILL_SOLID;
 	desc.CullMode = D3D_CULL_BACK;
 	desc.FrontCounterClockwise = FALSE;
@@ -178,7 +178,7 @@ void ResetDescription( D3D_RASTERIZER_DESC &desc )
 
 void ResetDescription( D3D_DEPTH_STENCIL_DESC &desc )
 {
-	ZeroMemory(&desc, sizeof(desc));
+    std::memset(&desc,0,sizeof(desc));
 	desc.DepthEnable = TRUE;
 	desc.DepthWriteMask = D3D_DEPTH_WRITE_MASK_ALL;
 	desc.DepthFunc = D3D_COMPARISON_LESS;
@@ -208,7 +208,7 @@ void ResetDescription( D3D_DEPTH_STENCIL_DESC &desc )
 #ifdef USE_DX11
 void ResetDescription( D3D_BLEND_DESC &desc )
 {
-	ZeroMemory(&desc, sizeof(desc));
+    std::memset(&desc, 0, sizeof(desc));
 
 	desc.AlphaToCoverageEnable = FALSE;
 	desc.IndependentBlendEnable = FALSE;
@@ -228,7 +228,7 @@ void ResetDescription( D3D_BLEND_DESC &desc )
 #else
 void ResetDescription( D3D_BLEND_DESC &desc )
 {
-	ZeroMemory(&desc, sizeof(desc));
+    std::memset(&desc,0,sizeof(desc));
 
 	desc.AlphaToCoverageEnable = FALSE;
 	desc.SrcBlend = D3D_BLEND_ONE;
@@ -248,7 +248,7 @@ void ResetDescription( D3D_BLEND_DESC &desc )
 
 void ResetDescription( D3D_SAMPLER_DESC &desc )
 {
-	ZeroMemory(&desc, sizeof(desc));
+    std::memset(&desc,0,sizeof(desc));
 
 	desc.Filter = D3D_FILTER_MIN_MAG_MIP_LINEAR;
 	desc.AddressU = D3D_TEXTURE_ADDRESS_CLAMP;

@@ -40,10 +40,10 @@ bool TestDX11Present()
 
 	// Register class
 	WNDCLASSEX wcex;
-	ZeroMemory(&wcex, sizeof(wcex));
+    std::memset(&wcex,0,sizeof(wcex));
 	wcex.cbSize = sizeof( WNDCLASSEX );
 	wcex.lpfnWndProc = WndProc;
-	wcex.hInstance = GetModuleHandle(NULL);
+	wcex.hInstance = GetModuleHandle(nullptr);
 	wcex.lpszClassName = "TestDX11WindowClass";
 	if( !RegisterClassEx( &wcex ) )
 	{
@@ -68,7 +68,7 @@ bool TestDX11Present()
 
 	HRESULT hr = E_FAIL;
 
-	ZeroMemory( &sd, sizeof( sd ) );
+    std::memset(&sd,0,sizeof( sd ));
 	sd.BufferCount = 1;
 	sd.BufferDesc.Width = 800;
 	sd.BufferDesc.Height = 600;

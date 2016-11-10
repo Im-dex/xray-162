@@ -152,7 +152,7 @@ public:
 class XRCDB_API	ISpatial_DB
 {
 private:
-	xrCriticalSection				cs;
+	std::recursive_mutex				cs;
 
 	poolSS< ISpatial_NODE, 128 >	allocator;
 

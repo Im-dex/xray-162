@@ -60,7 +60,7 @@ public:
 			VERIFY				(m_free);
 			T					*node = m_free;
 			m_free				= m_free->next();
-			ZeroMemory			(node,sizeof(T));
+            std::memset(node, 0, sizeof(T));
 			return				(node);
 		}
 

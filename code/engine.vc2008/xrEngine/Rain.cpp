@@ -139,10 +139,10 @@ void	CEffect_Rain::OnFrame	()
 	{
 //		hemi_factor				= 1.f-2.0f*(0.3f-_min(_min(1.f,E->renderable_ROS()->get_luminocity_hemi()),0.3f));
 		float* hemi_cube		= E->renderable_ROS()->get_luminocity_hemi_cube();
-		float hemi_val			= _max(hemi_cube[0],hemi_cube[1]);
-		hemi_val				= _max(hemi_val, hemi_cube[2]);
-		hemi_val				= _max(hemi_val, hemi_cube[3]);
-		hemi_val				= _max(hemi_val, hemi_cube[5]);
+		float hemi_val			= std::max(hemi_cube[0],hemi_cube[1]);
+		hemi_val				= std::max(hemi_val, hemi_cube[2]);
+		hemi_val				= std::max(hemi_val, hemi_cube[3]);
+		hemi_val				= std::max(hemi_val, hemi_cube[5]);
 		
 //		float f					= 0.9f*hemi_factor + 0.1f*hemi_val;
 		float f					= hemi_val;
@@ -176,7 +176,7 @@ void	CEffect_Rain::OnFrame	()
 //		Fvector					sndP;
 //		sndP.mad				(Device.vCameraPosition,Fvector().set(0,1,0),source_offset);
 //		snd_Ambient.set_position(sndP);
-		snd_Ambient.set_volume	(_max(0.1f,factor) * hemi_factor );
+		snd_Ambient.set_volume	(std::max(0.1f,factor) * hemi_factor );
 	}
 }
 

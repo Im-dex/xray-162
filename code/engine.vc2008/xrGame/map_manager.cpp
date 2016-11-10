@@ -281,8 +281,8 @@ void CMapManager::OnObjectDestroyNotify(u16 id)
 void CMapManager::Dump						()
 {
 	Msg("begin of map_locations dump");
-	Locations_it it = Locations().begin();
-	Locations_it it_e = Locations().end();
+	auto it = Locations().begin();
+    auto it_e = Locations().end();
 	for(; it!=it_e;++it)
 	{
 		Msg("spot_type=[%s] object_id=[%d]",*((*it).spot_type), (*it).object_id);

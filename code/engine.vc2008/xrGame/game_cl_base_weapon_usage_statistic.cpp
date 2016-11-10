@@ -11,23 +11,6 @@
 #include "../Include/xrRender/Kinematics.h"
 #include "game_cl_mp.h"
 
-class statistic_sync_quard
-{
-	xrCriticalSection & m_mutex;
-public:
-	statistic_sync_quard(xrCriticalSection & mutex) :
-		m_mutex(mutex)
-	{
-		m_mutex.Enter();
-	}
-    statistic_sync_quard(const statistic_sync_quard&) = delete;
-    statistic_sync_quard& operator= (const statistic_sync_quard&) = delete;
-	~statistic_sync_quard()
-	{
-		m_mutex.Leave();
-	}
-};
-
 
 BulletData::BulletData(shared_str FName, shared_str WName, SBullet* pBullet) 
 {
@@ -75,7 +58,7 @@ Weapon_Statistic::Weapon_Statistic(LPCSTR Name)
 	m_explosion_kills = 0;
 	m_bleed_kills = 0;
 
-	ZeroMemory(m_Basket, sizeof(m_Basket));
+    std::memset(m_Basket, 0, sizeof(m_Basket));
 };
 
 Weapon_Statistic::~Weapon_Statistic()
@@ -301,11 +284,11 @@ Player_Statistic::Player_Statistic(LPCSTR Name)
 	m_dwTotalShots_d		= 0;
 	m_dwCurrentTeam			= 0;
 
-	ZeroMemory				(m_dwTotalAliveTime, sizeof(m_dwTotalAliveTime));
-	ZeroMemory				(m_dwTotalMoneyRound, sizeof(m_dwTotalMoneyRound));
-	ZeroMemory				(m_dwNumRespawned, sizeof(m_dwNumRespawned));
-	ZeroMemory				(m_dwArtefacts, sizeof(m_dwArtefacts));
-	ZeroMemory				(m_dwSpecialKills, sizeof(m_dwSpecialKills));
+	std::memset				(m_dwTotalAliveTime,0, sizeof(m_dwTotalAliveTime));
+	std::memset				(m_dwTotalMoneyRound,0, sizeof(m_dwTotalMoneyRound));
+	std::memset				(m_dwNumRespawned, 0,sizeof(m_dwNumRespawned));
+	std::memset				(m_dwArtefacts, 0,sizeof(m_dwArtefacts));
+	std::memset				(m_dwSpecialKills,0, sizeof(m_dwSpecialKills));
 };
 
 Player_Statistic::~Player_Statistic()
@@ -405,9 +388,6 @@ void Player_Statistic::net_load(NET_Packet* P)
 };
 
 WeaponUsageStatistic::WeaponUsageStatistic()
-#ifdef PROFILE_CRITICAL_SECTIONS
-	: m_mutex(MUTEX_PROFILE_ID(WeaponUsageStatistic)){}
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 	Clear						();
 	m_dwUpdateTimeDelta			= 30000; //30 seconds
@@ -416,15 +396,15 @@ WeaponUsageStatistic::WeaponUsageStatistic()
 
 void WeaponUsageStatistic::Clear()
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	ActiveBullets.clear			();	
 	aPlayersStatistic.clear		();
 	m_Requests.clear			();
 	m_dwLastRequestSenderID		= 0;
 	
-	ZeroMemory					(m_dwTotalPlayersAliveTime, sizeof(m_dwTotalPlayersAliveTime));
-	ZeroMemory					(m_dwTotalPlayersMoneyRound, sizeof(m_dwTotalPlayersMoneyRound));
-	ZeroMemory					(m_dwTotalNumRespawns, sizeof(m_dwTotalNumRespawns));
+	std::memset					(m_dwTotalPlayersAliveTime, 0,sizeof(m_dwTotalPlayersAliveTime));
+	std::memset					(m_dwTotalPlayersMoneyRound,0, sizeof(m_dwTotalPlayersMoneyRound));
+	std::memset					(m_dwTotalNumRespawns,0, sizeof(m_dwTotalNumRespawns));
 
 	m_dwLastUpdateTime			= Level().timeServer();
 	mFileName[0]				= 0;
@@ -437,7 +417,7 @@ WeaponUsageStatistic::~WeaponUsageStatistic()
 
 bool WeaponUsageStatistic::GetPlayer(LPCSTR PlayerName, PLAYERS_STATS_it& pPlayerI)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	pPlayerI	= std::find(aPlayersStatistic.begin(), aPlayersStatistic.end(), PlayerName);
 	if (pPlayerI == aPlayersStatistic.end() || !((*pPlayerI) == PlayerName))
 		return false;
@@ -446,7 +426,7 @@ bool WeaponUsageStatistic::GetPlayer(LPCSTR PlayerName, PLAYERS_STATS_it& pPlaye
 
 PLAYERS_STATS_it WeaponUsageStatistic::FindPlayer(LPCSTR PlayerName)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	PLAYERS_STATS_it pPlayerI;
 	if (!GetPlayer(PlayerName, pPlayerI))
 	{
@@ -461,7 +441,7 @@ PLAYERS_STATS_it WeaponUsageStatistic::FindPlayer(LPCSTR PlayerName)
 
 void WeaponUsageStatistic::ChangePlayerName( LPCSTR from, LPCSTR to )
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	if ( !CollectData() ) return;
 	auto pPlayerI = FindPlayer( from );
 	pPlayerI->PName = to;
@@ -499,7 +479,7 @@ bool Weapon_Statistic::FindHit(u32 BulletID, HITS_VEC_it& Hit_it)
 
 void WeaponUsageStatistic::RemoveBullet(ABULLETS_it& Bullet_it)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	if (!Bullet_it->Removed || Bullet_it->HitRefCount!=Bullet_it->HitResponds) return;
 	//-------------------------------------------------------------
 	auto PlayerIt = FindPlayer(*(Bullet_it->FirerName));
@@ -516,7 +496,7 @@ void WeaponUsageStatistic::RemoveBullet(ABULLETS_it& Bullet_it)
 
 void WeaponUsageStatistic::OnWeaponBought(game_PlayerState* ps, LPCSTR WeaponName)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	if (!CollectData()) return;
 	if (!ps) return;
 	PLAYERS_STATS_it PlayerIt = FindPlayer(ps->getName());
@@ -540,7 +520,7 @@ void WeaponUsageStatistic::OnWeaponBought(game_PlayerState* ps, LPCSTR WeaponNam
 
 void WeaponUsageStatistic::OnBullet_Fire(SBullet* pBullet, const CCartridge& cartridge)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	if (!CollectData()) return;
 
 	if (!pBullet || !pBullet->flags.allow_sendhit) return;
@@ -565,7 +545,7 @@ void WeaponUsageStatistic::OnBullet_Fire(SBullet* pBullet, const CCartridge& car
 
 void WeaponUsageStatistic::OnBullet_Hit(SBullet* pBullet, u16 TargetID, s16 element, Fvector HitLocation)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	if (!pBullet || !pBullet->flags.allow_sendhit) return;
 //	Msg("! OnBullet Hit ID[%d]", pBullet->m_dwID);
 	ABULLETS_it BulletIt;
@@ -715,7 +695,7 @@ void WeaponUsageStatistic::Send_Check_Respond()
 
 void WeaponUsageStatistic::On_Check_Respond(NET_Packet* P)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	if (!P) return;
 	u8 NumFalse = P->r_u8();
 	u8 NumTrue = P->r_u8();
@@ -824,7 +804,7 @@ void WeaponUsageStatistic::OnExplosionKill(game_PlayerState* ps, const SHit& hit
 	if (!ps)									return;
 	if (!OnServer())							return;
 	
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 
 	CObject* killer								= hit.who;
 	if(!killer)									return;
@@ -859,7 +839,7 @@ void WeaponUsageStatistic::OnExplosionKill(game_PlayerState* ps, const SHit& hit
 
 void WeaponUsageStatistic::OnBleedKill(game_PlayerState* killer_ps, game_PlayerState* victim_ps, u16 weapon_id)
 {
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	if (!killer_ps || !victim_ps)
 		return;
 	Player_Statistic& PlayerStatKiller = *(FindPlayer(killer_ps->getName()));
@@ -993,7 +973,7 @@ void WeaponUsageStatistic::OnUpdateRequest(NET_Packet*)
 {
 	if (aPlayersStatistic.empty() || !Game().local_player) return;
 	
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	
 	game_PlayerState* local_player = Game().local_player;
 	if (!xr_strlen(local_player->getName()))
@@ -1014,7 +994,7 @@ void WeaponUsageStatistic::OnUpdateRespond(NET_Packet* P, shared_str const & sen
 {
 	if (!P) return;
 	
-	statistic_sync_quard syncg(m_mutex);
+    std::lock_guard<decltype(m_mutex)> syncg(m_mutex);
 	
 	shared_str PName;
 	P->r_stringZ(PName);

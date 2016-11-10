@@ -1631,7 +1631,7 @@ void CPHElement::GetPointVel( Fvector	 &res_vel, const Fvector & point ) const
 	dVector3 res;
 	//Fvector	 res_vel;
 	dBodyGetPointVel(get_bodyConst(),point.x,point.y,point.z,res);
-	CopyMemory (&res_vel,res,sizeof(Fvector));
+    std::memcpy(&res_vel,res,sizeof(Fvector));
 }
 
 #ifdef DEBUG

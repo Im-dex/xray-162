@@ -11,7 +11,7 @@ class PlayersMonitor
 {
 private:
 	typedef xr_vector<IClient*>	players_collection_t;
-	xrCriticalSection			csPlayers;
+	std::recursive_mutex			csPlayers;
 	players_collection_t		net_Players;
 	players_collection_t		net_Players_disconnected;
 	bool						now_iterating_in_net_players;
@@ -45,7 +45,7 @@ public:
 	void ForEachClientDo					(ActionFunctor & functor)
 	{
 		//Msg("-S- Entering to csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Enter();
+		csPlayers.lock();
 		//LogStackTrace(
 		//	make_string("-S- Entered to csPlayers [%d]", GetCurrentThreadId()).c_str());
 		now_iterating_in_net_players	=	true;
@@ -60,12 +60,12 @@ public:
 		}
 		now_iterating_in_net_players	=	false;
 		//Msg("-S- Leaving from csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Leave();
+		csPlayers.unlock();
 	}
 	void ForEachClientDo				(fastdelegate::FastDelegate1<IClient*, void> & fast_delegate)
 	{
 		//Msg("-S- Entering to csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Enter();
+        std::lock_guard<decltype(csPlayers)> lock(csPlayers);
 		//LogStackTrace(
 		//	make_string("-S- Entered to csPlayers [%d]", GetCurrentThreadId()).c_str());
 		now_iterating_in_net_players	=	true;
@@ -80,14 +80,13 @@ public:
 		}
 		now_iterating_in_net_players	=	false;
 		//Msg("-S- Leaving from csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Leave();
 	}
 	template<typename SearchPredicate, typename ActionFunctor>
 	u32	ForFoundClientsDo				(SearchPredicate const & predicate,	ActionFunctor & functor)
 	{
 		u32 ret_count = 0;
 		//Msg("-S- Entering to csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Enter();
+		csPlayers.lock();
 		//LogStackTrace(
 		//	make_string("-S- Entered to csPlayers [%d]", GetCurrentThreadId()).c_str());
 		now_iterating_in_net_players	=	true;
@@ -108,7 +107,7 @@ public:
 		}
 		now_iterating_in_net_players	=	false;
 		//Msg("-S- Leaving from csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Leave();
+		csPlayers.unlock();
 		return ret_count;
 	}
 	
@@ -116,7 +115,7 @@ public:
 	IClient*	FindAndEraseClient				(SearchPredicate const & predicate)
 	{
 		//Msg("-S- Entering to csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Enter();
+        std::lock_guard<decltype(csPlayers)> lock(csPlayers);
 		//LogStackTrace(
 		//	make_string("-S- Entered to csPlayers [%d]", GetCurrentThreadId()).c_str());
 		VERIFY(!now_iterating_in_net_players);
@@ -136,14 +135,13 @@ public:
 		}
 		now_iterating_in_net_players	=	false;
 		//Msg("-S- Leaving from csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Leave();
 		return ret_client;
 	}
 	template<typename SearchPredicate>
 	IClient*	GetFoundClient					(SearchPredicate const & predicate)
 	{
 		//Msg("-S- Entering to csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Enter();
+		csPlayers.lock();
 		//LogStackTrace(
 		//	make_string("-S- Entered to csPlayers [%d]", GetCurrentThreadId()).c_str());
 		players_collection_t::iterator client_iter = std::find_if(
@@ -156,19 +154,18 @@ public:
 			ret_client = *client_iter;
 		}
 		//Msg("-S- Leaving from csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Leave();
+		csPlayers.unlock();
 		return ret_client;
 	}
 	void		AddNewClient					(IClient* new_client)
 	{
 		//Msg("-S- Entering to csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Enter();
+        std::lock_guard<decltype(csPlayers)> lock(csPlayers);
 		//LogStackTrace(
 		//	make_string("-S- Entered to csPlayers [%d]", GetCurrentThreadId()).c_str());
 		VERIFY(!now_iterating_in_net_players);
 		net_Players.push_back(new_client);
 		//Msg("-S- Leaving from csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Leave();
 	}
 
 	/*template<typename ActionFunctor>
@@ -252,12 +249,11 @@ public:
 	u32			ClientsCount					()
 	{
 		//Msg("-S- Entering to csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Enter();
+        std::lock_guard<decltype(csPlayers)> lock(csPlayers);
 		//LogStackTrace(
 		//	make_string("-S- Entered to csPlayers [%d]", GetCurrentThreadId()).c_str());
 		u32 ret_count = net_Players.size();
 		//Msg("-S- Leaving from csPlayers [%d]", GetCurrentThreadId());
-		csPlayers.Leave();
 		return ret_count;
 	}
 	//WARNING! for iteration in vector use ForEachClientDo !

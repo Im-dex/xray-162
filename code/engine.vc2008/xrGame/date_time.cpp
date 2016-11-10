@@ -78,7 +78,7 @@ static void split_time_impl		(u64 time, u32 &years, u32 &months, u32 &days, u32 
 	time						-= p1*(100*365 + 25 - 1);
 	u64 const p2				= time/(4*365 + 1);
 	time						-= p2*(4*365 + 1);
-	u64 const p3				= _min(u32(time)/365, 3);
+	u64 const p3				= std::min(u32(time)/365, (u32)3);
 	time						-= p3*365;
 	years						= u32(400*p0 + 100*p1 + 4*p2 + p3 + 1);
 	++time;

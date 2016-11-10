@@ -60,7 +60,7 @@ void CEditableMesh::RebuildVMaps()
 	// refs copy to new
 	{
 		nVMRefs.resize(m_VMRefs.size());
-		for (VMRefsIt o_it=m_VMRefs.begin(),n_it=nVMRefs.begin(); o_it!=m_VMRefs.end(); o_it++,n_it++){
+		for (auto o_it=m_VMRefs.begin(),n_it=nVMRefs.begin(); o_it!=m_VMRefs.end(); o_it++,n_it++){
 			n_it->count	= o_it->count;
 			n_it->pts	= xr_alloc<st_VMapPt>(n_it->count);
 		}
@@ -138,13 +138,13 @@ void CEditableMesh::RebuildVMaps()
 			}
 		}
 	}
-	for (VMapIt vm_it=m_VMaps.begin(); vm_it!=m_VMaps.end(); vm_it++)
+	for (auto vm_it=m_VMaps.begin(); vm_it!=m_VMaps.end(); vm_it++)
 		xr_delete(*vm_it);
 
 	m_VMaps.clear();
 	m_VMaps=nVMaps;
 	// clear refs
-	for (VMRefsIt ref_it=m_VMRefs.begin(); ref_it!=m_VMRefs.end(); ref_it++)
+	for (auto ref_it=m_VMRefs.begin(); ref_it!=m_VMRefs.end(); ref_it++)
 		xr_free			(ref_it->pts);
 	m_VMRefs.clear();
 	m_VMRefs = nVMRefs;
@@ -176,8 +176,8 @@ bool CEditableMesh::OptimizeFace(st_Face& face){
 		iy = iFloor(float(points[k].y-VMmin.y)/VMscale.y*MY);
 		iz = iFloor(float(points[k].z-VMmin.z)/VMscale.z*MZ);
 		vl = &(VM[ix][iy][iz]);
-		for(U32It it=vl->begin();it!=vl->end(); it++){
-			FvectorIt v = m_NewPoints.begin()+(*it);
+		for(auto it=vl->begin();it!=vl->end(); it++){
+			auto v = m_NewPoints.begin()+(*it);
             if( v->similar(points[k],EPS) )
                 mface[k] = *it;
 		}
@@ -269,7 +269,7 @@ void CEditableMesh::OptimizeMesh(BOOL NoOpt)
         m_VertCount		= m_NewPoints.size();
         xr_free			(m_Vertices);
         m_Vertices		= xr_alloc<Fvector>(m_VertCount);
-		Memory.mem_copy	(m_Vertices,&*m_NewPoints.begin(),m_NewPoints.size()*sizeof(Fvector));
+        std::memcpy(m_Vertices, m_NewPoints.data(), m_NewPoints.size() * sizeof(Fvector));
 
 		if (i_del_face){
 	        st_Face* 	old_faces 	= m_Faces;
@@ -283,7 +283,7 @@ void CEditableMesh::OptimizeMesh(BOOL NoOpt)
 			{
             	if (faces_mark[dk])
 				{
-                    for (SurfFacesPairIt plp_it=m_SurfFaces.begin(); plp_it!=m_SurfFaces.end(); ++plp_it)
+                    for (auto plp_it=m_SurfFaces.begin(); plp_it!=m_SurfFaces.end(); ++plp_it)
 					{
                         IntVec& 	pol_lst = plp_it->second;
                         for (int k=0; k<int(pol_lst.size()); ++k)

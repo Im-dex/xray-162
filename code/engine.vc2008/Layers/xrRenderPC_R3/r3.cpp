@@ -385,7 +385,7 @@ void					CRender::create					()
 	D3D10_QUERY_DESC			qdesc;
 	qdesc.MiscFlags				= 0;
 	qdesc.Query					= D3D10_QUERY_EVENT;
-	ZeroMemory(q_sync_point, sizeof(q_sync_point));
+    std::memset(q_sync_point,0,sizeof(q_sync_point));
 	//R_CHK						(HW.pDevice->CreateQuery(&qdesc,&q_sync_point[0]));
 	//R_CHK						(HW.pDevice->CreateQuery(&qdesc,&q_sync_point[1]));
 	//	Prevent error on first get data
@@ -856,7 +856,7 @@ public:
 		// duplicate and zero-terminate
 		u32				size	= R->length();
 		u8*				data	= xr_alloc<u8>	(size + 1);
-		CopyMemory			(data,R->pointer(),size);
+        std::memcpy(data,R->pointer(),size);
 		data[size]				= 0;
 		FS.r_close				(R);
 

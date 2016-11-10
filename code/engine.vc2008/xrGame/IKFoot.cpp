@@ -133,7 +133,7 @@ void CIKFoot::set_toe(  u16 bones[4] )
 	ibind.set( ibind2 );
 	ax.set( foot_normal );
 	Kinematics()->EnumBoneVertices( pred, bones[2] );
-	m_toe_position.v.x = _max( pos.x, m_toe_position.v.x );
+	m_toe_position.v.x = std::max( pos.x, m_toe_position.v.x );
 	/////////////////////////////////////////////////////////
 	ax.sub( foot_normal, foot_dir );
 	ax.normalize();

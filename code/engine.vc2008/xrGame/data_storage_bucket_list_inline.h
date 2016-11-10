@@ -28,7 +28,7 @@ IC	CBucketList::CDataStorage			(const u32 vertex_count) :
 {
 	m_min_bucket_value		= _dist_type(0);
 	m_max_bucket_value		= _dist_type(1000);
-	ZeroMemory				(m_buckets,bucket_count*sizeof(CGraphVertex*));
+    std::memset(m_buckets, 0, bucket_count*sizeof(CGraphVertex*));
 }
 
 TEMPLATE_SPECIALIZATION
@@ -42,7 +42,7 @@ IC	void CBucketList::init				()
 	inherited::init			();
 	m_min_bucket_id			= bucket_count;
 	if (clear_buckets)
-		ZeroMemory			(m_buckets,bucket_count*sizeof(CGraphVertex*));
+        std::memset(m_buckets, 0, bucket_count*sizeof(CGraphVertex*));
 }
 
 TEMPLATE_SPECIALIZATION

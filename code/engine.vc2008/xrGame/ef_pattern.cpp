@@ -61,9 +61,9 @@ void CPatternFunction::vfLoadEF(LPCSTR caFileName)
 
 	F->r			(&m_dwVariableCount,sizeof(m_dwVariableCount));
 	m_dwaAtomicFeatureRange = xr_alloc<u32>(m_dwVariableCount);
-	ZeroMemory		(m_dwaAtomicFeatureRange,m_dwVariableCount*sizeof(u32));
+    std::memset(m_dwaAtomicFeatureRange, 0, m_dwVariableCount*sizeof(u32));
 	u32				*m_dwaAtomicIndexes = xr_alloc<u32>(m_dwVariableCount);
-	ZeroMemory		(m_dwaAtomicIndexes,m_dwVariableCount*sizeof(u32));
+    std::memset(m_dwaAtomicIndexes, 0, m_dwVariableCount*sizeof(u32));
 
 	for (u32 i=0; i<m_dwVariableCount; ++i) {
 		F->r(m_dwaAtomicFeatureRange + i,sizeof(u32));
@@ -82,7 +82,7 @@ void CPatternFunction::vfLoadEF(LPCSTR caFileName)
 	F->r			(&m_dwPatternCount,sizeof(m_dwPatternCount));
 	m_tpPatterns	= xr_alloc<SPattern>(m_dwPatternCount);
 	m_dwaPatternIndexes = xr_alloc<u32>(m_dwPatternCount);
-	ZeroMemory		(m_dwaPatternIndexes,m_dwPatternCount*sizeof(u32));
+    std::memset(m_dwaPatternIndexes, 0, m_dwPatternCount*sizeof(u32));
 	m_dwParameterCount = 0;
 	for (u32 i=0; i<m_dwPatternCount; ++i) {
 		if (i)

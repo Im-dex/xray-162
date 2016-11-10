@@ -15,7 +15,7 @@ void CBuild::BuildSectors()
 
 	u32 SectorCount = SectorMax+1; 
 	g_sectors.resize(SectorCount);
-	ZeroMemory(&*g_sectors.begin(),(u32)g_sectors.size()*sizeof(void*));
+    std::memset(g_sectors.data(),0, g_sectors.size()*sizeof(void*));
 	clMsg("%d sectors accepted.",SectorCount);
 
 	Status("Spatializing geometry...");

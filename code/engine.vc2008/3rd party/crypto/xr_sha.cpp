@@ -17,7 +17,7 @@ xr_sha256::~xr_sha256()
 void	xr_sha256::start_calculate		(u8 const * data, u32 data_size)
 {
 	SHA_Init		(m_sha_ctx);
-	ZeroMemory		(m_result, sizeof(m_result));
+	std::memset(m_result,0,sizeof(m_result));
 	VERIFY			(data_size);
 	m_data_src		= data;
 	m_data_size		= data_size;

@@ -71,10 +71,10 @@ void flares::load	(CInifile& config, shared_str const& section)
 	u32						radius_count   = _GetItemCount(flare_radius   .c_str());
 	u32						texture_count  = _GetItemCount(flare_textures .c_str());
 
-	u32						min_flare_count = _min(_min(_min(opacity_count, position_count), radius_count), texture_count);
-	u32						max_flare_count = _max(_max(_max(opacity_count, position_count), radius_count), texture_count);
+	u32						min_flare_count = std::min(std::min(std::min(opacity_count, position_count), radius_count), texture_count);
+	u32						max_flare_count = std::max(std::max(std::max(opacity_count, position_count), radius_count), texture_count);
 
-	u32						max_string_count= _max(_max(_max(flare_opacity.size(), flare_position.size()), flare_radius.size()), flare_textures.size()) + 1;
+	u32						max_string_count= std::max(std::max(std::max(flare_opacity.size(), flare_position.size()), flare_radius.size()), flare_textures.size()) + 1;
 
 	if (min_flare_count != max_flare_count)
 		Msg					("! flare count for sun [%s] is setup incorrectly. only %d flares are correct", section.c_str(), min_flare_count);

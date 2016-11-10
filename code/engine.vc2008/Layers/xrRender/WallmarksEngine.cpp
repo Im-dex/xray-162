@@ -47,9 +47,6 @@ CWallmarksEngine::wm_slot* CWallmarksEngine::AppendSlot	(ref_shader shader)
 //////////////////////////////////////////////////////////////////////
 
 CWallmarksEngine::CWallmarksEngine	()
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:lock(MUTEX_PROFILE_ID(CWallmarksEngine))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 	static_pool.reserve		(256);
 	marks.reserve			(256);
@@ -280,9 +277,8 @@ void CWallmarksEngine::AddStaticWallmark	(CDB::TRI* pTri, const Fvector* pVerts,
 		return;
 
 	// Physics may add wallmarks in parallel with rendering
-	lock.Enter				();
+    std::lock_guard<decltype(lock)> locker(lock);
 	AddWallmark_internal	(pTri,pVerts,contact_point,hShader,sz);
-	lock.Leave				();
 }
 
 void CWallmarksEngine::AddSkeletonWallmark	(const Fmatrix* xf, CKinematics* obj, ref_shader& sh, const Fvector& start, const Fvector& dir, float size)
@@ -292,9 +288,8 @@ void CWallmarksEngine::AddSkeletonWallmark	(const Fmatrix* xf, CKinematics* obj,
 	if (xf->c.distance_to_sqr(Device.vCameraPosition) > _sqr(50.f))				return;
 
 	VERIFY					(obj&&xf&&(size>EPS_L));
-	lock.Enter				();
+    std::lock_guard<decltype(lock)> locker(lock);
 	obj->AddWallmark		(xf,start,dir,sh,size);
-	lock.Leave				();
 }
 
 void CWallmarksEngine::AddSkeletonWallmark(intrusive_ptr<CSkeletonWallmark> wm)
@@ -303,7 +298,7 @@ void CWallmarksEngine::AddSkeletonWallmark(intrusive_ptr<CSkeletonWallmark> wm)
 
 	if (!::RImplementation.val_bHUD)
 	{
-		lock.Enter			();
+        std::lock_guard<decltype(lock)> locker(lock);
 		// search if similar wallmark exists
 		wm_slot* slot		= FindSlot	(wm->Shader());
 		if (0==slot) slot	= AppendSlot(wm->Shader());
@@ -312,7 +307,6 @@ void CWallmarksEngine::AddSkeletonWallmark(intrusive_ptr<CSkeletonWallmark> wm)
 #ifdef	DEBUG
 		wm->used_in_render	= Device.dwFrame;
 #endif
-		lock.Leave			();
 	}
 }
 
@@ -361,7 +355,7 @@ void CWallmarksEngine::Render()
 
 	float	ssaCLIP				= r_ssaDISCARD/4;
 
-	lock.Enter		();			// Physics may add wallmarks in parallel with rendering
+	lock.lock		();			// Physics may add wallmarks in parallel with rendering
 
 	for (auto slot_it=marks.begin(); slot_it!=marks.end(); slot_it++){
 		u32			w_offset;
@@ -443,7 +437,7 @@ void CWallmarksEngine::Render()
 		FlushStream				(hGeom,slot->shader,w_offset,w_verts,w_start,TRUE);
 	}
 
-	lock.Leave();				// Physics may add wallmarks in parallel with rendering
+	lock.unlock();				// Physics may add wallmarks in parallel with rendering
 
 	// Level-wmarks
 	RImplementation.r_dsgraph_render_wmarks	();

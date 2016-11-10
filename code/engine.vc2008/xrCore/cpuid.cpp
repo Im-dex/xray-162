@@ -23,7 +23,7 @@
 #ifdef _EDITOR
 unsgined int query_processor_info(processor_info* pinfo)
 {
-    ZeroMemory(pinfo, sizeof(processor_info));
+    std::memset(pinfo, 0, sizeof(processor_info));
 
     pinfo->feature = static_cast<u32>(CpuFeature::Mmx) | static_cast<u32>(CpuFeature::Sse);
     return pinfo->feature;
@@ -50,7 +50,7 @@ DWORD countSetBits(ULONG_PTR bitMask)
 
 unsigned int query_processor_info(processor_info* pinfo)
 {	
-    ZeroMemory(pinfo, sizeof(processor_info));
+    std::memset(pinfo,0,sizeof(processor_info));
 
     std::bitset<32> f_1_ECX;
     std::bitset<32> f_1_EDX;

@@ -26,7 +26,7 @@ CFS_PathNotificator::CFS_PathNotificator():CThread(0)
 
 CFS_PathNotificator::~CFS_PathNotificator(void)
 {
-	for (PathIt it=events.begin(); it!=events.end(); it++){
+	for (auto it=events.begin(); it!=events.end(); it++){
     	Path& P			= *it;
     	P.FChangeEvent	= 0;
         if (P.FWaitHandle != INVALID_HANDLE_VALUE){
@@ -43,7 +43,7 @@ void CFS_PathNotificator::RegisterPath(FS_Path& path)
 {                     
 //	R_ASSERT2(Suspended,"Can't register path. Thread already started.");
 	shared_str dir			= path.m_Path;
-	for (PathIt it=events.begin(); it!=events.end(); it++)
+	for (auto it=events.begin(); it!=events.end(); it++)
     	if ((it->FDirectory==dir)&&(it->bRecurse==path.m_Flags.is(FS_Path::flRecurse))) return;
 
     events.push_back	(Path());
@@ -58,7 +58,7 @@ void CFS_PathNotificator::RegisterPath(FS_Path& path)
 void CFS_PathNotificator::Execute(void)
 {
     EnterCriticalSection(&CS);
-	for (PathIt it=events.begin(); it!=events.end(); it++){
+	for (auto it=events.begin(); it!=events.end(); it++){
     	Path& P			= *it;
         P.FWaitHandle	= FindFirstChangeNotification(P.FDirectory.c_str(), P.bRecurse, FNotifyOptionFlags);
         if (P.FWaitHandle == INVALID_HANDLE_VALUE)
@@ -75,7 +75,7 @@ void CFS_PathNotificator::Execute(void)
     {
         HANDLEVec hHandles;
         hHandles.push_back(FMutex);
-		for (PathIt it=events.begin(); it!=events.end(); it++)
+		for (auto it=events.begin(); it!=events.end(); it++)
         	hHandles.push_back(it->FWaitHandle);
 
         int Obj = WaitForMultipleObjects(hHandles.size(), &*hHandles.begin(), false, INFINITE);

@@ -12,7 +12,7 @@ const	u32		alpha_ref		= 254-BORDER;
 // Initialization
 void _InitSurface	()
 {
-	FillMemory		(surface,c_LMAP_size*c_LMAP_size,0);
+    std::memset(surface,0,c_LMAP_size*c_LMAP_size);
 }
 
 // Rendering of rect

@@ -87,9 +87,9 @@ public:
 			}
 	static inline void DMXPStoFMX(const dReal* R,const dReal* pos,Fmatrix& aTransform){
 
-			CopyMemory(&aTransform,R,sizeof(dMatrix3));
+            std::memcpy(&aTransform,R,sizeof(dMatrix3));
 			aTransform.transpose();
-			CopyMemory(&aTransform.c,pos,sizeof(Fvector));
+            std::memcpy(&aTransform.c,pos,sizeof(Fvector));
 			aTransform._14=0.f;
 			aTransform._24=0.f;
 			aTransform._34=0.f;

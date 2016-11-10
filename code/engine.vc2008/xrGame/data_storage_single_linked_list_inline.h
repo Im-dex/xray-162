@@ -33,7 +33,7 @@ TEMPLATE_SPECIALIZATION
 IC	void CSingleLinkedList::init				()
 {
 	inherited::init			();
-	ZeroMemory				(m_list_data,2*sizeof(CGraphVertex));
+    std::memset(m_list_data, 0, 2*sizeof(CGraphVertex));
 	m_list_head				= m_list_data;
 	m_list_tail				= m_list_data + 1;
 	m_list_head->next()		= m_list_tail;

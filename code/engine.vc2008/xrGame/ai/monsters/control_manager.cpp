@@ -447,7 +447,7 @@ void CControl_Manager::check_active_com(CControl_Com *com, bool b_add)
 void CControl_Manager::add_debug_info(debug::text_tree& root_s)
 {
 	u32 index = 0;
-	for ( CONTROLLERS_MAP_IT it=m_control_elems.begin(); it!=m_control_elems.end(); ++it, ++index )
+	for ( auto it=m_control_elems.begin(); it!=m_control_elems.end(); ++it, ++index )
 	{
 		if ( !it->second->is_inited() ) continue;
 

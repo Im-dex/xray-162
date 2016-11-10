@@ -725,7 +725,7 @@ int DXTCompressBump(LPCSTR out_name, u8* T_height_gloss, u8* T_normal_map, u32 w
 	//tga_save			("x:\\0-height-gloss.tga",w,h,T_height_gloss,true);
 	if (T_normal_map){
 		u8* ext_nm		= pSrc->GetImageDataPointer();
-		CopyMemory		(ext_nm,T_normal_map,w*h*sizeof(u32));
+        std::memcpy(ext_nm,T_normal_map,w*h*sizeof(u32));
 	}else{
 //		ConvertToNormalMap(pSrc,KERNEL_4x,fmt->bump_virtual_height*50.f);
 //		ConvertToNormalMap(pSrc,KERNEL_3x3,fmt->bump_virtual_height*200.f);

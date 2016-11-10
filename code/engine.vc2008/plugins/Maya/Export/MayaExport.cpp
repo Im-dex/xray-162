@@ -465,11 +465,11 @@ MStatus CXRayObjectExport::ExportPart(CEditableObject* O, MDagPath& mdagPath, MO
 			MESH->m_VertCount	= _points.size();
 			MESH->m_FaceCount	= _faces.size();
 			MESH->m_Vertices	= xr_alloc<Fvector>(MESH->m_VertCount);
-			Memory.mem_copy		(MESH->m_Vertices,&*_points.begin(),MESH->m_VertCount*sizeof(Fvector));
+			std::memcpy(MESH->m_Vertices,_points.data(),MESH->m_VertCount*sizeof(Fvector));
 			MESH->m_Faces		= xr_alloc<st_Face>(MESH->m_FaceCount);
-			Memory.mem_copy		(MESH->m_Faces,&*_faces.begin(),MESH->m_FaceCount*sizeof(st_Face));
+			std::memcpy(MESH->m_Faces,_faces.data(),MESH->m_FaceCount*sizeof(st_Face));
 			MESH->m_SmoothGroups = xr_alloc<u32>(MESH->m_FaceCount);
-			Memory.mem_copy		(MESH->m_SmoothGroups,&*_sgs.begin(),MESH->m_FaceCount*sizeof(u32));
+			std::memcpy(MESH->m_SmoothGroups,_sgs.data(),MESH->m_FaceCount*sizeof(u32));
 
 			MESH->RecomputeBBox	();
 		}

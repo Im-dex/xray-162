@@ -152,7 +152,7 @@ void CStateAbstract::fill_data_with	(void *ptr_src, u32 size)
 	VERIFY(ptr_src);
 	VERIFY(_data);
 
-	CopyMemory(_data, ptr_src, size);
+    std::memcpy(_data, ptr_src, size);
 }
 
 #ifdef DEBUG

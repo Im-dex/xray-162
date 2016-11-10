@@ -143,9 +143,6 @@ void			ISpatial_NODE::_remove			(ISpatial* S)
 //////////////////////////////////////////////////////////////////////////
 
 ISpatial_DB::ISpatial_DB()
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:cs(MUTEX_PROFILE_ID(ISpatial_DB))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 	m_root					= NULL;
 	stat_nodes				= 0;
@@ -178,7 +175,7 @@ void			ISpatial_DB::initialize(Fbox& BB)
 
 		allocator_pool.reserve	(128);
 		m_center.set			(bbc);
-		m_bounds				= _max(_max(bbd.x,bbd.y),bbd.z);
+		m_bounds				= std::max(std::max(bbd.x,bbd.y),bbd.z);
 		rt_insert_object		= NULL;
 		if (0==m_root)	m_root	= _node_create();
 		m_root->_init			(NULL);
@@ -253,7 +250,7 @@ void			ISpatial_DB::_insert	(ISpatial_NODE* N, Fvector& n_C, float n_R)
 
 void			ISpatial_DB::insert		(ISpatial* S)
 {
-	cs.Enter			();
+    std::lock_guard<decltype(cs)> lock(cs);
 #ifdef DEBUG
 	stat_insert.Begin	();
 
@@ -286,7 +283,6 @@ void			ISpatial_DB::insert		(ISpatial* S)
 #ifdef DEBUG
 	stat_insert.End		();
 #endif
-	cs.Leave			();
 }
 
 void			ISpatial_DB::_remove	(ISpatial_NODE* N, ISpatial_NODE* N_sub)
@@ -313,7 +309,7 @@ void			ISpatial_DB::_remove	(ISpatial_NODE* N, ISpatial_NODE* N_sub)
 
 void			ISpatial_DB::remove		(ISpatial* S)
 {
-	cs.Enter			();
+    std::lock_guard<decltype(cs)> lock(cs);
 #ifdef DEBUG
 	stat_remove.Begin	();
 #endif
@@ -326,15 +322,13 @@ void			ISpatial_DB::remove		(ISpatial* S)
 #ifdef DEBUG
 	stat_remove.End		();
 #endif
-	cs.Leave			();
 }
 
 void			ISpatial_DB::update		(u32 nodes/* =8 */)
 {
 #ifdef DEBUG
 	if (0==m_root)	return;
-	cs.Enter		();
+    std::lock_guard<decltype(cs)> lock(cs);
 	VERIFY			(verify());
-	cs.Leave		();
 #endif
 }

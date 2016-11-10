@@ -11,7 +11,7 @@ void CPHSimpleCharacter::UpdateStaticDamage(dContact* c,SGameMtl* tri_material,b
 				}
 				else
 				{
-					float				vel_prg;vel_prg=_max(plane_pgr*tri_material->fPHFriction,norm_prg);
+					float				vel_prg;vel_prg= std::max(plane_pgr*tri_material->fPHFriction,norm_prg);
 					mag					=	(vel_prg)*tri_material->fBounceDamageFactor;
 				}
 				if(mag>m_collision_damage_info.m_contact_velocity)

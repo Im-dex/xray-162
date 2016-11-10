@@ -2,11 +2,9 @@
 #define AFX_NET_COMPRESSOR_H__21E1ED1C_BF92_4BF0_94A8_18A27486EBFD__INCLUDED_
 #pragma once
 
-#include "../xrcore/xrSyncronize.h"
-
 class	XRNETSERVER_API  NET_Compressor
 {
-	xrCriticalSection		CS;
+	std::recursive_mutex		CS;
 
 	struct SCompressorStats
 	{

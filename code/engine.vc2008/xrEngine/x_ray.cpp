@@ -101,7 +101,7 @@ PROTECT_API char * ComputeModuleHash( char * pszHash )
 		return pszHash;
 	}
 
-	ZeroMemory( &MemoryBasicInformation , sizeof( MEMORY_BASIC_INFORMATION ) );
+    std::memset(&MemoryBasicInformation,0,sizeof( MEMORY_BASIC_INFORMATION ));
 
 	VirtualQuery( lpvMapping , &MemoryBasicInformation , sizeof( MEMORY_BASIC_INFORMATION ) );
 
@@ -524,9 +524,9 @@ struct damn_keys_filter {
 		dwToggleKeysFlags = 0;
 
 
-		ZeroMemory( &StickyKeysStruct , dwStickyKeysStructSize );
-		ZeroMemory( &FilterKeysStruct , dwFilterKeysStructSize );
-		ZeroMemory( &ToggleKeysStruct , dwToggleKeysStructSize );
+		std::memset( &StickyKeysStruct , 0, dwStickyKeysStructSize );
+		std::memset( &FilterKeysStruct , 0, dwFilterKeysStructSize );
+		std::memset( &ToggleKeysStruct , 0, dwToggleKeysStructSize );
 
 		StickyKeysStruct.cbSize = dwStickyKeysStructSize;
 		FilterKeysStruct.cbSize = dwFilterKeysStructSize;
@@ -605,7 +605,7 @@ BOOL IsOutOfVirtualMemory()
 	char	pszError[ VIRT_ERROR_SIZE ];
 	char	pszMessage[ VIRT_MESSAGE_SIZE ];
 
-	ZeroMemory( &statex , sizeof( MEMORYSTATUSEX ) );
+    std::memset(&statex,0,sizeof( MEMORYSTATUSEX ));
 	statex.dwLength = sizeof( MEMORYSTATUSEX );
 	
 	if ( ! GlobalMemoryStatusEx( &statex ) )
@@ -878,9 +878,9 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 			//CreateProcess need to return results to next two structures
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
-			ZeroMemory(&si, sizeof(si));
+            std::memset(&si,0,sizeof(si));
 			si.cb = sizeof(si);
-			ZeroMemory(&pi, sizeof(pi));
+            std::memset(&pi,0,sizeof(pi));
 			//We use CreateProcess to setup working folder
 			char const * temp_wf = (xr_strlen(g_sLaunchWorkingFolder) > 0) ? g_sLaunchWorkingFolder : NULL;
 			CreateProcess(g_sLaunchOnExit_app, g_sLaunchOnExit_params, NULL, NULL, FALSE, 0, NULL, 

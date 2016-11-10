@@ -9,7 +9,7 @@ smem_value*			smem_container::dock			(u32 dwCRC, u32 dwLength, void* ptr)
 {
 	VERIFY						(dwCRC && dwLength && ptr);
 
-	cs.Enter					();
+    std::lock_guard<decltype(cs)> lock(cs);
 	smem_value*		result		= 0;
 
 	// search a place to insert
@@ -46,41 +46,37 @@ smem_value*			smem_container::dock			(u32 dwCRC, u32 dwLength, void* ptr)
 		result->dwReference		= 0;
 		result->dwCRC			= dwCRC;
 		result->dwLength		= dwLength;
-		CopyMemory			(result->value,ptr,dwLength);
+        std::memcpy(result->value,ptr,dwLength);
 		container.insert		(saved_place,result);
 	}
 
-	// exit
-	cs.Leave					();
 	return						result;
 }
 
 void				smem_container::clean			()
 {
-	cs.Enter		();
-	cdb::iterator	it	= container.begin	();
-	cdb::iterator	end	= container.end		();
+    std::lock_guard<decltype(cs)> lock(cs);
+	auto	it	= container.begin	();
+	auto	end	= container.end		();
 	for (; it!=end; it++)	if (0==(*it)->dwReference)	xr_free	(*it);
 	container.erase	(remove(container.begin(),container.end(),(smem_value*)0),container.end());
 	if (container.empty())	container.clear	();
-	cs.Leave		();
 }
 
 void				smem_container::dump			()
 {
-	cs.Enter		();
+    std::lock_guard<decltype(cs)> lock(cs);
 	cdb::iterator	it	= container.begin	();
 	cdb::iterator	end	= container.end		();
 	FILE* F			= fopen("x:\\$smem_dump$.txt","w");
 	for (; it!=end; it++)
 		fprintf		(F,"%4d : crc[%6x], %d bytes\n",(*it)->dwReference,(*it)->dwCRC,(*it)->dwLength);
 	fclose			(F);
-	cs.Leave		();
 }
 
 u32					smem_container::stat_economy	()
 {
-	cs.Enter		();
+    std::lock_guard<decltype(cs)> lock(cs);
 	cdb::iterator	it		= container.begin	();
 	cdb::iterator	end		= container.end		();
 	s64				counter	= 0;
@@ -92,7 +88,6 @@ u32					smem_container::stat_economy	()
 		counter		-= node_size;
 		counter		+= s64((s64((*it)->dwReference) - 1)*s64((*it)->dwLength));
 	}
-	cs.Leave		();
 
 	return			u32(s64(counter)/s64(1024));
 }

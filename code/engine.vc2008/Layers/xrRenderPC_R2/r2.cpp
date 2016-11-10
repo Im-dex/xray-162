@@ -279,7 +279,7 @@ void					CRender::create					()
 	marker						= 0;
 	//R_CHK						(HW.pDevice->CreateQuery(D3DQUERYTYPE_EVENT,&q_sync_point[0]));
 	//R_CHK						(HW.pDevice->CreateQuery(D3DQUERYTYPE_EVENT,&q_sync_point[1]));
-	ZeroMemory(q_sync_point, sizeof(q_sync_point));
+    std::memset(q_sync_point,0,sizeof(q_sync_point));
 	for (u32 i=0; i<HW.Caps.iGPUNum; ++i)
 		R_CHK						(HW.pDevice->CreateQuery(D3DQUERYTYPE_EVENT,&q_sync_point[i]));
 
@@ -644,7 +644,7 @@ public:
 		// duplicate and zero-terminate
 		u32				size	= R->length();
 		u8*				data	= xr_alloc<u8>	(size + 1);
-		CopyMemory			(data,R->pointer(),size);
+        std::memcpy(data,R->pointer(),size);
 		data[size]				= 0;
 		FS.r_close				(R);
 

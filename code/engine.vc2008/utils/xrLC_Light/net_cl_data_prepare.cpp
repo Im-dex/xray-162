@@ -9,12 +9,11 @@
 #include "xrlc_globaldata.h"
 #include "mu_light_net.h"
 #include "xrThread.h"
-#include "../../xrcore/xrSyncronize.h"
 
 bool					global_compile_data_initialized = false;
 bool					base_global_compile_data_initialized = false;
 CThreadManager			cl_data_prepare;
-xrCriticalSection		wait_lock;
+std::recursive_mutex		wait_lock;
 void		SetBaseGlobalCompileDataInitialized( );
 class NetCompileDetaPrepare	: public CThread
 {
@@ -43,10 +42,10 @@ void		WaitNetCompileDataPrepare( )
 	{
 		Sleep(1000);
 		bool inited = false;
-		wait_lock.Enter();
+		wait_lock.lock();
 		//cl_data_prepare.wait();
 		inited = global_compile_data_initialized;
-		wait_lock.Leave();
+		wait_lock.unlock();
 		if(inited)
 			break;
 	}
@@ -57,10 +56,10 @@ void		WaitNetBaseCompileDataPrepare( )//to do refactoring
 	{
 		Sleep(1000);
 		bool inited = false;
-		wait_lock.Enter();
+		wait_lock.lock();
 		//cl_data_prepare.wait();
 		inited = base_global_compile_data_initialized;
-		wait_lock.Leave();
+		wait_lock.unlock();
 		if(inited)
 			break;
 	}
@@ -70,10 +69,8 @@ void		SetBaseGlobalCompileDataInitialized( )
 {
 	
 	lc_net::globals().get<lc_net::gl_base_cl_data>().init();
-	wait_lock.Enter();
+    std::lock_guard<decltype(wait_lock)> lock(wait_lock);
 	base_global_compile_data_initialized = true;
-	wait_lock.Leave();
-	
 }
 
 void		SetGlobalCompileDataInitialized( )
@@ -85,11 +82,9 @@ void		SetGlobalCompileDataInitialized( )
 	Memory.mem_compact();
 	clLog( "mem usage after collision model destroy: %u", Memory.mem_usage() );
 //	inlc_global_data()->clear_build_textures_surface();
-	wait_lock.Enter();
+    std::lock_guard<decltype(wait_lock)> lock(wait_lock);
 		//cl_data_prepare.wait();
 	global_compile_data_initialized = true;
-	wait_lock.Leave();
-	
 }
 
 void		SartupNetTaskManager( )

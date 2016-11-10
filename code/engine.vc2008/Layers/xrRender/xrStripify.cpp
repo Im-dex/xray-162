@@ -49,7 +49,7 @@ void xrStripify		(xr_vector<u16> &indices, xr_vector<u16> &perturb, int iCacheSi
 	}
 
 	// Copy indices
-	CopyMemory	(&*indices.begin(),xPGROUP[0].indices,indices.size()*sizeof(u16));
+    std::memcpy(&*indices.begin(),xPGROUP[0].indices,indices.size()*sizeof(u16));
 
 	// Release memory
 	xPGROUP.clear	();

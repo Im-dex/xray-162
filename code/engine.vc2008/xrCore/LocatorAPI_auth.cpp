@@ -26,14 +26,14 @@ void	CLocatorAPI::auth_generate		(xr_vector<shared_str>&	ignore, xr_vector<share
 
 u64		CLocatorAPI::auth_get			()
 {
-	m_auth_lock.Enter	()	;
-	m_auth_lock.Leave	()	;
+	m_auth_lock.lock	()	;
+	m_auth_lock.unlock	()	;
 	return	m_auth_code		;
 }
 
 void	CLocatorAPI::auth_runtime		(void*	params)
 {
-	m_auth_lock.Enter	()	;
+    std::lock_guard<decltype(m_auth_lock)> lock(m_auth_lock);
 	auth_options*		_o	= (auth_options*)	params	;
 
 	CMemoryWriter			writer;
@@ -107,6 +107,4 @@ void	CLocatorAPI::auth_runtime		(void*	params)
 	}
 #endif // DEBUG
 	xr_delete			(_o);
-
-	m_auth_lock.Leave	()	;
 }

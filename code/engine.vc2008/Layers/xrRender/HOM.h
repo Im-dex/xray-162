@@ -24,7 +24,7 @@ private:
 	u32						tris_in_frame			;
 #endif
 
-	xrCriticalSection		MT;
+	std::recursive_mutex		MT;
 	volatile u32			MT_frame_rendered;
 
 	void					Render_DB	(CFrustum&	base);

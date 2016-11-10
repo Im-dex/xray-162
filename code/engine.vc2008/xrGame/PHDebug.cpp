@@ -167,7 +167,8 @@ struct SPHDBGDrawTri :public SPHDBGDrawAbsract
 
 static void clear_vector(PHABS_DBG_V& v)
 {
-	PHABS_DBG_I i,e;i=v.begin();e=v.end();
+	auto i=v.begin();
+    auto e=v.end();
 	for(;e!=i;++i)
 	{
 		xr_delete(*i);
@@ -450,7 +451,9 @@ void DBG_DrawPHAbstruct(SPHDBGDrawAbsract* a)
 
 void DBG_PHAbstruactStartFrame(bool dr_frame)
 {
-	PHABS_DBG_I i,e;
+    auto i = dbg_draw_abstruct0.end();
+    auto e = dbg_draw_abstruct0.end();
+
 	if(dr_frame)
 	{
 		i=dbg_draw_abstruct0.begin();
@@ -476,7 +479,9 @@ void DBG_PHAbstruactStartFrame(bool dr_frame)
 void capped_cylinder_ray_collision_test();
 void DBG_PHAbstructRender()
 {
-	PHABS_DBG_I i,e;
+    auto i = dbg_draw_abstruct0.end();
+    auto e = dbg_draw_abstruct0.end();
+
 	if(!draw_frame)
 	{
 		i=dbg_draw_abstruct0.begin();
@@ -497,8 +502,8 @@ void DBG_PHAbstructRender()
 	}
 	if(dbg_ph_draw_mode!=dmCashed)
 	{
-		PHABS_DBG_I i,e;
-		i=dbg_draw_cashed.begin();e=dbg_draw_cashed.end();
+		auto i=dbg_draw_cashed.begin();
+	    auto e=dbg_draw_cashed.end();
 		for(;e!=i;++i)
 		{
 			(*i)->render();
@@ -509,8 +514,8 @@ void DBG_PHAbstructRender()
 		}
 	}
 	{
-		PHABS_DBG_I i,e;
-		i=dbg_draw_simple.begin();e=dbg_draw_simple.end();
+		auto i=dbg_draw_simple.begin();
+	    auto e=dbg_draw_simple.end();
 		for(;e!=i;++i)
 		{
 			(*i)->render();

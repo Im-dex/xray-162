@@ -17,7 +17,7 @@ void CMemoryStream::write(const void* ptr, u32 count)
 		while (mem_size <= (position+count)) mem_size*=2;
 		data = (u8*)xr_realloc(data,mem_size);
 	}
-	CopyMemory(data+position,ptr,count);
+    std::memcpy(data+position,ptr,count);
 	position+=count;
 	if (position>file_size) file_size=position;
 }

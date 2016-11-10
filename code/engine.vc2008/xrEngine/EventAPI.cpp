@@ -65,26 +65,24 @@ void CEventAPI::Dump()
 
 EVENT	CEventAPI::Create(const char* N)
 {
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	CEvent	E	(N);
 	for (xr_vector<CEvent*>::iterator I=Events.begin(); I!=Events.end(); I++)
 	{
 		if ((*I)->Equal(E)) {
 			EVENT F		= *I;
 			F->dwRefCount++;
-			CS.Leave	();
 			return		F;
 		}
 	}
 
 	EVENT X = xr_new<CEvent>	(N);
 	Events.push_back			(X);
-	CS.Leave					( );
 	return X;
 }
 void	CEventAPI::Destroy(EVENT& E)
 {
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	E->dwRefCount--;
 	if (E->dwRefCount == 0) 
 	{
@@ -93,67 +91,60 @@ void	CEventAPI::Destroy(EVENT& E)
 		Events.erase(I);
 		xr_delete	(E);
 	}
-	CS.Leave	();
 }
 
 EVENT	CEventAPI::Handler_Attach(const char* N, IEventReceiver* H)
 {
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	EVENT	E = Create(N);
 	E->Attach(H);
-	CS.Leave	();
 	return E;
 }
 
 void	CEventAPI::Handler_Detach(EVENT& E, IEventReceiver* H)
 {
 	if (0==E)	return;
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	E->Detach	(H);
 	Destroy		(E);
-	CS.Leave	();
 }
 void	CEventAPI::Signal(EVENT E, u64 P1, u64 P2)
 {
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	E->Signal	(P1,P2);	
-	CS.Leave	();
 }
 void	CEventAPI::Signal(LPCSTR N, u64 P1, u64 P2)
 {
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	EVENT		E = Create(N);
 	Signal		(E,P1,P2);
 	Destroy		(E);
-	CS.Leave	();
 }
 void	CEventAPI::Defer(EVENT E, u64 P1, u64 P2)
 {
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	E->dwRefCount++;
 	Events_Deferred.push_back	(Deferred());
 	Events_Deferred.back().E	= E;
 	Events_Deferred.back().P1	= P1;
 	Events_Deferred.back().P2	= P2;
-	CS.Leave	();
 }
 void	CEventAPI::Defer(LPCSTR N, u64 P1, u64 P2)
 {
-	CS.Enter	();
+    std::lock_guard<decltype(CS)> lock(CS);
 	EVENT	E	= Create(N);
 	Defer		(E,P1,P2);
 	Destroy		(E);
-	CS.Leave	();
 }
 
 #ifdef DEBUG
 void msParse			(LPCSTR c)
 {
-	if (0==stricmp(c,"exit")) 
+	if (0==_stricmp(c,"exit")) 
 	{
 		Console->Execute	("quit");
 	}
-	if (0==stricmp(c,"quit"))
+	if (0==_stricmp(c,"quit"))
 	{
 		TerminateProcess	(GetCurrentProcess(),0);
 		Console->Execute	("quit");
@@ -166,8 +157,8 @@ void	CEventAPI::OnFrame	()
 #ifdef DEBUG
 	msRead		();
 #endif
-	CS.Enter	();
-	if (Events_Deferred.empty())	{ CS.Leave(); return; }
+    std::lock_guard<decltype(CS)> lock(CS);
+	if (Events_Deferred.empty())	return;
 	for (u32 I=0; I<Events_Deferred.size(); I++)
 	{
 		Deferred&	DEF = Events_Deferred[I];
@@ -175,23 +166,19 @@ void	CEventAPI::OnFrame	()
 		Destroy		(Events_Deferred[I].E);
 	}
 	Events_Deferred.clear();
-	CS.Leave	();
 }
 
 BOOL CEventAPI::Peek(LPCSTR EName)
 {
-	CS.Enter	();
-	if (Events_Deferred.empty())	{ CS.Leave(); return FALSE; }
+    std::lock_guard<decltype(CS)> lock(CS);
+	if (Events_Deferred.empty()) return FALSE;
 	for (u32 I=0; I<Events_Deferred.size(); I++)
 	{
 		Deferred&	DEF = Events_Deferred[I];
-		if(stricmp(DEF.E->GetFull(),EName)==0){
-			CS.Leave(); 
-			return TRUE;
-		}
+		if(_stricmp(DEF.E->GetFull(),EName)==0) return TRUE;
 
 	}
-	CS.Leave	();
+
 	return FALSE;
 }
 

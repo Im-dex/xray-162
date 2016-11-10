@@ -43,7 +43,7 @@ void CUINewsItemWnd::Setup			(GAME_NEWS_DATA& news_data)
 	Fvector2 pos			= m_UICaption->GetWndPos();
 	pos.x					= m_UIDate->GetWndPos().x + m_UIDate->GetWndSize().x + 5.0f;
 	m_UICaption->SetWndPos	(pos);
-	m_UICaption->SetWidth	( _min( m_UIText->GetWidth() - m_UIDate->GetWidth() - 5.0f, m_UICaption->GetWidth() ) );
+	m_UICaption->SetWidth	(std::min( m_UIText->GetWidth() - m_UIDate->GetWidth() - 5.0f, m_UICaption->GetWidth() ) );
 	
 	m_UIText->SetTextST				(news_data.news_text.c_str());
 	m_UIText->AdjustHeightToText	();
@@ -51,6 +51,6 @@ void CUINewsItemWnd::Setup			(GAME_NEWS_DATA& news_data)
 
 	m_UIImage->InitTexture			(news_data.texture_name.c_str());
 	float h3						= m_UIImage->GetWndPos().y + m_UIImage->GetHeight();
-	h1								= _max(h1,h3);
+	h1								= std::max(h1,h3);
 	SetHeight						(h1);
 }

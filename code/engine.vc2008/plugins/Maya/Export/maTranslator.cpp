@@ -368,9 +368,9 @@ bool CXRayObjectExport::initializeSetsAndLookupTables( bool exportAll )
 			{
 //				objectGroupsTablePtr[i] = (bool*)calloc( length, sizeof(bool) );	
 				objectGroupsTablePtr[i] = xr_alloc<bool>(length);
-				ZeroMemory(objectGroupsTablePtr[i],length*sizeof(bool));
+                std::memset(objectGroupsTablePtr[i],0,length*sizeof(bool));
 				
-				if ( objectGroupsTablePtr[i] == NULL ) {
+				if ( objectGroupsTablePtr[i] == nullptr ) {
 					Log("!calloc returned NULL (objectGroupsTablePtr)");
 					return false;
 				}
@@ -393,17 +393,17 @@ bool CXRayObjectExport::initializeSetsAndLookupTables( bool exportAll )
 		{
 //			vertexTablePtr[i] = (bool*)calloc( vertexCounts[i]*numSets, sizeof(bool) );	
 			vertexTablePtr[i] = xr_alloc<bool>(vertexCounts[i]*numSets);
-			ZeroMemory(vertexTablePtr[i],vertexCounts[i]*numSets*sizeof(bool));
+            std::memset(vertexTablePtr[i],0,vertexCounts[i]*numSets*sizeof(bool));
 
-			if ( vertexTablePtr[i] == NULL ) {
+			if ( vertexTablePtr[i] == nullptr ) {
 				Log("!calloc returned NULL (vertexTable)");
 				return false;
 			}
 	
 //			polygonTablePtr[i] = (bool*)calloc( polygonCounts[i]*numSets, sizeof(bool) );
 			polygonTablePtr[i] = xr_alloc<bool>(polygonCounts[i]*numSets);
-			ZeroMemory(polygonTablePtr[i],polygonCounts[i]*numSets*sizeof(bool));
-			if ( polygonTablePtr[i] == NULL ) {
+            std::memset(polygonTablePtr[i],0,polygonCounts[i]*numSets*sizeof(bool));
+			if ( polygonTablePtr[i] == nullptr ) {
 				Log("!calloc returned NULL (polygonTable)");
 				return false;
 			}
@@ -659,7 +659,7 @@ void CXRayObjectExport::buildEdgeTable( MDagPath& mesh )
     MFnMesh fnMesh( mesh );
     edgeTableSize = fnMesh.numVertices();
 	edgeTable = xr_alloc<SXREdgeInfoPtr>(edgeTableSize);
-	ZeroMemory(edgeTable,edgeTableSize*sizeof(int));
+    std::memset(edgeTable,0,edgeTableSize*sizeof(int));
 
     // Add entries, for each edge, to the lookup table
     //

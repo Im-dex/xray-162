@@ -61,7 +61,7 @@ namespace PAPI{
 			Particle* new_particles	= (Particle*) ( (DWORD) new_real_ptr + ( 64 - ( (DWORD) new_real_ptr & 63 ) ) );
 			//Msg( "Re-allocated %u bytes (%u particles) with base address 0x%p" , max_count * sizeof( Particle ) , max_count , new_particles );
 
-			CopyMemory			(new_particles, particles, p_count * sizeof(Particle));
+            std::memcpy(new_particles, particles, p_count * sizeof(Particle));
 			xr_free					(real_ptr);
 
 			particles				= new_particles;

@@ -56,7 +56,7 @@ CDemoPlay::CDemoPlay(const char *name, float ms, u32 cycles, float life_time) : 
 		
 		seq.resize		(sz/sizeof(Fmatrix));
 		m_count			= seq.size();
-		CopyMemory	(&*seq.begin(),fs->pointer(),sz);
+        std::memcpy(&*seq.begin(),fs->pointer(),sz);
 		FS.r_close		(fs);
 		Log				("~ Total key-frames: ",m_count);
 	}
@@ -111,8 +111,8 @@ void CDemoPlay::stat_Stop	()
 	rfps_middlepoint		= 0;
 
 	//	Filtered FPS
-	const u32 iAvgFPS		=	_max((u32)rfps_average,10);
-	const u32 WindowSize	=	_max(16, iAvgFPS/2);
+	const u32 iAvgFPS		= std::max((u32)rfps_average,(u32)10);
+	const u32 WindowSize	= std::max((u32)16, iAvgFPS/2);
 
 	if ( stat_table.size() > WindowSize*4 )
 	{

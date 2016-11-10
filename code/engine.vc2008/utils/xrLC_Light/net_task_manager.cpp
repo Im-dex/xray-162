@@ -69,7 +69,7 @@ get_net_task_manager()->receive( r );
 
 }
 
-static xrCriticalSection send_receive_data_lock;
+static std::recursive_mutex send_receive_data_lock;
 class INetFileBuffWriter;
 static INetFileBuffWriter *gl_data_write = 0;
 static CVirtualFileRW *g_net_data = 0;
@@ -255,19 +255,19 @@ void net_task_manager::receive(  INetReader& r )
 #ifdef LOAD_GL_DATA
 	return;
 #endif
-	send_receive_data_lock.Enter();
+	send_receive_data_lock.lock();
 	u32 id = r.r_u32();
 	xr_vector<u32>::iterator it =std::find( pool.begin(), pool.end(), id );
 	if( it == pool.end() )
 	{
-		send_receive_data_lock.Leave();
+		send_receive_data_lock.unlock();
 //		CDeflector temp;
 //		temp.read( r );
 		return;
 	}
 	pool.erase( it );
 	u32 pool_size = pool.size();
-	send_receive_data_lock.Leave();
+	send_receive_data_lock.unlock();
 
 	VERIFY(inlc_global_data());
 	//inlc_global_data()->create_read_faces();

@@ -10,7 +10,7 @@ namespace lc_net
 		
 		u32						id_state	;				
 		xr_vector<u32>			vec_cleanup	;
-		xrCriticalSection		lock;
+		std::recursive_mutex		lock;
 		friend					void  data_cleanup_callback( const char* dataDesc, IGenericStream** stream );
 	public:
 				global_data_cleanup		(  );
@@ -18,7 +18,7 @@ namespace lc_net
 		template<e_net_globals data>
 		void	set_cleanup					( u32 id )
 		{
-			lock.Enter();
+            std::lock_guard<decltype(lock)> locker(lock);
 			if( vec_cleanup[data] == id )
 			{
 				lock.Leave();
@@ -26,7 +26,6 @@ namespace lc_net
 			}
 			++id_state;
 			vec_cleanup[data] = id;
-			lock.Leave();
 		};
 		template<e_net_globals data>
 		u32 	get_cleanup					(  ) const

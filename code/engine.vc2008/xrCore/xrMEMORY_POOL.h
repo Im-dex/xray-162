@@ -10,7 +10,7 @@ class	MEMPOOL
 	friend class xrMemory;
 #endif // DEBUG_MEMORY_MANAGER
 private:
-	xrCriticalSection	cs;
+	std::recursive_mutex	cs;
 	u32					s_sector;		// large-memory sector size
 	u32					s_element;		// element size, for example 32
 	u32					s_count;		// element count = [s_sector/s_element]
@@ -22,30 +22,24 @@ private:
 	void				block_create	();
 public:
 	void				_initialize		(u32 _element, u32 _sector, u32 _header);
-
-#ifdef PROFILE_CRITICAL_SECTIONS
-	ICF					MEMPOOL			(): cs(MUTEX_PROFILE_ID(memory_pool)){}
-#endif // PROFILE_CRITICAL_SECTIONS
 	
 	ICF u32				get_block_count	()	{ return block_count; }
 	ICF u32				get_element		()	{ return s_element; }
 
 	ICF void*			create			()
 	{
-		cs.Enter		();
+        std::lock_guard<decltype(cs)> lock(cs);
 		if (0==list)	block_create();
 
 		void* E			= list;
 		list			= (u8*)*access(list);
-		cs.Leave		();
 		return			E;
 	}
 	ICF void			destroy			(void* &P)
 	{
-		cs.Enter		();
+        std::lock_guard<decltype(cs)> lock(cs);
 		*access(P)		= list;
 		list			= (u8*)P;
-		cs.Leave		();
 	}
 };
 #endif

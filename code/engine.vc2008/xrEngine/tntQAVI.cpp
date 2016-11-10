@@ -7,7 +7,7 @@
 
 CAviPlayerCustom::CAviPlayerCustom( )
 {
-	ZeroMemory( this, sizeof(*this) );
+    std::memset( this, 0, sizeof(*this) );
 	m_dwFrameCurrent	= 0xfffffffd;	// страхуемся от 0xffffffff + 1 == 0
 	m_dwFirstFrameOffset=0;
 }
@@ -50,7 +50,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 	// Найти чанк FOURCC('movi')
 
 	MMCKINFO mmckinfoParent;
-	ZeroMemory( &mmckinfoParent, sizeof(mmckinfoParent) );
+    std::memset( &mmckinfoParent, 0, sizeof(mmckinfoParent) );
 	mmckinfoParent.fccType = mmioFOURCC('A', 'V', 'I', ' ');
 	MMRESULT res;
 	if( MMSYSERR_NOERROR != (res = mmioDescend(hmmioFile, &mmckinfoParent, NULL, MMIO_FINDRIFF)) ) {
@@ -59,7 +59,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 		return FALSE;
 	}
 
-	ZeroMemory( &mmckinfoParent, sizeof(mmckinfoParent) );
+    std::memset( &mmckinfoParent, 0, sizeof(mmckinfoParent) );
 	mmckinfoParent.fccType = mmioFOURCC('h', 'd', 'r', 'l'); 
 	if( MMSYSERR_NOERROR != (res = mmioDescend(hmmioFile, &mmckinfoParent, NULL, MMIO_FINDLIST)) ) {
 
@@ -68,7 +68,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 	}
 //-------------------------------------------------------------------
 	//++strl
-	ZeroMemory( &mmckinfoParent, sizeof(mmckinfoParent) );
+    std::memset( &mmckinfoParent, 0, sizeof(mmckinfoParent) );
 	mmckinfoParent.fccType = mmioFOURCC('s', 't', 'r', 'l'); 
 	if( MMSYSERR_NOERROR != (res = mmioDescend(hmmioFile, &mmckinfoParent, NULL, MMIO_FINDLIST)) ) {
 
@@ -77,7 +77,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 	}
 
 	//++strh
-	ZeroMemory( &mmckinfoParent, sizeof(mmckinfoParent) );
+    std::memset( &mmckinfoParent, 0, sizeof(mmckinfoParent) );
 	mmckinfoParent.fccType = mmioFOURCC('s', 't', 'r', 'h'); 
 	if( MMSYSERR_NOERROR != (res = mmioDescend(hmmioFile, &mmckinfoParent, NULL, MMIO_FINDCHUNK)) ) {
 
@@ -86,7 +86,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 	}
 
 	AVIStreamHeaderCustom	strh;
-	ZeroMemory( &strh, sizeof(strh) );
+    std::memset(&strh,0,sizeof(strh));
 	if( mmckinfoParent.cksize != (DWORD)mmioRead(hmmioFile, (HPSTR)&strh, mmckinfoParent.cksize) ) {
 
 		mmioClose( hmmioFile, 0 );
@@ -100,7 +100,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 	if( AVIERR_OK != AVIFileOpen( &aviFile, fname, OF_READ, 0 ) )	return FALSE;
 
 	AVIFILEINFO		aviInfo;
-	ZeroMemory		(&aviInfo,sizeof(aviInfo));
+    std::memset(&aviInfo,0,sizeof(aviInfo));
 	if( AVIERR_OK != AVIFileInfo( aviFile, &aviInfo, sizeof(aviInfo) ) ){
 		AVIFileRelease( aviFile );
 		return FALSE;
@@ -119,7 +119,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 	m_pDecompressedBuf	= (BYTE *)xr_malloc( m_dwWidth * m_dwHeight * 4 + 4);
 
 	//++strf
-	ZeroMemory( &mmckinfoParent, sizeof(mmckinfoParent) );
+    std::memset(&mmckinfoParent,0,sizeof(mmckinfoParent));
 	mmckinfoParent.fccType = mmioFOURCC('s', 't', 'r', 'f'); 
 	if( MMSYSERR_NOERROR != (res = mmioDescend(hmmioFile, &mmckinfoParent, NULL, MMIO_FINDCHUNK)) ) {
 
@@ -182,7 +182,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 
 //-------------------------------------------------------------------
 	MMCKINFO mmckinfoSubchunk;
-	ZeroMemory( &mmckinfoSubchunk, sizeof(mmckinfoSubchunk) );
+    std::memset(&mmckinfoSubchunk,0,sizeof(mmckinfoSubchunk));
 	mmckinfoSubchunk.fccType = mmioFOURCC('m', 'o', 'v', 'i'); 
 	if( MMSYSERR_NOERROR != (res = mmioDescend(hmmioFile, &mmckinfoSubchunk, NULL, MMIO_FINDLIST)) \
 		|| mmckinfoSubchunk.cksize <= 4 )
@@ -217,7 +217,7 @@ BOOL CAviPlayerCustom::Load (char* fname)
 	}
 
 	// Найти чанк FOURCC('idx1')
-	ZeroMemory( &mmckinfoSubchunk, sizeof(mmckinfoSubchunk) );
+    std::memset(&mmckinfoSubchunk,0,sizeof(mmckinfoSubchunk));
 	mmckinfoSubchunk.fccType = mmioFOURCC('i', 'd', 'x', '1'); 
 
 	if( MMSYSERR_NOERROR != (res = mmioDescend(hmmioFile, &mmckinfoSubchunk, NULL, MMIO_FINDCHUNK)) \

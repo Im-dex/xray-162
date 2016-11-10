@@ -71,7 +71,7 @@ void CActor::camUpdateLadder(float dt)
 		cameras[eacFirstEye]->lim_yaw[1]	= hi;
 		cameras[eacFirstEye]->bClampYaw		= true;
 	}else{
-		cam_yaw								+= delta * _min(dt*10.f,1.f) ;
+		cam_yaw								+= delta * std::min(dt*10.f,1.f) ;
 	}
 
 	IElevatorState* es = character_physics_support()->movement()->ElevatorState();
@@ -81,7 +81,7 @@ void CActor::camUpdateLadder(float dt)
 		const float ldown_pitch				= cameras[eacFirstEye]->lim_pitch.y;
 		float delta							= angle_difference_signed(ldown_pitch,cam_pitch);
 		if(delta>0.f)
-			cam_pitch						+= delta* _min(dt*10.f,1.f) ;
+			cam_pitch						+= delta* std::min(dt*10.f,1.f) ;
 	}
 }
 
@@ -105,7 +105,7 @@ IC float viewport_near(float& w, float& h)
 	w = 2.f*VIEWPORT_NEAR*tan(deg2rad(Device.fFOV)/2.f);
 	h = w*Device.fASPECT;
 	float	c	= _sqrt					(w*w + h*h);
-	return	_max(_max(VIEWPORT_NEAR,_max(w,h)),c);
+	return	std::max(std::max(VIEWPORT_NEAR, std::max(w,h)),c);
 }
 
 ICF void calc_point(Fvector& pt, float radius, float depth, float alpha)

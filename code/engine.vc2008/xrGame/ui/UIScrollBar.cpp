@@ -56,7 +56,7 @@ void CUIScrollBar::InitScrollBar(Fvector2 pos, float length, bool bIsHorizontal,
 		LPCSTR texture				= xml_doc.Read(_path, 0, "");
 		R_ASSERT					(texture);
 		m_FrameBackground->InitTexture(texture);
-		m_ScrollWorkArea			= _max(0,iFloor(GetWidth()-2*height));
+		m_ScrollWorkArea			= std::max(0,iFloor(GetWidth()-2*height));
 	}else
 	{
 		inherited::SetWndSize		(Fvector2().set(height, length));
@@ -79,7 +79,7 @@ void CUIScrollBar::InitScrollBar(Fvector2 pos, float length, bool bIsHorizontal,
 		R_ASSERT					(texture);
 
 		m_FrameBackground->InitTexture(texture);
-		m_ScrollWorkArea			= _max(0,iFloor(GetHeight()-2*height));
+		m_ScrollWorkArea			= std::max(0,iFloor(GetHeight()-2*height));
 	}	
 
 	UpdateScrollBar					();
@@ -150,7 +150,7 @@ void CUIScrollBar::UpdateScrollBar()
 			if(m_bIsHorizontal)
 			{
 				// set width
-				clamp					(box_sz,_min(GetHeight(),GetWidth() - m_IncButton->GetWidth() - m_DecButton->GetWidth()),GetWidth() - m_IncButton->GetWidth() - m_DecButton->GetWidth());
+				clamp					(box_sz, std::min(GetHeight(),GetWidth() - m_IncButton->GetWidth() - m_DecButton->GetWidth()),GetWidth() - m_IncButton->GetWidth() - m_DecButton->GetWidth());
 				m_ScrollBox->SetWidth	(box_sz);
 				m_ScrollBox->SetHeight	(GetHeight());
 				// set pos
@@ -160,7 +160,7 @@ void CUIScrollBar::UpdateScrollBar()
 			}else
 			{
 				// set height
-				clamp					(box_sz,_min(GetWidth(),GetHeight()-m_IncButton->GetHeight() - m_DecButton->GetHeight()),GetHeight()-m_IncButton->GetHeight() - m_DecButton->GetHeight());
+				clamp					(box_sz, std::min(GetWidth(),GetHeight()-m_IncButton->GetHeight() - m_DecButton->GetHeight()),GetHeight()-m_IncButton->GetHeight() - m_DecButton->GetHeight());
 				m_ScrollBox->SetHeight	(box_sz);
 				m_ScrollBox->SetWidth	(GetWidth());
 				// set pos

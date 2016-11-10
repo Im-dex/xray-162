@@ -346,7 +346,7 @@ void __stdcall	CDetailManager::MT_CALC		()
 	if (!psDeviceFlags.is(rsDetails))	return;
 #endif    
 
-	MT.Enter					();
+    std::lock_guard<decltype(MT)> lock(MT);
 	if (m_frame_calc!=RDEVICE.dwFrame)	
 		if ((m_frame_rendered+1)==RDEVICE.dwFrame) //already rendered
 		{
@@ -362,5 +362,4 @@ void __stdcall	CDetailManager::MT_CALC		()
 			UpdateVisibleM				();
 			m_frame_calc				= RDEVICE.dwFrame;
 		}
-	MT.Leave					        ();
 }

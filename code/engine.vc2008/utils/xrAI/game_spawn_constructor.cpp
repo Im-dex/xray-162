@@ -22,9 +22,6 @@ extern LPCSTR generate_temp_file_name			(LPCSTR header0, LPCSTR header1, string_
 #define NO_MULTITHREADING
 
 CGameSpawnConstructor::CGameSpawnConstructor	(LPCSTR name, LPCSTR output, LPCSTR start, bool no_separator_check)
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:m_critical_section(MUTEX_PROFILE_ID(CGameSpawnConstructor))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 	load_spawns						(name,no_separator_check);
 	process_spawns					();
@@ -234,10 +231,9 @@ void CGameSpawnConstructor::add_story_object	(ALife::_STORY_ID id, CSE_ALifeDyna
 
 void CGameSpawnConstructor::add_object				(CSE_Abstract *object)
 {
-	m_critical_section.Enter	();
+    std::lock_guard<decltype(m_critical_section)> lock(m_critical_section);
 	object->m_tSpawnID			= spawn_id();
 	spawn_graph().add_vertex	(xr_new<CServerEntityWrapper>(object),object->m_tSpawnID);
-	m_critical_section.Leave	();
 }
 
 void CGameSpawnConstructor::remove_object			(CSE_Abstract *object)

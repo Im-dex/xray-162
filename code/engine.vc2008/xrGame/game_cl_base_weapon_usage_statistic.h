@@ -263,7 +263,7 @@ struct WeaponUsageStatistic {
 	void				WriteLtx					(CInifile& ini);
 
 private:
-	xrCriticalSection	m_mutex;
+	std::recursive_mutex	m_mutex;
 };
 
 struct Bullet_Check_Respond_True

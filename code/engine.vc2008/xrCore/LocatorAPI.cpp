@@ -113,8 +113,8 @@ void setup_reader(IReader* _r, _open_file& _of)
 template <typename T>
 void _register_open_file(T* _r, LPCSTR _fname)
 {
-	xrCriticalSection		_lock;
-	_lock.Enter				();
+	//xrCriticalSection		_lock; TODO: useless lock
+	//_lock.Enter				();
 
 	shared_str f			= _fname;
 	_check_open_file		(f);
@@ -123,20 +123,20 @@ void _register_open_file(T* _r, LPCSTR _fname)
 	setup_reader			(_r,_of);
 	_of._used				+= 1;
 
-	_lock.Leave				();
+	//_lock.Leave				();
 }
 
 template <typename T>
 void _unregister_open_file(T* _r)
 {
-	xrCriticalSection		_lock;
-	_lock.Enter				();
+	//xrCriticalSection		_lock; TODO: useless lock
+	//_lock.Enter				();
 
 	xr_vector<_open_file>::iterator it	= std::find_if(g_open_files.begin(), g_open_files.end(), eq_pointer<T>(_r) );
 	VERIFY								(it!=g_open_files.end());
 	_open_file&	_of						= *it;
 	_of._reader							= NULL;
-	_lock.Leave				();
+	//_lock.Leave				();
 }
 
 XRCORE_API void _dump_open_files(int mode)
@@ -174,9 +174,6 @@ XRCORE_API void _dump_open_files(int mode)
 }
 
 CLocatorAPI::CLocatorAPI()
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:m_auth_lock			(MUTEX_PROFILE_ID(CLocatorAPI::m_auth_lock))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
     m_Flags.zero		();
 	// get page size
@@ -377,8 +374,8 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint)
 		u32 crc			= *(u32*)buffer;
 		buffer			+= sizeof(crc);
 
-		u32				name_length = buffer_size - 4*sizeof(u32);
-		Memory.mem_copy	(name,buffer,name_length);
+		std::size_t				name_length = buffer_size - 4*sizeof(u32);
+        std::memcpy(name,buffer,name_length);
 		name[name_length] = 0;
 		buffer			+= buffer_size - 4*sizeof(u32);
 

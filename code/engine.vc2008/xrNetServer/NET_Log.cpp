@@ -62,9 +62,6 @@ string64 PacketName[] = {
 };
 //---------------------------------------------------------
 INetLog::INetLog(LPCSTR sFileName, u32 dwStartTime)
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:m_cs(MUTEX_PROFILE_ID(NET_Log))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 	xr_strcpy(m_cFileName, sFileName);
 
@@ -102,7 +99,7 @@ void		INetLog::LogPacket(u32 Time, NET_Packet* pPacket, bool IsIn)
 {
 	if (!pPacket) return;
 
-	m_cs.Enter();
+    std::lock_guard<decltype(m_cs)> lock(m_cs);
 	
 	SLogPacket NewPacket;
 	
@@ -113,15 +110,12 @@ void		INetLog::LogPacket(u32 Time, NET_Packet* pPacket, bool IsIn)
 
 	m_aLogPackets.push_back(NewPacket);
 	if (m_aLogPackets.size() > 100) FlushLog();
-
-	m_cs.Leave();
 };
 
 void		INetLog::LogData(u32 Time, void* data, u32 size, bool IsIn)
 {
 	if (!data) return;
-
-	m_cs.Enter();
+    std::lock_guard<decltype(m_cs)> lock(m_cs);
 
 	SLogPacket NewPacket;
 	
@@ -132,6 +126,4 @@ void		INetLog::LogData(u32 Time, void* data, u32 size, bool IsIn)
 
 	m_aLogPackets.push_back(NewPacket);
 	if (m_aLogPackets.size() > 100) FlushLog();
-
-	m_cs.Leave();
 }

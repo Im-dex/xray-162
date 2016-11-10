@@ -80,7 +80,7 @@ IC void dx10ConstantBuffer::set(R_constant* C, R_constant_load& L, const Fvector
 			break;
 	}
 
-	CopyMemory(it, &A[0], count*sizeof(float));
+    std::memcpy(it, &A[0], count*sizeof(float));
 
 	//c_f.access	(L.index)->set	(A);
 	//c_f.dirty	(L.index,L.index+1);

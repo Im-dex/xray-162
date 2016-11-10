@@ -23,7 +23,7 @@ xrGUID generate_guid()
     static_assert(sizeof(xrGUID) == sizeof(GUID), "Different GUID types");
 	GUID			_result;
 	RPC_STATUS		gen_result = UuidCreate(&_result);
-	Memory.mem_copy	(&result,&_result,sizeof(_result));
+    std::memcpy(&result,&_result,sizeof(_result));
 	switch (gen_result) {
 		case RPC_S_OK				: return(result);
 		case RPC_S_UUID_LOCAL_ONLY	: return(result);
@@ -32,9 +32,9 @@ xrGUID generate_guid()
 	}
 #endif
     static_assert(sizeof(result) >= sizeof(u64), "GUID must have size greater or equal to the long long");
-	ZeroMemory		(&result,sizeof(result));
+    std::memset(&result,0,sizeof(result));
 	u64				temp = CPU::GetCLK();
-	Memory.mem_copy	(&result,&temp,sizeof(temp));
+    std::memcpy(&result,&temp,sizeof(temp));
 	return			(result);
 }
 
@@ -43,7 +43,7 @@ LPCSTR generate_guid(const xrGUID &guid, LPSTR buffer, const u32 &buffer_size)
 #ifdef WINVER
     static_assert(sizeof(xrGUID) == sizeof(GUID), "Different GUID types");
 	GUID			temp;
-	Memory.mem_copy	(&temp,&guid,sizeof(guid));
+    std::memcpy(&temp,&guid,sizeof(guid));
 	RPC_CSTR		temp2;
 	RPC_STATUS		status = UuidToString(&temp,&temp2);
 	switch (status) {

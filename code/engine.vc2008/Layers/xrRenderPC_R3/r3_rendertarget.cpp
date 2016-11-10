@@ -218,9 +218,9 @@ Ivector	vpack			(Fvector src)
 #else
 	int		d=3;
 #endif
-	for (int x=_max(bx-d,0); x<=_min(bx+d,255); x++)
-	for (int y=_max(by-d,0); y<=_min(by+d,255); y++)
-	for (int z=_max(bz-d,0); z<=_min(bz+d,255); z++)
+	for (int x=std::max(bx-d,0); x<=std::min(bx+d,255); x++)
+	for (int y=std::max(by-d,0); y<=std::min(by+d,255); y++)
+	for (int z=std::max(bz-d,0); z<=std::min(bz+d,255); z++)
 	{
 		_v				= vunpack(x,y,z);
 		float	m		= _v.magnitude();
@@ -266,7 +266,7 @@ CRenderTarget::CRenderTarget		()
    u32 SampleCount = 1;
 
    if (ps_r_ssao_mode!=2/*hdao*/)
-	   ps_r_ssao = _min(ps_r_ssao, 3);
+	   ps_r_ssao = std::min(ps_r_ssao, (u32)3);
 
    if( RImplementation.o.dx10_msaa )
       SampleCount    = RImplementation.o.dx10_msaa_samples;
@@ -761,7 +761,7 @@ CRenderTarget::CRenderTarget		()
 							float	s1	=	_abs	(1-_abs	(0.05f*_cos(33.f*ld*ls)+ld-ls));
 							float	s2	=	_abs	(1-_abs	(ld-ls));
 							fd		=	ld;				// 1.0
-							fs		=	powf	(_max(_max(s0,s1),s2), 24.f);
+							fs		=	powf	(std::max(std::max(s0,s1),s2), 24.f);
 							fs		*=	powf	(ld,1/7.f);
 								}	break;
 						default:

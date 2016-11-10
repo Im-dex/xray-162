@@ -292,7 +292,7 @@ bool weather::save_time_frame			(shared_str const& frame_id, char* buffer, u32 c
 			return		(false);
 
 		writer.seek		(0);
-		Memory.mem_copy	(buffer, writer.pointer(), writer.size());
+        std::memcpy	(buffer, writer.pointer(), writer.size());
 		return			(true);
 	}
 

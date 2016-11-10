@@ -3,6 +3,8 @@
 #include "xrGameSpy_ATLAS.h"
 #include "GameSpy/GP/gp.h"
 
+#include <cstring>
+
 XRGAMESPY_API gsi_u32 xrGS_wsLoginProfile(const gsi_char * profileNick,
 										  const gsi_char * email,
 										  const gsi_char * password,
@@ -134,7 +136,7 @@ XRGAMESPY_API SCResult xrGS_scReportSetPlayerData  (SCReportPtr theReport,
 													const gsi_u8  theAuthHash[16])
 {
 	gsi_u8	tmp_auth_data[16];
-	ZeroMemory(tmp_auth_data, sizeof(tmp_auth_data));
+    std::memset(tmp_auth_data, 0, sizeof(tmp_auth_data));
 	return scReportSetPlayerData(
 		theReport,
 		thePlayerIndex,

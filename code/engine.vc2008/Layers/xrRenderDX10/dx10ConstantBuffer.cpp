@@ -94,7 +94,7 @@ void dx10ConstantBuffer::Flush()
 #endif
 		VERIFY(pData);
 		VERIFY(m_pBufferData);
-		CopyMemory(pData, m_pBufferData, m_uiBufferSize);
+        std::memcpy(pData, m_pBufferData, m_uiBufferSize);
 #ifdef USE_DX11
 		HW.pContext->Unmap(m_pBuffer, 0);
 #else

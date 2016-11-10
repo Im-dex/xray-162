@@ -261,9 +261,6 @@ void NET_Compressor::done_decoding		( )
 //////////////////////////////////////////////////////////////////////
 
 NET_Compressor::NET_Compressor()
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:CS(MUTEX_PROFILE_ID(NET_Compressor))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 }
 
@@ -353,7 +350,7 @@ u16 NET_Compressor::Compress(BYTE* dest, const u32 &dest_size, BYTE* src, const 
 
 #if !NET_USE_COMPRESSION
 
-	CopyMemory(dest,src,count);
+    std::memcpy(dest,src,count);
 	return (u16(count));
 	
 #else // !NET_USE_COMPRESSION
@@ -369,13 +366,11 @@ u16 NET_Compressor::Compress(BYTE* dest, const u32 &dest_size, BYTE* src, const 
 
 	if( !psNET_direct_connect  && g_net_compressor_enabled && b_compress_packet) 
 	{
-		CS.Enter							();
+        std::lock_guard<decltype(CS)> lock(CS);
 		compressed_size = offset + ENCODE( dest+offset, dest_size-offset, src, count );
 
 		if(g_net_compressor_gather_stats)
 			m_stats.total_compressed_bytes		+= compressed_size;
-
-		CS.Leave();
 	}
 
 	if( compressed_size < count ) 
@@ -417,7 +412,7 @@ u16 NET_Compressor::Compress(BYTE* dest, const u32 &dest_size, BYTE* src, const 
 		*dest = NET_TAG_NONCOMPRESSED;
 		
 		compressed_size	= count + 1;
-		CopyMemory( dest+1, src, count );
+        std::memcpy( dest+1, src, count );
 
         #if NET_LOG_COMPRESSION
         Msg( "#compress/as-is %u->%u  %02X", count, compressed_size, *dest );
@@ -476,7 +471,7 @@ u16 NET_Compressor::Decompress	(BYTE* dest, const u32 &dest_size, BYTE* src, con
 
 #if !NET_USE_COMPRESSION
 
-	CopyMemory(dest,src,count);
+    std::memcpy(dest,src,count);
 	
 	return (u16(count));
 
@@ -485,7 +480,7 @@ u16 NET_Compressor::Decompress	(BYTE* dest, const u32 &dest_size, BYTE* src, con
 	if( *src != NET_TAG_COMPRESSED ) 
 	{
 		if (count) {
-			CopyMemory	( dest, src+1, count-1 );
+            std::memcpy( dest, src+1, count-1 );
 			return		( u16(count-1) );
 		}
 
@@ -509,9 +504,8 @@ u16 NET_Compressor::Decompress	(BYTE* dest, const u32 &dest_size, BYTE* src, con
 	R_ASSERT2(crc == *((u32*)(src + 1)),make_string("crc is different! (0x%08x != 0x%08x)",crc,*((u32*)(src + 1))));
     #endif // NET_USE_COMPRESSION_CRC
 
-	CS.Enter();
+    std::lock_guard<decltype(CS)> lock(CS);
 	u32 uncompressed_size = DECODE( dest, dest_size, src+offset, count-offset );
-	CS.Leave();
 	
 	return (u16(uncompressed_size));
 	

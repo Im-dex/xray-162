@@ -611,7 +611,7 @@ void CCustomMonster::update_range_fov	(float &new_range, float &new_fov, float s
 		start_range
 		*
 		(
-			_min(m_far_plane_factor*current_far_plane,standard_far_plane)
+            std::min(m_far_plane_factor*current_far_plane,standard_far_plane)
 			/
 			standard_far_plane
 		)

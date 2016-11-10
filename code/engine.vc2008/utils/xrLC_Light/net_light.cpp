@@ -13,7 +13,7 @@
 //==============================================================================
 
 
-static xrCriticalSection	block;
+static std::recursive_mutex	block;
 LPCSTR dataDesc  = "global_data";
 
 xr_vector<u32>	net_pool;
@@ -154,28 +154,28 @@ bool  RunTask ( IAgent* agent,
                  IGenericStream* outStream )
 {
  
- block.Enter();
+ block.lock();
 
  g_sessionId = sessionId;
  net_task task( agent, sessionId );
 
  if(!TaskReceive( task, agent, sessionId, inStream ))
  {
-	 block.Leave();
+	 block.unlock();
 	 return false;
  }
- block.Leave();
+ block.unlock();
 
  task.run	();
 
- block.Enter();
+ block.lock();
  
  if(!TaskSendResult( task, outStream ))
  {
-	 block.Leave();
+	 block.unlock();
 	 return false;
  }
- block.Leave();
+ block.unlock();
  return true;
 }
 } g_net_task_interface_impl;

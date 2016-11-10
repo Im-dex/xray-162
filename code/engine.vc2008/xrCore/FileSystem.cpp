@@ -122,7 +122,7 @@ UINT_PTR CALLBACK OFNHookProcOldStyle(HWND , UINT , WPARAM , LPARAM )
 	return 0;
 }
 
-bool EFS_Utils::GetOpenNameInternal( LPCSTR initial,  LPSTR buffer, int sz_buf, bool bMulti, LPCSTR offset, int start_flt_ext )
+bool EFS_Utils::GetOpenNameInternal( LPCSTR initial,  LPSTR buffer, int sz_buf, bool bMulti, LPCSTR offset, int start_flt_ext ) const
 {
 	VERIFY				(buffer&&(sz_buf>0));
 	FS_Path& P			= *FS.get_path(initial);
@@ -130,7 +130,7 @@ bool EFS_Utils::GetOpenNameInternal( LPCSTR initial,  LPSTR buffer, int sz_buf, 
 	MakeFilter			(flt,P.m_FilterCaption?P.m_FilterCaption:"",P.m_DefExt);
 
 	OPENFILENAME 		ofn;
-	Memory.mem_fill		( &ofn, 0, sizeof(ofn) );
+    std::memset( &ofn, 0, sizeof(ofn) );
 
     if (xr_strlen(buffer))
     {
@@ -234,7 +234,7 @@ bool EFS_Utils::GetSaveName( LPCSTR initial, string_path& buffer, LPCSTR offset,
     
 	MakeFilter(flt,P.m_FilterCaption?P.m_FilterCaption:"",def_ext);
 	OPENFILENAME ofn;
-	Memory.mem_fill		( &ofn, 0, sizeof(ofn) );
+    std::memset( &ofn, 0, sizeof(ofn) );
     if (xr_strlen(buffer)){ 
         string_path		dr;
         if (!(buffer[0]=='\\' && buffer[1]=='\\')){ // if !network

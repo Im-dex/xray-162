@@ -209,10 +209,6 @@ public:
 		m_editor(0),
 		m_engine(0)
 #endif // #ifdef INGAME_EDITOR
-#ifdef PROFILE_CRITICAL_SECTIONS
-		,mt_csEnter(MUTEX_PROFILE_ID(CRenderDevice::mt_csEnter))
-		,mt_csLeave(MUTEX_PROFILE_ID(CRenderDevice::mt_csLeave))
-#endif // #ifdef PROFILE_CRITICAL_SECTIONS
 	{
 	    m_hWnd              = NULL;
 		b_is_Active			= FALSE;
@@ -264,8 +260,8 @@ public:
 	}
 
 	// Multi-threading
-	xrCriticalSection	mt_csEnter;
-	xrCriticalSection	mt_csLeave;
+	std::recursive_mutex	mt_csEnter;
+	std::recursive_mutex	mt_csLeave;
 	volatile BOOL		mt_bMustExit;
 
 	ICF		void			remove_from_seq_parallel	(const fastdelegate::FastDelegate0<> &delegate)

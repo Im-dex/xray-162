@@ -103,16 +103,9 @@ void SBullet::Init(const Fvector& position,
 
 
 CBulletManager::CBulletManager()
-#if 0//def PROFILE_CRITICAL_SECTIONS
-	: m_Lock(MUTEX_PROFILE_ID(CBulletManager))
-#	ifdef DEBUG
-		,m_thread_id(GetCurrentThreadId())
-#	endif // #ifdef DEBUG
-#else // #ifdef PROFILE_CRITICAL_SECTIONS
 #	ifdef DEBUG
 		: m_thread_id(GetCurrentThreadId())
 #	endif // #ifdef DEBUG
-#endif // #ifdef PROFILE_CRITICAL_SECTIONS
 {
 	m_Bullets.clear			();
 	m_Bullets.reserve		(100);
@@ -265,7 +258,7 @@ static Fvector parabolic_velocity			(
 {
 	return					(
 		Fvector(start_velocity).mul(
-			_max( 0.f, 1.f - air_resistance*time)
+            std::max( 0.f, 1.f - air_resistance*time)
 		).mad(
 			gravity,
 			time
@@ -280,7 +273,7 @@ static Fvector trajectory_velocity			(
 		float const time
 	)
 {
-	float const parabolic_time	= _max( 0.f, 2.f/air_resistance - air_resistance_epsilon);
+	float const parabolic_time	= std::max( 0.f, 2.f/air_resistance - air_resistance_epsilon);
 	float const	fall_down_time	= time - parabolic_time;
 //	float const fake_velocity	= start_velocity*2.f;
 	if ( fall_down_time < 0.f ) {
@@ -367,7 +360,7 @@ static Fvector trajectory_position			(
 	Fvector const & start_velocity	= base_start_velocity;//g_use_new_ballistics ? Fvector(base_start_velocity).mul( factor ) : base_start_velocity;
 	float const time				= base_time;
 
-	float const parabolic_time		= _max( 0.f, 1.f/air_resistance - air_resistance_epsilon);
+	float const parabolic_time		= std::max( 0.f, 1.f/air_resistance - air_resistance_epsilon);
 	float const	fall_down_time		= time - parabolic_time;
 	if ( fall_down_time < 0.f ) {
 		Fvector const xz_velocity	= Fvector().set( start_velocity.x, 0.f, start_velocity.z);
@@ -449,7 +442,7 @@ static float trajectory_pick_error			(
 	float					magnitude = start_to_max_error.magnitude();
 	start_to_max_error.mul	(1.f/magnitude);
 	Fvector					start_to_target = Fvector().sub(target,start).normalize();
-	float					cosine_alpha = _max(-1.f, _min(start_to_max_error.dotproduct(start_to_target), 1.f));
+	float					cosine_alpha = std::max(-1.f, std::min(start_to_max_error.dotproduct(start_to_target), 1.f));
 	float					sine_alpha = _sqrt(1.f - _sqr(cosine_alpha));
 	return					(magnitude*sine_alpha);
 }
@@ -534,7 +527,7 @@ static bool trajectory_select_pick_ranges(
 		return				(false);
 	}
 
-	float const	fall_down_time	= _max( 0.f, 1.f/air_resistance - air_resistance_epsilon);
+	float const	fall_down_time	= std::max( 0.f, 1.f/air_resistance - air_resistance_epsilon);
 	if ( !fsimilar(fall_down_time, low) ) {
 		result				= trajectory_select_pick_parabolic(bullet, low, fall_down_time, gravity, air_resistance);
 		return				(false);
@@ -688,7 +681,7 @@ static void update_bullet			(
 	)
 {
 	if ( air_resistance*(bullet.life_time + air_resistance_epsilon) >= 1.f ) {
-		update_bullet_gravitation	(bullet, data, gravity, air_resistance, _max( 0.f, 1.f/air_resistance - air_resistance_epsilon));
+		update_bullet_gravitation	(bullet, data, gravity, air_resistance, std::max( 0.f, 1.f/air_resistance - air_resistance_epsilon));
 		return;
 	}
 
@@ -953,12 +946,12 @@ void CBulletManager::Render	()
 	//2-пробивание материала
 	if (g_bDrawBulletHit) {
 		extern FvectorVec g_hit[];
-		FvectorIt it;
+
 		u32 C[3] = {0xffff0000,0xff00ff00,0xff0000ff};
 		//RCache.set_xform_world(Fidentity);
 		DRender->CacheSetXformWorld(Fidentity);
 		for(int i=0; i<3; ++i)
-			for(it=g_hit[i].begin();it!=g_hit[i].end();++it){
+			for(auto it=g_hit[i].begin();it!=g_hit[i].end();++it){
 				Level().debug_renderer().draw_aabb(*it,0.01f,0.01f,0.01f,C[i]);
 			}
 	}

@@ -165,7 +165,7 @@ void InitMergeGmThreads()
 
 	for ( u32 i = 0 ; i < mergegm_threads_count ; i++ ) {
 
-		ZeroMemory( &mergegm_params[ i ] , sizeof( MERGEGM_PARAMS ) );
+        std::memset(&mergegm_params[ i ],0,sizeof( MERGEGM_PARAMS ));
 
 		// Creating start,terminate,ready events for each thread
 		for( u32 x = 0 ; x < 3 ; x++ )
@@ -174,7 +174,7 @@ void InitMergeGmThreads()
 		// Duplicate ready event into array
 		mergegm_ready_events[ i ] = mergegm_params[ i ].hEvents[ 2 ];
 
-		mergegm_threads_handles[ i ] = CreateThread( NULL , 0 , &MergeGmThreadProc , &mergegm_params[ i ] , 0 , NULL );
+		mergegm_threads_handles[ i ] = CreateThread( nullptr , 0 , &MergeGmThreadProc , &mergegm_params[ i ] , 0 , NULL );
 	}
 
 	mergegm_threads_initialized = TRUE;

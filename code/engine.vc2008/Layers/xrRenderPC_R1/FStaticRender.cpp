@@ -680,7 +680,7 @@ public:
 		// duplicate and zero-terminate
 		u32				size	= R->length();
 		u8*				data	= xr_alloc<u8>	(size + 1);
-		CopyMemory			(data,R->pointer(),size);
+        std::memcpy(data,R->pointer(),size);
 		data[size]				= 0;
 		FS.r_close				(R);
 

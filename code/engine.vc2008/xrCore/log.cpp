@@ -12,18 +12,15 @@ extern BOOL					LogExecCB		= TRUE;
 static string_path			logFName		= "engine.log";
 static string_path			log_file_name	= "engine.log";
 static BOOL 				no_log			= TRUE;
-#ifdef PROFILE_CRITICAL_SECTIONS
-	static xrCriticalSection	logCS(MUTEX_PROFILE_ID(log));
-#else // PROFILE_CRITICAL_SECTIONS
-	static xrCriticalSection	logCS;
-#endif // PROFILE_CRITICAL_SECTIONS
+static std::recursive_mutex	logCS;
+
 xr_vector<shared_str>*		LogFile			= NULL;
 static LogCallback			LogCB			= 0;
 
 void FlushLog			()
 {
 	if (!no_log){
-		logCS.Enter			();
+        std::lock_guard<decltype(logCS)> lock(logCS);
 		IWriter *f			= FS.w_open(logFName);
         if (f) {
             for (u32 it=0; it<LogFile->size(); it++)	{
@@ -32,33 +29,32 @@ void FlushLog			()
 			}
             FS.w_close		(f);
         }
-		logCS.Leave			();
     }
 }
 
 void AddOne				(const char *split) 
 {
-	if(!LogFile)		
-						return;
+	if(!LogFile) return;
 
-	logCS.Enter			();
+	{
+        std::lock_guard<decltype(logCS)> lock(logCS);
 
 #ifdef DEBUG
-	OutputDebugString	(split);
-	OutputDebugString	("\n");
+        OutputDebugString(split);
+        OutputDebugString("\n");
 #endif
 
-//	DUMP_PHASE;
-	{
-		shared_str			temp = shared_str(split);
-//		DUMP_PHASE;
-		LogFile->push_back	(temp);
+        //	DUMP_PHASE;
+        {
+            shared_str			temp = shared_str(split);
+            //		DUMP_PHASE;
+            LogFile->push_back(temp);
+        }
+
+        //exec CallBack
+        if (LogExecCB&&LogCB)LogCB(split);
 	}
 
-	//exec CallBack
-	if (LogExecCB&&LogCB)LogCB(split);
-
-	logCS.Leave				();
 	FlushLog();
 }
 

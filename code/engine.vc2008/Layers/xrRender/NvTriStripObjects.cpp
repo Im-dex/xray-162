@@ -696,7 +696,7 @@ void NvStripifier::RemoveSmallStrips(NvStripInfoVec& allStrips, NvStripInfoVec& 
 	}
 	
 	bool *bVisitedList	= xr_alloc<bool> (tempFaceList.size());
-	ZeroMemory			(bVisitedList, tempFaceList.size()*sizeof(bool));
+    std::memset(bVisitedList,0,tempFaceList.size()*sizeof(bool));
 	
 	VertexCache* vcache = xr_new<VertexCache> (cacheSize);
 	
@@ -897,7 +897,7 @@ void NvStripifier::Stripify(const WordVec &in_indices, const int in_cacheSize,
 	int numSamples = 10;
 	
 	//the cache size, clamped to one
-	cacheSize = _max	(1, in_cacheSize - CACHE_INEFFICIENCY);
+	cacheSize = std::max	(1, in_cacheSize - CACHE_INEFFICIENCY);
 	
 	minStripLength = in_minStripLength;  //this is the strip size threshold below which we dump the strip into a list
 	

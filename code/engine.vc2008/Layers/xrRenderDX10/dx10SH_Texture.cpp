@@ -324,7 +324,7 @@ void CTexture::apply_avi	(u32 dwStage)
 #endif
 		R_ASSERT(mapData.RowPitch == int(pAVI->m_dwWidth*4));
 		BYTE* ptr; pAVI->GetFrame(&ptr);
-		CopyMemory(mapData.pData,ptr,pAVI->m_dwWidth*pAVI->m_dwHeight*4);
+        std::memcpy(mapData.pData,ptr,pAVI->m_dwWidth*pAVI->m_dwHeight*4);
 		//R_CHK	(T2D->UnlockRect(0));
 #ifdef USE_DX11
 		HW.pContext->Unmap(T2D, 0);

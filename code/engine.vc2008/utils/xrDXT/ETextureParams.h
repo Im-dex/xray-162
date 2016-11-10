@@ -110,7 +110,7 @@ struct ECORE_API STextureParams{
 
     STextureParams		()
 	{
-		ZeroMemory		(this,sizeof(STextureParams));
+        std::memset(this,0,sizeof(STextureParams));
 		flags.set		(flGenerateMipMaps|flDitherColor,TRUE);
 		mip_filter		= kMIPFilterBox;
         width			= 0;

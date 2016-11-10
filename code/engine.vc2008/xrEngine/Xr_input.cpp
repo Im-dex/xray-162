@@ -52,11 +52,11 @@ CInput::CInput						( BOOL bExclusive, int deviceForInit)
 	//=====================Mouse
 	mouse_property.mouse_dt				=	25;
 
-	ZeroMemory							( mouseState,	sizeof(mouseState) );
-	ZeroMemory							( KBState,		sizeof(KBState) );
-	ZeroMemory							( timeStamp,	sizeof(timeStamp) );
-	ZeroMemory							( timeSave,		sizeof(timeStamp) );
-	ZeroMemory							( offs,			sizeof(offs) );
+	std::memset							( mouseState,	0, sizeof(mouseState) );
+	std::memset							( KBState,		0, sizeof(KBState) );
+	std::memset							( timeStamp,	0, sizeof(timeStamp) );
+	std::memset							( timeSave,		0, sizeof(timeStamp) );
+	std::memset							( offs,			0, sizeof(offs) );
 
 	//===================== Dummy pack
 	iCapture	(&dummyController);
@@ -466,9 +466,9 @@ void CInput::iCapture(IInputReceiver *p)
 	cbStack.back()->IR_OnActivate();
 
 	// prepare for _new_ controller
-	ZeroMemory			( timeStamp,	sizeof(timeStamp) );
-	ZeroMemory			( timeSave,		sizeof(timeStamp) );
-	ZeroMemory			( offs,			sizeof(offs) );
+	std::memset			( timeStamp,	0, sizeof(timeStamp) );
+	std::memset			( timeSave,		0, sizeof(timeStamp) );
+	std::memset			( offs,			0, sizeof(offs) );
 }
 
 void CInput::iRelease(IInputReceiver *p)
@@ -497,11 +497,11 @@ void CInput::OnAppActivate		(void)
 		CurrentIR()->IR_OnActivate();
 
 	SetAllAcquire	( true );
-	ZeroMemory		( mouseState,	sizeof(mouseState) );
-	ZeroMemory		( KBState,		sizeof(KBState) );
-	ZeroMemory		( timeStamp,	sizeof(timeStamp) );
-	ZeroMemory		( timeSave,		sizeof(timeStamp) );
-	ZeroMemory		( offs,			sizeof(offs) );
+	std::memset		( mouseState,	0, sizeof(mouseState) );
+	std::memset		( KBState,		0, sizeof(KBState) );
+	std::memset		( timeStamp,	0, sizeof(timeStamp) );
+	std::memset		( timeSave,		0, sizeof(timeStamp) );
+	std::memset		( offs,			0, sizeof(offs) );
 }
 
 void CInput::OnAppDeactivate	(void)
@@ -510,11 +510,11 @@ void CInput::OnAppDeactivate	(void)
 		CurrentIR()->IR_OnDeactivate();
 
 	SetAllAcquire	( false );
-	ZeroMemory		( mouseState,	sizeof(mouseState) );
-	ZeroMemory		( KBState,		sizeof(KBState) );
-	ZeroMemory		( timeStamp,	sizeof(timeStamp) );
-	ZeroMemory		( timeSave,		sizeof(timeStamp) );
-	ZeroMemory		( offs,			sizeof(offs) );
+	std::memset		( mouseState,	0, sizeof(mouseState) );
+	std::memset		( KBState,		0, sizeof(KBState) );
+	std::memset		( timeStamp,	0, sizeof(timeStamp) );
+	std::memset		( timeSave,		0, sizeof(timeStamp) );
+	std::memset		( offs,			0, sizeof(offs) );
 }
 
 void CInput::OnFrame			(void)

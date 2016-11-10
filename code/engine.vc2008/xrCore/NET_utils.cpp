@@ -21,7 +21,7 @@ u32 NET_Packet::r_begin			( u16& type	)	// returns time of receiving
 void NET_Packet::w_seek	(u32 pos, const void* p, u32 count)	
 {
 	VERIFY(p && count && (pos+count<=B.count)); 
-	CopyMemory(&B.data[pos],p,count);	
+    std::memcpy(&B.data[pos],p,count);
 //.	INI_ASSERT		(w_seek)
 }
 

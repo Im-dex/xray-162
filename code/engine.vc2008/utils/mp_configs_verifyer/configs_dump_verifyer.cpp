@@ -93,7 +93,7 @@ bool const configs_verifyer::verify_dsign(u8* data,
 	if (!ret)
 		return false;
 
-	CopyMemory		(
+    std::memcpy(
 		sha_checksum,
 		m_verifyer.get_sha_checksum(),
 		sizeof(sha_checksum));

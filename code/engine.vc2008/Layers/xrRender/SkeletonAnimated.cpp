@@ -16,7 +16,7 @@ using	namespace animation;
 // BoneInstance methods
 void		CBlendInstance::construct()
 {	
-	ZeroMemory			(this,sizeof(*this));
+    std::memset(this,0,sizeof(*this));
 }
 void		CBlendInstance::blend_add	(CBlend* H)
 {	
@@ -637,7 +637,7 @@ void	CKinematicsAnimated::LL_SetChannelFactor (u16	channel,float factor)
 void CKinematicsAnimated::IBlend_Startup	()
 {
 	_DBG_SINGLE_USE_MARKER;
-	CBlend B; ZeroMemory(&B,sizeof(B));
+	CBlend B; std::memset(&B,0,sizeof(B));
 	//B.blend				= CBlend::eFREE_SLOT;
 
 	B.set_free_state();

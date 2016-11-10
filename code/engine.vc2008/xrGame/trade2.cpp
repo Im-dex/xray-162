@@ -223,8 +223,8 @@ u32	CTrade::GetItemPrice(PIItem pItem, bool b_buying)
 
 	clamp					(
 		action_factor,
-		_min(trade_factors.enemy_factor(),trade_factors.friend_factor()),
-		_max(trade_factors.enemy_factor(),trade_factors.friend_factor())
+		std::min(trade_factors.enemy_factor(),trade_factors.friend_factor()),
+		std::max(trade_factors.enemy_factor(),trade_factors.friend_factor())
 	);
 	
 	// computing deficit_factor

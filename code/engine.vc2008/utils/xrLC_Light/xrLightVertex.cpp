@@ -10,11 +10,7 @@
 typedef	xr_multimap<float,vecVertex>	mapVert;
 typedef	mapVert::iterator				mapVertIt;
 mapVert*								g_trans;
-xrCriticalSection						g_trans_CS
-#ifdef PROFILE_CRITICAL_SECTIONS
-	(MUTEX_PROFILE_ID(g_trans_CS))
-#endif // PROFILE_CRITICAL_SECTIONS
-;
+std::recursive_mutex						g_trans_CS;
 extern XRLC_LIGHT_API void		LightPoint		(CDB::COLLIDER* DB, CDB::MODEL* MDL, base_color_c &C, Fvector &P, Fvector &N, base_lighting& lights, u32 flags, Face* skip);
 
 void	g_trans_register_internal		(Vertex* V)
@@ -54,22 +50,18 @@ void	g_trans_register_internal		(Vertex* V)
 }
 void	g_trans_register	(Vertex* V)
 {
-	g_trans_CS.Enter			();
+    std::lock_guard<decltype(g_trans_CS)> lock(g_trans_CS);
 	g_trans_register_internal	(V);
-	g_trans_CS.Leave			();
 }
 
 //////////////////////////////////////////////////////////////////////////
 const u32				VLT_END		= u32(-1);
 class CVertexLightTasker
 {
-	xrCriticalSection	cs;
+	std::recursive_mutex	cs;
 	volatile u32		index;	
 public:
 	CVertexLightTasker	() : index(0)
-#ifdef PROFILE_CRITICAL_SECTIONS
-		,cs(MUTEX_PROFILE_ID(CVertexLightTasker))
-#endif // PROFILE_CRITICAL_SECTIONS
 	{};
 	
 	void	init		()
@@ -79,11 +71,10 @@ public:
 
 	u32		get			()
 	{
-		cs.Enter		();
+        std::lock_guard<decltype(cs)> lock(cs);
 		u32 _res		=	index;
 		if (_res>=lc_global_data()->g_vertices().size())	_res	=	VLT_END;
 		else							index	+=	1;
-		cs.Leave		();
 		return			_res;
 	}
 };

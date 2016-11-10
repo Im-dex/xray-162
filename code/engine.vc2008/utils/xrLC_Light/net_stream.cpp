@@ -284,7 +284,7 @@ INetFileBuffWriter::~INetFileBuffWriter()
 void CReadMemoryBlock::r(void *p,int cnt)const
 {	
 	R_ASSERT( (position+cnt) <=file_size);
-	CopyMemory	( p, _buffer+position, cnt );
+    std::memcpy( p, _buffer+position, cnt );
 	position	+=cnt;
 	
 }
@@ -490,7 +490,7 @@ void		CMemoryWriteBlock::w(const void* ptr, u32 count)
 	R_ASSERT(position+count <= buffer_size);
 	//mem_writer.w(ptr,count);
 
-	CopyMemory	(buffer+position,ptr,count);
+    std::memcpy(buffer+position,ptr,count);
 	position		+=count;
 	//if (position>file_size) file_size=position;//?
 

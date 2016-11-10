@@ -81,10 +81,10 @@ CEnvironment::CEnvironment	() :
 	// fill clouds hemi verts & faces 
 	const Fvector* verts;
 	CloudsVerts.resize		(xrHemisphereVertices(2,verts));
-	CopyMemory				(&CloudsVerts.front(),verts,CloudsVerts.size()*sizeof(Fvector));
+    std::memcpy(&CloudsVerts.front(),verts,CloudsVerts.size()*sizeof(Fvector));
 	const u16* indices;
 	CloudsIndices.resize	(xrHemisphereIndices(2,indices));
-	CopyMemory				(&CloudsIndices.front(),indices,CloudsIndices.size()*sizeof(u16));
+    std::memcpy(&CloudsIndices.front(),indices,CloudsIndices.size()*sizeof(u16));
 
 	// perlin noise
 	PerlinNoise1D			= xr_new<CPerlinNoise1D>(Random.randI(0,0xFFFF));
@@ -176,7 +176,7 @@ CEnvironment::CEnvironment	() :
     // params
 	p_var_alt		= deg2rad(config->r_float					( "environment","altitude" ));  
 	p_var_long		= deg2rad	(config->r_float				( "environment","delta_longitude" ));
-	p_min_dist		= _min		(.95f,config->r_float			( "environment","min_dist_factor" ));
+	p_min_dist		= std::min		(.95f,config->r_float			( "environment","min_dist_factor" ));
 	p_tilt			= deg2rad	(config->r_float				( "environment","tilt" ));
 	p_second_prop	= config->r_float							( "environment","second_propability" );
 	clamp			(p_second_prop,0.f,1.f);

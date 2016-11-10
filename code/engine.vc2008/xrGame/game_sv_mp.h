@@ -22,7 +22,7 @@ struct Rank_Struct
 	Rank_Struct () 
 	{
 		m_sTitle = NULL;
-		ZeroMemory(m_iTerms, sizeof(m_iTerms));
+        std::memset(m_iTerms, 0, sizeof(m_iTerms));
 		m_iBonusMoney = 0;
 		m_aRankDiff_ExpBonus.clear();
 	};

@@ -60,6 +60,6 @@ void CEngine::Destroy	()
 
 		FreeLibrary	(hPSGP); 
 		hPSGP		=0; 
-		ZeroMemory	(&PSGP,sizeof(PSGP));
+        std::memset(&PSGP, 0, sizeof(PSGP));
 	}
 }

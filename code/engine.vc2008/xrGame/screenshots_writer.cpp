@@ -75,7 +75,7 @@ u32	const writer::write_info(sha_process_yielder* yielder)
 
 	CMemoryWriter tmp_writer;
 	m_info_data.save_as				(tmp_writer);
-	CopyMemory						(
+    std::memcpy(
 		m_buffer + m_buffer_info_pos,
 		tmp_writer.pointer(), tmp_writer.size());
 	

@@ -21,8 +21,8 @@ int ov_seek_func(void *datasource, s64 offset, int whence)
 size_t ov_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
 { 
 	IReader* F			= (IReader*)datasource; 
-	size_t exist_block	= _max(0ul,iFloor(F->elapsed()/(float)size));
-	size_t read_block	= _min(exist_block,nmemb);
+	size_t exist_block	= std::max(static_cast<size_t>(0),static_cast<size_t>(iFloor(F->elapsed()/(float)size)));
+	size_t read_block	= std::min(exist_block,nmemb);
 	F->r				(ptr,(int)(read_block*size));	
 	return read_block;
 }
@@ -43,7 +43,7 @@ void CSoundRender_Source::decompress(u32 line, OggVorbis_File* ovf)
 	char*	dest			= (char*)SoundRender->cache.get_dataptr	(CAT,line);
 	u32		buf_offs		= (line*line_size) / 2 / m_wformat.nChannels;
 	u32		left_file		= dwBytesTotal - buf_offs;
-	u32		left			= (u32)_min	(left_file,line_size);
+	u32		left			= (u32) std::min	(left_file,line_size);
 
 	// seek
 	u32	cur_pos				= u32(ov_pcm_tell(ovf));
@@ -77,7 +77,7 @@ void CSoundRender_Source::LoadWave	(LPCSTR pName)
 	}
 #endif // #ifdef DEBUG
 
-	ZeroMemory					( &m_wformat, sizeof( WAVEFORMATEX ) );
+    std::memset(&m_wformat,0,sizeof( WAVEFORMATEX ));
 
 	m_wformat.nSamplesPerSec	= (ovi->rate); //44100;
 	m_wformat.wFormatTag		= WAVE_FORMAT_PCM;

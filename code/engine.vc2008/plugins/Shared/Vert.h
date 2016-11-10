@@ -15,7 +15,7 @@ public:
 	Fvector		P;
 	VDVec		data;
 public:
-				CVertexDef	()			{ZeroMemory(this,sizeof(this));}
+				CVertexDef	()			{ std::memset(this,0,sizeof(this));}
 	void		SetPosition	(Point3 &p)	{P.set(p.x,p.z,p.y);}
 	void		Append		(u32 bone, float weight)	
 	{

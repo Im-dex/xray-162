@@ -277,7 +277,7 @@ const shared_str InventoryUtilities::GetTimeAsString(ALife::_TIME_ID time, ETime
 {
 	string32 bufTime;
 
-	ZeroMemory(bufTime, sizeof(bufTime));
+    std::memset(bufTime, 0, sizeof(bufTime));
 
 	u32 year = 0, month = 0, day = 0, hours = 0, mins = 0, secs = 0, milisecs = 0;
 
@@ -327,7 +327,7 @@ const shared_str InventoryUtilities::GetDateAsString(ALife::_TIME_ID date, EDate
 {
 	string64 bufDate;
 
-	ZeroMemory(bufDate, sizeof(bufDate));
+    std::memset(bufDate, 0, sizeof(bufDate));
 
 	u32 year = 0, month = 0, day = 0, hours = 0, mins = 0, secs = 0, milisecs = 0;
 
@@ -411,7 +411,7 @@ void LoadStrings(CharInfoStrings *container, LPCSTR section, LPCSTR field)
 	u32					count		= _GetItemCount(cfgRecord);
 	R_ASSERT3			(count%2, "there're must be an odd number of elements", field);
 	string64			singleThreshold;
-	ZeroMemory			(singleThreshold, sizeof(singleThreshold));
+    std::memset(singleThreshold, 0, sizeof(singleThreshold));
 	int					upBoundThreshold	= 0;
 	CharInfoStringID	id;
 

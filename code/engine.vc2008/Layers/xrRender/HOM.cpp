@@ -13,7 +13,7 @@ float	psOSSR		= .001f;
 
 void __stdcall	CHOM::MT_RENDER()
 {
-	MT.Enter					();
+    std::lock_guard<decltype(MT)> lock(MT);
 	bool b_main_menu_is_active = (g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive() );
 	if (MT_frame_rendered!=Device.dwFrame && !b_main_menu_is_active)
 	{
@@ -22,7 +22,6 @@ void __stdcall	CHOM::MT_RENDER()
 		Enable						();
 		Render						(ViewBase);
 	}
-	MT.Leave					();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -350,7 +349,7 @@ void CHOM::OnRender	()
 
 	if (psDeviceFlags.is(rsOcclusionDraw)){
 		if (m_pModel){
-			DEFINE_VECTOR		(FVF::L,LVec,LVecIt);
+            using LVec = xr_vector<FVF::L>;
 			static LVec	poly;	poly.resize(m_pModel->get_tris_count()*3);
 			static LVec	line;	line.resize(m_pModel->get_tris_count()*6);
 			for (int it=0; it<m_pModel->get_tris_count(); it++){

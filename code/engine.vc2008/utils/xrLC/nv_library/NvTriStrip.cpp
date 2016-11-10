@@ -241,7 +241,7 @@ void RemapIndices(const xr_vector<PrimitiveGroup> &in_primGroups, const u16 numV
 	//caches oldIndex --> newIndex conversion
 	int			*indexCache;
 	indexCache	= xr_alloc<int> (numVerts);
-	FillMemory	(indexCache, sizeof(int)*numVerts, -1);
+    std::memset(indexCache,-1,sizeof(int)*numVerts);
 	
 	//loop over primitive groups
 	unsigned int indexCtr = 0;

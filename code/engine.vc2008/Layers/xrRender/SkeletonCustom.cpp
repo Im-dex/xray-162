@@ -9,17 +9,14 @@
 #include	"../../xrEngine/Render.h"
 #endif
 int			psSkeletonUpdate	= 32;
-xrCriticalSection	UCalc_Mutex
-#ifdef PROFILE_CRITICAL_SECTIONS
-	(MUTEX_PROFILE_ID(UCalc_Mutex))
-#endif // PROFILE_CRITICAL_SECTIONS
-;
 
 #ifndef _EDITOR
 #include "../../xrServerEntities/smart_cast.h"
 #else
 #include "../../Include/xrAPI/xrAPI.h"
 #endif
+
+std::recursive_mutex	UCalc_Mutex;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

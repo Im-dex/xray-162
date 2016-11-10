@@ -127,7 +127,7 @@ struct ECORE_API STextureParams{
 		destroy_shared_str	(bump_name);
 		destroy_shared_str	(ext_normal_map_name);
 		
-		ZeroMemory			(this,sizeof(STextureParams));
+        std::memset(this,0,sizeof(STextureParams));
 		
 		construct_shared_str(detail_name);
 		construct_shared_str(bump_name);

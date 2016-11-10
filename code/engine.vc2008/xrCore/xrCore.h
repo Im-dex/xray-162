@@ -195,15 +195,11 @@
 #include <list>
 #include <set>
 #include <map>
+#include <mutex>
 
 #ifndef _EDITOR
-#	if _MSC_VER <= 1500
-#		include <hash_map>
-#		include <hash_set>
-#	else
-#		include <unordered_map>
-#		include <unordered_set>
-#	endif
+#   include <unordered_map>
+#   include <unordered_set>
 #endif
 
 #include <string>
@@ -225,7 +221,6 @@
 #include "vector.h"
 
 #include "clsid.h"
-#include "xrSyncronize.h"
 #include "xrMemory.h"
 #include "xrDebug.h"
 

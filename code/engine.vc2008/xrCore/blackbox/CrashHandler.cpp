@@ -16,6 +16,8 @@ CONDITIONAL COMPILATION :
 #include "BugslayerUtil.h"
 #include "CrashHandler.h"
 
+#include <memory>
+
 // The project internal header file
 //#include "Internal.h"
 
@@ -197,7 +199,7 @@ BOOL __stdcall AddCrashHandlerLimitModule ( HMODULE hMod )
     else
     {
         // Copy the old values.
-        CopyMemory ( phTemp     ,
+        std::memcpy( phTemp     ,
                      g_ahMod    ,
                      sizeof ( HMODULE ) * g_uiModCount ) ;
         // Free the old memory.
@@ -235,7 +237,7 @@ int __stdcall GetLimitModulesArray ( HMODULE * pahMod , UINT uiSize )
             return ( iRet ) ;
         }
 
-        CopyMemory ( pahMod     ,
+        std::memcpy( pahMod     ,
                      g_ahMod    ,
                      sizeof ( HMODULE ) * g_uiModCount ) ;
 
@@ -449,7 +451,7 @@ LPCTSTR __stdcall GetFaultReason ( EXCEPTION_POINTERS * pExPtrs )
 
         // Start looking up the exception address.
         PIMAGEHLP_SYMBOL pSym = (PIMAGEHLP_SYMBOL)&g_stSymbol ;
-        FillMemory ( pSym , NULL , SYM_BUFF_SIZE ) ;
+        std::memset(pSym, 0, SYM_BUFF_SIZE);
         pSym->SizeOfStruct = sizeof ( IMAGEHLP_SYMBOL ) ;
         pSym->MaxNameLength = SYM_BUFF_SIZE - sizeof ( IMAGEHLP_SYMBOL);
 
@@ -506,7 +508,7 @@ LPCTSTR __stdcall GetFaultReason ( EXCEPTION_POINTERS * pExPtrs )
         ASSERT ( iCurr < ( BUFF_SIZE - 200 ) ) ;
 
         // Look up the source file and line number.
-        ZeroMemory ( &g_stLine , sizeof ( IMAGEHLP_LINE ) ) ;
+        std::memset( &g_stLine , 0, sizeof ( IMAGEHLP_LINE ) ) ;
         g_stLine.SizeOfStruct = sizeof ( IMAGEHLP_LINE ) ;
 
         if ( TRUE ==
@@ -604,7 +606,7 @@ LPCTSTR  __stdcall
     // function.
 
     // Initialize the STACKFRAME structure.
-    ZeroMemory ( &g_stFrame , sizeof ( STACKFRAME ) ) ;
+    std::memset( &g_stFrame , 0, sizeof ( STACKFRAME ) ) ;
 
     #ifdef _X86_
     g_stFrame.AddrPC.Offset       = pExPtrs->ContextRecord->Eip ;
@@ -764,7 +766,7 @@ LPCTSTR __stdcall
 
             // Start looking up the exception address.
             PIMAGEHLP_SYMBOL pSym = (PIMAGEHLP_SYMBOL)&g_stSymbol ;
-            ZeroMemory ( pSym , SYM_BUFF_SIZE ) ;
+            std::memset( pSym , 0, SYM_BUFF_SIZE ) ;
             pSym->SizeOfStruct = sizeof ( IMAGEHLP_SYMBOL ) ;
             pSym->MaxNameLength = SYM_BUFF_SIZE -
                                   sizeof ( IMAGEHLP_SYMBOL ) ;
@@ -821,7 +823,7 @@ LPCTSTR __stdcall
         // Output the source file and line number information?
         if ( GSTSO_SRCLINE == ( dwOpts & GSTSO_SRCLINE ) )
         {
-            ZeroMemory ( &g_stLine , sizeof ( IMAGEHLP_LINE ) ) ;
+            std::memset( &g_stLine , 0, sizeof ( IMAGEHLP_LINE ) ) ;
             g_stLine.SizeOfStruct = sizeof ( IMAGEHLP_LINE ) ;
 
             if ( TRUE ==

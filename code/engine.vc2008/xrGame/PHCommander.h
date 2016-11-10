@@ -70,7 +70,7 @@ using PHCALL_I = PHCALL_STORAGE::iterator;
 class CPHCommander:
 	public IPHWorldUpdateCallbck
 {
-	xrCriticalSection	lock;
+	std::recursive_mutex	lock;
 	PHCALL_STORAGE	m_calls;
 	PHCALL_STORAGE	m_calls_as_add_buffer;
 	PHCALL_STORAGE	m_calls_as_remove_buffer;

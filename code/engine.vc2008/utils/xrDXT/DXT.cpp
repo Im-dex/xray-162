@@ -57,7 +57,7 @@ void __cdecl ReadDTXnFile (DWORD count, void *buffer, void * userData)
 HRESULT WriteCompressedData(void* data, int miplevel, u32 size)
 {
     _write(gFileOut, data, size);
-	FillMemory(data,size,0xff);
+    std::memset(data,0xff, size);
 	return 0;
 }
   
@@ -124,7 +124,7 @@ IC u32 GetPowerOf2Plus1(u32 v)
 }
 
 void FillRect(u8* data, u8* new_data, u32 offs, u32 pitch, u32 h, u32 full_pitch){
-	for (u32 i=0; i<h; i++) CopyMemory(data+(full_pitch*i+offs),new_data+i*pitch,pitch);
+	for (u32 i=0; i<h; i++) std::memcpy(data+(full_pitch*i+offs),new_data+i*pitch,pitch);
 }
 
 int DXTCompressImage	(LPCSTR out_name, u8* raw_data, u32 w, u32 h, u32 pitch, 
@@ -141,7 +141,7 @@ int DXTCompressImage	(LPCSTR out_name, u8* raw_data, u32 w, u32 h, u32 pitch,
 	HRESULT hr=-1;
 // convert to Options
     CompressionOptions		nvOpt;
-	ZeroMemory				(&nvOpt,sizeof(nvOpt));
+    std::memset(&nvOpt,0, sizeof(nvOpt));
 
     if (fmt->flags.is(STextureParams::flGenerateMipMaps))	nvOpt.MipMapType=dGenerateMipMaps;
     else													nvOpt.MipMapType=dNoMipMaps;
@@ -207,7 +207,7 @@ int DXTCompressImage	(LPCSTR out_name, u8* raw_data, u32 w, u32 h, u32 pitch,
 		u32 dwH				= h;
 		u32 dwP				= pitch;
 		u32* pLastMip		= xr_alloc<u32>(w*h*4);
-		CopyMemory			(pLastMip,raw_data,w*h*4);
+        std::memcpy(pLastMip,raw_data,w*h*4);
 		FillRect			(pImagePixels,(u8*)pLastMip,w_offs,pitch,dwH,line_pitch);
 		w_offs				+= dwP;
 

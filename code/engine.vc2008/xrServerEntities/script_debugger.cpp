@@ -144,7 +144,7 @@ CScriptDebugger::CScriptDebugger()
 	m_callStack			= xr_new<CScriptCallStack>(this);
 	m_lua				= xr_new<CDbgLuaHelper>(this);
 
-	ZeroMemory(m_curr_connected_mslot,sizeof(m_curr_connected_mslot));
+    std::memset(m_curr_connected_mslot, 0, sizeof(m_curr_connected_mslot));
 //	m_pDebugger					= this;
 	m_nLevel					= 0;
 	m_mailSlot					= CreateMailSlotByName(DEBUGGER_MAIL_SLOT);
@@ -159,7 +159,7 @@ CScriptDebugger::CScriptDebugger()
 void CScriptDebugger::Connect(LPCSTR mslot_name)
 {
 	m_bIdePresent = CheckExisting(IDE_MAIL_SLOT);
-	ZeroMemory(m_curr_connected_mslot,sizeof(m_curr_connected_mslot));
+    std::memset(m_curr_connected_mslot, 0, sizeof(m_curr_connected_mslot));
 	if (Active())
 	{
 		_SendMessage(DMSG_NEW_CONNECTION,0,0);

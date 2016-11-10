@@ -410,7 +410,6 @@
     <ClCompile Include="rt_lzo1x_d3.cpp" />
     <ClCompile Include="rt_lzo_init.cpp" />
     <ClCompile Include="os_clipboard.cpp" />
-    <ClCompile Include="xrSyncronize.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FTimer.h" />
@@ -476,7 +475,6 @@
     <ClInclude Include="xrMemory.h" />
     <ClInclude Include="xrMemory_align.h" />
     <ClInclude Include="xrMEMORY_POOL.h" />
-    <ClInclude Include="xrMemory_pso.h" />
     <ClInclude Include="xrMemory_pure.h" />
     <ClInclude Include="xrMemory_subst_borland.h" />
     <ClInclude Include="xrMemory_subst_msvc.h" />
@@ -519,7 +517,6 @@
     <ClInclude Include="rt_lzodefs.h" />
     <ClInclude Include="rt_miniacc.h" />
     <ClInclude Include="os_clipboard.h" />
-    <ClInclude Include="xrSyncronize.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="xrCore.rc" />

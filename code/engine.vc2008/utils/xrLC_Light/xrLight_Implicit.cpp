@@ -164,17 +164,16 @@ void ImplicitLighting(BOOL b_net)
 	thread_spawn	(ImplicitLightingTreadNetExec,"worker-thread",1024*1024,0);
 
 }
-xrCriticalSection implicit_net_lock;
+std::recursive_mutex implicit_net_lock;
 void XRLC_LIGHT_API ImplicitNetWait()
 {
-	implicit_net_lock.Enter();
-	implicit_net_lock.Leave();
+	implicit_net_lock.lock();
+	implicit_net_lock.unlock();
 }
 void ImplicitLightingTreadNetExec( void *p  )
 {
-	implicit_net_lock.Enter();
+    std::lock_guard<std::recursive_mutex> lock(implicit_net_lock);
 	ImplicitLightingExec(TRUE);
-	implicit_net_lock.Leave();
 }
 
 static xr_vector<u32> not_clear;
@@ -198,7 +197,7 @@ void ImplicitLightingExec(BOOL b_net)
 		u32				Tid = M.surfidx;
 		b_BuildTexture*	T	= &(inlc_global_data()->textures()[Tid]);
 		
-		Implicit_it		it	= calculator.find(Tid);
+		auto		it	= calculator.find(Tid);
 		if (it==calculator.end()) 
 		{
 			ImplicitDeflector	ImpD;
@@ -214,7 +213,7 @@ void ImplicitLightingExec(BOOL b_net)
 
 	
 	// Lighing
-	for (Implicit_it imp=calculator.begin(); imp!=calculator.end(); imp++)
+	for (auto imp=calculator.begin(); imp!=calculator.end(); imp++)
 	{
 		ImplicitDeflector& defl = imp->second;
 		Status			("Lighting implicit map '%s'...",defl.texture->name);

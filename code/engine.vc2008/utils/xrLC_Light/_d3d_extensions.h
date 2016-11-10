@@ -19,9 +19,9 @@ public:
     float	        theta;            /* Inner angle of spotlight cone */
     float	        phi;              /* Outer angle of spotlight cone */
 
-	IC	void		set	(u32 ltType, float x, float y, float z)
+	void		set	(u32 ltType, float x, float y, float z)
 	{
-		ZeroMemory( this, sizeof(Flight) );
+        std::memset(this,0,sizeof(Flight));
 		type=ltType;
 		diffuse.set(1.0f, 1.0f, 1.0f, 1.0f);
 		specular.set(diffuse);
@@ -30,7 +30,8 @@ public:
 		direction.normalize_safe();
 		range= _sqrt(flt_max);
 	}
-    IC	void		mul		(float brightness){
+
+    void		mul		(float brightness){
 	    diffuse.mul_rgb		(brightness);
     	ambient.mul_rgb		(brightness);
 	    specular.mul_rgb	(brightness);
@@ -55,27 +56,29 @@ public:
     Fcolor			emissive;       /* Emissive color RGB */
     float			power;          /* Sharpness if specular highlight */
 
-	IC	void		set	(float r, float g, float b)
+	void		set	(float r, float g, float b)
 	{
-		ZeroMemory	(this, sizeof(Fmaterial));
+        std::memset(this,0,sizeof(Fmaterial));
 		diffuse.r = ambient.r = r;
 		diffuse.g = ambient.g = g;
 		diffuse.b = ambient.b = b;
 		diffuse.a = ambient.a = 1.0f;
 		power	  = 0;
 	}
-	IC	void	set(float r, float g, float b, float a)
+
+	void	set(float r, float g, float b, float a)
 	{
-		ZeroMemory	(this, sizeof(Fmaterial));
+        std::memset(this,0,sizeof(Fmaterial));
 		diffuse.r = ambient.r = r;
 		diffuse.g = ambient.g = g;
 		diffuse.b = ambient.b = b;
 		diffuse.a = ambient.a = a;
 		power	  = 0;
 	}
-	IC	void	set	(Fcolor &c)
+
+	void	set	(Fcolor &c)
 	{
-		ZeroMemory	( this, sizeof(Fmaterial) );
+        std::memset(this 0, sizeof(Fmaterial));
 		diffuse.r = ambient.r = c.r;
 		diffuse.g = ambient.g = c.g;
 		diffuse.b = ambient.b = c.b;
@@ -103,7 +106,7 @@ struct	VDeclarator	: public svector<D3DVERTEXELEMENT9, MAXD3DDECLLENGTH+1>
 	void	set		(D3DVERTEXELEMENT9* dcl)
 	{
 		resize					(D3DXGetDeclLength(dcl)+1);
-		CopyMemory				(begin(),dcl,size()*sizeof(D3DVERTEXELEMENT9));
+        std::memcpy(begin(),dcl,size()*sizeof(D3DVERTEXELEMENT9));
 	}
 	void	set		(const VDeclarator& d)
 	{

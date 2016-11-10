@@ -246,7 +246,7 @@ void*	xrMemory::mem_realloc	(void* P, size_t size
 		);
 		//	Igor: Reserve 1 byte for xrMemory header
 		//	Don't bother in this case?
-		mem_copy				(p_new,p_old,_min(s_current-1,s_dest));
+        std::memcpy(p_new,p_old,std::min(s_current-1,s_dest));
 		//mem_copy				(p_new,p_old,_min(s_current,s_dest));
 		mem_free				(p_old);
 		_ptr					= p_new;
@@ -258,7 +258,7 @@ void*	xrMemory::mem_realloc	(void* P, size_t size
 			,_name
 #	endif // DEBUG_MEMORY_NAME
 		);
-		mem_copy				(p_new,p_old,(u32)size);
+        std::memcpy(p_new, p_old, size);
 		mem_free				(p_old);
 		_ptr					= p_new;
 	}

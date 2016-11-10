@@ -295,7 +295,7 @@ void CBuild::Load	(const b_params& Params, const IReader& _in_FS)
 			F->r			(&TEX,sizeof(TEX));
 
 			b_BuildTexture	BT;
-			CopyMemory		(&BT,&TEX,sizeof(TEX));
+            std::memcpy(&BT,&TEX,sizeof(TEX));
 
 			// load thumbnail
 			LPSTR N			= BT.name;
@@ -372,7 +372,7 @@ void CBuild::Load	(const b_params& Params, const IReader& _in_FS)
 	Progress(p_total+=p_cost);
 
 	// Parameter block
-	CopyMemory(&g_params(),&Params,sizeof(b_params));
+    std::memcpy(&g_params(),&Params,sizeof(b_params));
 
 	// 
 	clMsg	("* sizes: V(%d),F(%d)",sizeof(Vertex),sizeof(Face));

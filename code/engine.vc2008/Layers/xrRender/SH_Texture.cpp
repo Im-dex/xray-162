@@ -115,7 +115,7 @@ void CTexture::apply_avi	(u32 dwStage)
 		R_ASSERT(R.Pitch == int(pAVI->m_dwWidth*4));
 		//		R_ASSERT(pAVI->DecompressFrame((u32*)(R.pBits)));
 		BYTE* ptr; pAVI->GetFrame(&ptr);
-		CopyMemory(R.pBits,ptr,pAVI->m_dwWidth*pAVI->m_dwHeight*4);
+        std::memcpy(R.pBits,ptr,pAVI->m_dwWidth*pAVI->m_dwHeight*4);
 		//		R_ASSERT(pAVI->GetFrame((BYTE*)(&R.pBits)));
 
 		R_CHK	(T2D->UnlockRect(0));

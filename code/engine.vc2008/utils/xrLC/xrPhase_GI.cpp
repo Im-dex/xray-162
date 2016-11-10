@@ -6,7 +6,6 @@
 #include "../xrLC_Light/xrLC_GlobalData.h"
 #include "../xrLC_Light/xrface.h"
 
-#include "../../xrcore/xrSyncronize.h"
 #include "../../xrcdb/xrcdb.h"
 
 
@@ -18,11 +17,7 @@ const	float			gi_clip				= 0.05f;
 const	u32				gi_maxlevel			= 4;
 //////////////////////////////////////////////////////////////////////////
 static xr_vector<R_Light>*		task;
-xrCriticalSection		task_cs
-#ifdef PROFILE_CRITICAL_SECTIONS
-	(MUTEX_PROFILE_ID(task_cs))
-#endif // PROFILE_CRITICAL_SECTIONS
-;
+std::recursive_mutex 		task_cs;
 static u32						task_it;
 
 //////////////////////////////////////////////////////////////////////////
@@ -97,22 +92,24 @@ public:
 		for (;;)	
 		{
 			// get task
-			R_Light				src,dst;
-			task_cs.Enter		();
-			if (task_it>=task->size())	{
-				task_cs.Leave	();
-				return;
-			} else {
-				src					= (*task)[task_it];
-				if (0==src.level)	src.range	*= 1.5f;
-				dst					= src;
-				//if (LT_POINT==src.type)	(*task)[task_it].energy		= 0.f;
-				dst.type			= LT_SECONDARY;
-				dst.level			++;
-				task_it				++;
-				thProgress			= float(task_it)/float(task->size())/float(GI_THREADS);
-			}
-			task_cs.Leave				();
+            R_Light				src, dst;
+
+            {
+                std::lock_guard<decltype(task_cs)> lock(task_cs);
+                if (task_it >= task->size()) {
+                    return;
+                } else {
+                    src = (*task)[task_it];
+                    if (0 == src.level)	src.range *= 1.5f;
+                    dst = src;
+                    //if (LT_POINT==src.type)	(*task)[task_it].energy		= 0.f;
+                    dst.type = LT_SECONDARY;
+                    dst.level++;
+                    task_it++;
+                    thProgress = float(task_it) / float(task->size()) / float(GI_THREADS);
+                }
+            }
+			
 			if (dst.level>gi_maxlevel)	continue;
 
 			// analyze
@@ -178,9 +175,8 @@ public:
 				if (dst.energy > gi_clip/4)	
 				{
 					//clMsg	("dst_ER[%f/%f]", dst.energy, dst.range);
-					task_cs.Enter		();
+                    std::lock_guard<decltype(task_cs)> lock(task_cs);
 					task->push_back		(dst);
-					task_cs.Leave		();
 				}
 			}
 		}

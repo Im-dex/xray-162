@@ -6,16 +6,11 @@
 #include "../xrLC_Light/xrLC_GlobalData.h"
 #include "../xrLC_Light/xrLightVertex.h"
 
-#include "../../xrcore/xrSyncronize.h"
 #include "net.h"
 //#include "../xrLC_Light/net_task_manager.h"
 #include "../xrLC_Light/lcnet_task_manager.h"
 #include "../xrLC_Light/mu_model_light.h"
-xrCriticalSection	task_CS
-#ifdef PROFILE_CRITICAL_SECTIONS
-	(MUTEX_PROFILE_ID(task_C_S))
-#endif // PROFILE_CRITICAL_SECTIONS
-;
+std::recursive_mutex	task_CS;
 
 xr_vector<int>		task_pool;
 
@@ -39,17 +34,14 @@ public:
 		for (;;) 
 		{
 			// Get task
-			task_CS.Enter		();
-			thProgress			= 1.f - float(task_pool.size())/float(lc_global_data()->g_deflectors().size());
-			if (task_pool.empty())	
-			{
-				task_CS.Leave		();
-				return;
-			}
+            {
+                std::lock_guard<decltype(task_CS)> lock(task_CS);
+                thProgress = 1.f - float(task_pool.size()) / float(lc_global_data()->g_deflectors().size());
+                if (task_pool.empty()) return;
 
-			D					= lc_global_data()->g_deflectors()[task_pool.back()];
-			task_pool.pop_back	();
-			task_CS.Leave		();
+                D = lc_global_data()->g_deflectors()[task_pool.back()];
+                task_pool.pop_back();
+            }
 
 			// Perform operation
 			try {

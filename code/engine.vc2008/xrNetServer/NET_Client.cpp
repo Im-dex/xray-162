@@ -121,9 +121,6 @@ void	dump_URL	(LPCSTR p, IDirectPlay8Address* A)
 
 // 
 INetQueue::INetQueue()		
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:cs(MUTEX_PROFILE_ID(INetQueue))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 	unused.reserve	(128);
 	for (int i=0; i<16; i++)
@@ -132,11 +129,10 @@ INetQueue::INetQueue()
 
 INetQueue::~INetQueue()
 {
-	cs.Enter		();
+    std::lock_guard<decltype(cs)> lock(cs);
 	u32				it;
 	for				(it=0; it<unused.size(); it++)	xr_delete(unused[it]);
 	for				(it=0; it<ready.size(); it++)	xr_delete(ready[it]);
-	cs.Leave		();
 }
 
 static u32 LastTimeCreate = 0;
@@ -165,7 +161,7 @@ NET_Packet*		INetQueue::Create	()
 NET_Packet*		INetQueue::Create	(const NET_Packet& _other)
 {
 	NET_Packet*	P			= 0;
-	cs.Enter		();
+    std::lock_guard<decltype(cs)> lock(cs);
 //#ifdef _DEBUG
 //		Msg ("- INetQueue::Create - ready %d, unused %d", ready.size(), unused.size());
 //#endif
@@ -181,8 +177,7 @@ NET_Packet*		INetQueue::Create	(const NET_Packet& _other)
 		unused.pop_back		();
 		P					= ready.back	();
 	}	
-	CopyMemory	(P,&_other,sizeof(NET_Packet));	
-	cs.Leave		();
+    std::memcpy(P,&_other,sizeof(NET_Packet));
 	return			P;
 }
 NET_Packet*		INetQueue::Retreive	()
@@ -341,9 +336,6 @@ IPureClient::_Recieve( const void* data, u32 data_size, u32 /*param*/ )
 //==============================================================================
 
 IPureClient::IPureClient	(CTimer* timer): net_Statistic(timer)
-#ifdef PROFILE_CRITICAL_SECTIONS
-	,net_csEnumeration(MUTEX_PROFILE_ID(IPureClient::net_csEnumeration))
-#endif // PROFILE_CRITICAL_SECTIONS
 {
 	NET						= NULL;
 	net_Address_server		= NULL;
@@ -486,7 +478,7 @@ if(!psNET_direct_connect)
 	
     // Now set up the Application Description
     DPN_APPLICATION_DESC        dpAppDesc;
-    ZeroMemory					(&dpAppDesc, sizeof(DPN_APPLICATION_DESC));
+    std::memset(&dpAppDesc,0,sizeof(DPN_APPLICATION_DESC));
     dpAppDesc.dwSize			= sizeof(DPN_APPLICATION_DESC);
     dpAppDesc.guidApplication	= NET_GUID;
 	
@@ -501,7 +493,7 @@ if(!psNET_direct_connect)
 
 	{
 		DPN_PLAYER_INFO				Pinfo;
-		ZeroMemory					(&Pinfo,sizeof(Pinfo));
+        std::memset(&Pinfo,0,sizeof(Pinfo));
 		Pinfo.dwSize				= sizeof(Pinfo);
 		Pinfo.dwInfoFlags			= DPNINFO_NAME|DPNINFO_DATA;
 		Pinfo.pwszName				= ClientNameUNICODE;
@@ -572,14 +564,14 @@ if(!psNET_direct_connect)
 
 		// Create ONE node
 		HOST_NODE	NODE;
-		ZeroMemory	(&NODE, sizeof(HOST_NODE));
+        std::memset(&NODE,0,sizeof(HOST_NODE));
 		
 		// Copy the Host Address
 		R_CHK		(net_Address_server->Duplicate(&NODE.pHostAddress ) );
 		
 		// Retreive session name
 		char					desc[4096];
-		ZeroMemory				(desc,sizeof(desc));
+        std::memset(desc,0,sizeof(desc));
 		DPN_APPLICATION_DESC*	dpServerDesc=(DPN_APPLICATION_DESC*)desc;
 		DWORD					dpServerDescSize=sizeof(desc);
 		dpServerDesc->dwSize	= sizeof(DPN_APPLICATION_DESC);
@@ -589,7 +581,7 @@ if(!psNET_direct_connect)
 			OnInvalidHost();
 			return FALSE;
 		}
-		CopyMemory(&m_game_description, dpServerDesc->pvApplicationReservedData,
+        std::memcpy(&m_game_description, dpServerDesc->pvApplicationReservedData,
 			dpServerDesc->dwApplicationReservedDataSize);
 		if( dpServerDesc->pwszSessionName)	{
 			string4096				dpSessionName;
@@ -675,7 +667,7 @@ if(!psNET_direct_connect)
 			dpAppDesc.pwszPassword = SessionPasswordUNICODE;
 		};
 		
-		net_csEnumeration.Enter		();
+		net_csEnumeration.lock		();
 		// real connect
 		for (u32 I=0; I<net_Hosts.size(); I++) 
 			Msg("* HOST #%d: %s\n",I+1,*net_Hosts[I].dpSessionName);
@@ -693,7 +685,7 @@ if(!psNET_direct_connect)
 			NULL,					// pvAsyncHandle
 			DPNCONNECT_SYNC);		// dwFlags
 //		R_CHK(res);		
-		net_csEnumeration.Leave		();
+		net_csEnumeration.unlock		();
 		_RELEASE					(pHostAddress);
 #ifdef DEBUG	
 //		const char* x = DXGetErrorString9(res);
@@ -741,13 +733,13 @@ void IPureClient::Disconnect()
 	if( NET )	NET->Close(0);
 
     // Clean up Host _list_
-	net_csEnumeration.Enter			();
+	net_csEnumeration.lock			();
 	for (u32 i=0; i<net_Hosts.size(); i++) {
 		HOST_NODE&	N = net_Hosts[i];
 		_RELEASE	(N.pHostAddress);
 	}
 	net_Hosts.clear					();
-	net_csEnumeration.Leave			();
+	net_csEnumeration.unlock			();
 
 	// Release interfaces
 	_SHOW_REF	("cl_netADR_Server",net_Address_server);
@@ -780,12 +772,12 @@ HRESULT	IPureClient::net_Handler(u32 dwMessageType, PVOID pMessage)
 			if (pDesc->dwApplicationReservedDataSize && pDesc->pvApplicationReservedData)
 			{
 				R_ASSERT(pDesc->dwApplicationReservedDataSize == sizeof(m_game_description));
-				CopyMemory(&m_game_description, pDesc->pvApplicationReservedData, 
+                std::memcpy(&m_game_description, pDesc->pvApplicationReservedData,
 					pDesc->dwApplicationReservedDataSize);
 			}
 			
 			// Insert each host response if it isn't already present
-			net_csEnumeration.Enter			();
+			net_csEnumeration.lock			();
 			BOOL	bHostRegistered			= FALSE;
 			for (u32 I=0; I<net_Hosts.size(); I++)
 			{
@@ -802,11 +794,11 @@ HRESULT	IPureClient::net_Handler(u32 dwMessageType, PVOID pMessage)
 			{
 				// This host session is not in the list then so insert it.
 				HOST_NODE	NODE;
-				ZeroMemory	(&NODE, sizeof(HOST_NODE));
+                std::memset(&NODE,0,sizeof(HOST_NODE));
 
 				// Copy the Host Address
 				R_CHK		(pEnumHostsResponseMsg->pAddressSender->Duplicate(&NODE.pHostAddress ) );
-				CopyMemory(&NODE.dpAppDesc,pDesc,sizeof(DPN_APPLICATION_DESC));
+                std::memcpy(&NODE.dpAppDesc,pDesc,sizeof(DPN_APPLICATION_DESC));
 
 				// Null out all the pointers we aren't copying
 				NODE.dpAppDesc.pwszSessionName					= NULL;
@@ -825,7 +817,7 @@ HRESULT	IPureClient::net_Handler(u32 dwMessageType, PVOID pMessage)
 				net_Hosts.push_back			(NODE);
 
 			}
-			net_csEnumeration.Leave			();
+			net_csEnumeration.unlock			();
 		}
 		break;
 
@@ -1033,7 +1025,7 @@ void	IPureClient::UpdateStatistic()
 {
 	// Query network statistic for this client
 	DPN_CONNECTION_INFO	CI;
-	ZeroMemory			(&CI,sizeof(CI));
+    std::memset(&CI,0,sizeof(CI));
 	CI.dwSize			= sizeof(CI);
 	HRESULT hr					= NET->GetConnectionInfo(&CI,0);
 	if (FAILED(hr)) return;

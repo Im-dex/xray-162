@@ -52,7 +52,7 @@ void CBackend::OnFrameBegin	()
 		set_RT				(HW.pBaseRT);
 		set_ZB				(HW.pBaseZB);
 #endif	//	USE_DX10
-		Memory.mem_fill		(&stat,0,sizeof(stat));
+        std::memset(&stat,0,sizeof(stat));
 		Vertex.Flush		();
 		Index.Flush			();
 		set_Stencil			(FALSE);
@@ -62,31 +62,31 @@ void CBackend::OnFrameBegin	()
 
 void CBackend::Invalidate	()
 {
-	pRT[0]						= NULL;
-	pRT[1]						= NULL;
-	pRT[2]						= NULL;
-	pRT[3]						= NULL;
-	pZB							= NULL;
+	pRT[0]						= nullptr;
+	pRT[1]						= nullptr;
+	pRT[2]						= nullptr;
+	pRT[3]						= nullptr;
+	pZB							= nullptr;
 
-	decl						= NULL;
-	vb							= NULL;
-	ib							= NULL;
+	decl						= nullptr;
+	vb							= nullptr;
+	ib							= nullptr;
 	vb_stride					= 0;
 
-	state						= NULL;
-	ps							= NULL;
-	vs							= NULL;
-DX10_ONLY(gs					= NULL);
+	state						= nullptr;
+	ps							= nullptr;
+	vs							= nullptr;
+DX10_ONLY(gs					= nullptr);
 #ifdef USE_DX11
 	hs = 0;
 	ds = 0;
 	cs = 0;
 #endif
-	ctable						= NULL;
+	ctable						= nullptr;
 
-	T							= NULL;
-	M							= NULL;
-	C							= NULL;
+	T							= nullptr;
+	M							= nullptr;
+	C							= nullptr;
 
 	stencil_enable=u32(-1);
 	stencil_func=u32(-1);

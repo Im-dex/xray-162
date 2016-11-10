@@ -91,7 +91,7 @@ BOOL CBulletManager::test_callback(const collide::ray_defs& rd, CObject* object,
 								if (weapon) {
 									game_difficulty_hit_probability = weapon->hit_probability();
 									float fly_dist	= bullet->fly_dist+dist;
-									dist_factor		= _min(1.f,fly_dist/Level().BulletManager().m_fHPMaxDist);
+									dist_factor		= std::min(1.f,fly_dist/Level().BulletManager().m_fHPMaxDist);
 								}
 							}
 

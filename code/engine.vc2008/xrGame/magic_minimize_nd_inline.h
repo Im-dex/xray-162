@@ -52,7 +52,7 @@ void _MinimizeND::GetMinimum (const float* afT0, const float* afT1,
     memcpy(m_afTCurr,afTInitial,iQuantity);
 
     // initialize direction set to the standard Euclidean basis
-    ZeroMemory(m_afDirectionStorage,iQuantity*(m_iDimensions+1));
+    std::memset(m_afDirectionStorage, 0, iQuantity*(m_iDimensions+1));
     int i;
     for (i = 0; i < m_iDimensions; i++)
         m_aafDirection[i][i] = 1.0f;

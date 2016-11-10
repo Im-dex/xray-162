@@ -9,7 +9,7 @@
 
 class XRCORE_API EFS_Utils {
 protected:
-	bool 		GetOpenNameInternal		(LPCSTR initial, LPSTR buffer, int sz_buf, bool bMulti=false, LPCSTR offset=0, int start_flt_ext=-1 );
+	bool 		GetOpenNameInternal		(LPCSTR initial, LPSTR buffer, int sz_buf, bool bMulti=false, LPCSTR offset=0, int start_flt_ext=-1 ) const;
 public:
 				EFS_Utils		();
 	virtual 	~EFS_Utils		();

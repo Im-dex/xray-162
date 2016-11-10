@@ -51,7 +51,7 @@
 					if(mCurNbEntries+nb>mMaxNbEntries)	Resize(nb);
 
 					// Add _new_ entry
-					CopyMemory(&mEntries[mCurNbEntries], entries, nb*sizeof(udword));
+                    std::memcpy(&mEntries[mCurNbEntries], entries, nb*sizeof(udword));
 					mCurNbEntries+=nb;
 					return *this;
 				}
@@ -85,7 +85,7 @@
 					if(mCurNbEntries+nb>mMaxNbEntries)	Resize(nb);
 
 					// Add _new_ entry
-					CopyMemory(&mEntries[mCurNbEntries], entries, nb*sizeof(float));
+                    std::memcpy(&mEntries[mCurNbEntries], entries, nb*sizeof(float));
 					mCurNbEntries+=nb;
 					return *this;
 				}
@@ -178,7 +178,7 @@
 				void			operator = (const Container& object)
 				{
 					SetSize(object.GetNbEntries());
-					CopyMemory(mEntries, object.GetEntries(), mMaxNbEntries*sizeof(udword));
+                    std::memcpy(mEntries, object.GetEntries(), mMaxNbEntries*sizeof(udword));
 					mCurNbEntries = mMaxNbEntries;
 				}
 

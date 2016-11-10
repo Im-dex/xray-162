@@ -34,7 +34,7 @@ void dxApplicationRender::setLevelLogo(LPCSTR pszLogoName)
 
 void dxApplicationRender::KillHW()
 {
-	ZeroMemory(&HW,sizeof(CHW));
+    std::memset(&HW,0,sizeof(CHW));
 }
 
 u32 calc_progress_color(u32, u32, int, int);

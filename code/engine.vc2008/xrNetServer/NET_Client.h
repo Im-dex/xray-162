@@ -7,7 +7,7 @@ struct ip_address;
 
 class XRNETSERVER_API INetQueue
 {
-	xrCriticalSection		cs;
+	std::recursive_mutex cs;
 	xr_deque<NET_Packet*>	ready;
 	xr_vector<NET_Packet*>	unused;
 public:
@@ -18,8 +18,8 @@ public:
 	NET_Packet*			Create	(const NET_Packet& _other);
 	NET_Packet*			Retreive();
 	void				Release	();
-	inline void			Lock	() { cs.Enter(); };
-	inline void			Unlock	() { cs.Leave(); };
+	inline void			Lock	() { cs.lock(); };
+	inline void			Unlock	() { cs.unlock(); };
 };
 
 
@@ -51,7 +51,7 @@ protected:
 	IDirectPlay8Address*	net_Address_device;
 	IDirectPlay8Address*	net_Address_server;
 		
-	xrCriticalSection		net_csEnumeration;
+	std::recursive_mutex		net_csEnumeration;
 	xr_vector<HOST_NODE>	net_Hosts;
 
 	NET_Compressor			net_Compressor;

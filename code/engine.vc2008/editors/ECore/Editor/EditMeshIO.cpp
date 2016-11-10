@@ -59,7 +59,7 @@ void CEditableMesh::SaveMesh(IWriter& F)
 
 	F.open_chunk	(EMESH_CHUNK_VMREFS);
 	F.w_u32			(m_VMRefs.size());
-    for (VMRefsIt r_it=m_VMRefs.begin(); r_it!=m_VMRefs.end(); r_it++)
+    for (auto r_it=m_VMRefs.begin(); r_it!=m_VMRefs.end(); r_it++)
     {
     	int sz 		= r_it->count; VERIFY(sz<=255);
 		F.w_u8		((u8)sz);
@@ -69,7 +69,7 @@ void CEditableMesh::SaveMesh(IWriter& F)
 
 	F.open_chunk	(EMESH_CHUNK_SFACE);
 	F.w_u16			((u16)m_SurfFaces.size()); 	/* surface polygon count*/
-	for (SurfFacesPairIt plp_it=m_SurfFaces.begin(); plp_it!=m_SurfFaces.end(); plp_it++)
+	for (auto plp_it=m_SurfFaces.begin(); plp_it!=m_SurfFaces.end(); plp_it++)
     {
     	F.w_stringZ	(plp_it->first->_Name()); 	/* surface name*/
     	IntVec& 	pol_lst = plp_it->second;
@@ -80,7 +80,7 @@ void CEditableMesh::SaveMesh(IWriter& F)
 
 	F.open_chunk	(EMESH_CHUNK_VMAPS_2);
 	F.w_u32		(m_VMaps.size());
-    for (VMapIt vm_it=m_VMaps.begin(); vm_it!=m_VMaps.end(); vm_it++)
+    for (auto vm_it=m_VMaps.begin(); vm_it!=m_VMaps.end(); vm_it++)
     {
         F.w_stringZ	((*vm_it)->name);
         F.w_u8		((*vm_it)->dim);
@@ -130,7 +130,12 @@ bool CEditableMesh::LoadMesh(IReader& F){
 	F.r					(m_Faces, m_FaceCount*sizeof(st_Face));
 
 	m_SmoothGroups		= xr_alloc<u32>(m_FaceCount);
-    Memory.mem_fill32	(m_SmoothGroups,m_Flags.is(flSGMask)?0:u32(-1),m_FaceCount);
+    //std::memset(m_SmoothGroups,m_Flags.is(flSGMask)?0:-1,m_FaceCount);
+    const u32 fillValue = m_Flags.is(flSGMask) ? 0 : -1;
+    for (std::size_t i = 0; i < m_FaceCount; i++) // fill32
+    {
+        std::memcpy(reinterpret_cast<u8*>(m_SmoothGroups) + (i * sizeof(u32)), &fillValue, sizeof(u32));
+    }
 	u32 sg_chunk_size	= F.find_chunk(EMESH_CHUNK_SG);
 	if (sg_chunk_size){
 		VERIFY			(m_FaceCount*sizeof(u32)==sg_chunk_size);
@@ -140,7 +145,7 @@ bool CEditableMesh::LoadMesh(IReader& F){
     R_ASSERT(F.find_chunk(EMESH_CHUNK_VMREFS));
     m_VMRefs.resize		(F.r_u32());
     int sz_vmpt			= sizeof(st_VMapPt);
-    for (VMRefsIt r_it=m_VMRefs.begin(); r_it!=m_VMRefs.end(); r_it++){
+    for (auto r_it=m_VMRefs.begin(); r_it!=m_VMRefs.end(); r_it++){
     	r_it->count		= F.r_u8();          
 	    r_it->pts		= xr_alloc<st_VMapPt>(r_it->count);
         F.r				(r_it->pts, sz_vmpt*r_it->count);

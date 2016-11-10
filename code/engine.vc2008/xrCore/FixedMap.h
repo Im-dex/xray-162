@@ -31,8 +31,8 @@ private:
 		TNode*	newNodes = (TNode*)allocator::alloc(sizeof(TNode)*newLimit);
 		VERIFY(newNodes);
 
-		ZeroMemory(newNodes, Size(newLimit));
-		if (limit) CopyMemory	(newNodes, nodes, Size(limit));
+        std::memset(newNodes,0,Size(newLimit));
+		if (limit) std::memcpy(newNodes, nodes, Size(limit));
 
 		for (u32 I=0; I<pool; I++)
 		{

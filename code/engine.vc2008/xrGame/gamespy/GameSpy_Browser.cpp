@@ -16,10 +16,6 @@ void __cdecl SBCallback(ServerBrowser sb, SBCallbackReason reason, SBServer serv
 EGameIDs ParseStringToGameType(LPCSTR str);
 
 CGameSpy_Browser::CGameSpy_Browser()
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:m_refresh_lock(MUTEX_PROFILE_ID(CGameSpy_Browser::m_refresh_lock))
-#endif // PROFILE_CRITICAL_SECTIONS
-
 {
 	//-------------------------
 	m_hGameSpyDLL = NULL;
@@ -39,10 +35,6 @@ CGameSpy_Browser::CGameSpy_Browser()
 };
 
 CGameSpy_Browser::CGameSpy_Browser(HMODULE hGameSpyDLL)
-#ifdef PROFILE_CRITICAL_SECTIONS
-	:m_refresh_lock(MUTEX_PROFILE_ID(CGameSpy_Browser::m_refresh_lock))
-#endif // PROFILE_CRITICAL_SECTIONS
-
 {
 	//-------------------------
 	m_hGameSpyDLL = NULL;
@@ -178,15 +170,13 @@ void	RefreshInternetList	(void * inData)
 
 void			CGameSpy_Browser::RefreshListInternet (const char* FilterStr)
 {
-	m_refresh_lock.Enter();
+    std::lock_guard<std::recursive_mutex> lock(m_refresh_lock);
 
 	SBError error = sbe_noerror;
 	error = xrGS_ServerBrowserUpdateA(m_pGSBrowser, m_pServerList ? SBTrue : SBFalse, SBFalse, FilterStr);
 	m_bAbleToConnectToMasterServer = (error == sbe_noerror);
 	m_bShowCMSErr = (error != sbe_noerror);
 	m_bTryingToConnectToMasterServer = false;
-
-	m_refresh_lock.Leave();
 };
 
 void			CGameSpy_Browser::RefreshList_Full(bool Local, const char* FilterStr)
@@ -204,8 +194,8 @@ void			CGameSpy_Browser::RefreshList_Full(bool Local, const char* FilterStr)
 	SBError error = sbe_noerror;
 	if(!Local)
 	{	
-		m_refresh_lock.Enter();
-		m_refresh_lock.Leave();
+		m_refresh_lock.lock();
+		m_refresh_lock.unlock();
 		if (m_bAbleToConnectToMasterServer)
 		{
 			RefreshData*	pRData = xr_new<RefreshData>();

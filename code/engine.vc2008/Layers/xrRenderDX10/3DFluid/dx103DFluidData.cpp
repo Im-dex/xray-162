@@ -40,7 +40,7 @@ dx103DFluidData::dx103DFluidData()
 	desc.Depth =  FluidManager.GetTextureDepth();
 
 	D3D_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-	ZeroMemory( &SRVDesc, sizeof(SRVDesc) );
+    std::memset(&SRVDesc,0,sizeof(SRVDesc));
 	SRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE3D;
 	SRVDesc.Texture3D.MipLevels = 1;
 	SRVDesc.Texture3D.MostDetailedMip = 0;
@@ -176,7 +176,7 @@ void dx103DFluidData::ParseProfile(const xr_string &Profile)
 	{
 		string32	EmitterSectionName;
 		CEmitter	&Emitter = m_Emitters[i];
-		ZeroMemory(&Emitter, sizeof(Emitter));
+        std::memset(&Emitter,0,sizeof(Emitter));
 		xr_sprintf(EmitterSectionName, "emitter%02d", i);
 
 		Emitter.m_eType = (dx103DFluidEmitters::EmitterType)ini.r_token( EmitterSectionName, "Type", emitter_type_token);

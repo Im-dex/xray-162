@@ -102,7 +102,7 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from)
 
 		m_UIMainScrollH					= xr_new<CUIFixedScrollBar>(); m_UIMainScrollH->SetAutoDelete(true);
 		m_UIMainScrollH->InitScrollBar	(Fvector2().set(r.left+dx, r.bottom-sy), true);
-		m_UIMainScrollH->SetStepSize	( _max( 1, (int)(m_UILevelFrame->GetWidth()*0.1f) ) );
+		m_UIMainScrollH->SetStepSize	(std::max( 1, (int)(m_UILevelFrame->GetWidth()*0.1f) ) );
 		m_UIMainScrollH->SetPageSize	( (int)m_UILevelFrame->GetWidth() ); // iFloor
 		AttachChild						(m_UIMainScrollH);
 		Register						(m_UIMainScrollH);
@@ -110,7 +110,7 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from)
 
 		m_UIMainScrollV					= xr_new<CUIFixedScrollBar>(); m_UIMainScrollV->SetAutoDelete(true);
 		m_UIMainScrollV->InitScrollBar	(Fvector2().set(r.right-sx, r.top+dy), false);
-		m_UIMainScrollV->SetStepSize	( _max( 1, (int)(m_UILevelFrame->GetHeight()*0.1f) ) );
+		m_UIMainScrollV->SetStepSize	(std::max( 1, (int)(m_UILevelFrame->GetHeight()*0.1f) ) );
 		m_UIMainScrollV->SetPageSize	( (int)m_UILevelFrame->GetHeight() );
 		AttachChild						(m_UIMainScrollV);
 		Register						(m_UIMainScrollV);

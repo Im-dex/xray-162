@@ -130,7 +130,7 @@ void global_claculation_data::xrLoad()
 #endif
 
 				b_BuildTexture	BT;
-				CopyMemory		(&BT,&TEX,sizeof(TEX));
+                std::memcpy(&BT,&TEX,sizeof(TEX));
 
 				// load thumbnail
 				LPSTR N			= BT.name;

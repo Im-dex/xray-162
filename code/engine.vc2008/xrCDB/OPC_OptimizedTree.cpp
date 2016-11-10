@@ -236,7 +236,7 @@ bool AABBCollisionTree::Build(AABBTree* tree)
 	mNbNodes	= NbNodes;
 	mNodes		= CALLOC(AABBCollisionNode,mNbNodes);
 	CHECKALLOC	(mNodes);
-	ZeroMemory	(mNodes,mNbNodes*sizeof(AABBCollisionNode));
+    std::memset(mNodes, 0, mNbNodes*sizeof(AABBCollisionNode));
 
 	// Build the tree
 	udword CurID = 1;
@@ -290,7 +290,7 @@ bool AABBNoLeafTree::Build(AABBTree* tree)
 	mNbNodes	= NbTriangles-1;
 	mNodes		= CALLOC(AABBNoLeafNode,mNbNodes);
 	CHECKALLOC	(mNodes);
-	ZeroMemory	(mNodes,mNbNodes*sizeof(AABBNoLeafNode));
+    std::memset(mNodes, 0, mNbNodes*sizeof(AABBNoLeafNode));
 
 	// Build the tree
 	udword CurID = 1;
@@ -440,7 +440,7 @@ bool AABBQuantizedTree::Build(AABBTree* tree)
 	mNbNodes					= NbNodes;
 	AABBCollisionNode*	Nodes	= CALLOC(AABBCollisionNode,mNbNodes);
 	CHECKALLOC			(Nodes);
-	ZeroMemory			(Nodes,mNbNodes*sizeof(AABBCollisionNode));
+    std::memset(Nodes, 0, mNbNodes*sizeof(AABBCollisionNode));
 
 	// Build the tree
 	udword CurID = 1;
@@ -450,7 +450,7 @@ bool AABBQuantizedTree::Build(AABBTree* tree)
 	{
 		mNodes		= CALLOC(AABBQuantizedNode,mNbNodes);
 		CHECKALLOC	(mNodes);
-		ZeroMemory	(mNodes,mNbNodes*sizeof(AABBQuantizedNode));
+        std::memset(mNodes, 0, mNbNodes*sizeof(AABBQuantizedNode));
 
 		// Get max values
 		FIND_MAX_VALUES
@@ -517,7 +517,7 @@ bool AABBQuantizedNoLeafTree::Build(AABBTree* tree)
 	mNbNodes				= NbTriangles-1;
 	AABBNoLeafNode* Nodes	= CALLOC(AABBNoLeafNode,mNbNodes);
 	CHECKALLOC		(Nodes);
-	ZeroMemory		(Nodes,	mNbNodes*sizeof(AABBNoLeafNode));
+    std::memset(Nodes,	0, mNbNodes*sizeof(AABBNoLeafNode));
 
 	// Build the tree
 	udword CurID = 1;
@@ -528,7 +528,7 @@ bool AABBQuantizedNoLeafTree::Build(AABBTree* tree)
 	{
 		mNodes		= CALLOC(AABBQuantizedNoLeafNode,mNbNodes);
 		CHECKALLOC	(mNodes);
-		ZeroMemory	(mNodes,mNbNodes*sizeof(AABBQuantizedNoLeafNode));
+        std::memset(mNodes, 0, mNbNodes*sizeof(AABBQuantizedNoLeafNode));
 
 		// Get max values
 		FIND_MAX_VALUES

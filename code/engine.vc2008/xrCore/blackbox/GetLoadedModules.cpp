@@ -9,6 +9,8 @@ Copyright (c) 1997-2000 John Robbins -- All rights reserved.
 // The project internal header file.
 #include "Internal.h"
 
+#include <memory>
+
 // The documentation for this function is in BugslayerUtil.h.
 BOOL  __stdcall
                            GetLoadedModules ( DWORD     dwPID        ,
@@ -45,7 +47,7 @@ BOOL  __stdcall
     // Figure out which OS we are on.
     OSVERSIONINFO stOSVI ;
 
-    FillMemory ( &stOSVI ,sizeof ( OSVERSIONINFO ), NULL  ) ;
+    std::memset( &stOSVI , NULL, sizeof(OSVERSIONINFO)) ;
     stOSVI.dwOSVersionInfoSize = sizeof ( OSVERSIONINFO ) ;
 
     BOOL bRet = GetVersionEx ( &stOSVI ) ;

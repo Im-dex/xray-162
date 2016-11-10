@@ -273,7 +273,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	
 	// Set up the presentation parameters
 	DXGI_SWAP_CHAIN_DESC	&sd	= m_ChainDesc;
-	ZeroMemory				( &sd, sizeof(sd) );
+    std::memset(&sd,0,sizeof(sd));
 
 	selectResolution	(sd.BufferDesc.Width, sd.BufferDesc.Height, bWindowed);
 

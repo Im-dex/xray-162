@@ -55,7 +55,7 @@ void CRender::ScreenshotImpl	(ScreenshotMode mode, LPCSTR name, CMemoryWriter* m
 				ID3DTexture2D		*pSrcSmallTexture;
 	
 				D3D_TEXTURE2D_DESC desc;
-				ZeroMemory( &desc, sizeof(desc) );
+                std::memset( &desc, 0, sizeof(desc) );
 				desc.Width = GAMESAVE_SIZE;
 				desc.Height = GAMESAVE_SIZE;
 				desc.MipLevels = 1;
@@ -105,7 +105,7 @@ void CRender::ScreenshotImpl	(ScreenshotMode mode, LPCSTR name, CMemoryWriter* m
 				ID3DTexture2D		*pSrcSmallTexture;
 	
 				D3D_TEXTURE2D_DESC desc;
-				ZeroMemory( &desc, sizeof(desc) );
+                std::memset( &desc, 0, sizeof(desc) );
 				desc.Width = SM_FOR_SEND_WIDTH;
 				desc.Height = SM_FOR_SEND_HEIGHT;
 				desc.MipLevels = 1;
@@ -534,7 +534,7 @@ void CRender::ScreenshotAsyncEnd(CMemoryWriter &memory_writer)
 		FLOAT	tmpArray[4*iMaxPixelsInARow];
 		while(pPixel!=pEnd)
 		{
-			const int iProcessPixels = _min(iMaxPixelsInARow, (s32)(pEnd-pPixel));
+			const int iProcessPixels = std::min(iMaxPixelsInARow, (s32)(pEnd-pPixel));
 
 			D3DXFloat16To32Array( tmpArray, pPixelElement16, iProcessPixels*4);			
 

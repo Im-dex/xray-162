@@ -323,7 +323,7 @@ void   ATTACK_ON_RUN_STATE::update_movement_target ()
 	else if ( m_phaze == go_prepare )
 	{
 		float const offs_length				=	5.f;
-		float const offs_angle				=	_max(deg2rad(30.f), offs_length/far_radius) * 
+		float const offs_angle				= std::max(deg2rad(30.f), offs_length/far_radius) *
 												(m_prepare_side == left ? -1 : +1);
 		
 		float const cos_alpha				=	_cos(offs_angle);

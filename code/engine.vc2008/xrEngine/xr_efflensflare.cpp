@@ -103,8 +103,8 @@ void CLensFlareDescriptor::load(CInifile* pIni, LPCSTR sect)
 		float o = pIni->r_float		( sect,"gradient_opacity" );
 		SetGradient(r,o,T,S);
 	}
-    m_StateBlendUpSpeed	= 1.f/(_max(pIni->r_float( sect,"blend_rise_time" ),0.f)+EPS_S);
-    m_StateBlendDnSpeed	= 1.f/(_max(pIni->r_float( sect,"blend_down_time" ),0.f)+EPS_S);
+    m_StateBlendUpSpeed	= 1.f/(std::max(pIni->r_float( sect,"blend_rise_time" ),0.f)+EPS_S);
+    m_StateBlendDnSpeed	= 1.f/(std::max(pIni->r_float( sect,"blend_down_time" ),0.f)+EPS_S);
 
 	OnDeviceCreate();
 }

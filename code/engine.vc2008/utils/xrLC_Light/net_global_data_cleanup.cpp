@@ -35,19 +35,15 @@ namespace lc_net
 	{	
 		 u32 state = u32(-1);
 		 inStream->Read(&state, sizeof(id_state) );
-		 lock.Enter();
+         std::lock_guard<decltype(lock)> locker(lock);
 		 if( state == id_state )
-		 {
-			 lock.Leave();
 			 return;
-		 }
+
 		 IGenericStream* globalDataStream=0;
 		 HRESULT rz = agent->GetData(sessionId, "data_cleanup", &globalDataStream);
 		 if (rz!=S_OK) 
-		 {
-			 lock.Leave();	
 			 return;
-		 }
+
 		 R_ASSERT( globalDataStream );
 		 u8 buff[data_cleanup_callback_read_write_buff_size];
 		 r_pod_vector( INetBlockReader( globalDataStream, buff, sizeof(buff) ), vec_cleanup );
@@ -59,8 +55,6 @@ namespace lc_net
 		 Msg("cleanup call");
 #endif
 		 globals().cleanup();
-		 lock.Leave();
-		 return;
 	}
 #pragma warning(default:4995)
 }

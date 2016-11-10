@@ -24,7 +24,7 @@ public:
 CObjectList::CObjectList	( ) :
 	m_owner_thread_id		(GetCurrentThreadId())
 {
-	ZeroMemory				(map_NETID, 0xffff*sizeof(CObject*));
+    std::memset(map_NETID,0,0xffff*sizeof(CObject*));
 }
 
 CObjectList::~CObjectList	( )

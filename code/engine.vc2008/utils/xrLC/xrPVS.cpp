@@ -109,7 +109,7 @@ void CBuild::BuildPVS()
 				g_TREE_ROOT->VisUnroll(pos,g_selected);
 				if (!g_selected.empty()) {
 					g_result.resize(g_selected.size());
-					ZeroMemory(g_result.begin(),g_result.size()*sizeof(BOOL));
+                    std::memset(g_result.begin(),0,g_result.size()*sizeof(BOOL));
 					ORM_Process(g_selected.size(),pos,g_selected.begin(),g_result.begin());
 					
 					// Exclude invisible

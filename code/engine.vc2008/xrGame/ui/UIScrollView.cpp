@@ -84,7 +84,7 @@ void CUIScrollView::InitScrollView()
 	Fvector2 sc_pos					= {m_VScrollBar->GetWndPos().x - m_VScrollBar->GetWndSize().x, m_VScrollBar->GetWndPos().y};
 	m_VScrollBar->SetWndPos			(sc_pos);
 	m_VScrollBar->SetWindowName		("scroll_v");
-	m_VScrollBar->SetStepSize		(_max(1,iFloor(GetHeight()/10)));
+	m_VScrollBar->SetStepSize		(std::max(1,iFloor(GetHeight()/10)));
 	m_VScrollBar->SetPageSize		(iFloor(GetHeight()));
 }
 
@@ -154,7 +154,7 @@ void CUIScrollView::RecalcSize			()
 			item_pos.y				+= m_vertInterval; 
 			pad_size.y				+= (*it)->GetWndSize().y;
 			pad_size.y				+= m_vertInterval;
-			pad_size.x				= _max(pad_size.x, (*it)->GetWndSize().x);
+			pad_size.x				= std::max(pad_size.x, (*it)->GetWndSize().x);
 		}
 
 	}else{
@@ -165,7 +165,7 @@ void CUIScrollView::RecalcSize			()
 			item_pos.y				+= m_vertInterval; 
 			pad_size.y				+= (*it)->GetWndSize().y;
 			pad_size.y				+= m_vertInterval;
-			pad_size.x				= _max(pad_size.x, (*it)->GetWndSize().x);
+			pad_size.x				= std::max(pad_size.x, (*it)->GetWndSize().x);
 		}
 	};
 
@@ -283,7 +283,7 @@ bool CUIScrollView::OnMouseAction(float x, float y, EUIMessages mouse_action)
 				curr_pad_pos.y				+= GetUICursor().GetCursorPositionDelta().y;
 				
 				float max_pos = m_pad->GetHeight() - GetHeight();
-				max_pos							= _max(0.0f,max_pos);
+				max_pos							= std::max(0.0f,max_pos);
 				clamp							(curr_pad_pos.y,-max_pos,0.0f);
 				m_pad->SetWndPos				(curr_pad_pos);
 				UpdateScroll					();

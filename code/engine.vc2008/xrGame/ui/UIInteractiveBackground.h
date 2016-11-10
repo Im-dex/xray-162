@@ -50,7 +50,7 @@ protected:
 template <class T>
 CUIInteractiveBackground<T>::CUIInteractiveBackground()
 {
-	ZeroMemory(m_states,S_Total* sizeof(T*));
+    std::memset(m_states,0, S_Total* sizeof(T*));
 }
 
 

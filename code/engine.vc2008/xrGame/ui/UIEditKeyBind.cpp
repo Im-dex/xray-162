@@ -164,7 +164,7 @@ void CUIEditKeyBind::SetValue()
 void CUIEditKeyBind::SetCurrentOptValue()
 {
 	string64				buff;
-	ZeroMemory				(buff, sizeof(buff));
+    std::memset(buff, 0, sizeof(buff));
 
 	_binding*	pbinding	= &g_key_bindings[m_action->id];
 

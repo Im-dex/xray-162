@@ -257,11 +257,7 @@ void OGF::Optimize	()
 
 
 // Make Progressive
-xrCriticalSection			progressive_cs
-#ifdef PROFILE_CRITICAL_SECTIONS
-	(MUTEX_PROFILE_ID(progressive_cs))
-#endif // PROFILE_CRITICAL_SECTIONS
-;
+std::recursive_mutex			progressive_cs;
 void OGF::MakeProgressive	(float metric_limit)
 {
 	// test
@@ -273,7 +269,7 @@ void OGF::MakeProgressive	(float metric_limit)
 //. AlexMX added for draft build mode
 	if (g_params().m_quality==ebqDraft)		return		;
 
-	progressive_cs.Enter	();
+    std::lock_guard<decltype(progressive_cs)> lock(progressive_cs);
 
 	//////////////////////////////////////////////////////////////////////////
 	// NORMAL
@@ -415,8 +411,6 @@ void OGF::MakeProgressive	(float metric_limit)
 		// cleanup
 		VIPM_Destroy			();
 	}
-
-	progressive_cs.Leave	();
 }
 
 void OGF_Base::Save	(IWriter &fs)

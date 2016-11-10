@@ -110,7 +110,7 @@ public:
 	IC void			appendW		(const float w)			{vm.push_back(w);}
 	IC void			appendVI	(const int vi)				{vindices.push_back(vi);}
 	IC void			appendPI	(const int pi)				{VERIFY(polymap); pindices.push_back(pi);}
-    IC void			copyfrom	(float* src, int cnt)	{resize(cnt); CopyMemory(&*vm.begin(),src,cnt*dim*4);}
+    IC void			copyfrom	(float* src, int cnt)	{resize(cnt); std::memcpy(&*vm.begin(),src,cnt*dim*4);}
 };
 
 struct st_VMapPtLst{

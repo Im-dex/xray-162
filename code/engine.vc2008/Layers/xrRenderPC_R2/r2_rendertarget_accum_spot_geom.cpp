@@ -79,7 +79,7 @@ void CRenderTarget::accum_spot_geom_create	()
 
 		BYTE*	pData				= 0;
 		R_CHK						(g_accum_spot_vb->Lock(0,0,(void**)&pData,0));
-		CopyMemory				(pData,du_cone_vertices,vCount*vSize);
+        std::memcpy(pData,du_cone_vertices,vCount*vSize);
 		g_accum_spot_vb->Unlock	();
 	}
 
@@ -91,7 +91,7 @@ void CRenderTarget::accum_spot_geom_create	()
 		R_CHK				(HW.pDevice->CreateIndexBuffer	(iCount*2,dwUsage,D3DFMT_INDEX16,D3DPOOL_MANAGED,&g_accum_spot_ib,0));
 		HW.stats_manager.increment_stats_ib					(g_accum_spot_ib);
 		R_CHK				(g_accum_spot_ib->Lock(0,0,(void**)&pData,0));
-		CopyMemory		(pData,du_cone_faces,iCount*2);
+        std::memcpy(pData,du_cone_faces,iCount*2);
 		g_accum_spot_ib->Unlock	();
 	}
 }

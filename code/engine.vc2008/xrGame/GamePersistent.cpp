@@ -62,7 +62,7 @@ CGamePersistent::CGamePersistent(void)
 	ambient_effect_wind_out_time= 0.f;
 	ambient_effect_wind_on		= false;
 
-	ZeroMemory					(ambient_sound_next_time, sizeof(ambient_sound_next_time));
+    std::memset(ambient_sound_next_time, 0, sizeof(ambient_sound_next_time));
 	
 
 	m_pUI_core					= NULL;

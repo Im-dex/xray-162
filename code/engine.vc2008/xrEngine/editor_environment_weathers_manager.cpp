@@ -81,7 +81,7 @@ void manager::load			()
 
 		u32							new_length = length - 4;
 		LPSTR						identifier = (LPSTR)_alloca((new_length + 1)*sizeof(char));
-		Memory.mem_copy				(identifier, *i, new_length*sizeof(char));
+		std::memcpy				(identifier, *i, new_length*sizeof(char));
 		identifier[new_length]		= 0;
 		weather*					object = xr_new<weather>(&m_manager, identifier);
 		object->load				();
@@ -246,7 +246,7 @@ bool manager::save_current_blend		(char* buffer, u32 const& buffer_size)
 
 	writer.w_u8		(0);
 	writer.seek		(0);
-	Memory.mem_copy	(buffer, writer.pointer(), writer.size());
+    std::memcpy	(buffer, writer.pointer(), writer.size());
 	return			(true);
 }
 

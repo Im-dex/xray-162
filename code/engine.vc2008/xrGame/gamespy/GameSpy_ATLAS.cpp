@@ -184,7 +184,7 @@ SCResult CGameSpy_ATLAS::ReportSetPlayerData(SCReportPtr	theReport,
 											 const GSLoginCertificate * theCertificate)
 {
 	gsi_u8 	zero_auth_data[16];
-	ZeroMemory(zero_auth_data, sizeof(zero_auth_data));
+    std::memset(zero_auth_data, 0, sizeof(zero_auth_data));
 	return xrGS_scReportSetPlayerData(
 		theReport,
 		thePlayerIndex,

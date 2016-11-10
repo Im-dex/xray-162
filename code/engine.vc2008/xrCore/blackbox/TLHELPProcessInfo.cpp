@@ -185,7 +185,7 @@ BOOL __stdcall TLHELPGetLoadedModules ( DWORD     dwPID        ,
         return ( FALSE ) ;
     }
 
-    FillMemory ( &stME32 , sizeof ( MODULEENTRY32 ), NULL ) ;
+    std::memset( &stME32 , NULL, sizeof(MODULEENTRY32)) ;
     stME32.dwSize = sizeof ( MODULEENTRY32 ) ;
 
     // Start getting the module values.
@@ -270,7 +270,7 @@ DWORD __stdcall TLHELPGetModuleFileNameEx ( DWORD     dwPID        ,
         return ( 0 ) ;
     }
 
-    FillMemory ( &stME32 , sizeof ( MODULEENTRY32 ), NULL ) ;
+    std::memset( &stME32 , NULL, sizeof(MODULEENTRY32)) ;
     stME32.dwSize = sizeof ( MODULEENTRY32 ) ;
 
     DWORD dwRet = 0 ;

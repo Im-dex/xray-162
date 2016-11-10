@@ -87,7 +87,7 @@ line_edit_control::~line_edit_control()
 	delete_data				( actions );
 }
 
-static inline bool get_caps_lock_state	()
+static bool get_caps_lock_state	()
 {
 #if 0
 	static bool first_time					= true;
@@ -95,7 +95,7 @@ static inline bool get_caps_lock_state	()
 	if ( first_time ) {
 		first_time							= false;
 		OSVERSIONINFO						version_info;
-		ZeroMemory							( &version_info, sizeof(version_info) );
+        std::memset( &version_info, 0, sizeof(version_info) );
 		version_info.dwOSVersionInfoSize	= sizeof(version_info);
 		GetVersionEx						( &version_info );
 		is_windows_vista_or_later			= version_info.dwMajorVersion >= 6;
@@ -565,11 +565,11 @@ void line_edit_control::add_inserted_text()
 		m_inserted[m_buffer_size - 1 - m_p1] = 0;
 		new_size = xr_strlen( m_inserted );
 	}
-	strncpy_s( buf + m_p1, m_buffer_size, m_inserted, _min(new_size, m_buffer_size - m_p1) ); // part 2
+	strncpy_s( buf + m_p1, m_buffer_size, m_inserted, std::min(new_size, m_buffer_size - m_p1) ); // part 2
 
 	u8 ds = (m_insert_mode && m_p2 < old_edit_size)? 1 : 0;
 	strncpy_s( buf + m_p1 + new_size, m_buffer_size, m_edit_str + m_p2 + ds,
-		_min(old_edit_size - m_p2 - ds, m_buffer_size - m_p1 - new_size) ); // part 3
+        std::min(old_edit_size - m_p2 - ds, m_buffer_size - m_p1 - new_size) ); // part 3
 	buf[m_buffer_size] = 0;
 
 	int szn = m_p1 + new_size + old_edit_size - m_p2 - ds;

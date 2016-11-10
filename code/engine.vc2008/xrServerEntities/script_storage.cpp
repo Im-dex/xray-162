@@ -525,7 +525,7 @@ bool CScriptStorage::load_buffer	(lua_State *L, LPCSTR caBuffer, size_t tSize, L
 		};
 
 		xr_strcpy		(script, total_size, insert);
-		CopyMemory		(script + str_len,caBuffer,u32(tSize));
+        std::memcpy(script + str_len,caBuffer,u32(tSize));
 
 		l_iErrorCode	= luaL_loadbuffer(L,script,tSize + str_len,caScriptName);
 

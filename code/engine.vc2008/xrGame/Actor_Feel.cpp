@@ -306,7 +306,7 @@ void CActor::PickupInfoDraw(CObject* object)
 void CActor::feel_sound_new(CObject* who, int type, CSound_UserDataPtr user_data, const Fvector& Position, float power)
 {
 	if(who == this)
-		m_snd_noise = _max(m_snd_noise, power);
+		m_snd_noise = std::max(m_snd_noise, power);
 }
 
 void CActor::Feel_Grenade_Update( float rad )

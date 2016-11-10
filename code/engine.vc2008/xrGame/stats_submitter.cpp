@@ -26,7 +26,7 @@ stats_submitter::stats_submitter(CGameSpy_Full* fullgs) :
 	m_last_operation_profile	= NULL;
 	m_atlas_report				= NULL;
 	m_last_best_scores			= NULL;
-	ZeroMemory					(m_atlas_connection_id, sizeof(m_atlas_connection_id));
+    std::memset(m_atlas_connection_id, 0, sizeof(m_atlas_connection_id));
 }
 
 stats_submitter::~stats_submitter()
@@ -416,7 +416,7 @@ void stats_submitter::terminate_session()
 	m_last_operation_profile	= NULL;
 	m_atlas_report				= NULL;
 	m_last_best_scores			= NULL;
-	ZeroMemory					(m_atlas_connection_id, sizeof(m_atlas_connection_id));
+    std::memset(m_atlas_connection_id, 0, sizeof(m_atlas_connection_id));
 }
 
 

@@ -13,7 +13,7 @@
 
 CEF_Storage::CEF_Storage()
 {	
-	ZeroMemory							(m_fpaBaseFunctions,sizeof(m_fpaBaseFunctions));
+    std::memset(m_fpaBaseFunctions, 0, sizeof(m_fpaBaseFunctions));
 	
 	m_fpaBaseFunctions[0]				= m_pfDistance				= xr_new<CDistanceFunction>				(this);
 	m_fpaBaseFunctions[1]				= m_pfGraphPointType0		= xr_new<CGraphPointType0>				(this);

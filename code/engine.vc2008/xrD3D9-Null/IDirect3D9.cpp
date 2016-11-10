@@ -114,7 +114,7 @@ HRESULT xrIDirect3D9::GetDeviceCaps( UINT Adapter,D3DDEVTYPE DeviceType,D3DCAPS9
 {
 	APIDEBUG("xrIDirect3D9::GetDeviceCaps");
 	if (pCaps)
-		ZeroMemory(pCaps,sizeof(D3DCAPS9));
+        std::memset(pCaps, 0, sizeof(D3DCAPS9));
 	return HRESULT_Proc(S_OK);
 };
 HMONITOR xrIDirect3D9::GetAdapterMonitor( UINT Adapter)

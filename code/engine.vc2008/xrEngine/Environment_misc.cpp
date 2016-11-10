@@ -600,7 +600,7 @@ void CEnvironment::load_weathers		()
 		VERIFY						((*i)[length - 1] == 'x');
 		u32							new_length = length - 4;
 		LPSTR						identifier = (LPSTR)_alloca((new_length + 1)*sizeof(char));
-		Memory.mem_copy				(identifier, *i, new_length*sizeof(char));
+        std::memcpy(identifier, *i, new_length*sizeof(char));
 		identifier[new_length]		= 0;
 		EnvVec& env					= WeatherCycles[identifier];
 
@@ -657,7 +657,7 @@ void CEnvironment::load_weather_effects	()
 		VERIFY						((*i)[length - 1] == 'x');
 		u32							new_length = length - 4;
 		LPSTR						identifier = (LPSTR)_alloca((new_length + 1)*sizeof(char));
-		Memory.mem_copy				(identifier, *i, new_length*sizeof(char));
+        std::memcpy(identifier, *i, new_length*sizeof(char));
 		identifier[new_length]		= 0;
 		EnvVec& env					= WeatherFXs[identifier];
 

@@ -138,7 +138,7 @@ void Fvisual::Load		(const char* N, IReader *data, u32 dwFlags)
 			R_CHK				(HW.pDevice->CreateVertexBuffer	(vCount*vStride,dwUsage,0,D3DPOOL_MANAGED,&p_rm_Vertices,0));
 			HW.stats_manager.increment_stats_vb					(p_rm_Vertices);
 			R_CHK				(p_rm_Vertices->Lock(0,0,(void**)&bytes,0));
-			CopyMemory			(bytes, data->pointer(), vCount*vStride);
+            std::memcpy(bytes, data->pointer(), vCount*vStride);
 			p_rm_Vertices->Unlock	();
 #endif	//	USE_DX10
 		}
@@ -186,7 +186,7 @@ void Fvisual::Load		(const char* N, IReader *data, u32 dwFlags)
 			R_CHK				(HW.pDevice->CreateIndexBuffer(iCount*2,dwUsage,D3DFMT_INDEX16,D3DPOOL_MANAGED,&p_rm_Indices,0));
 			HW.stats_manager.increment_stats_ib		( p_rm_Indices);
 			R_CHK				(p_rm_Indices->Lock(0,0,(void**)&bytes,0));
-			CopyMemory		(bytes, data->pointer(), iCount*2);
+            std::memcpy(bytes, data->pointer(), iCount*2);
 			p_rm_Indices->Unlock	();
 #endif	//	USE_DX10
 		}

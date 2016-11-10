@@ -71,8 +71,7 @@ MultipacketSender::MultipacketSender()
 void
 MultipacketSender::SendPacket( const void* packet_data, u32 packet_sz, u32 flags, u32 timeout )
 {
-    _buf_cs.Enter();
-
+    std::lock_guard<decltype(_buf_cs)> lock(_buf_cs);
 	//PrintParsedPacket("-- LL Sending:", 1, packet_data, packet_sz);
 
     Buffer* buf = &_buf;
@@ -109,7 +108,6 @@ MultipacketSender::SendPacket( const void* packet_data, u32 packet_sz, u32 flags
         _FlushSendBuffer( timeout, buf );
     
     buf->last_flags = flags;
-    _buf_cs.Leave();
 }
 
 
@@ -118,12 +116,10 @@ MultipacketSender::SendPacket( const void* packet_data, u32 packet_sz, u32 flags
 void            
 MultipacketSender::FlushSendBuffer( u32 timeout )
 {
-    _buf_cs.Enter();
+    std::lock_guard<decltype(_buf_cs)> lock(_buf_cs);
     
     _FlushSendBuffer( timeout, &_buf );
     _FlushSendBuffer( timeout, &_gbuf );
-    
-    _buf_cs.Leave();
 }
 
 

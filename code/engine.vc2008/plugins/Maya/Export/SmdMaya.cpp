@@ -1381,7 +1381,7 @@ void CXRaySkinExport::buildEdgeTable( MDagPath& mesh )
 	MFnMesh fnMesh( mesh );
 	edgeTableSize = fnMesh.numVertices();
 	edgeTable = xr_alloc<SXREdgeInfoPtr>(edgeTableSize);
-	ZeroMemory(edgeTable,edgeTableSize*sizeof(int));
+    std::memset(edgeTable,0,edgeTableSize*sizeof(int));
 
 	// Add entries, for each edge, to the lookup table
 	//

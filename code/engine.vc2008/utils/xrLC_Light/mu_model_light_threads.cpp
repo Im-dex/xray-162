@@ -14,7 +14,6 @@
 //#include "mu_model_face.h"
 
 #include "xrThread.h"
-#include "../../xrcore/xrSyncronize.h"
 
 
 
@@ -23,25 +22,24 @@ CThreadManager			mu_secondary;
 #define		MU_THREADS	4
 // mu-light
 bool mu_models_local_calc_lightening = false;
-xrCriticalSection		mu_models_local_calc_lightening_wait_lock;
+std::recursive_mutex		mu_models_local_calc_lightening_wait_lock;
 void WaitMuModelsLocalCalcLightening()
 {
 	for(;;)
 	{
 		bool complited = false;
 		Sleep(1000);
-		mu_models_local_calc_lightening_wait_lock.Enter();
+		mu_models_local_calc_lightening_wait_lock.lock();
 		complited = mu_models_local_calc_lightening;
-		mu_models_local_calc_lightening_wait_lock.Leave();
+		mu_models_local_calc_lightening_wait_lock.unlock();
 		if(complited)
 			break;
 	}
 }
 void SetMuModelsLocalCalcLighteningCompleted()
 {
-	mu_models_local_calc_lightening_wait_lock.Enter();
+    std::lock_guard<std::recursive_mutex> lock(mu_models_local_calc_lightening_wait_lock);
 	mu_models_local_calc_lightening = true;
-	mu_models_local_calc_lightening_wait_lock.Leave();
 }
 class CMULight	: public CThread
 {

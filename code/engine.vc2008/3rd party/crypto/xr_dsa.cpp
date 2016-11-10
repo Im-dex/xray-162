@@ -82,7 +82,7 @@ void print_big_number(BIGNUM* big_num, u32 max_columns = 8)
 	string4096	result_buffer;
 	string16	tmp_buff;
 
-	ZeroMemory	(bin_buff, sizeof(bin_buff));
+    std::memset(bin_buff, 0, sizeof(bin_buff));
 	BN_bn2bin	(big_num, bin_buff);
 	bin_size	= big_num->top * sizeof(unsigned long);
 
@@ -170,7 +170,7 @@ void xr_dsa::generate_params()
 	shared_str sig_str		= BN_bn2hex(&bn_sign);
 	
 	BIGNUM*	bn_rsing		= NULL;
-	ZeroMemory				(sig, siglen);
+    std::memset(sig, 0, siglen);
 	BN_hex2bn				(&bn_rsing, sig_str.c_str());
 	BN_bn2bin				(bn_rsing, sig);
 	BN_free					(bn_rsing);

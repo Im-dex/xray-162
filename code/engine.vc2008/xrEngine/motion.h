@@ -34,7 +34,7 @@ struct st_BoneMotion
 	shared_str		name;
 	CEnvelope*	envs			[ctMaxChannel];
 	Flags8		m_Flags;
-    			st_BoneMotion()	{name=0; m_Flags.zero(); ZeroMemory(envs,sizeof(CEnvelope*)*ctMaxChannel);}
+    			st_BoneMotion()	{name=0; m_Flags.zero(); std::memset(envs, 0, sizeof(CEnvelope*)*ctMaxChannel);}
     void        SetName(LPCSTR nm)	{	name=nm;	}
 };
 // vector по костям

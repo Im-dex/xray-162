@@ -850,8 +850,8 @@ void CUIMpTradeWnd::DumpAllItems(LPCSTR s)
 
 #ifndef MASTER_GOLD
 	Msg("CUIMpTradeWnd::DumpAllItems.total[%d] reason [%s]", m_all_items.size(), s);
-	ITEMS_vec_cit it = m_all_items.begin();
-	ITEMS_vec_cit it_e = m_all_items.end();
+	auto it = m_all_items.begin();
+	auto it_e = m_all_items.end();
 	for(;it!=it_e;++it)
 	{
 		SBuyItemInfo* iinfo = *it;

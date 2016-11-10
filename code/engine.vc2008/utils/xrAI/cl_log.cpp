@@ -5,11 +5,7 @@
 #include <mmsystem.h>
 
 //************************* Log-thread data
-static xrCriticalSection	csLog
-#ifdef PROFILE_CRITICAL_SECTIONS
-	(MUTEX_PROFILE_ID(csLog))
-#endif // PROFILE_CRITICAL_SECTIONS
-;
+static std::recursive_mutex	csLog;
 
 volatile BOOL				bClose				= FALSE;
 
@@ -72,13 +68,12 @@ std::string make_time	(u32 sec)
 
 void __cdecl Status	(const char *format, ...)
 {
-	csLog.Enter			();
+    std::lock_guard<decltype(csLog)> lock(csLog);
 	va_list				mark;
 	va_start			( mark, format );
 	vsprintf			( status, format, mark );
 	bStatusChange		= TRUE;
 	Msg					("    | %s",status);
-	csLog.Leave			();
 }
 
 void Progress		(const float F)
@@ -96,7 +91,7 @@ void Phase			(const char *phase_name)
 {
 	while (!(hwPhaseTime && hwStage)) Sleep(1);
 
-	csLog.Enter			();
+    std::lock_guard<decltype(csLog)> lock(csLog);
 	// Replace phase name with TIME:Name 
 	char	tbuf		[512];
 	bPhaseChange		= TRUE;
@@ -116,7 +111,6 @@ void Phase			(const char *phase_name)
 
 	// Release focus
 	Msg("\n* New phase started: %s",phase_name);
-	csLog.Leave			();
 }
 
 HWND logWindow=0;
@@ -164,7 +158,7 @@ void logThread(void *dummy)
 		SetPriorityClass	(GetCurrentProcess(),IDLE_PRIORITY_CLASS);	// bHighPriority?NORMAL_PRIORITY_CLASS:IDLE_PRIORITY_CLASS
 
 		// transfer data
-		while (!csLog.TryEnter())	{
+		while (!csLog.try_lock())	{
 			_process_messages	( );
 			Sleep				(1);
 		}
@@ -173,20 +167,23 @@ void logThread(void *dummy)
 
 		BOOL bWasChanges = FALSE;
 		char tbuf		[256];
-		csLog.Enter		();
-		if (LogSize!=LogFile->size())
+
 		{
-			bWasChanges		= TRUE;
-			for (; LogSize<LogFile->size(); LogSize++)
-			{
-				const char *S = *(*LogFile)[LogSize];
-				if (0==S)	S = "";
-				SendMessage	( hwLog, LB_ADDSTRING, 0, (LPARAM) S);
-			}
-			SendMessage		( hwLog, LB_SETTOPINDEX, LogSize-1, 0);
-			FlushLog		( );
+            std::lock_guard<decltype(csLog)> lock(csLog);
+            if (LogSize != LogFile->size())
+            {
+                bWasChanges = TRUE;
+                for (; LogSize<LogFile->size(); LogSize++)
+                {
+                    const char *S = *(*LogFile)[LogSize];
+                    if (0 == S)	S = "";
+                    SendMessage(hwLog, LB_ADDSTRING, 0, (LPARAM) S);
+                }
+                SendMessage(hwLog, LB_SETTOPINDEX, LogSize - 1, 0);
+                FlushLog();
+            }
 		}
-		csLog.Leave		();
+        
 		if (_abs(PrSave-progress)>EPS_L) {
 			bWasChanges = TRUE;
 			PrSave = progress;
@@ -223,7 +220,7 @@ void logThread(void *dummy)
 			UpdateWindow	( logWindow);
 			bWasChanges		= FALSE;
 		}
-		csLog.Leave			();
+		csLog.unlock			();
 
 		_process_messages	();
 		if (bClose)			break;
@@ -241,9 +238,8 @@ void __cdecl clMsg( const char *format, ...)
 	va_start	( mark, format );
 	vsprintf	( buf, format, mark );
 
-	csLog.Enter		();
+    std::lock_guard<decltype(csLog)> lock(csLog);
 	string1024		_out_;
 	strconcat		(sizeof(_out_),_out_,"    |    | ", buf );   
 	Log				(_out_);
-	csLog.Leave		();
 }

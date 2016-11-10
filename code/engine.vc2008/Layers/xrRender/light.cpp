@@ -28,7 +28,7 @@ light::light		(void)	: ISpatial(g_SpatialSpace)
 	frame_render	= 0;
 
 #if (RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
-	ZeroMemory		(omnipart,sizeof(omnipart));
+    std::memset(omnipart,0,sizeof(omnipart));
 	s_spot			= NULL;
 	s_point			= NULL;
 	vis.frame2test	= 0;	// xffffffff;
@@ -135,7 +135,7 @@ void	light::set_position		(const Fvector& P)
 }
 
 void	light::set_range		(float R)			{
-	float	eps					=	_max	(range*0.1f,EPS_L);
+	float	eps					= std::max	(range*0.1f,EPS_L);
 	if (fsimilar(range,R,eps))	return	;
 	range						= R		;
 	spatial_move				();

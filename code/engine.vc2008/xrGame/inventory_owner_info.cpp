@@ -69,7 +69,7 @@ void CInventoryOwner::DumpInfo() const
 
 	Msg("------------------------------------------");	
 	Msg("Start KnownInfo dump for [%s]",Name());	
-	KNOWN_INFO_VECTOR_IT it = known_info.begin();
+	auto it = known_info.begin();
 	for(int i=0;it!=known_info.end();++it,++i){
 		Msg("known info[%d]:%s",i,(*it).c_str());	
 	}

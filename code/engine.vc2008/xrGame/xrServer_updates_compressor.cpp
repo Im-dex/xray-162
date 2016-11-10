@@ -40,7 +40,7 @@ u16 last_updates_cache::add_update			(u16 const entity_id, NET_Packet const & up
 		tmp_entity->first.m_eq_count = 0;
 	}	
 	tmp_entity->first.m_update_time	= current_time;
-	CopyMemory(tmp_entity->second.B.data, update.B.data, update.B.count);
+    std::memcpy(tmp_entity->second.B.data, update.B.data, update.B.count);
 	tmp_entity->second.B.count = update.B.count;
 	return tmp_entity->first.m_eq_count;
 }

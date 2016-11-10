@@ -26,7 +26,7 @@ void InternalRender()
 	// allocation
 	int		msize = dimX*dimZ*sizeof(Texel);
 	texels	= (Texel*)xr_malloc(msize);
-	ZeroMemory(texels,msize);
+    std::memset(texels,0,msize);
 
 	// rasterization
 	for (u32 i=0; i<g_nodes.size(); i++)

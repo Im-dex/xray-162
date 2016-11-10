@@ -190,7 +190,7 @@ public:
 		LT.update_smooth			(O)								;
 		o_hemi						= 0.75f*LT.get_hemi			()	;
 		o_sun						= 0.75f*LT.get_sun			()	;
-		CopyMemory(o_hemi_cube, LT.get_hemi_cube(), CROS_impl::NUM_FACES*sizeof(float));
+        std::memcpy(o_hemi_cube, LT.get_hemi_cube(), CROS_impl::NUM_FACES*sizeof(float));
 	}
 	IC void							apply_lmaterial				()
 	{

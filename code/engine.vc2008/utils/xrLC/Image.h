@@ -14,7 +14,7 @@ public:
 	BOOL	bAlpha;
 	u32*	pData;
 
-	CImage	()			{ ZeroMemory(this,sizeof(*this)); }
+	CImage	()			{ std::memset(this,0,sizeof(*this)); }
 	~CImage	()			{ xr_free(pData); }
 
 	void	Create		(u32 w, u32 h);

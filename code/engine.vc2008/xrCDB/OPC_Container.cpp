@@ -102,7 +102,7 @@ bool Container::Resize(udword needed)
 #endif
 
 	// Copy old data if needed
-	if(mCurNbEntries)	CopyMemory(NewEntries, mEntries, mCurNbEntries*sizeof(udword));
+	if(mCurNbEntries)	std::memcpy(NewEntries, mEntries, mCurNbEntries*sizeof(udword));
 
 	// Delete old data
 	CFREE(mEntries);
@@ -169,7 +169,7 @@ bool Container::Refit()
 #endif
 
 	// Copy old data
-	CopyMemory(NewEntries, mEntries, mCurNbEntries*sizeof(udword));
+    std::memcpy(NewEntries, mEntries, mCurNbEntries*sizeof(udword));
 
 	// Delete old data
 	CFREE(mEntries);

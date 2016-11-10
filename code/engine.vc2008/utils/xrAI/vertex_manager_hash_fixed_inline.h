@@ -33,12 +33,12 @@ IC	CHashFixedVertexManager::CDataStorage		(const u32 vertex_count) :
 
 	byte_count				= (hash_size)*sizeof(CGraphIndexVertex*);
 	m_hash					= xr_alloc<CGraphIndexVertex*>(hash_size);
-	ZeroMemory				(m_hash,byte_count);
+    std::memset(m_hash,0,byte_count);
 	memory_usage			+= byte_count;
 
 	byte_count				= (fix_size)*sizeof(CGraphIndexVertex);
 	m_vertices				= xr_alloc<CGraphIndexVertex>(fix_size);
-	ZeroMemory				(m_vertices,byte_count);
+    std::memset(m_vertices,0,byte_count);
 	memory_usage			+= byte_count;
 }
 
@@ -57,8 +57,8 @@ IC	void CHashFixedVertexManager::init		()
 	m_vertex_count			= 0;
 	if (!m_current_path_id) {
 		++m_current_path_id;
-		ZeroMemory			(m_hash,(hash_size)*sizeof(CGraphIndexVertex*));
-		ZeroMemory			(m_vertices,(fix_size)*sizeof(CGraphIndexVertex));
+        std::memset(m_hash,0,(hash_size)*sizeof(CGraphIndexVertex*));
+        std::memset(m_vertices,0,(fix_size)*sizeof(CGraphIndexVertex));
 	}
 //	ZeroMemory			(m_hash,(hash_size)*sizeof(CGraphIndexVertex*));
 //	ZeroMemory			(m_vertices,(fix_size)*sizeof(CGraphIndexVertex));

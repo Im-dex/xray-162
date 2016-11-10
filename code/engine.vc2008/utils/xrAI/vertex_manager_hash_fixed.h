@@ -90,7 +90,8 @@ struct CVertexManagerHashFixed {
 		IC		bool			is_closed		(const CGraphVertex &vertex) const;
 		IC		CGraphVertex	&get_node		(const _index_type &vertex_id) const;
 		IC		CGraphVertex	&create_vertex	(CGraphVertex &vertex, const _index_type &vertex_id);
-		IC		void			add_opened		(CGraphVertex &vertex);
+	    static
+	    IC		void			add_opened		(CGraphVertex &vertex);
 		IC		void			add_closed		(CGraphVertex &vertex);
 		IC		_path_id_type	current_path_id	() const;
 		IC		u32				hash_index		(const _index_type &vertex_id) const;

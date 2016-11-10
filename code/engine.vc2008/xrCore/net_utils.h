@@ -93,7 +93,7 @@ public:
 		R_ASSERT	(inistream==NULL || w_allow);
 		VERIFY		(p && count);
 		VERIFY		(B.count + count < NET_PacketSizeLimit);
-		CopyMemory(&B.data[B.count],p,count);
+        std::memcpy(&B.data[B.count],p,count);
 		B.count		+= count;
 		VERIFY		(B.count<NET_PacketSizeLimit);
 	}
@@ -207,7 +207,7 @@ public:
 	{
 		R_ASSERT	(inistream==NULL);
 		VERIFY		(p && count);
-		CopyMemory	(p,&B.data[r_pos],count);
+        std::memcpy(p,&B.data[r_pos],count);
 		r_pos		+= count;
 		VERIFY		(r_pos<=B.count);
 	}

@@ -28,7 +28,7 @@ void ConvertVertices(u32 dwTypeDest, void *pDest, u32 dwTypeSrc, void *pSource, 
 
 	// avoid redundant processing
 	if (dwTypeDest==dwTypeSrc) {
-		CopyMemory(pDest,pSource,dwSizeDest*dwCount*4);
+        std::memcpy(pDest,pSource,dwSizeDest*dwCount*4);
 		return;
 	}
 

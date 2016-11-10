@@ -119,7 +119,7 @@ u32*	Surface_Load(char* name, u32& w, u32& h)
 	u32			memSize	= w*h*4;
 	u32*		memPTR	= (u32*)(xr_malloc(memSize));
 	u32*		memDATA	= (u32*)(FreeImage_GetScanLine(map32,0));
-	CopyMemory	(memPTR,memDATA,memSize);
+    std::memcpy(memPTR,memDATA,memSize);
 	FreeImage_Unload		(map32);
 	return		memPTR;
 }

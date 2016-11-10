@@ -442,9 +442,8 @@ u32 xrServer::OnDelayedMessage	(NET_Packet& P, ClientID sender)			// Non-Zero me
 
 u32	xrServer::OnMessageSync(NET_Packet& P, ClientID sender)
 {
-	csMessage.Enter();
+    std::lock_guard<decltype(csMessage)> lock(csMessage);
 	u32 ret = OnMessage(P, sender);
-	csMessage.Leave();
 	return ret;
 }
 
@@ -958,7 +957,7 @@ void xrServer::create_direct_client()
 
 void xrServer::ProceedDelayedPackets()
 {
-	DelayedPackestCS.Enter();
+    std::lock_guard<decltype(DelayedPackestCS)> lock(DelayedPackestCS);
 	while (!m_aDelayedPackets.empty())
 	{
 		DelayedPacket& DPacket	= *m_aDelayedPackets.begin();
@@ -966,19 +965,16 @@ void xrServer::ProceedDelayedPackets()
 //		OnMessage(DPacket.Packet, DPacket.SenderID);
 		m_aDelayedPackets.pop_front();
 	}
-	DelayedPackestCS.Leave();
 };
 
 void xrServer::AddDelayedPacket	(NET_Packet& Packet, ClientID Sender)
 {
-	DelayedPackestCS.Enter();
+    std::lock_guard<decltype(DelayedPackestCS)> lock(DelayedPackestCS);
 
 	m_aDelayedPackets.push_back(DelayedPacket());
 	DelayedPacket* NewPacket = &(m_aDelayedPackets.back());
 	NewPacket->SenderID = Sender;
-	CopyMemory	(&(NewPacket->Packet),&Packet,sizeof(NET_Packet));	
-
-	DelayedPackestCS.Leave();
+    std::memcpy(&(NewPacket->Packet),&Packet,sizeof(NET_Packet));
 }
 
 u32 g_sv_dwMaxClientPing		= 2000;

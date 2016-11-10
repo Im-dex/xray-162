@@ -272,7 +272,7 @@ void	CROS_impl::update	(IRenderable* O)
 	if (bFirstTime)
 	{
 		hemi_smooth	= hemi_value;
-		CopyMemory(hemi_cube_smooth, hemi_cube, NUM_FACES*sizeof(float));
+        std::memcpy(hemi_cube_smooth, hemi_cube, NUM_FACES*sizeof(float));
 	}
 
 	update_smooth			()	;
@@ -385,7 +385,7 @@ void CROS_impl::calc_sky_hemi_value(Fvector& position, CObject* _object)
 	
 #if RENDER!=R_R1
 		sky_rays_uptodate	+= ps_r2_dhemi_count;
-		sky_rays_uptodate	= _min(sky_rays_uptodate, lt_hemisamples);
+		sky_rays_uptodate	= std::min(sky_rays_uptodate, lt_hemisamples);
 #endif	//	RENDER!=R_R1
 
 		for (u32 it=0; it<(u32)ps_r2_dhemi_count;	it++)		{	// five samples per one frame

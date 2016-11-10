@@ -31,7 +31,7 @@
 									m[2][0] = m20;	m[2][1] = m21;	m[2][2] = m22;
 								}
 		//! Copy constructor
-		inline_					Matrix3x3(const Matrix3x3& mat)				{ CopyMemory(m, &mat.m, 9*sizeof(float));	}
+		inline_					Matrix3x3(const Matrix3x3& mat)				{ std::memcpy(m, &mat.m, 9*sizeof(float));	}
 		//! Destructor
 		inline_					~Matrix3x3()								{}
 
@@ -66,7 +66,7 @@
 				}
 
 		//! Copy from a Matrix3x3
-		inline_	void			Copy(const Matrix3x3& source)				{ CopyMemory(m, source.m, 9*sizeof(float));			}
+		inline_	void			Copy(const Matrix3x3& source)				{ std::memcpy(m, source.m, 9*sizeof(float));			}
 
 		// Row-column access
 		//! Returns a row.
@@ -81,7 +81,7 @@
 		//! Computes the trace. The trace is the sum of the 3 diagonal components.
 		inline_	float			Trace()					const				{ return m[0][0] + m[1][1] + m[2][2];				}
 		//! Clears the matrix.
-		inline_	void			Zero()										{ ZeroMemory(&m, sizeof(m));						}
+		inline_	void			Zero()										{ std::memset(&m, 0, sizeof(m));						}
 		//! Sets the identity matrix.
 		inline_	void			Identity()									{ Zero(); m[0][0] = m[1][1] = m[2][2] = 1.0f; 		}
 		//! Checks for identity

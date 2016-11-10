@@ -31,7 +31,7 @@ Image *	new_image(int xsize, int ysize)		/* create a blank image */
 
 	if((0!=(image = (Image *)xr_malloc(sizeof(Image)))) && (0!=(image->data = (Pixel *)xr_malloc(ysize*xsize*sizeof(Pixel)))))
 	{
-		ZeroMemory(image->data,ysize*xsize*sizeof(Pixel));
+        std::memset(image->data,0,ysize*xsize*sizeof(Pixel));
 		image->xsize	= xsize;
 		image->ysize	= ysize;
 		image->span		= xsize;
@@ -54,7 +54,7 @@ Pixel	get_pixel	(Image* image, int x, int y)
 void	get_row		(Pixel* row, Image* image, int y)
 {
 	if((y < 0) || (y >= image->ysize)) return;
-	CopyMemory(row,	image->data + (y * image->span), (sizeof(Pixel) * image->xsize));
+    std::memcpy(row,	image->data + (y * image->span), (sizeof(Pixel) * image->xsize));
 }
 
 void	get_column	(Pixel* column, Image* image, int x)
@@ -248,7 +248,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 	/* pre-calculate filter contributions for a row */
 	try	{
 		contrib = (CLIST *)	xr_malloc	(dst.xsize*sizeof(CLIST));
-		ZeroMemory(contrib,dst.xsize*sizeof(CLIST));
+        std::memset(contrib,0,dst.xsize*sizeof(CLIST));
 	} catch (...) {
 		Msg		("imf_Process::2");
 	};
@@ -260,7 +260,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 			{
 				contrib[i].n	= 0;
 				contrib[i].p	= (CONTRIB *)xr_malloc((int) (width * 2 + 1)*sizeof(CONTRIB));
-				ZeroMemory(contrib[i].p,(int) (width * 2 + 1)*sizeof(CONTRIB));
+                std::memset(contrib[i].p,0, (width * 2 + 1)*sizeof(CONTRIB));
 				center			= float(i) / xscale;
 				left			= ceil	(center - width);
 				right			= floor	(center + width);
@@ -289,7 +289,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 			{
 				contrib[i].n	= 0;
 				contrib[i].p	= (CONTRIB *)xr_malloc((int) (fwidth * 2 + 1)*sizeof(CONTRIB));
-				ZeroMemory(contrib[i].p,(int) (fwidth * 2 + 1)*sizeof(CONTRIB));
+                std::memset(contrib[i].p,0,(fwidth * 2 + 1)*sizeof(CONTRIB));
 				center			= float(i) / xscale;
 				left			= ceil	(center - fwidth);
 				right			= floor	(center + fwidth);
@@ -317,7 +317,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 	/* apply filter to zoom horizontally from src to tmp */
 	try	{
 		raster	= (Pixel *)xr_malloc(src.xsize*sizeof(Pixel));
-		ZeroMemory(raster,src.xsize*sizeof(Pixel));
+        std::memset(raster,0,src.xsize*sizeof(Pixel));
 	} catch (...) {	Msg		("imf_Process::4");	};
 	try	{
 		for	(k = 0; k < tmp->ysize; ++k)
@@ -351,7 +351,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 	/* pre-calculate filter contributions for a column */
 	try	{
 		contrib = (CLIST *)xr_malloc(dst.ysize*sizeof(CLIST));
-		ZeroMemory(contrib,dst.ysize*sizeof(CLIST));
+        std::memset(contrib,0,dst.ysize*sizeof(CLIST));
 	} catch (...) {	Msg		("imf_Process::7");	};
 	if(yscale < 1.0) {
 		try	{
@@ -361,7 +361,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 			{
 				contrib[i].n	= 0;
 				contrib[i].p	= (CONTRIB *)xr_malloc((int) (width * 2 + 1)*sizeof(CONTRIB));
-				ZeroMemory(contrib[i].p,(int) (width * 2 + 1)*sizeof(CONTRIB));
+                std::memset(contrib[i].p,0, (width * 2 + 1)*sizeof(CONTRIB));
 				center			= (float) i / yscale;
 				left			= ceil	(center - width);
 				right			= floor	(center + width);
@@ -388,7 +388,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 			{
 				contrib[i].n	= 0;
 				contrib[i].p	= (CONTRIB *)xr_malloc((int) (fwidth * 2 + 1)*sizeof(CONTRIB));
-				ZeroMemory(contrib[i].p,(int) (fwidth * 2 + 1)*sizeof(CONTRIB));
+                std::memset(contrib[i].p,0, (fwidth * 2 + 1)*sizeof(CONTRIB));
 				center			= (float) i / yscale;
 				left			= ceil	(center - fwidth);
 				right			= floor	(center + fwidth);
@@ -413,7 +413,7 @@ void	imf_Process	(u32* dstI, u32 dstW, u32 dstH, u32* srcI, u32 srcW, u32 srcH, 
 	/* apply filter to zoom vertically from tmp to dst */
 	try	{
 		raster = (Pixel *)xr_malloc(tmp->ysize*sizeof(Pixel));
-		ZeroMemory(raster,tmp->ysize*sizeof(Pixel));
+        std::memset(raster,0,tmp->ysize*sizeof(Pixel));
 	} catch (...) {	Msg		("imf_Process::9");	};
 	try	{
 		for(k = 0; k < dst.xsize; ++k)

@@ -17,10 +17,6 @@
 #ifdef USE_PROFILER
 #	include "ai_debug.h"
 
-#ifdef PROFILE_CRITICAL_SECTIONS
-	extern void add_profile_portion(LPCSTR id, const u64 &time);
-#endif // PROFILE_CRITICAL_SECTIONS
-
 #pragma pack(push,4)
 struct CProfileResultPortion {
 	u64				m_time;
@@ -62,7 +58,7 @@ protected:
 	PORTIONS			m_portions;
 	TIMERS				m_timers;
 	bool				m_actual;
-	xrCriticalSection	m_section;
+	std::recursive_mutex	m_section;
 	u32					m_call_count;
 
 protected:

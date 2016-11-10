@@ -11,7 +11,7 @@
 void CImage::Create(u32 w, u32 h, u32* data)
 {
 	Create(w,h);
-    CopyMemory(pData,data,w*h*sizeof(u32));
+    std::memcpy(pData,data,w*h*sizeof(u32));
 }
 
 void CImage::Create(u32 w, u32 h)

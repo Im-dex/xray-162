@@ -3,7 +3,7 @@
 
 IC actor_mp_state_holder::actor_mp_state_holder			()
 {
-	ZeroMemory						(&m_state,sizeof(m_state));
+    std::memset(&m_state, 0, sizeof(m_state));
 	m_state.physics_quaternion.z	= 1.f;
 }
 

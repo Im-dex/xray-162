@@ -20,9 +20,6 @@ using namespace	collide;
 //----------------------------------------------------------------------
 CObjectSpace::CObjectSpace	( ):
 	xrc()
-#ifdef PROFILE_CRITICAL_SECTIONS
-	,Lock(MUTEX_PROFILE_ID(CObjectSpace::Lock))
-#endif // PROFILE_CRITICAL_SECTIONS
 #ifdef DEBUG
 	,m_pRender(0)
 #endif

@@ -25,7 +25,7 @@ IC	CBinaryHeap::CDataStorage				(const u32 vertex_count) :
 
 	byte_count				= vertex_count*sizeof(CGraphVertex*);
 	m_heap					= xr_alloc<CGraphVertex*>(vertex_count);
-	ZeroMemory				(m_heap,byte_count);
+    std::memset(m_heap, 0, byte_count);
 	memory_usage			+= byte_count;
 }
 

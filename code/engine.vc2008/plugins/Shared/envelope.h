@@ -46,7 +46,7 @@ struct st_Key{
 	float		continuity;
 	float		bias;
 	float		param[ 4 ];
-				st_Key		(){ZeroMemory(this,sizeof(st_Key));}
+				st_Key		(){ std::memset(this,0,sizeof(st_Key));}
     IC bool		equal		(const st_Key& tgt)
     {
     	if (!fsimilar(value,tgt.value)) 			return false;

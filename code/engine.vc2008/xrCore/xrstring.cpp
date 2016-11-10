@@ -19,7 +19,7 @@ struct str_container_impl
 	str_container_impl ()
 	{
 		num_docs = 0;
-		ZeroMemory(buffer, sizeof(buffer));
+        std::memset(buffer,0,sizeof(buffer));
 	}
 
 	str_value*       find   (str_value* value, const char* str)
@@ -37,7 +37,7 @@ struct str_container_impl
 			candidate = candidate->next;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	void			 insert (str_value* value)
@@ -53,7 +53,7 @@ struct str_container_impl
 		{
 			str_value** current = &buffer[i];
 
-			while ( *current != NULL )
+			while ( *current != nullptr )
 			{
 				str_value* value = *current;
 				if ( !value->dwReference )
@@ -142,7 +142,7 @@ str_value*	str_container::dock		(str_c value)
 {
 	if (0==value)				return 0;
 
-	cs.Enter					();
+    std::lock_guard<decltype(cs)> lock(cs);
 
 #ifdef DEBUG_MEMORY_MANAGER
 	Memory.stat_strdock			++	;
@@ -194,52 +194,46 @@ str_value*	str_container::dock		(str_c value)
 		result->dwReference		= 0;
 		result->dwLength		= sv->dwLength;
 		result->dwCRC			= sv->dwCRC;
-		CopyMemory				(result->value,value,s_len_with_zero);
+        std::memcpy(result->value,value,s_len_with_zero);
 
 		impl->insert (result);
 	}
-	cs.Leave					();
 
 	return	result;
 }
 
 void		str_container::clean	()
 {
-	cs.Enter	();
+    std::lock_guard<decltype(cs)> lock(cs);
 	impl->clean ();
-	cs.Leave	();
 }
 
 void		str_container::verify	()
 {
-	cs.Enter	();
+    std::lock_guard<decltype(cs)> lock(cs);
 	impl->verify();
-	cs.Leave	();
 }
 
 void		str_container::dump	()
 {
- 	cs.Enter	();
+    std::lock_guard<decltype(cs)> lock(cs);
  	FILE* F		= fopen("d:\\$str_dump$.txt","w");
  	impl->dump  (F);
  	fclose		(F);
- 	cs.Leave	();
 }
 
 void		str_container::dump	(IWriter* W)
 {
- 	cs.Enter	();
+    std::lock_guard<decltype(cs)> lock(cs);
  	impl->dump  (W);
- 	cs.Leave	();
 }
 
 u32			str_container::stat_economy		()
 {
- 	cs.Enter	();
+    std::lock_guard<decltype(cs)> lock(cs);
  	int				counter	= 0;
  	counter			-= sizeof(*this);
 	counter			+= impl->stat_economy();
- 	cs.Leave		(); 
  	return			u32(counter);
 }
 
@@ -271,7 +265,7 @@ str_value*	str_container::dock		(str_c value)
 {
 	if (0==value)				return 0;
 
-	cs.Enter					();
+    std::lock_guard<decltype(cs)> lock(cs);
 
 // 	++impl->num_docs;
 // 	if ( impl->num_docs == 10000000 )
@@ -345,21 +339,19 @@ str_value*	str_container::dock		(str_c value)
 		result->dwCRC			= sv->dwCRC;
 		result->next			= NULL;
 
-		CopyMemory				(result->value,value,s_len_with_zero);
+        std::memcpy(result->value,value,s_len_with_zero);
 
 		impl->container.insert (result);
 	}
-
-	cs.Leave					();
 
 	return	result;
 }
 
 void		str_container::clean	()
 {
-	cs.Enter	();
-	str_container_impl::cdb::iterator	it	= impl->container.begin	();
-	str_container_impl::cdb::iterator	end	= impl->container.end		();
+    std::lock_guard<decltype(cs)> lock(cs);
+	auto	it	= impl->container.begin	();
+	auto	end	= impl->container.end		();
 	for (; it!=end; )	{
 		str_value*	sv = *it;
 		if (0==sv->dwReference)	
@@ -374,12 +366,11 @@ void		str_container::clean	()
 		}
 	}
 	if (impl->container.empty())	impl->container.clear	();
-	cs.Leave	();
 }
 
 void		str_container::verify	()
 {
-	cs.Enter	();
+    std::lock_guard<decltype(cs)> lock(cs);
 	str_container_impl::cdb::iterator	it	= impl->container.begin	();
 	str_container_impl::cdb::iterator	end	= impl->container.end		();
 	for (; it!=end; ++it)	{
@@ -389,7 +380,6 @@ void		str_container::verify	()
 		R_ASSERT3	(crc==sv->dwCRC, "CorePanic: read-only memory corruption (shared_strings)", itoa(sv->dwCRC,crc_str,16));
 		R_ASSERT3	(sv->dwLength == xr_strlen(sv->value), "CorePanic: read-only memory corruption (shared_strings, internal structures)", sv->value);
 	}
-	cs.Leave	();
 }
 
 void		str_container::dump	()

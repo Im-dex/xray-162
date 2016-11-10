@@ -62,7 +62,7 @@ public:
 		count++;
 		array[id] = V;
 	}
-	IC void		assign(iterator p, int c) { VERIFY(c>0 && c<dim); CopyMemory(array,p,c*sizeof(value_type)); count=c; }
+	IC void		assign(iterator p, int c) { VERIFY(c>0 && c<dim); std::memcpy(array,p,c*sizeof(value_type)); count=c; }
 	IC BOOL		equal (const svector<value_type,dim>& base) const
 	{
 		if (size()!=base.size())	return FALSE;

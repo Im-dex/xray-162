@@ -669,7 +669,7 @@ void rotation_principal_axis_to_deriv_matrix(char axis, float angle, Matrix m)
 {
     float cos_a, sin_a;
     
-    ZeroMemory(m,sizeof(Matrix));
+    std::memset(m,0,sizeof(Matrix));
     cos_a = _cos(angle);
     sin_a = _sin(angle);
     

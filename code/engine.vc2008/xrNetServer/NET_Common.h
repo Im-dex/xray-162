@@ -72,7 +72,7 @@ private:
 
     Buffer              _buf;
     Buffer              _gbuf;
-    xrCriticalSection   _buf_cs;
+    std::recursive_mutex   _buf_cs;
 };
 
 

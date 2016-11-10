@@ -207,7 +207,7 @@ bool CDetailPathManager::build_circle_trajectory(
 	if (fis_zero(position.angular_velocity))
 		n				= 1;
 	else {
-		int				m = _min(iFloor(_abs(angle)/position.angular_velocity*10.f + 1.5f),iFloor(position.radius*_abs(angle)/min_dist + 1.5f));
+		int				m = std::min(iFloor(_abs(angle)/position.angular_velocity*10.f + 1.5f),iFloor(position.radius*_abs(angle)/min_dist + 1.5f));
 #ifdef DEBUG
 		if (m>=10000) {
 			Msg			("! [position.radius=%f],[angle=%f],[m=%d]",position.radius,angle,m);

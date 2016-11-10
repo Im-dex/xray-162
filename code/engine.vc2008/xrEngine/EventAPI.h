@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../xrcore/xrSyncronize.h"
-
 class ENGINE_API	CEvent;
 typedef CEvent*		EVENT;
 
@@ -23,11 +21,8 @@ class ENGINE_API	CEventAPI
 private:
 	xr_vector<EVENT>		Events;
 	xr_vector<Deferred>		Events_Deferred;
-	xrCriticalSection		CS;
+	std::recursive_mutex		CS;
 public:
-#ifdef PROFILE_CRITICAL_SECTIONS
-			CEventAPI		() : CS(MUTEX_PROFILE_ID(CEventAPI)) {}
-#endif // PROFILE_CRITICAL_SECTIONS
 	EVENT	Create			(const char* N);
 	void	Destroy			(EVENT& E);
 

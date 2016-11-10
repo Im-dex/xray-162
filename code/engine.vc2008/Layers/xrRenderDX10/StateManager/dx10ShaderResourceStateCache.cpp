@@ -10,12 +10,12 @@ dx10ShaderResourceStateCache::dx10ShaderResourceStateCache()
 
 void dx10ShaderResourceStateCache::ResetDeviceState()
 {
-	ZeroMemory(m_PSViews, sizeof(m_PSViews));
-	ZeroMemory(m_GSViews, sizeof(m_GSViews));
-	ZeroMemory(m_VSViews, sizeof(m_VSViews));
+	std::memset(m_PSViews, 0, sizeof(m_PSViews));
+	std::memset(m_GSViews, 0, sizeof(m_GSViews));
+	std::memset(m_VSViews, 0, sizeof(m_VSViews));
 #ifdef USE_DX11
-	ZeroMemory(m_HSViews, sizeof(m_HSViews));
-	ZeroMemory(m_DSViews, sizeof(m_DSViews));
+    std::memset(m_HSViews, 0, sizeof(m_HSViews));
+    std::memset(m_DSViews, 0, sizeof(m_DSViews));
 #endif
 
 	m_uiMinPSView = 0xFFFFFFFF;
@@ -106,8 +106,8 @@ void dx10ShaderResourceStateCache::SetPSResource( u32 uiSlot, ID3DShaderResource
 		m_PSViews[uiSlot] = pRes;
 		if (m_bUpdatePSViews)
 		{
-			m_uiMinPSView = _min( m_uiMinPSView, uiSlot );
-			m_uiMaxPSView = _max( m_uiMaxPSView, uiSlot );
+			m_uiMinPSView = std::min( m_uiMinPSView, uiSlot );
+			m_uiMaxPSView = std::max( m_uiMaxPSView, uiSlot );
 		}
 		else
 		{
@@ -127,8 +127,8 @@ void dx10ShaderResourceStateCache::SetGSResource( u32 uiSlot, ID3DShaderResource
 		m_GSViews[uiSlot] = pRes;
 		if (m_bUpdateGSViews)
 		{
-			m_uiMinGSView = _min( m_uiMinGSView, uiSlot );
-			m_uiMaxGSView = _max( m_uiMaxGSView, uiSlot );
+			m_uiMinGSView = std::min( m_uiMinGSView, uiSlot );
+			m_uiMaxGSView = std::max( m_uiMaxGSView, uiSlot );
 		}
 		else
 		{
@@ -148,8 +148,8 @@ void dx10ShaderResourceStateCache::SetVSResource( u32 uiSlot, ID3DShaderResource
 		m_VSViews[uiSlot] = pRes;
 		if (m_bUpdateVSViews)
 		{
-			m_uiMinVSView = _min( m_uiMinVSView, uiSlot );
-			m_uiMaxVSView = _max( m_uiMaxVSView, uiSlot );
+			m_uiMinVSView = std::min( m_uiMinVSView, uiSlot );
+			m_uiMaxVSView = std::max( m_uiMaxVSView, uiSlot );
 		}
 		else
 		{
@@ -170,8 +170,8 @@ void dx10ShaderResourceStateCache::SetHSResource( u32 uiSlot, ID3DShaderResource
 		m_HSViews[uiSlot] = pRes;
 		if (m_bUpdateHSViews)
 		{
-			m_uiMinHSView = _min( m_uiMinHSView, uiSlot );
-			m_uiMaxHSView = _max( m_uiMaxHSView, uiSlot );
+			m_uiMinHSView = std::min( m_uiMinHSView, uiSlot );
+			m_uiMaxHSView = std::max( m_uiMaxHSView, uiSlot );
 		}
 		else
 		{
@@ -191,8 +191,8 @@ void dx10ShaderResourceStateCache::SetDSResource( u32 uiSlot, ID3DShaderResource
 		m_DSViews[uiSlot] = pRes;
 		if (m_bUpdateDSViews)
 		{
-			m_uiMinDSView = _min( m_uiMinDSView, uiSlot );
-			m_uiMaxDSView = _max( m_uiMaxDSView, uiSlot );
+			m_uiMinDSView = std::min( m_uiMinDSView, uiSlot );
+			m_uiMaxDSView = std::max( m_uiMaxDSView, uiSlot );
 		}
 		else
 		{
@@ -212,8 +212,8 @@ void dx10ShaderResourceStateCache::SetCSResource( u32 uiSlot, ID3DShaderResource
 		m_CSViews[uiSlot] = pRes;
 		if (m_bUpdateCSViews)
 		{
-			m_uiMinCSView = _min( m_uiMinCSView, uiSlot );
-			m_uiMaxCSView = _max( m_uiMaxCSView, uiSlot );
+			m_uiMinCSView = std::min( m_uiMinCSView, uiSlot );
+			m_uiMaxCSView = std::max( m_uiMaxCSView, uiSlot );
 		}
 		else
 		{

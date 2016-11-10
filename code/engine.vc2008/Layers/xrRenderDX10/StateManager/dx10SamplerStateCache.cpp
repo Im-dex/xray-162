@@ -98,7 +98,7 @@ void dx10SamplerStateCache::PrepareSamplerStates(
 ) const
 {
 	//	It seems that sizeof pSS is 4 wor win32!
-	ZeroMemory(pSS, sizeof(pSS[0])*D3D_COMMONSHADER_SAMPLER_SLOT_COUNT);
+    std::memset(pSS,0,sizeof(pSS[0])*( 16 ));
 
 	for ( u32 i=0; i<samplers.size(); ++i )
 	{

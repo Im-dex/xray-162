@@ -44,7 +44,8 @@ struct SPHDBGDrawAbsract
 	virtual void				render				( )						=0;
 	virtual						~SPHDBGDrawAbsract	( )						{ };
 };
-DEFINE_VECTOR( SPHDBGDrawAbsract*, PHABS_DBG_V, PHABS_DBG_I )					;
+
+using PHABS_DBG_V = xr_vector<SPHDBGDrawAbsract*>;
 extern PHABS_DBG_V	dbg_draw_abstruct0;
 extern PHABS_DBG_V	dbg_draw_abstruct1;
 void DBG_DrawStatBeforeFrameStep( );

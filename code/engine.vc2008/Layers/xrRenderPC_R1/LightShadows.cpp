@@ -220,7 +220,7 @@ void CLightShadows::calculate	()
 			float		p_near	=	p_dist-p_R-eps;									
 			//float		p_nearR	=	C.C.distance_to(L.source->position) + p_R*0.85f + eps;
 			//			p_nearR =	p_near;
-			float		p_far	=	_min(Lrange,_max(p_dist+S_fade,p_dist+p_R));	
+			float		p_far	= std::min(Lrange, std::max(p_dist+S_fade,p_dist+p_R));
 			if (p_near<eps)			continue;
 			if (p_far<(p_near+eps))	continue;
 			//	Igor: make check here instead of assertion in buil_projection_hat
@@ -499,7 +499,7 @@ void CLightShadows::render	()
 			if (tess.size())		{
 				CI->tris			= xr_alloc<tess_tri>(CI->tcnt);
 				//Msg					("---alloc--- %x",u32(CI->tris));
-				CopyMemory		(CI->tris,&*tess.begin(),CI->tcnt * sizeof(tess_tri));
+                std::memcpy(CI->tris,&*tess.begin(),CI->tcnt * sizeof(tess_tri));
 			}
 		}
 

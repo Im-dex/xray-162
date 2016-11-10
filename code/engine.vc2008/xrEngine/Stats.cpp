@@ -371,7 +371,7 @@ void CStats::Show()
 		for (u32 it=0; it<errors.size(); it++)
 			F.OutNext("%s",errors[it].c_str());
 #else
-		for (u32 it=(u32)_max(int(0),(int)errors.size() - g_ErrorLineCount); it<errors.size(); it++)
+		for (u32 it=(u32) std::max(int(0),(int)errors.size() - g_ErrorLineCount); it<errors.size(); it++)
 			F.OutNext("%s",errors[it].c_str());
 #endif
 		F.OnRender	();
@@ -483,8 +483,8 @@ void CStats::OnRender				()
 	if (g_stats_flags.is(st_sound)){
 		CSound_stats_ext				snd_stat_ext;
 		::Sound->statistic				(0,&snd_stat_ext);
-		CSound_stats_ext::item_vec_it	_I = snd_stat_ext.items.begin();
-		CSound_stats_ext::item_vec_it	_E = snd_stat_ext.items.end();
+		auto	_I = snd_stat_ext.items.begin();
+		auto	_E = snd_stat_ext.items.end();
 		for (;_I!=_E;_I++){
 			const CSound_stats_ext::SItem& item = *_I;
 			if (item._3D)

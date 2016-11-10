@@ -6,8 +6,6 @@
 #define AFX_NET_COMPRESSOR_H__21E1ED1C_BF92_4BF0_94A8_18A27486EBFD__INCLUDED_
 #pragma once
 
-#include "xrSyncronize.h"
-
 struct	NET_Compressor_FREQ
 {
 	u32	table	[257];
@@ -50,7 +48,7 @@ public:
 	typedef u32			code_value;		/* Type of an rangecode value			*/
 	typedef u32			freq;
 private:
-	xrCriticalSection		CS;
+	std::recursive_mutex		CS;
 
 	// main structure
 	struct rangecoder {

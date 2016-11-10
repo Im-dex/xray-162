@@ -97,10 +97,10 @@ debug::text_tree&   CLevelDebug::get_text_tree ()
 
 CLevelDebug::CObjectInfo &CLevelDebug::object_info(CObject *obj, LPCSTR class_name)
 {
-	OBJECT_INFO_MAP_IT	obj_it = m_objects_info.find(obj);
+	auto	obj_it = m_objects_info.find(obj);
 	if (obj_it != m_objects_info.end()) {
 
-		CLASS_INFO_MAP_IT	class_it = 	obj_it->second.find(class_name);
+		auto	class_it = 	obj_it->second.find(class_name);
 
 		if (class_it != obj_it->second.end()) {
 			return (*(class_it->second));
@@ -124,7 +124,7 @@ CLevelDebug::CTextInfo &CLevelDebug::text(void *class_ptr, LPCSTR class_name)
 {
 	SKey key(class_ptr, class_name);
 
-	TEXT_INFO_MAP_IT it = m_text_info.find(key);
+	auto it = m_text_info.find(key);
 	if (it != m_text_info.end()) {
 		return (*it->second);
 	} else {
@@ -138,7 +138,7 @@ CLevelDebug::CLevelInfo &CLevelDebug::level_info(void *class_ptr, LPCSTR class_n
 {
 	SKey key(class_ptr, class_name);
 
-	LEVEL_INFO_MAP_IT it = m_level_info.find(key);
+    auto it = m_level_info.find(key);
 	if (it != m_level_info.end()) {
 		return (*it->second);
 	} else {
@@ -152,19 +152,19 @@ CLevelDebug::CLevelInfo &CLevelDebug::level_info(void *class_ptr, LPCSTR class_n
 void CLevelDebug::free_mem()
 {
 	//free object info
-	for (OBJECT_INFO_MAP_IT it_obj = m_objects_info.begin(); it_obj != m_objects_info.end(); ++it_obj) {
-		for (CLASS_INFO_MAP_IT it_class = it_obj->second.begin(); it_class != it_obj->second.end(); ++it_class){
+	for (auto it_obj = m_objects_info.begin(); it_obj != m_objects_info.end(); ++it_obj) {
+		for (auto it_class = it_obj->second.begin(); it_class != it_obj->second.end(); ++it_class){
 			xr_delete(it_class->second);
 		}
 	}
 
 	// free text info 
-	for (TEXT_INFO_MAP_IT it = m_text_info.begin(); it != m_text_info.end(); ++it){
+	for (auto it = m_text_info.begin(); it != m_text_info.end(); ++it){
 		xr_delete(it->second);
 	}
 
 	// free text info 
-	for (LEVEL_INFO_MAP_IT it = m_level_info.begin(); it != m_level_info.end(); ++it){
+	for (auto it = m_level_info.begin(); it != m_level_info.end(); ++it){
 		xr_delete(it->second);
 	}
 }
@@ -173,11 +173,11 @@ void CLevelDebug::draw_object_info()
 {
 
 	// handle all of the objects
-	for (OBJECT_INFO_MAP_IT it = m_objects_info.begin(); it != m_objects_info.end(); ++it) {
+	for (auto it = m_objects_info.begin(); it != m_objects_info.end(); ++it) {
 
 		// если объект невалидный - удалить информацию
 		if (!it->first || it->first->getDestroy()) {
-			for (CLASS_INFO_MAP_IT it_class = it->second.begin(); it_class != it->second.end(); ++it_class){
+			for (auto it_class = it->second.begin(); it_class != it->second.end(); ++it_class){
 				xr_delete(it_class->second);
 			}
 			m_objects_info.erase(it);
@@ -192,7 +192,7 @@ void CLevelDebug::draw_object_info()
 		float		delta_height = 0.f;
 
 		// handle all of the classes
-		for (CLASS_INFO_MAP_IT class_it = it->second.begin(); class_it != it->second.end(); ++class_it) {
+		for (auto class_it = it->second.begin(); class_it != it->second.end(); ++class_it) {
 
 			// get up on 2 meters
 			res.transform(v_res, class_it->second->get_shift_pos());
@@ -219,7 +219,7 @@ void CLevelDebug::draw_object_info()
 void CLevelDebug::draw_text()
 {
 	// handle all of the classes
-	for (TEXT_INFO_MAP_IT it = m_text_info.begin(); it != m_text_info.end(); ++it) {
+	for (auto it = m_text_info.begin(); it != m_text_info.end(); ++it) {
 		it->second->draw_text();
 	}
 }
@@ -227,7 +227,7 @@ void CLevelDebug::draw_text()
 void CLevelDebug::draw_level_info()
 {
 	// handle all of the classes
-	for (LEVEL_INFO_MAP_IT it = m_level_info.begin(); it != m_level_info.end(); ++it) {
+	for (auto it = m_level_info.begin(); it != m_level_info.end(); ++it) {
 		it->second->draw_info();
 	}
 }
@@ -341,10 +341,10 @@ void CLevelDebug::CLevelInfo::draw_info()
 void CLevelDebug::on_destroy_object(CObject *obj)
 {
 	// handle all of the objects
-	for (OBJECT_INFO_MAP_IT it = m_objects_info.begin(); it != m_objects_info.end(); ++it) {
+	for (auto it = m_objects_info.begin(); it != m_objects_info.end(); ++it) {
 		// если объект невалидный - удалить информацию
 		if (it->first == obj) {
-			for (CLASS_INFO_MAP_IT it_class = it->second.begin(); it_class != it->second.end(); ++it_class){
+			for (auto it_class = it->second.begin(); it_class != it->second.end(); ++it_class){
 				xr_delete(it_class->second);
 			}
 			m_objects_info.erase(it);

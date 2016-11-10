@@ -6,20 +6,13 @@
 #include		"../../xrEngine/bone.h"
 #include		"../../Include/xrRender/Kinematics.h"
 
-// consts
-extern	xrCriticalSection	UCalc_Mutex			;
+extern	std::recursive_mutex	UCalc_Mutex;
 
 // refs
 class	 CKinematics;
 class	 CInifile;
 class	 CBoneData;
 struct	SEnumVerticesCallback;
-
-// MT-locker
-struct	UCalc_mtlock	{
-	UCalc_mtlock()		{ UCalc_Mutex.Enter(); }
-	~UCalc_mtlock()		{ UCalc_Mutex.Leave(); }
-};
 
 #pragma warning(push)
 #pragma warning(disable:4275)

@@ -70,7 +70,7 @@ void FLOD::Copy			(dxRender_Visual *pFrom	)
 	FLOD* F				= (FLOD*)pFrom;
 	geom				= F->geom		;
 	lod_factor			= F->lod_factor	;
-	CopyMemory		(facets,F->facets,sizeof(facets));
+    std::memcpy(facets,F->facets,sizeof(facets));
 }
 void FLOD::Render		(float LOD)
 {

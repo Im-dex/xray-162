@@ -32,7 +32,7 @@ public:
 	}
 	IC SelfRef set(SelfCRef a) 
 	{
-		CopyMemory(this,&a,9*sizeof(float));
+        std::memcpy(this,&a,9*sizeof(float));
 		return *this;
 	}
 	IC SelfRef set(const _matrix<T> &a) 
@@ -66,7 +66,7 @@ public:
 	IC SelfRef transpose(void)						// self transpose - slower
 	{
 		_matrix33 a;
-		CopyMemory(&a,this,9*sizeof(float));					// save matrix
+        std::memcpy(&a,this,9*sizeof(float));					// save matrix
 		transpose(a);
 		return *this;
 	}

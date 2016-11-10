@@ -43,16 +43,13 @@ class		XRCORE_API	smem_container
 {
 private:
 	typedef xr_vector<smem_value*>		cdb;
-	xrCriticalSection					cs;
+    std::recursive_mutex					cs;
 	cdb									container;
 public:
 	smem_value*			dock			(u32 dwCRC, u32 dwLength, void* ptr);
 	void				clean			();
 	void				dump			();
 	u32					stat_economy	();
-#ifdef PROFILE_CRITICAL_SECTIONS
-						smem_container	():cs(MUTEX_PROFILE_ID(smem_container)){}
-#endif // PROFILE_CRITICAL_SECTIONS
 						~smem_container	();
 };
 XRCORE_API	extern		smem_container*	g_pSharedMemoryContainer;

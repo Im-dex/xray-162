@@ -25,7 +25,6 @@
 #	define DUMP_PHASE	do {} while (0)
 #endif // DEBUG_MEMORY_MANAGER
 
-#include "xrMemory_pso.h"
 #include "xrMemory_POOL.h"
 
 class XRCORE_API		xrMemory
@@ -39,12 +38,12 @@ public:
 	};
 public:
 	xrMemory			();
-	void				_initialize		(BOOL _debug_mode=FALSE);
+	void				_initialize		(bool _debug_mode = false);
 	void				_destroy		();
 
 #ifdef DEBUG_MEMORY_MANAGER
-	BOOL				debug_mode;
-	xrCriticalSection	debug_cs;
+	bool				debug_mode;
+    std::recursive_mutex	debug_cs;
 	std::vector<mdbg>	debug_info;
 	u32					debug_info_update;
 	u32					stat_strcmp		;
@@ -72,20 +71,9 @@ public:
 	void*				mem_realloc		(void*	p, size_t size		);
 #endif // DEBUG_MEMORY_NAME
 	void				mem_free		(void*	p					);
-
-	pso_MemCopy*		mem_copy;
-	pso_MemFill*		mem_fill;
-	pso_MemFill32*		mem_fill32;
 };
 
 extern XRCORE_API	xrMemory	Memory;
-
-#undef	ZeroMemory
-#undef	CopyMemory
-#undef	FillMemory
-#define ZeroMemory(a,b)		Memory.mem_fill(a,0,b)
-#define CopyMemory(a,b,c)	memcpy(a,b,c)			//. CopyMemory(a,b,c)
-#define FillMemory(a,b,c)	Memory.mem_fill(a,c,b)
 
 // delete
 #ifdef __BORLANDC__
@@ -138,7 +126,7 @@ const		u32			mem_pools_count			=	54;
 const		u32			mem_pools_ebase			=	16;
 const		u32			mem_generic				=	mem_pools_count+1;
 extern		MEMPOOL		mem_pools				[mem_pools_count];
-extern		BOOL		mem_initialized;
+extern		bool		mem_initialized;
 
 XRCORE_API void vminfo			(size_t *_free, size_t *reserved, size_t *committed);
 XRCORE_API void log_vminfo		();

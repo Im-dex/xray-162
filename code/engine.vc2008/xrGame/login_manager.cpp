@@ -312,7 +312,7 @@ void __cdecl login_manager::login_cb(GPConnection * connection,
 	}
 
 	char tmp_ticket_dest[GP_LOGIN_TICKET_LEN];
-	ZeroMemory(tmp_ticket_dest, sizeof(tmp_ticket_dest));
+    std::memset(tmp_ticket_dest, 0, sizeof(tmp_ticket_dest));
 
 	VERIFY(my_inst->m_gamespy_gp);
 	GPResult tmp_lticket_res = my_inst->m_gamespy_gp->GetLoginTicket(tmp_ticket_dest);

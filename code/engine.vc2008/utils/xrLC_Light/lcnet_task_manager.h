@@ -29,9 +29,9 @@ namespace	lc_net
 		DWORD						session_id;
 		u32							tasks_completed;
 		bool						_release;
-		xrCriticalSection			pool_lock;
-		xrCriticalSection			log_lock;
-		xrCriticalSection			init_lock;
+		std::recursive_mutex			pool_lock;
+		std::recursive_mutex			log_lock;
+		std::recursive_mutex			init_lock;
 	private:
 		void			send_task			( IGridUser& user, u32 id  );
 		void			receive_result		( IGenericStream* inStream );

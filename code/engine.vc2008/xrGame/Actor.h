@@ -529,7 +529,7 @@ virtual	bool				can_validate_position_on_spawn	(){return false;}
 	Fvector			IPosS, IPosH, IPosL;	//положение актера после интерпол€ции Ѕизье, Ёрмита, линейной
 
 #ifdef DEBUG
-	DEF_DEQUE		(VIS_POSITION, Fvector);
+    using VIS_POSITION = xr_deque<Fvector>;
 
 	VIS_POSITION	LastPosS;
 	VIS_POSITION	LastPosH;

@@ -58,7 +58,7 @@ u32 GetNVGpuNum()
 	{
 		status = NvAPI_GetPhysicalGPUsFromLogicalGPU( logicalGPUs[i], physicalGPUs, &physicalGPUCount);
 		if (status == NVAPI_OK)
-			iGpuNum = _max( iGpuNum, physicalGPUCount);
+			iGpuNum = std::max( iGpuNum, (int)physicalGPUCount);
 	}
 
 	if (iGpuNum>1)
@@ -86,11 +86,11 @@ u32 GetGpuNum()
 {
 	u32 res = GetNVGpuNum();
 
-	res = _max( res, GetATIGpuNum() );
+	res = std::max( res, GetATIGpuNum() );
 
-	res = _max( res, 2 );
+	res = std::max( res, (u32)2 );
 
-	res = _min( res, CHWCaps::MAX_GPUS );
+	res = std::min( res, (u32)CHWCaps::MAX_GPUS );
 
 	//	It's vital to have at least one GPU, else
 	//	code will fail.
@@ -124,7 +124,7 @@ void CHWCaps::Update()
 	clamp<DWORD>(cnt,0,256);
 	geometry.dwRegisters		= cnt;
 	geometry.dwInstructions		= 256;
-	geometry.dwClipPlanes		= _min(caps.MaxUserClipPlanes,15);
+	geometry.dwClipPlanes		= std::min((u32)caps.MaxUserClipPlanes,(u32)15);
 	geometry.bVTF				= (geometry_major>=3) && HW.support(D3DFMT_R32F,D3DRTYPE_TEXTURE,D3DUSAGE_QUERY_VERTEXTEXTURE);
 
 	// ***************** PIXEL processing
@@ -223,7 +223,7 @@ void CHWCaps::Update()
 	clamp<DWORD>(cnt,0,256);
 	geometry.dwRegisters		= cnt;
 	geometry.dwInstructions		= 256;
-	geometry.dwClipPlanes		= _min(6,15);
+	geometry.dwClipPlanes		= std::min(6,15);
 	geometry.bVTF				= TRUE;
 
 	// ***************** PIXEL processing

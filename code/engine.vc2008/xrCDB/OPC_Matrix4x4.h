@@ -39,7 +39,7 @@
 										m[3][0] = m30;	m[3][1] = m31;	m[3][2] = m32;	m[3][3] = m33;
 									}
 		//! Copy constructor
-		inline_						Matrix4x4(const Matrix4x4& mat)				{ CopyMemory(m, &mat.m, 16*sizeof(float));	}
+		inline_						Matrix4x4(const Matrix4x4& mat)				{ std::memcpy(m, &mat.m, 16*sizeof(float));	}
 		//! Destructor.
 		inline_						~Matrix4x4()								{}
 
@@ -98,7 +98,7 @@
 				}
 
 		//! Copy from a Matrix4x4
-		inline_	void				Copy(const Matrix4x4& source)				{ CopyMemory(m, source.m, 16*sizeof(float));	}
+		inline_	void				Copy(const Matrix4x4& source)				{ std::memcpy(m, source.m, 16*sizeof(float));	}
 
 		// Row-column access
 		//! Returns a row.
@@ -166,7 +166,7 @@
 		//! Computes the trace of the upper 3x3 matrix.
 		inline_	float				Trace3x3()		const			{ return m[0][0] + m[1][1] + m[2][2];					}
 		//! Clears the matrix.
-		inline_	void				Zero()							{ ZeroMemory(&m,  sizeof(m));							}
+		inline_	void				Zero()							{ std::memset(&m, 0,  sizeof(m));							}
 		//! Sets the identity matrix.
 		inline_	void				Identity()						{ Zero(); m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0f;	}
 		//! Checks for identity

@@ -78,7 +78,7 @@ dx103DFluidManager::dx103DFluidManager()
 	m_fDecay(1.0f), m_pGrid(0), m_pRenderer(0),
 	m_pObstaclesHandler(0)
 {
-	ZeroMemory(pRenderTargetViews, sizeof(pRenderTargetViews));
+    std::memset(pRenderTargetViews,0,sizeof(pRenderTargetViews));
 
 	//RenderTargetFormats [RENDER_TARGET_VELOCITY0]	= DXGI_FORMAT_R16G16B16A16_FLOAT;
 	RenderTargetFormats [RENDER_TARGET_VELOCITY1]	= DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -122,7 +122,7 @@ void dx103DFluidManager::Initialize( int width, int height, int depth )
 	desc.Depth =  depth;
 
 	D3D_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-	ZeroMemory( &SRVDesc, sizeof(SRVDesc) );
+    std::memset(&SRVDesc,0,sizeof(SRVDesc));
 	SRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE3D;
 	SRVDesc.Texture3D.MipLevels = 1;
 	SRVDesc.Texture3D.MostDetailedMip = 0;

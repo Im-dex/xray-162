@@ -28,9 +28,9 @@ IC CGameLevelCrossTable::CGameLevelCrossTable(LPCSTR fName)
 #endif // AI_COMPILER
 
 IC CGameLevelCrossTable::CGameLevelCrossTable	(const void *buffer, const u32 &buffer_size) :
-	m_tpCrossTableVFS	(0)
+	m_tpCrossTableVFS	(nullptr)
 {
-	Memory.mem_copy		(&m_tCrossTableHeader,buffer,sizeof(m_tCrossTableHeader));
+    std::memcpy(&m_tCrossTableHeader,buffer,sizeof(m_tCrossTableHeader));
 	buffer				= (const u8*)buffer + sizeof(m_tCrossTableHeader);
 
 	R_ASSERT2			(m_tCrossTableHeader.version() == XRAI_CURRENT_VERSION,"Cross table version mismatch!");
