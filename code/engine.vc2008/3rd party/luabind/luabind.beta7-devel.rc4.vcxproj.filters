@@ -200,13 +200,7 @@
     <ClInclude Include="..\..\..\sdk\include\luabind\class_info.hpp">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sdk\include\luabind\com_policy.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sdk\include\luabind\config.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sdk\include\luabind\container_policy.hpp">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sdk\include\luabind\copy_policy.hpp">
@@ -237,9 +231,6 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sdk\include\luabind\luabind.hpp">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sdk\include\luabind\luabind_auto_ptr.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sdk\include\luabind\luabind_delete.h">
@@ -303,9 +294,6 @@
       <Filter>include\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\call_member.hpp">
-      <Filter>include\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sdk\include\luabind\detail\call_operator_iterate.hpp">
       <Filter>include\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\class_cache.hpp">
@@ -374,9 +362,6 @@
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\operator_id.hpp">
       <Filter>include\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sdk\include\luabind\detail\operators.hpp">
-      <Filter>include\detail</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\other.hpp">
       <Filter>include\detail</Filter>
     </ClInclude>
@@ -419,10 +404,9 @@
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\typetraits.hpp">
       <Filter>include\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sdk\include\luabind\detail\yes_no.hpp">
-      <Filter>include\detail</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="..\..\..\SDK\include\luabind\detail\policy_cons.hpp" />
+    <ClInclude Include="..\..\..\SDK\include\luabind\detail\calc_has_arg.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="luabind\doc\docs.html">

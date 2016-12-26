@@ -174,37 +174,6 @@ luabind::detail::class_rep::allocate(lua_State* L) const
 
 	return std::pair<void*,void*>(mem,ptr);
 }
-/*
-#include <iostream>
-namespace
-{
-	void dump_stack(lua_State* L)
-	{
-		for (int i = 1; i <= lua_gettop(L); ++i)
-		{
-			int t = lua_type(L, i);
-			switch (t)
-			{
-			case LUA_TNUMBER:
-				std::cout << "[" << i << "] number: " << lua_tonumber(L, i) << "\n";
-				break;
-			case LUA_TSTRING:
-				std::cout << "[" << i << "] string: " << lua_tostring(L, i) << "\n";
-				break;
-			case LUA_TUSERDATA:
-				std::cout << "[" << i << "] userdata: " << lua_touserdata(L, i) << "\n";
-				break;
-			case LUA_TTABLE:
-				std::cout << "[" << i << "] table:\n";
-				break;
-			case LUA_TNIL:
-				std::cout << "[" << i << "] nil:\n";
-				break;
-			}
-		}
-	}
-}
-*/
 
 void luabind::detail::class_rep::adopt(bool const_obj, void* obj)
 {
@@ -523,7 +492,7 @@ int luabind::detail::class_rep::constructor_dispatcher(lua_State* L)
 		void* obj_rep;
 		void* held;
 
-		boost::tie(obj_rep,held) = crep->allocate(L);
+		std::tie(obj_rep,held) = crep->allocate(L);
 
 		weak_ref backref(L, -1);
 
@@ -725,131 +694,6 @@ int luabind::detail::class_rep::function_dispatcher(lua_State* L)
 	lua_error(L);
 	return 0; // will never be reached
 }
-
-#if 0//ndef NDEBUG
-
-namespace
-{
-	string_class to_string(luabind::object const& o)
-	{
-		using namespace luabind;
-		if (o.type() == LUA_TSTRING) return object_cast<string_class>(o);
-		lua_State* L = o.lua_state();
-		LUABIND_CHECK_STACK(L);
-
-#ifdef BOOST_NO_STRINGSTREAM
-		strstream_class s;
-#else
-		stringstream_class s;
-#endif
-
-		if (o.type() == LUA_TNUMBER)
-		{
-			s << object_cast<float>(o);
-			return s.str();
-		}
-
-		s << "<" << lua_typename(L, o.type()) << ">";
-#ifdef BOOST_NO_STRINGSTREAM
-		s << std::ends;
-#endif
-		return s.str();
-	}
-
-
-	string_class member_to_string(luabind::object const& e)
-	{
-#if !defined(LUABIND_NO_ERROR_CHECKING)
-        using namespace luabind;
-		lua_State* L = e.lua_state();
-		LUABIND_CHECK_STACK(L);
-
-		if (e.type() == LUA_TFUNCTION)
-		{
-			e.pushvalue();
-			detail::stack_pop p(L, 1);
-
-			{
-				if (lua_getupvalue(L, -1, 3) == 0) return to_string(e);
-				detail::stack_pop p2(L, 1);
-				if (lua_touserdata(L, -1) != reinterpret_cast<void*>(0x1337)) return to_string(e);
-			}
-
-#ifdef BOOST_NO_STRINGSTREAM
-			strstream_class s;
-#else
-			stringstream_class s;
-#endif
-			{
-				lua_getupvalue(L, -1, 2);
-				detail::stack_pop p2(L, 1);
-				int b = lua_toboolean(L, -1);
-				s << "<c++ function";
-				if (b) s << " (default)";
-				s << "> ";
-			}
-
-			{
-				lua_getupvalue(L, -1, 1);
-				detail::stack_pop p2(L, 1);
-				method_rep* m = static_cast<method_rep*>(lua_touserdata(L, -1));
-				s << m << "\n";
-				for (vector_class<overload_rep>::const_iterator i = m->overloads().begin();
-					i != m->overloads().end(); ++i)
-				{
-					string_class str;
-					i->get_signature(L, str);
-					s << "   " << str << "\n";
-				}
-			}
-#ifdef BOOST_NO_STRINGSTREAM
-			s << std::ends;
-#endif
-			return s.str();
-		}
-
-        return to_string(e);
-#else
-        return "";
-#endif
-	}
-}
-
-string_class luabind::detail::class_rep::class_info_string(lua_State* L) const
-{
-#ifdef BOOST_NO_STRINGSTREAM
-	strstream_class ret;
-#else
-	stringstream_class ret;
-#endif
-
-	ret << "CLASS: " << m_name << "\n";
-
-	ret << "dynamic dispatch functions:\n------------------\n";
-
-	get_table(L);
-	object t(L);
-	t.set();
-	for (object::iterator i = t.begin(); i != t.end(); ++i)
-	{
-		object e = *i;
-		ret << "  " << to_string(i.key()) << ": " << member_to_string(e) << "\n";
-	}
-
-	ret << "default implementations:\n------------------\n";
-	get_default_table(L);
-	t.set();
-	for (object::iterator i = t.begin(); i != t.end(); ++i)
-	{
-		object e = *i;
-		ret << "  " << to_string(i.key()) << ": " << member_to_string(e) << "\n";
-	}
-#ifdef BOOST_NO_STRINGSTREAM
-	ret << std::ends;
-#endif
-	return ret.str();
-}
-#endif
 
 void luabind::detail::class_rep::add_base_class(const luabind::detail::class_rep::base_info& binfo)
 {
@@ -1182,7 +1026,7 @@ int luabind::detail::class_rep::construct_lua_class_callback(lua_State* L)
 	void* obj_ptr;
 	void* held_storage;
 
-	boost::tie(obj_ptr, held_storage) = crep->allocate(L);
+	std::tie(obj_ptr, held_storage) = crep->allocate(L);
 	(new(obj_ptr) object_rep(crep, flags, ref))->set_object(held_storage);
 
 	detail::getref(L, crep->metatable_ref());

@@ -32,7 +32,7 @@
 namespace luabind { namespace detail {
 
     registration::registration()
-        : m_next(0)
+        : m_next(nullptr)
     {
     }
 
@@ -43,20 +43,14 @@ namespace luabind { namespace detail {
 
     } // namespace detail
     
-    scope::scope()
-        : m_chain(0)
+    scope::scope() noexcept
+        : m_chain(nullptr)
     {
     }
     
-    scope::scope(luabind::auto_ptr<detail::registration> reg)
-        : m_chain(reg.release())
+    scope::scope(detail::registration* reg) noexcept
+        : m_chain(reg)
     {
-    }
-
-    scope::scope(scope const& other)
-        : m_chain(other.m_chain)
-    {
-        const_cast<scope&>(other).m_chain = 0;
     }
 
     scope::~scope()
@@ -64,13 +58,13 @@ namespace luabind { namespace detail {
         luabind_delete	(m_chain);
     }
     
-    scope& scope::operator,(scope s)
+    scope&& scope::operator,(scope&& s) &&
     {
         if (!m_chain) 
         {
             m_chain = s.m_chain;
-            s.m_chain = 0;
-            return *this;
+            s.m_chain = nullptr;
+            return std::move(*this);
         }
         
         for (detail::registration* c = m_chain;; c = c->m_next)
@@ -78,17 +72,17 @@ namespace luabind { namespace detail {
             if (!c->m_next)
             {
                 c->m_next = s.m_chain;
-                s.m_chain = 0;
+                s.m_chain = nullptr;
                 break;
             }
         }
 
-        return *this;
+        return std::move(*this);
     }
 
     void scope::register_(lua_State* L) const
     {
-        for (detail::registration* r = m_chain; r != 0; r = r->m_next)
+        for (detail::registration* r = m_chain; r != nullptr; r = r->m_next)
         {
 			LUABIND_CHECK_STACK(L);
             r->register_(L);
@@ -124,7 +118,7 @@ namespace luabind {
     {
     }
 
-    void module_::operator[](scope s)
+    void module_::operator[](scope&& s)
     {
         if (m_name)
         {
@@ -192,15 +186,20 @@ namespace luabind {
     };
 
     namespace_::namespace_(char const* name)
-        : scope(luabind::auto_ptr<detail::registration>(
-			m_registration = luabind_new<registration_>(name)))
+        : namespace_(luabind_new<registration_>(name))
     {
     }
 
-    namespace_& namespace_::operator[](scope s)
+    namespace_::namespace_(registration_* reg)
+        : scope(reg),
+          m_registration(reg)
     {
-        m_registration->m_scope.operator,(s);        
-        return *this;
+    }
+
+    namespace_&& namespace_::operator[](scope&& s) &&
+    {
+        m_registration->m_scope = std::move(m_registration->m_scope).operator,(std::move(s));
+        return std::move(*this);
     }
 
 } // namespace luabind

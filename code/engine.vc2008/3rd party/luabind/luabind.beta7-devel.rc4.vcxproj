@@ -177,14 +177,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="luabind\src\class.cpp" />
+    <ClCompile Include="luabind\src\class.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="luabind\src\class_info.cpp" />
     <ClCompile Include="luabind\src\class_registry.cpp" />
     <ClCompile Include="luabind\src\class_rep.cpp" />
     <ClCompile Include="luabind\src\create_class.cpp" />
-    <ClCompile Include="luabind\src\error.cpp" />
+    <ClCompile Include="luabind\src\error.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">Use</PrecompiledHeader>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="luabind\src\find_best_match.cpp" />
-    <ClCompile Include="luabind\src\function.cpp" />
+    <ClCompile Include="luabind\src\function.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PreprocessToFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="luabind\src\implicit_cast.cpp" />
     <ClCompile Include="luabind\src\link_compatibility.cpp" />
     <ClCompile Include="luabind\src\object.cpp" />
@@ -345,15 +359,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Mixed|Win32'">true</ExcludedFromBuild>
     </CustomBuildStep>
+    <ClInclude Include="..\..\..\SDK\include\luabind\detail\calc_has_arg.hpp" />
+    <ClInclude Include="..\..\..\SDK\include\luabind\detail\policy_cons.hpp" />
     <ClInclude Include="luabind\examples\filesystem\directory_iterator.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\adopt_policy.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\back_reference.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\back_reference_fwd.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\class.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\class_info.hpp" />
-    <ClInclude Include="..\..\..\sdk\include\luabind\com_policy.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\config.hpp" />
-    <ClInclude Include="..\..\..\sdk\include\luabind\container_policy.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\copy_policy.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\dependency_policy.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\discard_result_policy.hpp" />
@@ -364,7 +378,6 @@
     <ClInclude Include="..\..\..\sdk\include\luabind\library_linkage.h" />
     <ClInclude Include="..\..\..\sdk\include\luabind\lua_include.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\luabind.hpp" />
-    <ClInclude Include="..\..\..\sdk\include\luabind\luabind_auto_ptr.h" />
     <ClInclude Include="..\..\..\sdk\include\luabind\luabind_delete.h" />
     <ClInclude Include="..\..\..\sdk\include\luabind\luabind_memory.h" />
     <ClInclude Include="..\..\..\sdk\include\luabind\luabind_memory_allocator.h" />
@@ -386,7 +399,6 @@
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\call.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\call_function.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\call_member.hpp" />
-    <ClInclude Include="..\..\..\sdk\include\luabind\detail\call_operator_iterate.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\class_cache.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\class_registry.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\class_rep.hpp" />
@@ -409,7 +421,6 @@
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\object_rep.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\open.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\operator_id.hpp" />
-    <ClInclude Include="..\..\..\sdk\include\luabind\detail\operators.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\other.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\overload_rep.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\overload_rep_base.hpp" />
@@ -424,7 +435,6 @@
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\signature_match.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\stack_utils.hpp" />
     <ClInclude Include="..\..\..\sdk\include\luabind\detail\typetraits.hpp" />
-    <ClInclude Include="..\..\..\sdk\include\luabind\detail\yes_no.hpp" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

@@ -20,8 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef LUABIND_DEBUG_HPP_INCLUDED
-#define LUABIND_DEBUG_HPP_INCLUDED
+#pragma once
 
 #ifndef NDEBUG
 
@@ -51,5 +50,3 @@ namespace luabind { namespace detail
 #else
 #define LUABIND_CHECK_STACK(L) do {} while (0)
 #endif
-
-#endif // LUABIND_DEBUG_HPP_INCLUDED

@@ -20,78 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-#ifndef LUABIND_CONFIG_HPP_INCLUDED
-#define LUABIND_CONFIG_HPP_INCLUDED
-
-#if defined(__GNUC__) && __GNUC__ < 3
-#	define BOOST_NO_STRINGSTREAM
-#endif
-
-#include <boost/config.hpp>
-
-#ifdef BOOST_MSVC
-	#define LUABIND_ANONYMOUS_FIX static
-#else
-	#define LUABIND_ANONYMOUS_FIX
-#endif
+#pragma once
 
 #define LUABIND_DONT_COPY_STRINGS
 
-#if defined (BOOST_MSVC) && (BOOST_MSVC <= 1200)
-
-#define for if (false) {} else for
-
-#include <cstring>
-
-namespace std
-{
-	using ::strlen;
-	using ::strcmp;
-	using ::type_info;
-}
-
-#endif
-
-#if defined (BOOST_MSVC) && (BOOST_MSVC <= 1300)
-	#define LUABIND_MSVC_TYPENAME
-#else
-	#define LUABIND_MSVC_TYPENAME typename
-#endif
-
-// the maximum number of arguments of functions that's
-// registered. Must at least be 2
-#ifndef LUABIND_MAX_ARITY
-	#define LUABIND_MAX_ARITY 10
-#elif LUABIND_MAX_ARITY < 10
-	#undef LUABIND_MAX_ARITY
-	#define LUABIND_MAX_ARITY 10
-#endif
-
-// the maximum number of classes one class
-// can derive from
-// max bases must at least be 1
-#ifndef LUABIND_MAX_BASES
-	#define LUABIND_MAX_BASES 10
-#elif LUABIND_MAX_BASES <= 0
-	#undef LUABIND_MAX_BASES
-	#define LUABIND_MAX_BASES 1
-#endif
-
 #ifdef NDEBUG
-
 
 #	ifndef LUABIND_NO_ERROR_CHECKING
 #		define LUABIND_NO_ERROR_CHECKING
 #	endif // LUABIND_NO_ERROR_CHECKING
 
 #	define LUABIND_NO_EXCEPTIONS
-#	define BOOST_NO_EXCEPTIONS
-
-/*namespace std
-{
-	void terminate();
-}*/
 
 #endif // NDEBUG
 // LUABIND_NO_ERROR_CHECKING
@@ -166,10 +105,4 @@ namespace std
 #define set_class				luabind::internal_set
 #define multimap_class			luabind::internal_multimap
 #define multiset_class			luabind::internal_multiset
-#ifdef BOOST_NO_STRINGSTREAM
-#	define strstream_class		luabind::internal_strstream
-#else // BOOST_NO_STRINGSTREAM
-#	define stringstream_class	luabind::internal_stringstream
-#endif // BOOST_NO_STRINGSTREAM
-
-#endif // LUABIND_CONFIG_HPP_INCLUDED
+#define stringstream_class		luabind::internal_stringstream

@@ -6,8 +6,7 @@
 //	Description : luabind memory
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef LUABIND_MEMORY_H_INCLUDED
-#define LUABIND_MEMORY_H_INCLUDED
+#pragma once
 
 #ifdef DEBUG
 #	ifdef NDEBUG
@@ -16,7 +15,6 @@
 #endif // #ifdef DEBUG
 
 #include <luabind/luabind_types.h>
-#include <boost/type_traits/is_polymorphic.hpp>
 
 namespace luabind {
 	extern LUABIND_API	memory_allocation_function_pointer		allocator;
@@ -29,9 +27,4 @@ namespace luabind {
 } // namespace luabind
 
 #include <luabind/luabind_delete.h>
-#include <luabind/luabind_auto_ptr.h>
-
-#define LUABIND_MEMORY_MANAGER_GENERATOR_MAX_ARITY	6
 #include <luabind/luabind_memory_manager_generator.h>
-
-#endif // #ifndef LUABIND_MEMORY_H_INCLUDED

@@ -111,7 +111,7 @@ namespace luabind
 {
 	namespace
 	{
-		LUABIND_ANONYMOUS_FIX detail::policy_cons<detail::dir_iterator_policy, detail::null_type> return_directory_iterator;
+		detail::policy_cons<detail::dir_iterator_policy, detail::null_type> return_directory_iterator;
 	}
 }
 

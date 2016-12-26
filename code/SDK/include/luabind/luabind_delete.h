@@ -6,8 +6,9 @@
 //	Description : luabind delete
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef LUABIND_DELETE_H_INCLUDED
-#define LUABIND_DELETE_H_INCLUDED
+#pragma once
+
+#include <type_traits>
 
 namespace luabind {
 	extern LUABIND_API	memory_allocation_function_pointer	allocator;
@@ -44,11 +45,9 @@ namespace luabind {
 
 		delete_helper<
 			T,
-			boost::is_polymorphic<T>::value
+			std::is_polymorphic_v<T>
 		>::apply					(
 			pointer
 		);
 	}
 } // namespace luabind
-
-#endif // #ifndef LUABIND_DELETE_H_INCLUDED

@@ -20,9 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-#ifndef LUABIND_METHOD_REP_HPP_INCLUDED
-#define LUABIND_METHOD_REP_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 
@@ -79,5 +77,3 @@ namespace luabind { namespace detail
 	};
 
 }}
-
-#endif // LUABIND_METHOD_REP_HPP_INCLUDED

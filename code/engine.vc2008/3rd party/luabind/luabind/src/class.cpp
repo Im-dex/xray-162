@@ -142,7 +142,7 @@ namespace luabind { namespace detail {
             // but only for the base class, if it already
             // exists, we don't have to register it
             detail::class_rep* c = r->find_class(m_holder_type);
-            if (c == 0)
+            if (c == nullptr)
             {
                 r->add_class(m_holder_type, crep);
                 r->add_class(m_const_holder_type, crep);
@@ -228,9 +228,13 @@ namespace luabind { namespace detail {
     // -- interface ---------------------------------------------------------
 
     class_base::class_base(char const* name)
-        : scope(luabind::auto_ptr<registration>(
-				m_registration = luabind_new<class_registration>(name))
-          )
+        : class_base(luabind_new<class_registration>(name))
+    {
+    }
+
+    class_base::class_base(class_registration* reg)
+        : scope(reg),
+          m_registration(reg)
     {
     }
 
@@ -269,7 +273,7 @@ namespace luabind { namespace detail {
     }
 
     void class_base::add_getter(
-		const char* name, const boost::function2<int, lua_State*, int, luabind::memory_allocator<boost::function_base> >& g)
+		const char* name, const std::function<int(lua_State*, int)>& g)
     {
         detail::class_rep::callback c;
         c.func = g;
@@ -282,11 +286,11 @@ namespace luabind { namespace detail {
 #ifdef LUABIND_NO_ERROR_CHECKING
     void class_base::add_setter(
         const char* name
-        , const boost::function2<int, lua_State*, int, luabind::memory_allocator<boost::function_base> >& s)
+        , const std::function<int(lua_State*, int)>& s)
 #else
     void class_base::add_setter(
         const char* name
-        , const boost::function2<int, lua_State*, int, luabind::memory_allocator<boost::function_base> >& s
+        , const std::function<int(lua_State*, int)>& s
         , int (*match)(lua_State*, int)
         , void (*get_sig_ptr)(lua_State*, string_class&))
 #endif
@@ -368,9 +372,9 @@ namespace luabind { namespace detail {
         m_registration->m_static_constants[name] = val;
     }
 
-    void class_base::add_inner_scope(scope& s)
+    void class_base::add_inner_scope(scope&& s)
     {
-        m_registration->m_scope.operator,(s);
+        m_registration->m_scope = std::move(m_registration->m_scope).operator,(std::move(s));
     }
 
 	template<class T>

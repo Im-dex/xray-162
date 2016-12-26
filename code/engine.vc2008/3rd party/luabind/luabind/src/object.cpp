@@ -86,8 +86,6 @@ LUABIND_PROXY_ASSIGNMENT_OPERATOR(proxy_array_object)
 		// *************************************
 		// PROXY ARRAY OBJECT
 
-
-
 #define LUABIND_ARRAY_PROXY_ASSIGNMENT_OPERATOR(rhs)\
 		proxy_array_object& proxy_array_object::operator=(const rhs& p) \
 		{ \

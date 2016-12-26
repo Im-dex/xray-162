@@ -20,15 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-#ifndef LUABIND_CLASS_REP_HPP_INCLUDED
-#define LUABIND_CLASS_REP_HPP_INCLUDED
-
-#include <boost/limits.hpp>
-#include <boost/preprocessor/repetition/enum_params_with_a_default.hpp>
+#pragma once
 
 #include <utility>
 #include <list>
+#include <functional>
 
 #include <luabind/config.hpp>
 #include <luabind/detail/object_rep.hpp>
@@ -45,9 +41,9 @@
 namespace luabind
 {
 
-	template<BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT(LUABIND_MAX_BASES, class A, detail::null_type)>
+	template<typename... Ts>
 	struct bases {};
-	typedef bases<detail::null_type> no_bases;
+    using no_bases = bases<>;
 }
 
 namespace luabind { namespace detail
@@ -215,7 +211,22 @@ namespace luabind { namespace detail
 		// this is used to describe setters and getters
 		struct callback
 		{
-			boost::function2<int, lua_State*, int, luabind::memory_allocator<boost::function_base> > func;
+		private:
+            luabind::memory_allocator<unsigned char> allocator;
+		public:
+
+            callback()
+                : allocator(),
+		          func(std::allocator_arg_t(), allocator)
+#ifndef LUABIND_NO_ERROR_CHECKING
+                  ,sig(nullptr),
+                  pointer_offset(0)
+#endif
+            {
+            }
+
+            std::function<int(lua_State*, int)> func;
+
 #ifndef LUABIND_NO_ERROR_CHECKING
 			int (*match)(lua_State*, int);
 
@@ -416,5 +427,3 @@ namespace luabind { namespace detail
 }}
 
 #include <luabind/detail/overload_rep_impl.hpp>
-
-#endif // LUABIND_CLASS_REP_HPP_INCLUDED

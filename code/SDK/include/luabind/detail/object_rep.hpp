@@ -20,9 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-#ifndef LUABIND_OBJECT_REP_HPP_INCLUDED
-#define LUABIND_OBJECT_REP_HPP_INCLUDED
+#pragma once
 
 #include <luabind/config.hpp>
 #include <luabind/detail/ref.hpp>
@@ -118,19 +116,14 @@ namespace luabind { namespace detail
 	inline object_rep* is_class_object(lua_State* L, int index)
 	{
 		object_rep* obj = static_cast<detail::object_rep*>(lua_touserdata(L, index));
-		if (!obj) return 0;
+		if (!obj) return nullptr;
 		if (lua_getmetatable(L, index) == 0) return 0;
 
 		lua_pushstring(L, "__luabind_class");
 		lua_gettable(L, -2);
 		bool confirmation = lua_toboolean(L, -1) != 0;
 		lua_pop(L, 2);
-		if (!confirmation) return 0;
+		if (!confirmation) return nullptr;
 		return obj;
-
 	}
-
 }}
-
-#endif // LUABIND_OBJECT_REP_HPP_INCLUDED
-

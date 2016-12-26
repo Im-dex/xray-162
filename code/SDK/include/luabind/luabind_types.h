@@ -6,8 +6,7 @@
 //	Description : luabind types
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef LUABIND_TYPES_H_INCLUDED
-#define LUABIND_TYPES_H_INCLUDED
+#pragma once
 
 #include <memory>
 #include <string>
@@ -31,5 +30,3 @@ namespace luabind {
 
 	typedef		std::basic_string<char, std::char_traits<char>, memory_allocator<char> >		internal_string;
 } // namespace luabind
-
-#endif // #ifndef LUABIND_TYPES_H_INCLUDED

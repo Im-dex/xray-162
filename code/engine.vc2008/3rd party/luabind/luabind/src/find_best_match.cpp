@@ -26,6 +26,8 @@
 
 #include <luabind/luabind.hpp>
 
+#include <limits>
+
 using namespace luabind::detail;
 
 bool luabind::detail::find_best_match(
@@ -80,4 +82,3 @@ void luabind::detail::find_exact_match(
         reinterpret_cast<const char*&>(start) += orep_size;
     }
 }
-

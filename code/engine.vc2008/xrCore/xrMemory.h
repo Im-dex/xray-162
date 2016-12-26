@@ -103,6 +103,9 @@ extern XRCORE_API	xrMemory	Memory;
 
 XRCORE_API	char* 	xr_strdup	(const char* string);
 
+#pragma warning(push)
+#pragma warning(disable:4595) // Warning C4595 'operator new': non - member operator new or delete functions may not be declared inline
+
 #ifdef DEBUG_MEMORY_NAME
 // Global new/delete override
 #	if !(defined(__BORLANDC__) || defined(NO_XRNEW))
@@ -120,6 +123,7 @@ XRCORE_API	char* 	xr_strdup	(const char* string);
 #	endif
 #endif // DEBUG_MEMORY_MANAGER
 
+#pragma warning(pop)
 
 // POOL-ing
 const		u32			mem_pools_count			=	54;
