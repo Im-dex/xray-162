@@ -998,8 +998,6 @@ HRESULT	CRender::shader_compile			(
 			u32 crc = 0;
 			crc = file->r_u32();
 
-			//boost::crc_32_type		processor;
-			//processor.process_block	( file->pointer(), ((char*)file->pointer()) + file->elapsed() );
 			u32 const real_crc = crc32(file->pointer(), file->elapsed());
 
 			if ( real_crc == crc ) {

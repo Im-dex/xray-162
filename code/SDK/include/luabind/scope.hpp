@@ -120,10 +120,25 @@ namespace luabind {
         void operator[](scope&& s);
 
         module_(const module_&) = delete;
-        module_(module_&&) noexcept = default;
+
+        module_(module_&& that) noexcept
+            : m_state(that.m_state),
+              m_name(that.m_name)
+        {
+            that.m_state = nullptr;
+            that.m_name = nullptr;
+        }
 
         module_& operator= (const module_&) = delete;
-        module_& operator= (module_&&) noexcept = default;
+
+        module_& operator= (module_&& that) noexcept
+        {
+            m_state = that.m_state;
+            m_name = that.m_name;
+            that.m_state = nullptr;
+            that.m_name = nullptr;
+            return *this;
+        }
 
     private:
         lua_State* m_state;

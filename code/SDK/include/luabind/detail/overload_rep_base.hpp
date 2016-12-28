@@ -36,6 +36,12 @@ namespace luabind { namespace detail
         overload_rep_base(): allocator(), m_match_fun(std::allocator_arg_t(), allocator), m_arity(-1) {}
 #endif
 
+        overload_rep_base(const overload_rep_base&) = default;
+        overload_rep_base(overload_rep_base&&) = default;
+
+        overload_rep_base& operator= (const overload_rep_base&) = default;
+        overload_rep_base& operator= (overload_rep_base&&) = default;
+
         using match_fun_t = std::function<int(lua_State*)>;
 		typedef void(*get_sig_ptr)(lua_State*, string_class&);
 

@@ -244,9 +244,6 @@
     <Filter Include="OpenAutomate">
       <UniqueIdentifier>{6f41ecfc-9dce-4607-8b0d-053a98181614}</UniqueIdentifier>
     </Filter>
-    <Filter Include="My Amplifier Results">
-      <UniqueIdentifier>{09ef455f-1f18-4b5c-a73e-ae3cef0c84d1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="_d3d_extensions.h">
@@ -818,9 +815,6 @@
     <ClCompile Include="mailSlot.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="_scripting.cpp">
-      <Filter>Engine\Core\Scripting</Filter>
-    </ClCompile>
     <ClCompile Include="ai_script_lua_debug.cpp">
       <Filter>Engine\Core\Scripting</Filter>
     </ClCompile>
@@ -974,15 +968,6 @@
     </None>
     <None Include="stalker_cs.ico">
       <Filter>General\Resources</Filter>
-    </None>
-    <None Include="My Amplifier Results\r000hs\r000hs.ampl">
-      <Filter>My Amplifier Results</Filter>
-    </None>
-    <None Include="My Amplifier Results\r001hs\r001hs.ampl">
-      <Filter>My Amplifier Results</Filter>
-    </None>
-    <None Include="My Amplifier Results\r002cc\r002cc.ampl">
-      <Filter>My Amplifier Results</Filter>
     </None>
     <None Include="ClientServer.txt" />
     <None Include="Effects description.txt" />

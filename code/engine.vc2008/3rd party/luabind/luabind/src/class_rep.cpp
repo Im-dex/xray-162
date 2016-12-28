@@ -712,7 +712,8 @@ void luabind::detail::class_rep::add_base_class(const luabind::detail::class_rep
 	for (methods_t::const_iterator i = bcrep->m_methods.begin();
 		i != bcrep->m_methods.end(); ++i)
     {
-		add_method(*i);
+        auto copy = *i;
+		add_method(std::move(copy));
     }
 
 	// import all getters from the base
@@ -1450,7 +1451,7 @@ bool luabind::detail::class_rep::has_operator_in_lua(lua_State* L, int id)
 
 // this will merge all overloads of fun into the list of
 // overloads in this class
-void luabind::detail::class_rep::add_method(luabind::detail::method_rep const& fun)
+void luabind::detail::class_rep::add_method(luabind::detail::method_rep&& fun)
 {
 	typedef list_class<detail::method_rep> methods_t;
 
@@ -1472,8 +1473,7 @@ void luabind::detail::class_rep::add_method(luabind::detail::method_rep const& f
     for (overloads_t::const_iterator j = fun.overloads().begin();
 		j != fun.overloads().end(); ++j)
     {
-        detail::overload_rep o = *j;
-        m->add_overload(o);
+        m->add_overload(std::move(*j));
     }
 }
 

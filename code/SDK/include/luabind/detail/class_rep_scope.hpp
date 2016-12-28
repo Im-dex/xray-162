@@ -735,20 +735,25 @@ namespace luabind { namespace detail
 		inline LUABIND_TYPE_INFO type() const throw() { return m_type; }
 		inline void set_type(LUABIND_TYPE_INFO t) { m_type = t; }
 
-		inline void add_function(const char* name, const overload_rep& o)
+		void add_function(const char* name, const overload_rep& o)
 		{
+            auto copy = o;
+            add_function(name, std::move(copy));
+		}
 
+        void add_function(const char* name, overload_rep&& o)
+		{
 #ifdef LUABIND_DONT_COPY_STRINGS
-			detail::method_rep& method = m_methods[name];
-			method.name = name;
+            detail::method_rep& method = m_methods[name];
+            method.name = name;
 #else
-			m_strings.push_back(dup_string(name));
-			detail::method_rep& method = m_methods[m_strings.back()];
-			method.name = m_strings.back();
+            m_strings.push_back(dup_string(name));
+            detail::method_rep& method = m_methods[m_strings.back()];
+            method.name = m_strings.back();
 #endif
 
-			method.add_overload(o);
-			method.crep = this;
+            method.add_overload(std::move(o));
+            method.crep = this;
 		}
 
 		inline void add_constructor(const detail::construct_rep::overload_t& o)
@@ -1377,6 +1382,8 @@ namespace luabind { namespace detail
                   pointer_offset(0)
             {
             }
+            callback(const callback&) = default;
+            callback(callback&&) = default;
 
 			std::function<int(lua_State*, int)> func;
 			int pointer_offset;

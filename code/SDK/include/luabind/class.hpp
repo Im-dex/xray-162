@@ -97,6 +97,7 @@
 #include <luabind/detail/operator_id.hpp>
 #include <luabind/detail/pointee_typeid.hpp>
 #include <luabind/detail/link_compatibility.hpp>
+#include <luabind/raw_policy.hpp>
 
 // to remove the 'this' used in initialization list-warning
 #ifdef _MSC_VER
@@ -108,14 +109,12 @@ namespace luabind
 {	
 	namespace detail
 	{
-		struct unspecified {};
-
 		template<class Derived> struct operator_;
 	}
 
 	using detail::type;
 
-	template<class T, class X1 = detail::unspecified, class X2 = detail::unspecified, class X3 = detail::unspecified>
+	template<class T, typename... Xs>
 	struct class_;
 
 /*    template <typename... Ts>
@@ -143,34 +142,12 @@ namespace luabind
         {
         };
 
-		template<typename T>
-		struct is_not_unspecified : public std::true_type
-		{
-		};
-
-        template<>
-        struct is_not_unspecified<unspecified> : public std::false_type
-        {
-        };
-
         template <typename Predicate>
         struct get_predicate
         {
             template <typename T>
-            using type = std::conjunction<
-                typename Predicate::template type<T>,
-                is_not_unspecified<T>
-            >;
+            using type = typename Predicate::template type<T>;
         };
-
-/*		template<class Predicate>
-		struct get_predicate
-		{
-			typedef typename boost::mpl::and_<
-						Predicate
-					,	is_not_unspecified<boost::mpl::_1>
-					> type;
-		};*/
 
         template <typename Pred, typename DefaultValue, typename... Parameters>
         struct extract_parameter
@@ -184,18 +161,6 @@ namespace luabind
                 iterator
             >;
         };
-
-		/*template<class Parameters, class Predicate, class DefaultValue>
-		struct extract_parameter
-		{
-			typedef typename get_predicate<Predicate>::type pred;
-			typedef typename boost::mpl::find_if<Parameters, pred>::type iterator;
-
-			typedef typename boost::mpl::apply_if<boost::is_same<iterator, typename boost::mpl::end<Parameters>::type>
-				, boost::mpl::identity<DefaultValue>
-				, iterator
-			>::type type;
-		};*/
 
 		template<typename Fn, typename Class, typename... Policies>
 		struct mem_fn_callback
@@ -751,25 +716,25 @@ namespace luabind
 				, int holder_size
 				, int holder_alignment);
 
-			void add_getter(
-				const char* name
-				, const std::function<int(lua_State*, int)>& g);
+			void add_getter(const char* name, std::function<int(lua_State*, int)> g);
 
 #ifdef LUABIND_NO_ERROR_CHECKING
 			void class_base::add_setter(
 				const char* name
-				, const std::function<int(lua_State*, int)>& s);
+				, std::function<int(lua_State*, int)> s);
 #else
 			void class_base::add_setter(
 				const char* name
-				, const std::function<int(lua_State*, int)>& s
+				, std::function<int(lua_State*, int)> s
 				, int (*match)(lua_State*, int)
 				, void (*get_sig_ptr)(lua_State*, string_class&));
 #endif
 
 			void add_base(const base_desc& b);
-			void add_constructor(const detail::construct_rep::overload_t& o);	
+            void add_constructor(const detail::construct_rep::overload_t& o);
+			void add_constructor(detail::construct_rep::overload_t&& o);	
 			void add_method(const char* name, const detail::overload_rep& o);
+            void add_method(const char* name, detail::overload_rep&& o);
 
 #ifndef LUABIND_NO_ERROR_CHECKING
 			void add_operator(
@@ -817,10 +782,10 @@ namespace luabind
 	} // namespace detail
 
 	// registers a class in the lua environment
-	template<typename T, typename X1, typename X2, typename X3>
+	template<typename T, typename... Xs>
 	struct class_: detail::class_base 
 	{
-		typedef class_<T, X1, X2, X3> self_t;
+	    using self_t = class_<T, Xs...>;
 
         class_(const class_&) = delete;
 
@@ -859,38 +824,17 @@ namespace luabind
 
 	public:
 
-		// WrappedType MUST inherit from T
-		/*typedef typename detail::extract_parameter<
-		    boost::mpl::vector3<X1,X2,X3>
-		  , boost::is_base_and_derived<T, boost::mpl::_>
-		  , detail::null_type
-		>::type WrappedType;*/
-
         // WrappedType MUST inherit from T
         using WrappedType = typename detail::extract_parameter<
             WrappedTypePredicate,
             detail::null_type,
-            X1, X2, X3
+            Xs...
         >::type;
-
-		/*typedef typename detail::extract_parameter<
-		    boost::mpl::list3<X1,X2,X3>
-		  , boost::mpl::not_<
-		        boost::mpl::or_<
-				    boost::mpl::or_<
-					    detail::is_bases<boost::mpl::_>
-					  , boost::is_base_and_derived<boost::mpl::_, T>
-					>
-				  , boost::is_base_and_derived<T, boost::mpl::_>
-				>
-			>
-		  , detail::null_type
-		>::type HeldType;*/
 
         using HeldType = typename detail::extract_parameter<
             HeldTypePredicate,
             detail::null_type,
-            X1, X2, X3
+            Xs...
         >::type;
 
 		// this function generates conversion information
@@ -1130,29 +1074,14 @@ namespace luabind
             using bases_t = typename detail::extract_parameter<
                 BasesPredicate,
                 no_bases,
-                X1, X2, X3
+                Xs...
             >::type;
-
-			/*typedef typename detail::extract_parameter<
-					boost::mpl::list3<X1,X2,X3>
-				,	boost::mpl::or_<
-							detail::is_bases<boost::mpl::_>
-						,	boost::is_base_and_derived<boost::mpl::_, T>
-					>
-				,	no_bases
-			>::type bases_t;*/
 
             using Base = std::conditional_t<
                 detail::is_bases<bases_t>::value,
                 bases_t,
                 bases<bases_t>
             >;
-
-			/*typedef typename 
-				boost::mpl::if_<detail::is_bases<bases_t>
-					,	bases_t
-					,	bases<bases_t>
-				>::type Base;*/
 	
 			class_base::init(LUABIND_TYPEID(T)
 				, detail::internal_holder_type<HeldType>::apply()
@@ -1220,7 +1149,7 @@ namespace luabind
 #ifndef LUABIND_NO_ERROR_CHECKING
 			o.set_sig_fun(&detail::get_member_signature<F>::apply);
 #endif
-			this->add_method(name, o);
+			this->add_method(name, std::move(o));
             return std::move(*this);
 		}
 
@@ -1243,7 +1172,7 @@ namespace luabind
 			o.set_sig_fun(&detail::get_member_signature<F>::apply);
 #endif
 
-			this->add_method(name, o);
+			this->add_method(name, std::move(o));
 			// register virtual function
             return std::move(*this);
 		}
@@ -1263,7 +1192,7 @@ namespace luabind
 			o.set_sig_fun(&detail::get_signature<Ts...>::apply);
 #endif
 			o.set_arity(detail::calc_arity<sizeof...(Ts)>::template apply<Policies...>());
-			this->add_constructor(o);
+			this->add_constructor(std::move(o));
             return std::move(*this);
         }
 
@@ -1282,7 +1211,7 @@ namespace luabind
 			o.set_sig_fun(&detail::get_signature<Ts...>::apply);
 #endif
 			o.set_arity(detail::calc_arity<sizeof...(Ts)>::template apply<Policies...>());
-			this->add_constructor(o);
+			this->add_constructor(std::move(o));
             return std::move(*this);
         }
 

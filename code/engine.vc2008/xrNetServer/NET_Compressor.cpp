@@ -378,11 +378,9 @@ u16 NET_Compressor::Compress(BYTE* dest, const u32 &dest_size, BYTE* src, const 
 		*dest = NET_TAG_COMPRESSED;
 		
         #if NET_USE_COMPRESSION_CRC
-		//boost::crc_32_type	temp; 
-		//temp.process_block( dest+offset, dest+compressed_size );		
-		u32	crc = crc32(dest + offset, compressed_size);
+		    u32	crc = crc32(dest + offset, compressed_size);
 
-		*((u32*)(dest + 1))	= crc;
+		    *((u32*)(dest + 1))	= crc;
         #endif // NET_USE_COMPRESSION_CRC
 
         #if NET_LOG_COMPRESSION

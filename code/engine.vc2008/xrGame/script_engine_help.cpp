@@ -63,11 +63,6 @@ xr_string member_to_string			(luabind::object const& e, LPCSTR function_signatur
 			if (lua_touserdata(L, -1) != reinterpret_cast<void*>(0x1337)) return to_string(e);
 		}
 
-// #ifdef BOOST_NO_STRINGSTREAM
-// 		std::strstream s;
-// #else
-// 		std::stringstream s;
-// #endif
 		xr_string s = "";
 
 		{

@@ -179,7 +179,7 @@ namespace luabind { namespace detail
 		class_type get_class_type() const { return m_class_type; }
 
 		void add_static_constant(const char* name, int val);
-		void add_method(detail::method_rep const& m);
+		void add_method(detail::method_rep&& m);
 		void register_methods(lua_State* L);
 
 		// takes a pointer to the instance object
@@ -217,12 +217,49 @@ namespace luabind { namespace detail
 
             callback()
                 : allocator(),
-		          func(std::allocator_arg_t(), allocator)
+		          func(std::allocator_arg_t(), allocator),
 #ifndef LUABIND_NO_ERROR_CHECKING
-                  ,sig(nullptr),
-                  pointer_offset(0)
+                  match(nullptr),
+                  sig(nullptr),
 #endif
+                  pointer_offset(0)
             {
+            }
+
+            callback(const callback&) = default;
+
+            callback(callback&& that)
+                : allocator(std::move(that.allocator)),
+                  func(std::move(that.func)),
+#ifndef LUABIND_NO_ERROR_CHECKING
+                  match(that.match),
+                  sig(that.sig),
+#endif
+                  pointer_offset(that.pointer_offset)
+            {
+#ifndef LUABIND_NO_ERROR_CHECKING
+                that.match = nullptr;
+                that.sig = nullptr;
+#endif
+                that.pointer_offset = 0;
+            }
+
+            callback& operator= (const callback&) = delete;
+
+            callback& operator= (callback&& that)
+            {
+                allocator = std::move(that.allocator);
+                func = std::move(that.func);
+#ifndef LUABIND_NO_ERROR_CHECKING
+                match = that.match;
+                that.match = nullptr;
+                sig = that.sig;
+                that.sig = nullptr;
+#endif
+                pointer_offset = that.pointer_offset;
+                that.pointer_offset = 0;
+
+                return *this;
             }
 
             std::function<int(lua_State*, int)> func;
@@ -248,7 +285,6 @@ namespace luabind { namespace detail
 		{
 			return m_holder_size;
 		}
-
 
 		void set_holder_alignment(int n)
 		{

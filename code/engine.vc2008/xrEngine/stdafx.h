@@ -82,7 +82,6 @@ extern ENGINE_API CInifile *pGameIni;
 
 #if	!defined(DEBUG) || defined(FORCE_NO_EXCEPTIONS)
 #	define LUABIND_NO_EXCEPTIONS
-#	define BOOST_NO_EXCEPTIONS
 #endif
 
 #define LUABIND_DONT_COPY_STRINGS

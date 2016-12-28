@@ -211,7 +211,7 @@ namespace luabind { namespace detail {
             = m_methods.begin(); i != m_methods.end(); ++i)
         {
             LUABIND_CHECK_STACK(L);
-			crep->add_method(*i);
+			crep->add_method(std::move(*i));
 		}
 
 		crep->register_methods(L);
@@ -272,31 +272,28 @@ namespace luabind { namespace detail {
         m_registration->m_holder_alignment = holder_alignment;
     }
 
-    void class_base::add_getter(
-		const char* name, const std::function<int(lua_State*, int)>& g)
+    void class_base::add_getter(const char* name, std::function<int(lua_State*, int)> g)
     {
         detail::class_rep::callback c;
-        c.func = g;
+        c.func = std::move(g);
         c.pointer_offset = 0;
 
         const char* key = name;
-        m_registration->m_getters[key] = c;
+        m_registration->m_getters[key] = std::move(c);
     }
 
 #ifdef LUABIND_NO_ERROR_CHECKING
-    void class_base::add_setter(
-        const char* name
-        , const std::function<int(lua_State*, int)>& s)
+    void class_base::add_setter(const char* name, std::function<int(lua_State*, int)> s)
 #else
     void class_base::add_setter(
         const char* name
-        , const std::function<int(lua_State*, int)>& s
+        , std::function<int(lua_State*, int)> s
         , int (*match)(lua_State*, int)
         , void (*get_sig_ptr)(lua_State*, string_class&))
 #endif
     {
         detail::class_rep::callback c;
-        c.func = s;
+        c.func = std::move(s);
         c.pointer_offset = 0;
 
 #ifndef LUABIND_NO_ERROR_CHECKING
@@ -304,9 +301,8 @@ namespace luabind { namespace detail {
         c.sig = get_sig_ptr;
 #endif
 
-
         const char* key = name;
-        m_registration->m_setters[key] = c;
+        m_registration->m_setters[key] = std::move(c);
     }
 
     void class_base::add_base(const base_desc& b)
@@ -319,24 +315,35 @@ namespace luabind { namespace detail {
         m_registration->m_constructor.overloads.push_back(o);
     }
 
+    void class_base::add_constructor(detail::construct_rep::overload_t&& o)
+    {
+        m_registration->m_constructor.overloads.push_back(std::move(o));
+    }
+
     void class_base::add_method(const char* name, const detail::overload_rep& o)
     {
-		typedef list_class<detail::method_rep> methods_t;
+        auto copy = o;
+        add_method(name, std::move(copy));
+    }
 
-		methods_t::iterator m = std::find_if(
-			m_registration->m_methods.begin()
-			, m_registration->m_methods.end()
-			, method_name(name));
-		if (m == m_registration->m_methods.end())
-		{
-			m_registration->m_methods.push_back(method_rep());
-			m = m_registration->m_methods.end();
-			std::advance(m, -1);
-			m->name = name;
-		}
-		
-        m->add_overload(o);
-        m->crep = 0;
+    void class_base::add_method(const char* name, detail::overload_rep&& o)
+    {
+        using methods_t = list_class<detail::method_rep>;
+
+        auto m = std::find_if(
+            m_registration->m_methods.begin()
+            , m_registration->m_methods.end()
+            , method_name(name));
+        if (m == m_registration->m_methods.end())
+        {
+            m_registration->m_methods.push_back(method_rep());
+            m = m_registration->m_methods.end();
+            std::advance(m, -1);
+            m->name = name;
+        }
+
+        m->add_overload(std::move(o));
+        m->crep = nullptr;
     }
 
 #ifndef LUABIND_NO_ERROR_CHECKING

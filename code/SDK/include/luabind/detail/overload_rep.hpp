@@ -54,6 +54,12 @@ namespace luabind { namespace detail
         {
         }
 
+        overload_rep(const overload_rep&) = default;
+        overload_rep(overload_rep&&) = default;
+
+        overload_rep& operator= (const overload_rep&) = default;
+        overload_rep& operator= (overload_rep&&) = default;
+
 		bool operator==(const overload_rep& o)
 		{
 			if (o.m_const != m_const) return false;

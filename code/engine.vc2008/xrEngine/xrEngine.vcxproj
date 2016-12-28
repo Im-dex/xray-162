@@ -731,7 +731,6 @@
     <ClCompile Include="EngineAPI.cpp" />
     <ClCompile Include="EventAPI.cpp" />
     <ClCompile Include="mailSlot.cpp" />
-    <ClCompile Include="_scripting.cpp" />
     <ClCompile Include="ai_script_lua_debug.cpp" />
     <ClCompile Include="ai_script_lua_extension.cpp" />
     <ClCompile Include="perlin.cpp" />
@@ -812,9 +811,6 @@
   <ItemGroup>
     <None Include="splash_xrcs_en.bmp" />
     <None Include="stalker_cs.ico" />
-    <None Include="My Amplifier Results\r000hs\r000hs.ampl" />
-    <None Include="My Amplifier Results\r001hs\r001hs.ampl" />
-    <None Include="My Amplifier Results\r002cc\r002cc.ampl" />
     <None Include="ClientServer.txt" />
     <None Include="Effects description.txt" />
     <None Include="features.txt" />
