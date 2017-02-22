@@ -30,6 +30,15 @@ struct GameDescriptionData
 #define NET_GUARANTEEDPACKET_IGNORE     1
 #define NET_GUARANTEEDPACKET_SEPARATE   2
 
+#define	GAMESPY_QR2_BASEPORT 5445
+#define START_PORT_LAN GAMESPY_QR2_BASEPORT
+#define START_PORT_LAN_SV START_PORT_LAN + 1
+#define START_PORT_LAN_CL START_PORT_LAN + 2
+#define END_PORT_LAN START_PORT_LAN + 250//GameSpy only process 500 ports
+
+#define START_PORT 0
+#define END_PORT 65535
+
 extern XRNETSERVER_API int psNET_GuaranteedPacketMode;
 
 /*#ifdef DEBUG
