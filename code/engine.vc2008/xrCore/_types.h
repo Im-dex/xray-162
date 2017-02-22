@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 
 // Type defs
 using s8 = std::int8_t;
@@ -43,6 +44,8 @@ constexpr float flt_min  = type_min<float>;
 constexpr float flt_zero = type_zero<float>;
 constexpr float flt_eps  = type_epsilon<float>;
 
+#undef FLT_MAX
+#undef FLT_MIN
 #define FLT_MAX flt_max
 #define FLT_MIN flt_min
 
@@ -50,6 +53,8 @@ constexpr double dbl_max = type_max<double>;
 constexpr double dbl_min = type_min<double>;
 constexpr double dbl_zero = type_zero<double>;
 constexpr double dbl_eps = type_epsilon<double>;
+
+constexpr int max_path = 260;
 
 using string16    = char[16];
 using string32    = char[32];
@@ -60,7 +65,7 @@ using string512   = char[512];
 using string1024  = char[1024];
 using string2048  = char[2048];
 using string4096  = char[4096];
-using string_path = char[2 * MAX_PATH];
+using string_path = char[2 * max_path];
 
 using wstring16    = wchar_t[16];
 using wstring32    = wchar_t[32];
@@ -71,4 +76,4 @@ using wstring512   = wchar_t[512];
 using wstring1024  = wchar_t[1024];
 using wstring2048  = wchar_t[2048];
 using wstring4096  = wchar_t[4096];
-using wstring_path = wchar_t[2 * MAX_PATH];
+using wstring_path = wchar_t[2 * max_path];

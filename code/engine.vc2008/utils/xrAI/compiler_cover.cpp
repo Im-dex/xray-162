@@ -222,7 +222,7 @@ public:
 
 	IC void		Clear	()
 	{
-		for (Nearest_it it=q_Clear.begin(); it!=q_Clear.end();  it++)
+		for (auto it=q_Clear.begin(); it!=q_Clear.end();  it++)
 			q_Marks[*it]	= false;
 	}
 };
@@ -257,7 +257,7 @@ public:
 		Q.Perform		(N);
 		
 		// main cycle: trace rays and compute counts
-		for (Nearest_it it=Q.q_List.begin(); it!=Q.q_List.end();  it++)
+		for (auto it=Q.q_List.begin(); it!=Q.q_List.end();  it++)
 		{
 			// calc dir & range
 			u32		ID	= *it;

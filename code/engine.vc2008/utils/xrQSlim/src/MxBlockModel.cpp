@@ -153,8 +153,8 @@ unsigned int binding_size(MxBlockModel& m, unsigned char i)
     switch( i )
     {
     case MX_UNBOUND: return 0;
-    case MX_PERVERTEX: return _max(1, m.vert_count());
-    case MX_PERFACE: return _max(1, m.face_count());
+    case MX_PERVERTEX: return std::max(1u, m.vert_count());
+    case MX_PERFACE: return std::max(1u, m.face_count());
     default: return 0;
     }
 }

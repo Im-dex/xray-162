@@ -129,7 +129,7 @@ namespace luabind
                 rhs.m_called = true;
             }
 
-			~proxy_caller();
+            ~proxy_caller() noexcept(false); // TODO: noexcept depends on configuration
 			operator object();
 
 			template<typename... Policies>
@@ -1238,7 +1238,7 @@ private:
 
 
 		template<typename... Ts>
-		proxy_caller<Ts...>::~proxy_caller()
+		proxy_caller<Ts...>::~proxy_caller() noexcept(false) // TODO: noexcept depends on configuration
 		{
 			if (m_called) return;
 

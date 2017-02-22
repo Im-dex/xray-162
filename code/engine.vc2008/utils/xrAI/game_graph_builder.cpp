@@ -548,7 +548,7 @@ void CGameGraphBuilder::create_tripples		(const float &start, const float &amoun
 
 			m_tripples.push_back	(
 				std::make_pair(
-					_min(
+                    std::min(
 						(*i).weight(),
 						edge ? edge->weight() : (*i).weight()
 					),

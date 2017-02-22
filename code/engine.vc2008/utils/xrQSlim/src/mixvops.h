@@ -111,7 +111,7 @@ __LINKAGE __T mxv_unitize(__T *v, __DIM)
 
 __LINKAGE __T mxv_Linf(const __T *u, const __T *v, __DIM)
 {
-    __T d=0.0;  forall(i, N) { __T p=_abs(u[i]-v[i]); d=_min(d, p); }  return d;
+    __T d=0.0;  forall(i, N) { __T p=_abs(u[i]-v[i]); d= std::min(d, p); }  return d;
 }
 
 __LINKAGE __T mxv_L1(const __T *u, const __T *v, __DIM)

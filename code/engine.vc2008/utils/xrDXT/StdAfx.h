@@ -25,6 +25,7 @@
 #endif //defined(MAKEFOURCC)
 
 #pragma comment(lib,"xrCore.lib")
+#pragma comment(lib, "nvDXTlib.lib")
 
 #pragma warning( disable : 4995 )
 

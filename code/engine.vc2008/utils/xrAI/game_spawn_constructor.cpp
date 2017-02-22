@@ -219,7 +219,7 @@ void CGameSpawnConstructor::add_story_object	(ALife::_STORY_ID id, CSE_ALifeDyna
 	if (id == INVALID_STORY_ID)
 		return;
 
-	ALife::STORY_P_PAIR_IT		I = m_story_objects.find(id);
+	auto		I = m_story_objects.find(id);
 	if (I != m_story_objects.end()) {
 		Msg						("Object %s, story id %d",object->name_replace(),object->m_story_id);
 		Msg						("Object %s, story id %d",(*I).second->name_replace(),(*I).second->m_story_id);

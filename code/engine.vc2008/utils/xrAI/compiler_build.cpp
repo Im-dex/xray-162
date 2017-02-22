@@ -286,7 +286,7 @@ u32	FindNode(Fvector& vAt)
 	float eps	= 0.05f;
 	vecDW& V	= HashMap(vAt);
 
-	for (vecDW_it I=V.begin(); I!=V.end(); I++)
+	for (auto I=V.begin(); I!=V.end(); I++)
 	{
 		vertex& N = g_nodes[*I];
 		if (vAt.similar(N.Pos,eps)) return *I;

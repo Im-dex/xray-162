@@ -368,7 +368,7 @@ public:
 
 		std::random_shuffle		(l_dwaNodes.begin(),l_dwaNodes.end());
 
-		u32						m = l_dwaNodes.size() > 10 ? _min(iFloor(.1f*l_dwaNodes.size()),255) : l_dwaNodes.size(), l_dwStartIndex = m_tpLevelPoints.size();
+		u32						m = l_dwaNodes.size() > 10 ? std::min(iFloor(.1f*l_dwaNodes.size()),255) : l_dwaNodes.size(), l_dwStartIndex = m_tpLevelPoints.size();
 		m_tpLevelPoints.resize	(l_dwStartIndex + m);
 		LEVEL_POINT_STORAGE::iterator I = m_tpLevelPoints.begin() + l_dwStartIndex;
 		LEVEL_POINT_STORAGE::iterator E = m_tpLevelPoints.end();

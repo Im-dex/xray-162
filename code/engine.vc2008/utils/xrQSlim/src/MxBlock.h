@@ -98,9 +98,9 @@ public:
     //
     void resize(int n) { resize_block(n); }
     void bitcopy(const T *a, int n) // copy bits directly
-	{ std::memcpy(block, a, _min(n,N)*sizeof(T)); }
+	{ std::memcpy(block, a, std::min(n,N)*sizeof(T)); }
     void copy(const T *a, const int n) // copy using assignment operator
-	{ for(int i=0; i<_min(n,N); i++) block[i] = a[i]; }
+	{ for(int i=0; i<std::min(n,N); i++) block[i] = a[i]; }
     void bitcopy(const MxBlock<T>& b) { bitcopy(b, b.length()); }
     void copy(const MxBlock<T>& b) { copy(b, b.length()); }
 

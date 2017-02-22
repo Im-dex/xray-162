@@ -8,6 +8,7 @@
 
 #include "pch_script.h"
 #include "xrServer_Objects_ALife_Smartcovers.h"
+#include "script_value_container_impl.h"
 
 #ifndef AI_COMPILER
 #	include "character_info.h"
