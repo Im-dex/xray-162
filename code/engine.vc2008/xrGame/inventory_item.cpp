@@ -227,10 +227,6 @@ void CInventoryItem::UpdateCL()
 	}
 
 #endif
-	if (!IsGameTypeSingle())
-	{
-		Interpolate();
-	}
 }
 
 void CInventoryItem::OnEvent (NET_Packet& P, u16 type)
@@ -338,10 +334,7 @@ BOOL CInventoryItem::net_Spawn			(CSE_Abstract* DC)
 	//!!!
 	m_fCondition = pSE_InventoryItem->m_fCondition;
 	
-	if ( IsGameTypeSingle() )
-	{
-		net_Spawn_install_upgrades( pSE_InventoryItem->m_upgrades );
-	}
+    net_Spawn_install_upgrades(pSE_InventoryItem->m_upgrades);
 
 	if (GameID() != eGameIDSingle)
 		object().processing_activate();
@@ -610,140 +603,7 @@ void CInventoryItem::net_Export_PH_Params(NET_Packet& P, SPHNetState& State, mas
 
 void CInventoryItem::net_Export			(NET_Packet& P) 
 {	
-	//copy from CPhysicObject
-	if (object().H_Parent() || IsGameTypeSingle()) 
-	{
-		P.w_u8				(0);
-		return;
-	}
-
-	CPHSynchronize* pSyncObj				= NULL;
-	SPHNetState								State;
-	pSyncObj = object().PHGetSyncItem		(0);
-
-	if (pSyncObj && !object().H_Parent()) 
-		pSyncObj->get_State					(State);
-	else 	
-		State.position.set					(object().Position());
-
-
-	mask_inv_num_items			num_items;
-	num_items.mask			= 0;
-	u16						temp = object().PHGetSyncItemsNumber();
-	R_ASSERT				(temp < (u16(1) << 5));
-	num_items.num_items		= u8(temp);
-
-	if (State.enabled)									num_items.mask |= CSE_ALifeInventoryItem::inventory_item_state_enabled;
-	if (fis_zero(State.angular_vel.square_magnitude()))	num_items.mask |= CSE_ALifeInventoryItem::inventory_item_angular_null;
-	if (fis_zero(State.linear_vel.square_magnitude()))	num_items.mask |= CSE_ALifeInventoryItem::inventory_item_linear_null;
-	//if (m_pPhysicsShell->PPhysicsShellAnimator())		{num_items.mask |= CSE_ALifeObjectPhysic::animated;}
-
-	P.w_u8					(num_items.common);
-	if (!num_items.common)
-	{
-#ifdef DEBUG
-		Msg("--- Number of sync items of inv item object is 0");
-#endif // #ifdef DEBUG
-		return;
-	}
-
-	/*if (num_items.mask&CSE_ALifeObjectPhysic::animated)
-	{
-		net_Export_Anim_Params(P);
-	}*/
-	net_Export_PH_Params(P,State,num_items);
-	
-	if (object().PPhysicsShell() && object().PPhysicsShell()->isEnabled())
-	{
-		P.w_u8(1);	//not freezed
-	} else
-	{
-		P.w_u8(0);  //freezed
-	}
-
-	/*if (object().H_Parent() || IsGameTypeSingle()) 
-	{
-		P.w_u8				(0);
-		return;
-	}
-	CPHSynchronize* pSyncObj				= NULL;
-	SPHNetState								State;
-	pSyncObj = object().PHGetSyncItem		(0);
-
-	if (pSyncObj && !object().H_Parent()) 
-		pSyncObj->get_State					(State);
-	else 	
-		State.position.set					(object().Position());
-
-
-	mask_num_items			num_items;
-	num_items.mask			= 0;
-	u16						temp = object().PHGetSyncItemsNumber();
-	R_ASSERT				(temp < (u16(1) << 5));
-	num_items.num_items		= u8(temp);
-
-	if (State.enabled)									num_items.mask |= CSE_ALifeInventoryItem::inventory_item_state_enabled;
-	if (fis_zero(State.angular_vel.square_magnitude()))	num_items.mask |= CSE_ALifeInventoryItem::inventory_item_angular_null;
-	if (fis_zero(State.linear_vel.square_magnitude()))	num_items.mask |= CSE_ALifeInventoryItem::inventory_item_linear_null;
-
-	P.w_u8					(num_items.common);
-
-	P.w_vec3				(State.position);
-
-	float					magnitude = _sqrt(State.quaternion.magnitude());
-	if (fis_zero(magnitude)) {
-		magnitude			= 1;
-		State.quaternion.x	= 0.f;
-		State.quaternion.y	= 0.f;
-		State.quaternion.z	= 1.f;
-		State.quaternion.w	= 0.f;
-	}
-	else {
-		float				invert_magnitude = 1.f/magnitude;
-		
-		State.quaternion.x	*= invert_magnitude;
-		State.quaternion.y	*= invert_magnitude;
-		State.quaternion.z	*= invert_magnitude;
-		State.quaternion.w	*= invert_magnitude;
-
-		clamp				(State.quaternion.x, -1.f, 1.f);
-		clamp				(State.quaternion.y, -1.f, 1.f);
-		clamp				(State.quaternion.z, -1.f, 1.f);
-		clamp				(State.quaternion.w, -1.f, 1.f);
-	}
-
-	P.w_float_q8			(State.quaternion.x, -1.f, 1.f);
-	P.w_float_q8			(State.quaternion.y, -1.f, 1.f);
-	P.w_float_q8			(State.quaternion.z, -1.f, 1.f);
-	P.w_float_q8			(State.quaternion.w, -1.f, 1.f);
-
-	if (!(num_items.mask & CSE_ALifeInventoryItem::inventory_item_angular_null)) {
-		clamp				(State.angular_vel.x,0.f,10.f*PI_MUL_2);
-		clamp				(State.angular_vel.y,0.f,10.f*PI_MUL_2);
-		clamp				(State.angular_vel.z,0.f,10.f*PI_MUL_2);
-
-		P.w_float_q8		(State.angular_vel.x,0.f,10.f*PI_MUL_2);
-		P.w_float_q8		(State.angular_vel.y,0.f,10.f*PI_MUL_2);
-		P.w_float_q8		(State.angular_vel.z,0.f,10.f*PI_MUL_2);
-	}
-
-	if (!(num_items.mask & CSE_ALifeInventoryItem::inventory_item_linear_null)) {
-		clamp				(State.linear_vel.x,-32.f,32.f);
-		clamp				(State.linear_vel.y,-32.f,32.f);
-		clamp				(State.linear_vel.z,-32.f,32.f);
-
-		P.w_float_q8		(State.linear_vel.x,-32.f,32.f);
-		P.w_float_q8		(State.linear_vel.y,-32.f,32.f);
-		P.w_float_q8		(State.linear_vel.z,-32.f,32.f);
-	}
-
-	if (object().PPhysicsShell() && object().PPhysicsShell()->isEnabled())
-	{
-		P.w_u8(1);	//not freezed
-	} else
-	{
-		P.w_u8(0);  //freezed
-	}*/
+    P.w_u8(0);
 };
 
 void CInventoryItem::load(IReader &packet)
@@ -1390,9 +1250,6 @@ bool CInventoryItem::NeedToDestroyObject()	const
 	if (GameID() == eGameIDSingle)
 		return false;
 
-	if (GameID() == eGameIDCaptureTheArtefact)
-		return false;
-
 	if (object().Remote()) return false;
 	if (TimePassedAfterIndependant() > ITEM_REMOVE_TIME)
 		return true;
@@ -1477,23 +1334,6 @@ u16 CInventoryItem::parent_id() const
 void CInventoryItem::SetDropManual(BOOL val)
 {
 	m_flags.set(FdropManual, val);
-	
-#ifdef DEBUG
-	if (!IsGameTypeSingle())
-	{
-		if (!!m_name)
-		{
-			Msg("! WARNING: trying to set drop manual flag to item [%d][%s] to %d", object_id(), m_name.c_str(), val);
-		}
-	}
-#endif // #ifdef DEBUG
-	if (!IsGameTypeSingle())
-	{
-		if (val == TRUE)
-			DenyTrade();
-		else
-			AllowTrade();
-	}
 }
 
 bool CInventoryItem::has_network_synchronization	() const

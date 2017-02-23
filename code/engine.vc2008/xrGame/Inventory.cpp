@@ -300,18 +300,6 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 	if(ItemFromSlot(slot_id) == pIItem)
 		return false;
 
-	if (!IsGameTypeSingle())
-	{
-		u16 real_parent = pIItem->object().H_Parent() ? pIItem->object().H_Parent()->ID() : u16(-1);
-		if (GetOwner()->object_id() != real_parent)
-		{
-			Msg("! WARNING: CL: actor [%d] tries to place to slot not own item [%d], that has parent [%d]",
-				GetOwner()->object_id(), pIItem->object_id(), real_parent);
-			return false;
-		}
-	}
-
-
 //.	Msg("To Slot %s[%d]", *pIItem->object().cName(), pIItem->object().ID());
 
 	if(!strict_placement && !CanPutInSlot(pIItem,slot_id)) 
@@ -336,34 +324,11 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 	//удалить из рюкзака или пояса
 	TIItemContainer::iterator it_ruck = std::find(m_ruck.begin(), m_ruck.end(), pIItem);
 	TIItemContainer::iterator it_belt = std::find(m_belt.begin(), m_belt.end(), pIItem);
-	if (!IsGameTypeSingle())
-	{
-		if (it_ruck != m_ruck.end())
-		{
-			m_ruck.erase(it_ruck);
-			R_ASSERT(it_belt == m_belt.end());
-		} else if(it_belt != m_belt.end())
-		{
-			m_belt.erase(it_belt);
-			R_ASSERT(it_ruck == m_ruck.end());
-		} else
-		{
-			u16 real_parent = pIItem->object().H_Parent() ? pIItem->object().H_Parent()->ID() : u16(-1);
-			R_ASSERT2(GetOwner()->object_id() == real_parent,
-				make_string("! ERROR: CL: actor [%d] doesn't contain [%d], real parent is [%d]", 
-					GetOwner()->object_id(), pIItem->object_id(), real_parent).c_str()
-			);
-		}
-#ifdef MP_LOGGING
-		Msg("--- Actor [%d] places to slot item [%d]", GetOwner()->object_id(), pIItem->object_id());
-#endif //#ifdef MP_LOGGING
-	} else
-	{
-		if (it_ruck != m_ruck.end())
-			m_ruck.erase(it_ruck);
-		if (it_belt != m_belt.end())
-			m_belt.erase(it_belt);
-	}
+	
+    if (it_ruck != m_ruck.end())
+        m_ruck.erase(it_ruck);
+    if (it_belt != m_belt.end())
+        m_belt.erase(it_belt);
 
 	bool in_slot = InSlot(pIItem);
 	if(in_slot && (pIItem->CurrSlot()!=slot_id)) 
@@ -435,17 +400,6 @@ bool CInventory::Ruck(PIItem pIItem, bool strict_placement)
 {
 	if(!strict_placement && !CanPutInRuck(pIItem)) return false;
 
-	if (!IsGameTypeSingle())
-	{
-		u16 real_parent = pIItem->object().H_Parent() ? pIItem->object().H_Parent()->ID() : u16(-1);
-		if (GetOwner()->object_id() != real_parent)
-		{
-			Msg("! WARNING: CL: actor [%d] tries to place to ruck not own item [%d], that has parent [%d]",
-				GetOwner()->object_id(), pIItem->object_id(), real_parent);
-			return false;
-		}
-	}
-	
 	bool in_slot = InSlot(pIItem);
 	//вещь была в слоте
 	if(in_slot) 
@@ -460,19 +414,6 @@ bool CInventory::Ruck(PIItem pIItem, bool strict_placement)
 		TIItemContainer::iterator it = std::find(m_belt.begin(), m_belt.end(), pIItem); 
 		if(m_belt.end() != it) 
 			m_belt.erase(it);
-
-		if (!IsGameTypeSingle())
-		{
-			u16 item_parent_id = pIItem->object().H_Parent() ? pIItem->object().H_Parent()->ID() : u16(-1) ;
-			u16 inventory_owner_id = GetOwner()->object_id();
-			R_ASSERT2(item_parent_id == inventory_owner_id,
-				make_string("! ERROR: CL: Actor[%d] tries to place to ruck not own item [%d], real item owner is [%d]",
-				inventory_owner_id, pIItem->object_id(), item_parent_id).c_str()
-			);
-#ifdef MP_LOGGING
-			Msg("--- Actor [%d] place to ruck item [%d]", inventory_owner_id, pIItem->object_id());
-#endif
-		}
 	}
 	
 	m_ruck.insert									(m_ruck.end(), pIItem); 
@@ -648,14 +589,6 @@ bool CInventory::Action(u16 cmd, u32 flags)
 		
 		case kDROP:		
 			{
-				if ((flags & CMD_STOP) && !IsGameTypeSingle())
-				{
-					PIItem tmp_item = ActiveItem();
-					if (tmp_item)
-					{
-						tmp_item->DenyTrade();
-					}
-				}
 				SendActionEvent	(cmd, flags);
 				return			true;
 			}break;
@@ -690,7 +623,6 @@ bool CInventory::Action(u16 cmd, u32 flags)
 	case kWPN_6:
 		{
 			b_send_event = true;
-			if (cmd == kWPN_6 && !IsGameTypeSingle()) return false;
 			
 			u16 slot = u16(cmd - kWPN_1 + 1);
 			if ( flags & CMD_START )
@@ -725,11 +657,7 @@ void CInventory::ActiveWeapon( u16 slot )
 	// weapon is in active slot
 	if ( GetActiveSlot() == slot && ActiveItem() )
 	{
-		if ( IsGameTypeSingle() )
-			Activate(NO_ACTIVE_SLOT);
-		else
-			ActivateNextItemInActiveSlot();
-
+        Activate(NO_ACTIVE_SLOT);
 		return;
 	}
 	Activate(slot);
@@ -1057,7 +985,7 @@ bool CInventory::Eat(PIItem pIItem)
 	Msg( "--- Actor [%d] use or eat [%d][%s]", entity_alive->ID(), pItemToEat->object().ID(), pItemToEat->object().cNameSect().c_str() );
 #endif // MP_LOGGING
 
-	if(IsGameTypeSingle() && Actor()->m_inventory == this)
+	if(Actor()->m_inventory == this)
 		Actor()->callback(GameObject::eUseObject)((smart_cast<CGameObject*>(pIItem))->lua_game_object());
 
 	if(pItemToEat->Empty())
@@ -1263,9 +1191,6 @@ void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_t
 
 bool CInventory::isBeautifulForActiveSlot	(CInventoryItem *pIItem)
 {
-	if (!IsGameTypeSingle()) 
-		return (true);
-
 	u16 I = FirstSlot();
 	u16 E = LastSlot();
 	for(;I<=E;++I)

@@ -27,7 +27,6 @@ class CUIListBox;
 class CUIStatsPlayerList;
 class CUIDragDropListEx;
 class CUIComboBox;
-class CUITabButtonMP;
 class CUITrackBar;
 class UIHintWindow;
 class CUILines;
@@ -55,7 +54,6 @@ public:
 	static bool 	InitProgressBar			(CUIXml& xml_doc, LPCSTR path, int index, CUIProgressBar* pWnd);
 	static bool 	InitProgressShape		(CUIXml& xml_doc, LPCSTR path, int index, CUIProgressShape* pWnd);
 	static bool 	InitFont				(CUIXml& xml_doc, LPCSTR path, int index, u32 &color, CGameFont *&pFnt);
-	static bool 	InitTabButtonMP			(CUIXml& xml_doc, LPCSTR path,	int index, CUITabButtonMP *pWnd);
 	static bool 	InitTabControl			(CUIXml& xml_doc, LPCSTR path,	int index, CUITabControl *pWnd);
 	static bool 	InitAnimatedStatic		(CUIXml& xml_doc, LPCSTR path,	int index, CUIAnimatedStatic *pWnd);
 	static bool 	InitSleepStatic			(CUIXml& xml_doc, LPCSTR path,	int index, CUISleepStatic *pWnd);

@@ -1,12 +1,9 @@
 #include "stdafx.h"
 #include "Level.h"
-#include "UIGameDM.h"
 #include "xrServer.h"
-#include "game_sv_mp.h"
 #include "spectator.h"
 #include "actor.h"
 #include "game_cl_base.h"
-#include "game_cl_mp.h"
 #include "../xrCore/stream_reader.h"
 #include "Message_Filter.h"
 #include "DemoPlay_Control.h"
@@ -152,21 +149,6 @@ void CLevel::SaveDemoHeader(shared_str const & server_options)
 
 void CLevel::SaveDemoInfo()
 {
-	game_cl_mp* tmp_game = smart_cast<game_cl_mp*>(&Game());
-	if (!tmp_game)
-		return;
-	
-	R_ASSERT(m_writer);
-	
-	u32 old_pos = m_writer->tell();
-	m_writer->seek(m_demo_info_file_pos);
-	if (!m_demo_info)
-	{
-		m_demo_info = xr_new<demo_info>();
-	}
-	m_demo_info->load_from_game();
-	m_demo_info->write_to_file(m_writer);
-	m_writer->seek(old_pos);
 }
 
 void CLevel::SavePacket(NET_Packet& packet)
@@ -235,24 +217,7 @@ void CLevel::SimulateServerUpdate()
 
 void CLevel::SpawnDemoSpectator()
 {
-	R_ASSERT(Server && Server->game);
-	m_current_spectator = NULL;
-	game_sv_mp*	tmp_sv_game		= smart_cast<game_sv_mp*>(Server->game);
-	game_cl_mp*	mp_cl_game		= smart_cast<game_cl_mp*>(Level().game);
-
-	CSE_Spectator* specentity = smart_cast<CSE_Spectator*>(
-		tmp_sv_game->spawn_begin("spectator"));
-	R_ASSERT						(specentity);
-	R_ASSERT2						(mp_cl_game->local_player, "player not spawned");
-	//mp_cl_game->local_player		= mp_cl_game->createPlayerState();
-	//xr_strcpy						(mp_cl_game->local_player->name, "demo_spectator");
-	specentity->set_name_replace	(mp_cl_game->local_player->getName());
-	specentity->s_flags.assign		(M_SPAWN_OBJECT_LOCAL | M_SPAWN_OBJECT_ASPLAYER | M_SPAWN_OBJECT_PHANTOM); //M_SPAWN_OBJECT_PHANTOM is ONLY to indicate thath this is a fake spectator
-	tmp_sv_game->assign_RP			(specentity, Level().game->local_player);
-	
-	g_sv_Spawn						(specentity);
-	
-	F_entity_Destroy				(specentity);
+    R_ASSERT2(false, "Multiplayer is unsupported");
 }
 
 void CLevel::SetDemoSpectator(CObject* spectator)

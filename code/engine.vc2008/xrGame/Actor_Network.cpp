@@ -599,11 +599,6 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 
 	Engine.Sheduler.Register	(this,TRUE);
 
-	if (!IsGameTypeSingle())
-	{
-		setEnabled(TRUE);
-	}
-
 	m_hit_slowmo				= 0.f;
 
 	OnChangeVisual();
@@ -683,15 +678,10 @@ BOOL CActor::net_Spawn		(CSE_Abstract* DC)
 	m_bWasHitted = false;
 	m_dwILastUpdateTime		= 0;
 
-	if (IsGameTypeSingle())
-	{
+    Level().MapManager().AddMapLocation("actor_location", ID());
+    Level().MapManager().AddMapLocation("actor_location_p", ID());
 
-		Level().MapManager().AddMapLocation("actor_location",ID());
-		Level().MapManager().AddMapLocation("actor_location_p",ID());
-
-		m_statistic_manager = xr_new<CActorStatisticMgr>();
-	}
-
+    m_statistic_manager = xr_new<CActorStatisticMgr>();
 
 	spatial.type |=STYPE_REACTTOSOUND;
 	psHUD_Flags.set(HUD_WEAPON_RT,TRUE);

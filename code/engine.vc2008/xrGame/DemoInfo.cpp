@@ -1,6 +1,5 @@
 #include "stdafx.h"
-#include "game_sv_mp.h"
-#include "game_cl_mp.h"
+#include "game_cl_base.h"
 #include "level.h"
 #include "DemoInfo.h"
 #include "../xrCore/stream_reader.h"
@@ -9,33 +8,7 @@
 LPCSTR GameTypeToString(EGameIDs gt, bool bShort);
 
 u32 const demo_player_info::demo_info_max_size = DEMOSTRING_MAX_SIZE + 80;
-/*
-void stream_read_demostring(CStreamReader* stream, shared_str & dest_result, u32 max_size)
-{
-	R_ASSERT(stream);
-	R_ASSERT(max_size > 0);
-	char* dest_str		= static_cast<char*>(_alloca(max_size));
-	u32 string_size = stream->r_u32();
-	if (string_size > max_size)
-	{
-		int old_pos = stream->tell();
-		stream->r(static_cast<void*>(dest_str), max_size);
-		dest_str[max_size - 1] = 0;
-		stream->seek(old_pos + string_size);
-	} else
-	{
-		stream->r(static_cast<void*>(dest_str), string_size);
-	}
-	dest_result = dest_str;
-}
 
-void stream_write_demostring(IWriter* writer, shared_str const & string_to_write, u32 max_size)
-{
-	R_ASSERT(writer);
-	R_ASSERT(string_to_write.size() < max_size);
-	writer->w_u32		(string_to_write.size() + 1);//with zero end
-	writer->w_stringZ	(string_to_write);
-}*/
 
 demo_player_info::demo_player_info()
 {
@@ -75,19 +48,6 @@ void demo_player_info::load_from_player(game_PlayerState* player_state)
 	m_deaths	= player_state->m_iDeaths;
 	m_spots		= m_frags - (player_state->m_iTeamKills * 2) - player_state->m_iSelfKills + (m_artefacts * 3);
 	m_rank		= player_state->rank;
-
-	game_cl_mp*	tmp_game = smart_cast<game_cl_mp*>(&Game());
-	R_ASSERT(tmp_game);
-	s16			tmp_team = tmp_game->ModifyTeam(player_state->team);
-	if (tmp_team < 0)
-	{
-		tmp_team = 2;	//spectator
-	}
-	if ((tmp_game->Type() == eGameIDDeathmatch) && (tmp_team != 2))
-	{
-		tmp_team = 0;	//in deathmatch if player is not spectator, he is in green team
-	}
-	m_team		= static_cast<u8>(tmp_team);
 }
 
 u32 const demo_info::max_demo_info_size = 
@@ -152,26 +112,23 @@ void demo_info::load_from_game()
 {
 	m_map_name		= Level().name();
 	m_map_version	= Level().version();
-	game_cl_mp*		tmp_game = smart_cast<game_cl_mp*>(&Game());
-	R_ASSERT2		(tmp_game, "client game not present");
-	m_game_type		= GameTypeToString(tmp_game->Type(), true);
-	string32		tmp_score_dest;
-	m_game_score	= tmp_game->GetGameScore(tmp_score_dest);
-	if (tmp_game->local_player && (xr_strlen(tmp_game->local_player->getName()) > 0))
+	m_game_type		= GameTypeToString(Game().Type(), true);
+	m_game_score	= "";
+	if (Game().local_player && (xr_strlen(Game().local_player->getName()) > 0))
 	{
-		m_author_name	= tmp_game->local_player->getName();
+		m_author_name	= Game().local_player->getName();
 	} else
 	{
 		m_author_name	= "unknown";
 	}
 	
-	u32	pcount		= tmp_game->GetPlayersCount();
+	u32	pcount		= Game().GetPlayersCount();
 	
 	delete_data			(m_players);
 	m_players.reserve	(pcount);
 	for (u32 i = 0; i < pcount; ++i)
 	{
-		game_PlayerState* tmp_player = tmp_game->GetPlayerByOrderID(i);
+		game_PlayerState* tmp_player = Game().GetPlayerByOrderID(i);
 		R_ASSERT2(tmp_player, "player not exist");
 		demo_player_info* new_player = xr_new<demo_player_info>();
 		new_player->load_from_player(tmp_player);

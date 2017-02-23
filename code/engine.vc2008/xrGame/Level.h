@@ -61,93 +61,6 @@ class CLevel					: public IGame_Level, public IPureClient
 {
 	#include "Level_network_Demo.h"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	void						ClearAllObjects			();
 private:
 #ifdef DEBUG
@@ -259,7 +172,6 @@ private:
 	bool						m_bConnectResult;
 	xr_string					m_sConnectResult;
 public:	
-	void						OnGameSpyChallenge				(NET_Packet* P);
 	void						OnBuildVersionChallenge			();
 	void						OnConnectResult					(NET_Packet* P);
 public:

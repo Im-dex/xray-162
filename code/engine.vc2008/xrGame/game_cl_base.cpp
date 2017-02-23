@@ -11,7 +11,6 @@
 #include "UI/UIDialogWnd.h"
 #include "string_table.h"
 #include "game_cl_base_weapon_usage_statistic.h"
-#include "game_sv_mp_vote_flags.h"
 
 EGameIDs ParseStringToGameType	(LPCSTR str);
 LPCSTR GameTypeToString			(EGameIDs gt, bool bShort);
@@ -342,8 +341,7 @@ void game_cl_GameState::shedule_Update		(u32 dt)
 	{
 	case GAME_PHASE_INPROGRESS:
 		{
-			if (!IsGameTypeSingle())
-				m_WeaponUsageStatistic->Update();
+			// mp only
 		}break;
 	default:
 		{

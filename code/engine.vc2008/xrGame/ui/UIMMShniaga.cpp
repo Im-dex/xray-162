@@ -12,9 +12,7 @@
 #include <math.h>
 #include "../Actor.h"
 #include "../saved_game_wrapper.h"
-#include "../login_manager.h"
 #include "MainMenu.h"
-#include "../gamespy/GameSpy_Full.h"
 
 extern string_path g_last_saved_game;
 

@@ -73,7 +73,6 @@
 #	include "RustyHairArtifact.h"
 #	include "GalantineArtifact.h"
 #	include "GraviArtifact.h"
-#	include "cta_game_artefact.h"
 
 #	include "weaponFN2000.h"
 #	include "weaponAK74.h"
@@ -156,20 +155,9 @@
 #	include "DestroyablePhysicsObject.h"
 
 #	include "game_sv_single.h"
-#	include "game_sv_deathmatch.h"
-#	include "game_sv_teamdeathmatch.h"
-#	include "game_sv_ArtefactHunt.h"
-#	include "game_sv_capture_the_artefact.h"
-
 #	include "game_cl_single.h"
-#	include "game_cl_deathmatch.h"
-#	include "game_cl_teamdeathmatch.h"
-#	include "game_cl_ArtefactHunt.h"
-#	include	"game_cl_capture_the_artefact.h"
 
 #	include "UIGameSP.h"
-#	include "UIGameAHunt.h"
-#	include "UIGameCTA.h"
 #	include	"climableobject.h"
 #	include "space_restrictor.h"
 #	include "smart_zone.h"
@@ -200,29 +188,12 @@ void CObjectFactory::register_classes	()
 #ifndef NO_SINGLE
 	add<game_sv_Single>											(CLSID_SV_GAME_SINGLE			,"game_sv_single");
 #endif // #ifndef NO_SINGLE
-#ifndef	BENCHMARK_BUILD
-	add<game_sv_Deathmatch>										(CLSID_SV_GAME_DEATHMATCH		,"game_sv_deathmatch");
-	add<game_sv_TeamDeathmatch>									(CLSID_SV_GAME_TEAMDEATHMATCH	,"game_sv_team_deathmatch");
-	add<game_sv_ArtefactHunt>									(CLSID_SV_GAME_ARTEFACTHUNT		,"game_sv_artefact_hunt");
-	add<game_sv_CaptureTheArtefact>									(CLSID_SV_GAME_CAPTURETHEARTEFACT	,"game_sv_capture_the_artefact");
-#endif	//	BENCHMARK_BUILD
 	//Client Game type
 #ifndef NO_SINGLE
 	add<game_cl_Single>											(CLSID_CL_GAME_SINGLE			,"game_cl_single");
 #endif // #ifndef NO_SINGLE
-#ifndef	BENCHMARK_BUILD
-	add<game_cl_Deathmatch>										(CLSID_CL_GAME_DEATHMATCH		,"game_cl_deathmatch");
-	add<game_cl_TeamDeathmatch>									(CLSID_CL_GAME_TEAMDEATHMATCH	,"game_cl_team_deathmatch");
-	add<game_cl_ArtefactHunt>									(CLSID_CL_GAME_ARTEFACTHUNT		,"game_cl_artefact_hunt");
-	add<game_cl_CaptureTheArtefact>									(CLSID_CL_GAME_CAPTURETHEARTEFACT	,"game_cl_capture_the_artefact");
-#endif	//	BENCHMARK_BUILD
-
 
 	add<CUIGameSP>												(CLSID_GAME_UI_SINGLE			,"game_ui_single");
-	add<CUIGameDM>												(CLSID_GAME_UI_DEATHMATCH		,"game_ui_deathmatch");
-	add<CUIGameTDM>												(CLSID_GAME_UI_TEAMDEATHMATCH	,"game_ui_team_deathmatch");
-	add<CUIGameAHunt>											(CLSID_GAME_UI_ARTEFACTHUNT		,"game_ui_artefact_hunt");
-	add<CUIGameCTA>												(CLSID_GAME_UI_CAPTURETHEARTEFACT	,"game_ui_capture_the_artefact");
 
 #	ifndef NO_SINGLE
 		ADD_MP(CActor,CActorMP,CSE_ALifeCreatureActor,CSE_ActorMP	,CLSID_OBJECT_ACTOR				,"actor");
@@ -291,7 +262,6 @@ void CObjectFactory::register_classes	()
 	ADD(CGalantineArtefact		,CSE_ALifeItemArtefact			,CLSID_AF_GALANTINE				,"art_galantine");
 	ADD(CGraviArtefact			,CSE_ALifeItemArtefact			,CLSID_AF_GRAVI					,"art_gravi");
 	ADD(CGraviArtefact			,CSE_ALifeItemArtefact			,CLSID_ARTEFACT					,"artefact");
-	ADD(CtaGameArtefact			,CSE_ALifeItemArtefact			,CLSID_AF_CTA					,"art_cta");
 
 	//  [8/15/2006]
 	ADD(CWeaponMagazined		,CSE_ALifeItemWeaponMagazined	,CLSID_OBJECT_W_MAGAZINED		,"wpn_wmagaz");

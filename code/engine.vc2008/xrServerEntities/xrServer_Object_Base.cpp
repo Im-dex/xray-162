@@ -422,10 +422,6 @@ Flags16&	CSE_Abstract::flags			()
 xr_token game_types[]={
 	{ "any_game",				eGameIDNoGame				},
 	{ "single",					eGameIDSingle				},
-	{ "deathmatch",				eGameIDDeathmatch			},
-	{ "team_deathmatch",		eGameIDTeamDeathmatch		},
-	{ "artefacthunt",			eGameIDArtefactHunt			},
-	{ "capture_the_artefact",	eGameIDCaptureTheArtefact	},
 	//eGameIDDominationZone
 	//eGameIDTeamDominationZone
 	{ 0,				0				}

@@ -97,14 +97,6 @@ bool CEatableItem::UseBy (CEntityAlive* entity_alive)
 			entity_alive->conditions().ApplyBooster(B, m_physic_item->cNameSect());
 		}
 	}
-
-	if (!IsGameTypeSingle() && OnServer())
-	{
-		NET_Packet				tmp_packet;
-		CGameObject::u_EventGen	(tmp_packet, GEG_PLAYER_USE_BOOSTER, entity_alive->ID());
-		tmp_packet.w_u16		(object_id());
-		Level().Send			(tmp_packet);
-	}
 	
 	if(m_iPortionsNum > 0)
 		--m_iPortionsNum;

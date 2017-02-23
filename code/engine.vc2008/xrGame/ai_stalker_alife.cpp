@@ -24,7 +24,10 @@
 #include "trade_parameters.h"
 #include "clsid_game.h"
 
-extern u32 get_rank								(const shared_str &section);
+u32 get_rank(const shared_str&)
+{
+    return -1;
+}
 
 static const int MAX_AMMO_ATTACH_COUNT = 1;
 static const int enough_ammo_box_count = 1;

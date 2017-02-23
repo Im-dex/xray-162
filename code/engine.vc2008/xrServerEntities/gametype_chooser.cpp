@@ -7,19 +7,11 @@
 //old
 enum ERPGameType{		// [0..255]
 	rpgtGameAny							= u8(0),
-	rpgtGameDeathmatch,
-	rpgtGameTeamDeathmatch,
-	rpgtGameArtefactHunt,
-	rpgtGameCaptureTheArtefact,
 	rpgtGameCount,
 };
 
 xr_token rpoint_game_type[]={
 	{ "Any game",			rpgtGameAny					},
-	{ "Deathmatch",			rpgtGameDeathmatch			},
-	{ "TeamDeathmatch",		rpgtGameTeamDeathmatch		},
-	{ "ArtefactHunt",		rpgtGameArtefactHunt		},
-	{ "CaptureTheArtefact",	rpgtGameCaptureTheArtefact	},
 	{ 0,					0	}
 };
 
@@ -42,18 +34,6 @@ bool GameTypeChooser::LoadLTX(CInifile& ini, LPCSTR sect_name, bool bOldFormat)
         {
             case rpgtGameAny:
                 m_GameType.one();
-                break;
-            case rpgtGameDeathmatch:
-                m_GameType.set(eGameIDDeathmatch,TRUE);
-                break;
-            case rpgtGameTeamDeathmatch:
-                m_GameType.set(eGameIDTeamDeathmatch,TRUE);
-                break;
-            case rpgtGameArtefactHunt:
-                m_GameType.set(eGameIDArtefactHunt,TRUE);
-                break;
-            case rpgtGameCaptureTheArtefact:
-                m_GameType.set(eGameIDCaptureTheArtefact,TRUE);
                 break;
         }
     }else

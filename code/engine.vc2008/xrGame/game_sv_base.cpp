@@ -13,7 +13,6 @@
 #include "string_table.h"
 
 #include "debug_renderer.h"
-#include "xrGameSpyServer.h"
 
 ENGINE_API	bool g_dedicated_server;
 
@@ -392,24 +391,6 @@ void game_sv_GameState::Create					(shared_str &options)
 				if(type==rptItemSpawn)
 					O->r_stringZ		(rp_profile);
 
-				if (GameType != EGameIDs(u16(-1)))
-				{
-					if ((Type() == eGameIDCaptureTheArtefact) && (GameType & eGameIDCaptureTheArtefact))
-					{
-						team = team - 1;
-						R_ASSERT2( ((team >= 0) && (team < 4)) || 
-							(type != rptActorSpawn), 
-							"Problem with CTA Team indexes. Propably you have added rpoint of team 0 for cta game type.");
-					}
-					if ((!(GameType & eGameIDDeathmatch) && (Type() == eGameIDDeathmatch)) ||
-						(!(GameType & eGameIDTeamDeathmatch) && (Type() == eGameIDTeamDeathmatch))	||
-						(!(GameType & eGameIDArtefactHunt) && (Type() == eGameIDArtefactHunt)) ||
-						(!(GameType & eGameIDCaptureTheArtefact) && (Type() == eGameIDCaptureTheArtefact))
-						)
-					{
-						continue;
-					};
-				};
 				switch (type)
 				{
 				case rptActorSpawn:
@@ -645,11 +626,6 @@ void game_sv_GameState::Update		()
 	ping_filler tmp_functor;
 	m_server->ForEachClientDo(tmp_functor);
 	
-	if (!IsGameTypeSingle() && (Phase() == GAME_PHASE_INPROGRESS))
-	{
-		m_item_respawner.update(Level().timeServer());
-	}
-	
 	if (!g_dedicated_server)
 	{
 		if (Level().game) {
@@ -762,11 +738,7 @@ void game_sv_GameState::OnEvent (NET_Packet &tNetPacket, u16 type, u32 time, Cli
 
 			if(!e_src)  // && !IsGameTypeSingle() added by andy because of Phantom does not have server entity
 			{
-				if( IsGameTypeSingle() ) break;
-
-				game_PlayerState* ps	= get_eid(id_src);
-				if (!ps)				break;
-				id_src					= ps->GameID;
+				break;
 			}
 
 			OnHit(id_src, id_dest, tNetPacket);
@@ -817,45 +789,9 @@ void game_sv_GameState::OnEvent (NET_Packet &tNetPacket, u16 type, u32 time, Cli
 	};
 }
 
-bool game_sv_GameState::CheckNewPlayer(xrClientData* CL)
+bool game_sv_GameState::CheckNewPlayer(xrClientData*)
 {
-	xrGameSpyServer*		gs_server = smart_cast<xrGameSpyServer*>(m_server);
-	R_ASSERT				(gs_server);
-	
-	char const *			error_msg = NULL;
-	ClientID				tmp_client_id(CL->ID);
-	
-	if (gs_server->IsPublicServer())
-	{
-		if (!CL->ps->m_account.is_online())
-		{
-			error_msg = "mp_please_login";
-		} else
-		{
-			if (FindPlayerName(CL->ps->getName(), CL))
-			{
-				error_msg = "mp_already_logged_in";
-			}
-		}
-	} else
-	{
-		if (CL->ps->m_account.is_online())
-		{
-			error_msg = "mp_use_offline_mode";
-		} else
-		{
-			CheckPlayerName(CL);
-		}
-	}
-
-	if (error_msg)
-	{
-		m_server->SendProfileCreationError(CL, error_msg);
-		if (CL != m_server->GetServerClient()) //CL can be NULL
-			CleanDelayedEventFor(tmp_client_id);
-		return false;
-	}
-	return true;
+    return true;
 }
 
 void game_sv_GameState::OnSwitchPhase(u32 old_phase, u32 new_phase)
@@ -866,29 +802,7 @@ void game_sv_GameState::OnSwitchPhase(u32 old_phase, u32 new_phase)
 
 void game_sv_GameState::AddDelayedEvent(NET_Packet &tNetPacket, u16 type, u32 time, ClientID sender )
 {
-//	OnEvent(tNetPacket,type,time,sender);
-	if (IsGameTypeSingle())
-	{
-		m_event_queue->Create(tNetPacket,type,time,sender);
-		return;
-	}
-	switch (type)
-	{
-	case GAME_EVENT_PLAYER_STARTED:
-	case GAME_EVENT_PLAYER_READY:
-	case GAME_EVENT_VOTE_START:
-	case GAME_EVENT_VOTE_YES:
-	case GAME_EVENT_VOTE_NO:
-	case GAME_EVENT_PLAYER_AUTH:
-	case GAME_EVENT_CREATE_PLAYER_STATE:
-		{
-			m_event_queue->Create(tNetPacket,type,time,sender);
-		}break;
-	default:
-		{
-			m_event_queue->CreateSafe(tNetPacket,type,time,sender);
-		}break;
-	}
+    m_event_queue->Create(tNetPacket, type, time, sender);
 }
 
 void game_sv_GameState::ProcessDelayedEvent		()
@@ -1298,31 +1212,6 @@ void game_sv_GameState::GenerateNewName			(char const * old_name, char * dest, u
 	xr_strcat	(dest, dest_size, new_suffix);
 }
 
-void game_sv_GameState::CheckPlayerName(xrClientData* CL)
+void game_sv_GameState::CheckPlayerName(xrClientData*)
 {
-	R_ASSERT	(CL && CL->ps);
-	R_ASSERT	(!CL->ps->m_account.is_online());
-
-	char const *	current_name = NULL;
-	if (CL->ps->m_account.name().size())	//in case of logging from gamespy login page
-	{
-		current_name = CL->ps->getName();
-	} else
-	{
-		current_name = CL->name.c_str();
-		CL->ps->m_account.set_player_name(current_name);
-	}
-	u32				current_name_length = xr_strlen(current_name);
-
-
-	u32				new_name_dest_size = current_name_length + 16;
-	char *			new_name_dest = static_cast<char*>(
-		_alloca(new_name_dest_size));
-
-	while (FindPlayerName(current_name, CL))
-	{
-		GenerateNewName(current_name, new_name_dest, new_name_dest_size);
-		CL->ps->m_account.set_player_name(new_name_dest);
-		current_name = new_name_dest;
-	}
 }

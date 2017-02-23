@@ -59,40 +59,7 @@ void WeaponUsageStatistic::WriteLtx(CInifile& ini)
 
 void WeaponUsageStatistic::SaveData()
 {
-
-	if (OnClient()) return;
-	if (!CollectData()) return;
-	if (aPlayersStatistic.empty()) return;
-
-	string64		GameType;
-	SYSTEMTIME		Time;	
-	switch ( GameID() )
-	{
-	case eGameIDDeathmatch:				xr_sprintf(GameType, "dm"); break;
-	case eGameIDTeamDeathmatch:			xr_sprintf(GameType, "tdm"); break;
-	case eGameIDArtefactHunt:			xr_sprintf(GameType, "ah"); break;
-	case eGameIDCaptureTheArtefact:		xr_sprintf(GameType, "cta"); break;
-	default:
-		return;
-		break;
-	};
-	GetLocalTime(&Time);	
-	xr_sprintf(mFileName, "(%s)_(%s)_%02d.%02d.%02d_%02d.%02d.%02d.wus", *(Level().name()), GameType, Time.wMonth, Time.wDay, Time.wYear, Time.wHour, Time.wMinute, Time.wSecond);
-
-
-	//---------------------------------------------------------
-	FS.update_path			(mFileName,"$logs$",mFileName);
-	FILE* SFile				= fopen(mFileName, "wb");
-	if (!SFile)				return;
-	//---------------------------------------------------------
-	u32 IDENT				= WUS_IDENT;
-	fwrite					(&IDENT, 4, 1, SFile);
-	u32 Ver					= WUS_VERSION;
-	fwrite					(&Ver, 4, 1, SFile);
-	//---------------------------------------------------------
-	Write					(SFile);
-	//---------------------------------------------------------
-	fclose					(SFile);
+    // mp only
 };
 
 void WeaponUsageStatistic::Write(FILE* pFile)

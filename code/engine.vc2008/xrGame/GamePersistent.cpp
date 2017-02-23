@@ -186,31 +186,12 @@ void CGamePersistent::OnGameStart()
 	UpdateGameType				();
 }
 
-LPCSTR GameTypeToString(EGameIDs gt, bool bShort)
+LPCSTR GameTypeToString(EGameIDs gt, bool)
 {
 	switch(gt)
 	{
 	case eGameIDSingle:
 		return "single";
-		break;
-	case eGameIDDeathmatch:
-		return (bShort)?"dm":"deathmatch";
-		break;
-	case eGameIDTeamDeathmatch:
-		return (bShort)?"tdm":"teamdeathmatch";
-		break;
-	case eGameIDArtefactHunt:
-		return (bShort)?"ah":"artefacthunt";
-		break;
-	case eGameIDCaptureTheArtefact:
-		return (bShort)?"cta":"capturetheartefact";
-		break;
-	case eGameIDDominationZone:
-		return (bShort)?"dz":"dominationzone";
-		break;
-	case eGameIDTeamDominationZone:
-		return (bShort)?"tdz":"teamdominationzone";
-		break;
 	default :
 		return		"---";
 	}
@@ -221,25 +202,7 @@ EGameIDs ParseStringToGameType(LPCSTR str)
 	if (!xr_strcmp(str, "single")) 
 		return eGameIDSingle;
 	else
-		if (!xr_strcmp(str, "deathmatch") || !xr_strcmp(str, "dm")) 
-			return eGameIDDeathmatch;
-		else
-			if (!xr_strcmp(str, "teamdeathmatch") || !xr_strcmp(str, "tdm")) 
-				return eGameIDTeamDeathmatch;
-			else
-				if (!xr_strcmp(str, "artefacthunt") || !xr_strcmp(str, "ah")) 
-					return eGameIDArtefactHunt;
-				else
-					if (!xr_strcmp(str, "capturetheartefact") || !xr_strcmp(str, "cta")) 
-						return eGameIDCaptureTheArtefact;
-					else
-						if (!xr_strcmp(str, "dominationzone")) 
-							return eGameIDDominationZone;
-						else
-							if (!xr_strcmp(str, "teamdominationzone")) 
-								return eGameIDTeamDominationZone;
-							else 
-								return eGameIDNoGame; //EGameIDs
+        return eGameIDNoGame; //EGameIDs
 }
 
 void CGamePersistent::UpdateGameType			()
@@ -585,7 +548,7 @@ void CGamePersistent::OnFrame	()
 			}
 		}
 #ifndef MASTER_GOLD
-		if (Level().CurrentViewEntity() && IsGameTypeSingle()) {
+		if (Level().CurrentViewEntity()) {
 			if (!g_actor || (g_actor->ID() != Level().CurrentViewEntity()->ID())) {
 				CCustomMonster	*custom_monster = smart_cast<CCustomMonster*>(Level().CurrentViewEntity());
 				if (custom_monster) // can be spectator in multiplayer
@@ -842,7 +805,7 @@ void CGamePersistent::LoadTitle(bool change_tip, shared_str map_name)
 
 bool CGamePersistent::CanBePaused()
 {
-	return IsGameTypeSingle	() || (g_pGameLevel && Level().IsDemoPlay());
+	return g_pGameLevel && Level().IsDemoPlay();
 }
 void CGamePersistent::SetPickableEffectorDOF(bool bSet)
 {

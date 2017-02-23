@@ -4,7 +4,6 @@
 #include "xrserver.h"
 #include "game_cl_base.h"
 #include "xrmessages.h"
-#include "xrGameSpyServer.h"
 #include "../xrEngine/x_ray.h"
 #include "../xrEngine/device.h"
 #include "../xrEngine/IGame_Persistent.h"
@@ -12,7 +11,6 @@
 #include "MainMenu.h"
 #include "string_table.h"
 #include "UIGameCustom.h"
-#include "ui/UICDkey.h"
 
 int		g_cl_save_demo = 0;
 extern XRCORE_API bool g_allow_heap_min;
@@ -34,12 +32,7 @@ BOOL CLevel::net_Start	( LPCSTR op_server, LPCSTR op_client )
 	pApp->LoadBegin				();
 
 	string64	player_name;
-	GetPlayerName_FromRegistry( player_name, sizeof(player_name) );
-
-	if ( xr_strlen(player_name) == 0 )
-	{
-		xr_strcpy( player_name, xr_strlen(Core.UserName) ? Core.UserName : Core.CompName );
-	}
+    xr_strcpy(player_name, xr_strlen(Core.UserName) ? Core.UserName : Core.CompName);
 	VERIFY( xr_strlen(player_name) );
 
 	//make Client Name if options doesn't have it
@@ -118,7 +111,9 @@ bool CLevel::net_start1				()
 		} else
 		{
 			g_allow_heap_min		= false;
-			Server					= xr_new<xrGameSpyServer>();
+            Log("Unsupported game type: ", p.m_game_type);
+            net_start_result_total = FALSE;
+            return true;
 		}
 
 		if (xr_strcmp(p.m_alife,"alife"))
@@ -343,11 +338,6 @@ void CLevel::InitializeClientGame	(NET_Packet& P)
 	game->set_type_name		(game_type_name);
 	game->Init				();
 	m_bGameConfigStarted	= TRUE;
-
-	if (!IsGameTypeSingle())
-	{
-		init_compression();
-	}
 	
 	R_ASSERT				(Load_GameSpecific_After ());
 }

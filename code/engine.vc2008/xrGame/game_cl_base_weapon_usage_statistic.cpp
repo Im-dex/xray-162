@@ -9,7 +9,6 @@
 #include "xrServer.h"
 #include "game_cl_base_weapon_usage_statistic.h"
 #include "../Include/xrRender/Kinematics.h"
-#include "game_cl_mp.h"
 
 
 BulletData::BulletData(shared_str FName, shared_str WName, SBullet* pBullet) 
@@ -869,28 +868,9 @@ void WeaponUsageStatistic::OnBleedKill(game_PlayerState* killer_ps, game_PlayerS
 	WeaponIt->add_hit(NewHit);
 }
 
-u8 WeaponUsageStatistic::ConvertToTeamIndex(s16 team)
+u8 WeaponUsageStatistic::ConvertToTeamIndex(s16)
 {
-	game_cl_mp* cl_game = static_cast<game_cl_mp*>(&Game());
-	s16 team_index = cl_game->ModifyTeam(team);
-	if (Game().Type() == eGameIDTeamDeathmatch)
-	{
-		if (team_index == -1)
-		{
-//			Msg("! ERROR: can't process spectators in deathmatch statistics.");
-			return 1;
-		}
-	} else
-	{
-		if ((team_index == etSpectatorsTeam) || (team_index == -1))
-		{
-			team_index = 0;
-		} else
-		{
-			++team_index;
-		}
-	}
-	return static_cast<u8>(team_index);
+    return 1;
 }
 
 void WeaponUsageStatistic::OnPlayerKilled(game_PlayerState* ps)
