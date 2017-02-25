@@ -18,12 +18,9 @@ namespace lc_net
 		template<e_net_globals data>
 		void	set_cleanup					( u32 id )
 		{
-            std::lock_guard<decltype(lock)> locker(lock);
+                        std::lock_guard<decltype(lock)> locker(lock);
 			if( vec_cleanup[data] == id )
-			{
-				lock.Leave();
 				return;
-			}
 			++id_state;
 			vec_cleanup[data] = id;
 		};
