@@ -76,7 +76,8 @@ u32 GetATIGpuNum()
 	if (iGpuNum <= 0)
 		return 0;
 
-	Msg	("* ATI MGPU: %d-Way CrossFire detected.", iGpuNum);
+	if (iGPUNum > 1)
+		Msg	("* ATI MGPU: %d-Way CrossFire detected.", iGpuNum);
 
 	return iGpuNum;
 }
