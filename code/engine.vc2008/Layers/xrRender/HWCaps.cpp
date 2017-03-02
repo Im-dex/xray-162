@@ -72,12 +72,11 @@ u32 GetNVGpuNum()
 u32 GetATIGpuNum()
 {
 	int iGpuNum = AtiMultiGPUAdapters();
-	//int iGpuNum = 1;
+	
+	if (iGpuNum <= 0)
+		return 0;
 
-	if (iGpuNum>1)
-	{
-		Msg	("* ATI MGPU: %d-Way CrossFire detected.", iGpuNum);
-	}
+	Msg	("* ATI MGPU: %d-Way CrossFire detected.", iGpuNum);
 
 	return iGpuNum;
 }
