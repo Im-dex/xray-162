@@ -682,8 +682,8 @@ void CMainMenu::OnConnectToMasterServerOkClicked(CUIWindow*, void*)
 
 LPCSTR CMainMenu::GetGSVer()
 {
-	static string256	buff;
-    buff[0] = 0;
+	static string256 buff;
+    xr_strcpy(buff, 255, "1.7 by Im-dex");
 	return buff;
 }
 
