@@ -121,8 +121,6 @@
 
 #	include "explosiverocket.h"
 
-#	include "MPPlayersBag.h"
-
 #	include "customzone.h"
 #	include "mosquitobald.h"
 #	include "mincer.h"
@@ -163,15 +161,12 @@
 #	include "smart_zone.h"
 #	include "InventoryBox.h"
 
-#	include "actor_mp_server.h"
-#	include "actor_mp_client.h"
 #	include "smart_cover_object.h"
 #endif // NO_XR_GAME
 
 #ifndef NO_XR_GAME
 	ENGINE_API					bool g_dedicated_server;
 #	define ADD(a,b,c,d)			add<a,b>(c,d)
-#	define ADD_MP(a,b,c,d,e,f)	add(xr_new<CObjectItemClientServerSingleMp<a,b,c,d> >(e,f))
 #else
 #	define ADD(a,b,c,d)			add<b>(c,d)
 #endif
@@ -195,11 +190,6 @@ void CObjectFactory::register_classes	()
 
 	add<CUIGameSP>												(CLSID_GAME_UI_SINGLE			,"game_ui_single");
 
-#	ifndef NO_SINGLE
-		ADD_MP(CActor,CActorMP,CSE_ALifeCreatureActor,CSE_ActorMP	,CLSID_OBJECT_ACTOR				,"actor");
-#	else // #ifndef NO_SINGLE
-		ADD(CActorMP,CSE_ActorMP	,CLSID_OBJECT_ACTOR				,"actor");
-#	endif // #ifndef NO_SINGLE
 #else // NO_XR_GAME
 	ADD(CActor					,CSE_ALifeCreatureActor			,CLSID_OBJECT_ACTOR				,"actor");
 #endif // NO_XR_GAME
@@ -329,10 +319,6 @@ void CObjectFactory::register_classes	()
 	// Rockets
 	ADD(CExplosiveRocket		,CSE_Temporary					,CLSID_OBJECT_G_RPG7			,"wpn_grenade_rpg7");
 	ADD(CExplosiveRocket		,CSE_Temporary					,CLSID_OBJECT_G_FAKE			,"wpn_grenade_fake");
-
-	//-----------------------------------------------------------------------------------------------------------------
-	ADD(CMPPlayersBag			,CSE_ALifeItem					,CLSID_OBJECT_PLAYERS_BAG		,"mp_players_bag");
-	//-----------------------------------------------------------------------------------------------------------------
 
 	// Zones
 	ADD(CCustomZone				,CSE_ALifeCustomZone			,CLSID_ZONE						,"zone");

@@ -1,6 +1,5 @@
 #pragma once
 #include "inventory_item_object.h"
-#include "anticheat_dumpable_object.h"
 
 struct SCartridgeParam
 {
@@ -23,7 +22,7 @@ struct SCartridgeParam
 	}
 };
 
-class CCartridge : public IAnticheatDumpable
+class CCartridge
 {
 public:
 	CCartridge();
@@ -45,7 +44,6 @@ public:
 	Flags8	m_flags;
 
 	shared_str	m_InvShortName;
-	virtual void				DumpActiveParams		(shared_str const & section_name, CInifile & dst_ini) const;
 	virtual shared_str const 	GetAnticheatSectionName	() const { return m_ammoSect; };
 };
 

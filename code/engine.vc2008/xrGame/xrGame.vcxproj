@@ -1241,10 +1241,6 @@
     <ClInclude Include="Message_Filter.h" />
     <ClInclude Include="xr_level_controller.h" />
     <ClInclude Include="level_debug.h" />
-    <ClInclude Include="actor_mp_client.h" />
-    <ClInclude Include="actor_mp_server.h" />
-    <ClInclude Include="actor_mp_state.h" />
-    <ClInclude Include="actor_mp_state_inline.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="actor_anim_defs.h" />
     <ClInclude Include="actor_defs.h" />
@@ -1436,8 +1432,6 @@
     </CustomBuildStep>
     <ClInclude Include="ExplosiveItem.h" />
     <ClInclude Include="wallmark_manager.h" />
-    <ClInclude Include="MPPlayersBag.h" />
-    <ClInclude Include="anticheat_dumpable_object.h" />
     <ClInclude Include="searchlight.h" />
     <ClInclude Include="trade.h" />
     <ClInclude Include="CustomZone.h" />
@@ -3689,13 +3683,6 @@
     <ClCompile Include="Message_Filter.cpp" />
     <ClCompile Include="xr_level_controller.cpp" />
     <ClCompile Include="level_debug.cpp" />
-    <ClCompile Include="actor_mp_client.cpp" />
-    <ClCompile Include="actor_mp_client_export.cpp" />
-    <ClCompile Include="actor_mp_client_import.cpp" />
-    <ClCompile Include="actor_mp_server.cpp" />
-    <ClCompile Include="actor_mp_server_export.cpp" />
-    <ClCompile Include="actor_mp_server_import.cpp" />
-    <ClCompile Include="actor_mp_state.cpp" />
     <ClCompile Include="Actor.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
@@ -4305,11 +4292,6 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="wallmark_manager.cpp" />
-    <ClCompile Include="MPPlayersBag.cpp" />
-    <ClCompile Include="mpactor_dump_impl.cpp" />
-    <ClCompile Include="shootingObject_dump_impl.cpp" />
-    <ClCompile Include="weapon_ammo_dump_impl.cpp" />
-    <ClCompile Include="weapon_dump_impl.cpp" />
     <ClCompile Include="searchlight.cpp" />
     <ClCompile Include="trade.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch_script.h</PrecompiledHeaderFile>
