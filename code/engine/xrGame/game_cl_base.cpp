@@ -341,7 +341,8 @@ void game_cl_GameState::shedule_Update		(u32 dt)
 	{
 	case GAME_PHASE_INPROGRESS:
 		{
-			// mp only
+			if (!IsGameTypeSingle())
+				m_WeaponUsageStatistic->Update();
 		}break;
 	default:
 		{

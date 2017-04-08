@@ -11,6 +11,7 @@
 #pragma warning(push)
 #pragma warning(disable:4995)
 #include <malloc.h>
+#include "Level.h"
 #pragma warning(pop)
 
 LPCSTR xrServer::get_map_download_url(LPCSTR level_name, LPCSTR level_version)
@@ -19,7 +20,12 @@ LPCSTR xrServer::get_map_download_url(LPCSTR level_name, LPCSTR level_version)
 	LPCSTR ret_url = "";
 	CInifile* level_ini = pApp->GetArchiveHeader(level_name, level_version);
 	if (!level_ini)
+	{
+		if(!IsGameTypeSingle())
+			Msg("! Warning: level [%s][%s] has not header ltx", level_name, level_version);
+
 		return ret_url;
+	}
 
 	ret_url = level_ini->r_string_wb("header", "link").c_str();
 	if (!ret_url)
@@ -132,7 +138,7 @@ void xrServer::AttachNewClient			(IClient* CL)
 
 void xrServer::RequestClientDigest(IClient* CL)
 {
-	if (CL == GetServerClient())
+	if (IsGameTypeSingle() || (CL == GetServerClient()))
 	{
 		Check_BuildVersion_Success(CL);	
 		return;
@@ -148,4 +154,5 @@ void xrServer::RequestClientDigest(IClient* CL)
 
 void xrServer::ProcessClientDigest(xrClientData*, NET_Packet*)
 {
+	// NOTE: multiplayer code was here
 }

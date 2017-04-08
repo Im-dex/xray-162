@@ -480,6 +480,37 @@ void	CActor::Hit(SHit* pHDS)
 	bool bPlaySound = true;
 	if (!g_Alive()) bPlaySound = false;
 
+	if (!IsGameTypeSingle() && !g_dedicated_server)
+	{
+		game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+		if (ps && ps->testFlag(GAME_PLAYER_FLAG_INVINCIBLE))
+		{
+			bPlaySound = false;
+			if (Device.dwFrame != last_hit_frame &&
+				HDS.bone() != BI_NONE)
+			{		
+				// вычислить позицию и направленность партикла
+				Fmatrix pos; 
+
+				CParticlesPlayer::MakeXFORM(this,HDS.bone(),HDS.dir,HDS.p_in_bone_space,pos);
+
+				// установить particles
+				CParticlesObject* ps = NULL;
+
+				if (eacFirstEye == cam_active && this == Level().CurrentEntity())
+					ps = CParticlesObject::Create(invincibility_fire_shield_1st,TRUE);
+				else
+					ps = CParticlesObject::Create(invincibility_fire_shield_3rd,TRUE);
+
+				ps->UpdateParent(pos,Fvector().set(0.f,0.f,0.f));
+				GamePersistent().ps_needtoplay.push_back(ps);
+			};
+		};
+		 
+
+		last_hit_frame = Device.dwFrame;
+	};
+
 	if(	!g_dedicated_server				&& 
 		!sndHit[HDS.hit_type].empty()	&&
 		conditions().PlayHitSound(pHDS)	)
@@ -540,20 +571,61 @@ void	CActor::Hit(SHit* pHDS)
 			HitMark			(HDS.damage(), HDS.dir, HDS.who, HDS.bone(), HDS.p_in_bone_space, HDS.impulse, HDS.hit_type);
 	}
 
-    float hit_power = HitArtefactsOnBelt(HDS.damage(), HDS.hit_type);
+	if(IsGameTypeSingle())	
+	{
+		float hit_power				= HitArtefactsOnBelt(HDS.damage(), HDS.hit_type);
 
-    if (GodMode())
-    {
-        HDS.power = 0.0f;
-        inherited::Hit(&HDS);
-        return;
-    }
-    else
-    {
-        HDS.power = hit_power;
-        HDS.add_wound = true;
-        inherited::Hit(&HDS);
-    }
+		if(GodMode())
+		{
+			HDS.power				= 0.0f;
+			inherited::Hit			(&HDS);
+			return;
+		}else 
+		{
+			HDS.power				= hit_power;
+			HDS.add_wound			= true;
+			inherited::Hit			(&HDS);
+		}
+	}else
+	{
+		m_bWasBackStabbed			= false;
+		if (HDS.hit_type == ALife::eHitTypeWound_2 && Check_for_BackStab_Bone(HDS.bone()))
+		{
+			// convert impulse into local coordinate system
+			Fmatrix					mInvXForm;
+			mInvXForm.invert		(XFORM());
+			Fvector					vLocalDir;
+			mInvXForm.transform_dir	(vLocalDir,HDS.dir);
+			vLocalDir.invert		();
+
+			Fvector a				= {0,0,1};
+			float res				= a.dotproduct(vLocalDir);
+			if (res < -0.707)
+			{
+				game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+				
+				if (!ps || !ps->testFlag(GAME_PLAYER_FLAG_INVINCIBLE))						
+					m_bWasBackStabbed = true;
+			}
+		};
+		
+		float hit_power				= 0.0f;
+
+		if (m_bWasBackStabbed) 
+			hit_power				= (HDS.damage() == 0) ? 0 : 100000.0f;
+		else 
+			hit_power				= HitArtefactsOnBelt(HDS.damage(), HDS.hit_type);
+
+		HDS.power					= hit_power;
+		HDS.add_wound				= true;
+		inherited::Hit				(&HDS);
+
+		if(OnServer() && !g_Alive() && HDS.hit_type==ALife::eHitTypeExplosion)
+		{
+			game_PlayerState* ps							= Game().GetPlayerByGameID(ID());
+			Game().m_WeaponUsageStatistic->OnExplosionKill	(ps, HDS);
+		}
+	}
 }
 
 void CActor::HitMark	(float P, 
@@ -667,11 +739,22 @@ void CActor::Die	(CObject* who)
 			{
 				if(item_in_slot)
 				{
-                    CGrenade* grenade = smart_cast<CGrenade*>(item_in_slot);
-                    if (grenade)
-                        grenade->DropGrenade();
-                    else
-                        item_in_slot->SetDropManual(TRUE);
+					if (IsGameTypeSingle())
+					{
+						CGrenade* grenade = smart_cast<CGrenade*>(item_in_slot);
+						if (grenade)
+							grenade->DropGrenade();
+						else
+							item_in_slot->SetDropManual(TRUE);
+					}else
+					{
+						//This logic we do on a server site
+						/*
+						if ((*I).m_pIItem->object().CLS_ID != CLSID_OBJECT_W_KNIFE)
+						{
+							(*I).m_pIItem->SetDropManual(TRUE);
+						}*/							
+					}
 				};
 			continue;
 			}
@@ -689,6 +772,20 @@ void CActor::Die	(CObject* who)
 		TIItemContainer &l_blist = inventory().m_belt;
 		while (!l_blist.empty())	
 			inventory().Ruck(l_blist.front());
+
+		if (!IsGameTypeSingle())
+		{
+			//if we are on server and actor has PDA - destroy PDA
+			TIItemContainer &l_rlist	= inventory().m_ruck;
+			for(TIItemContainer::iterator l_it = l_rlist.begin(); l_rlist.end() != l_it; ++l_it)
+			{
+				if ((*l_it)->object().CLS_ID == CLSID_OBJECT_PLAYERS_BAG)
+				{
+					(*l_it)->SetDropManual(TRUE);
+					continue;
+				};
+			};
+		};
 	};
 
 	if(!g_dedicated_server)
@@ -700,9 +797,15 @@ void CActor::Die	(CObject* who)
 		m_DangerSnd.stop		();		
 	}
 
-    cam_Set(eacFreeLook);
-    CurrentGameUI()->HideShownDialogs();
-    start_tutorial("game_over");
+	if	(IsGameTypeSingle())
+	{
+		cam_Set				(eacFreeLook);
+		CurrentGameUI()->HideShownDialogs();
+		start_tutorial		("game_over");
+	} else
+	{
+		cam_Set				(eacFixedLookAt);
+	}
 	
 	mstate_wishful	&=		~mcAnyMove;
 	mstate_real		&=		~mcAnyMove;
@@ -1472,6 +1575,8 @@ void CActor::ForceTransform(const Fmatrix& m)
 
 	character_physics_support()->ForceTransform( m );
 	const float block_damage_time_seconds = 2.f;
+	if(!IsGameTypeSingle())
+		character_physics_support()->movement()->BlockDamageSet( u64( block_damage_time_seconds/fixed_step ) );
 }
 
 ENGINE_API extern float		psHUD_FOV;
@@ -1486,6 +1591,7 @@ float CActor::Radius()const
 
 bool		CActor::use_bolts				() const
 {
+	if (!IsGameTypeSingle()) return false;
 	return CInventoryOwner::use_bolts();
 };
 
@@ -1493,7 +1599,20 @@ int		g_iCorpseRemove = 1;
 
 bool  CActor::NeedToDestroyObject() const
 {
-    return false;
+	if(IsGameTypeSingle())
+	{
+		return false;
+	}
+	else 
+	{
+		if (g_Alive()) return false;
+		if (g_iCorpseRemove == -1) return false;
+		if (g_iCorpseRemove == 0 && m_bAllowDeathRemove) return true;
+		if(TimePassedAfterDeath()>m_dwBodyRemoveTime && m_bAllowDeathRemove)
+			return true;
+		else
+			return false;
+	}
 }
 
 ALife::_TIME_ID	 CActor::TimePassedAfterDeath()	const

@@ -106,6 +106,9 @@ void CWeapon::UpdateXForm	()
 	CEntityAlive*			E = smart_cast<CEntityAlive*>(H_Parent());
 	
 	if (!E) {
+		if (!IsGameTypeSingle())
+			UpdatePosition	(H_Parent()->XFORM());
+
 		return;
 	}
 
@@ -752,7 +755,11 @@ void CWeapon::OnActiveItem ()
 void CWeapon::OnHiddenItem ()
 {
 	m_BriefInfo_CalcFrame = 0;
-    SwitchState(eHiding);
+
+	if(IsGameTypeSingle())
+		SwitchState(eHiding);
+	else
+		SwitchState(eHidden);
 
 	OnZoomOut();
 	inherited::OnHiddenItem		();
@@ -803,8 +810,11 @@ void CWeapon::UpdateCL		()
 	//нарисовать партиклы
 	UpdateFlameParticles	();
 	UpdateFlameParticles2	();
+
+	if(!IsGameTypeSingle())
+		make_Interpolation		();
 	
-	if( (GetNextState()==GetState()) && H_Parent()==Level().CurrentEntity())
+	if( (GetNextState()==GetState()) && IsGameTypeSingle() && H_Parent()==Level().CurrentEntity())
 	{
 		CActor* pActor	= smart_cast<CActor*>(H_Parent());
 		if(pActor && !pActor->AnyMove() && this==pActor->inventory().ActiveItem())
@@ -851,7 +861,7 @@ void CWeapon::UpdateCL		()
 void CWeapon::EnableActorNVisnAfterZoom()
 {
 	CActor *pA = smart_cast<CActor *>(H_Parent());
-	if(!pA)
+	if(IsGameTypeSingle() && !pA)
 		pA = g_actor;
 
 	if(pA)
@@ -1743,12 +1753,17 @@ void CWeapon::render_item_ui()
 
 bool CWeapon::unlimited_ammo() 
 { 
-    if (m_pInventory)
-    {
-        return inventory_owner().unlimited_ammo() && m_DefaultCartridge.m_flags.test(CCartridge::cfCanBeUnlimited);
-    }
-    else
-        return false;
+	if (IsGameTypeSingle())
+	{
+		if(m_pInventory)
+		{
+			return inventory_owner().unlimited_ammo() && m_DefaultCartridge.m_flags.test(CCartridge::cfCanBeUnlimited);
+		}else
+			return false;
+	}
+
+	return false; 
+			
 };
 
 float CWeapon::Weight() const

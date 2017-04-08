@@ -230,7 +230,10 @@ void CPhysicsShellHolder::activate_physic_shell()
 	}
 	smart_cast<IKinematics*>(Visual())->CalculateBones_Invalidate	();
 	smart_cast<IKinematics*>(Visual())->CalculateBones(TRUE);
-
+	if(!IsGameTypeSingle())
+	{
+		if(!smart_cast<CCustomRocket*>(this)&&!smart_cast<CGrenade*>(this)) PPhysicsShell()->SetIgnoreDynamic();
+	}
 //	XFORM().set					(l_p1);
 	correct_spawn_pos();
 
@@ -535,18 +538,12 @@ CPhysicsShell*& CPhysicsShellHolder::ObjectPPhysicsShell()
 {
 	return PPhysicsShell();
 }
-//void CPhysicsShellHolder::enable_notificate()
-//{
-//	
-//}
+
 bool CPhysicsShellHolder::has_parent_object()
 {
 	return !!H_Parent();
 }
-//void CPhysicsShellHolder::on_physics_disable()
-//{
-//
-//}
+
 IPHCapture*	CPhysicsShellHolder::PHCapture()
 {
 	CCharacterPhysicsSupport* ph_sup = character_physics_support();
@@ -569,7 +566,7 @@ bool CPhysicsShellHolder::IsStalker()
 {
 	return !!cast_stalker();
 }
-//void						SetWeaponHideState( u16 State, bool bSet )
+
 void CPhysicsShellHolder::HideAllWeapons( bool v )	
 {
 

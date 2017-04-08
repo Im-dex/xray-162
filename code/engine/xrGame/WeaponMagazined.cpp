@@ -172,7 +172,7 @@ bool CWeaponMagazined::TryReload()
 {
 	if(m_pInventory) 
 	{
-		if(ParentIsActor())
+		if(IsGameTypeSingle() && ParentIsActor())
 		{
 			int	AC					= GetSuitableAmmoTotal();
 			Actor()->callback(GameObject::eWeaponNoAmmoAvailable)(lua_game_object(), AC);

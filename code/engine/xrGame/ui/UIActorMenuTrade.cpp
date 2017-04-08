@@ -318,10 +318,17 @@ bool CUIActorMenu::CanMoveToPartner(PIItem pItem)
 
 void CUIActorMenu::UpdateActor()
 {
-    string64 buf;
-    xr_sprintf(buf, "%d RU", m_pActorInvOwner->get_money());
-    m_ActorMoney->SetText(buf);
-
+	if ( IsGameTypeSingle() )
+	{
+		string64 buf;
+		xr_sprintf( buf, "%d RU", m_pActorInvOwner->get_money() );
+		m_ActorMoney->SetText( buf );
+	}
+	else
+	{
+		UpdateActorMP();
+	}
+	
 	CActor* actor = smart_cast<CActor*>( m_pActorInvOwner );
 	if ( actor )
 	{

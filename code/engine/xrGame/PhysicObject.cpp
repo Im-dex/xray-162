@@ -347,6 +347,11 @@ void CPhysicObject::UpdateCL()
 	{
 		m_pPhysicsShell->AnimatorOnFrame();
 	}
+	
+	if (!IsGameTypeSingle())
+	{
+		Interpolate();
+	}
 
 	m_anim_script_callback.update( *this );
 	PHObjectPositionUpdate();
@@ -507,28 +512,6 @@ void	CPhysicObject::	set_collision_hit_callback	(ICollisionHitCallback *cc)
 }
 
 //////////////////////////////////////////////////////////////////////////
-/*
-DEFINE_MAP_PRED	(LPCSTR,	CPhysicsJoint*,	JOINT_P_MAP,	JOINT_P_PAIR_IT,	pred_str);
-
-JOINT_P_MAP			*l_tpJointMap = xr_new<JOINT_P_MAP>();
-
-l_tpJointMap->insert(std::make_pair(bone_name,joint*));
-JOINT_P_PAIR_IT		I = l_tpJointMap->find(bone_name);
-if (l_tpJointMap->end()!=I){
-//bone_name is found and is an pair_iterator
-(*I).second
-}
-
-JOINT_P_PAIR_IT		I = l_tpJointMap->begin();
-JOINT_P_PAIR_IT		E = l_tpJointMap->end();
-for ( ; I != E; ++I) {
-(*I).second->joint_method();
-Msg("%s",(*I).first);
-}
-
-*/
-
-//////////////////////////////////////////////////////////////////////////
 bool CPhysicObject::is_ai_obstacle		() const
 {
 	return							!!( READ_IF_EXISTS(pSettings, r_bool, cNameSect(), "is_ai_obstacle", true ) );
@@ -545,7 +528,48 @@ net_updatePhData* CPhysicObject::NetSync()
 
 void CPhysicObject::net_Export			(NET_Packet& P) 
 {	
-    P.w_u8				(0);
+	if (this->H_Parent() || IsGameTypeSingle()) 
+	{
+		P.w_u8				(0);
+		return;
+	}
+
+	CPHSynchronize* pSyncObj				= NULL;
+	SPHNetState								State;
+	pSyncObj = this->PHGetSyncItem		(0);
+
+	if (pSyncObj && !this->H_Parent()) 
+		pSyncObj->get_State					(State);
+	else 	
+		State.position.set					(this->Position());
+
+
+	mask_num_items			num_items;
+	num_items.mask			= 0;
+	u16						temp = this->PHGetSyncItemsNumber();
+	R_ASSERT				(temp < (u16(1) << 5));
+	num_items.num_items		= u8(temp);
+
+	if (State.enabled)									num_items.mask |= CSE_ALifeObjectPhysic::inventory_item_state_enabled;
+	if (fis_zero(State.angular_vel.square_magnitude()))	num_items.mask |= CSE_ALifeObjectPhysic::inventory_item_angular_null;
+	if (fis_zero(State.linear_vel.square_magnitude()))	num_items.mask |= CSE_ALifeObjectPhysic::inventory_item_linear_null;
+	//if (m_pPhysicsShell->PPhysicsShellAnimator())		{num_items.mask |= CSE_ALifeObjectPhysic::animated;}
+
+	P.w_u8					(num_items.common);
+
+	/*if (num_items.mask&CSE_ALifeObjectPhysic::animated)
+	{
+		net_Export_Anim_Params(P);
+	}*/
+	net_Export_PH_Params(P,State,num_items);
+	
+	if (PPhysicsShell()->isEnabled())
+	{
+		P.w_u8(1);	//not freezed
+	} else
+	{
+		P.w_u8(0);  //freezed
+	}
 };
 
 void CPhysicObject::net_Export_PH_Params(NET_Packet& P, SPHNetState& State, mask_num_items&	num_items)

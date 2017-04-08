@@ -59,6 +59,11 @@ void CEntity::OnEvent		(NET_Packet& P, u16 type)
 			P.r_u16			(id);
 			P.r_u32			(cl);
 			CObject			*who = Level().Objects.net_Find	(id);
+			if (who && !IsGameTypeSingle())
+			{
+				if (this!=who)	/*if(bDebug) */ Msg( "%s killed by %s ...", cName().c_str(), who->cName().c_str() );
+				else			/*if(bDebug) */ Msg( "%s dies himself ...", cName().c_str() );
+			}
 			Die				(who);
 		}
 		break;
@@ -71,9 +76,13 @@ void CEntity::Die(CObject* who)
 	set_ready_to_save	();
 	SetfHealth			(-1.f);
 
-    VERIFY(m_registered_member);
+	if(IsGameTypeSingle())
+	{
+		VERIFY				(m_registered_member);
+	}
 	m_registered_member	= false;
-    Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).unregister_member(this);
+	if (IsGameTypeSingle())
+		Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).unregister_member(this);
 }
 
 //обновление состояния
@@ -193,7 +202,7 @@ BOOL CEntity::net_Spawn		(CSE_Abstract* DC)
 		}
 	}
 
-	if (g_Alive()) {
+	if (g_Alive() && IsGameTypeSingle()) {
 		m_registered_member		= true;
 		Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).register_member(this);
 		++Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).m_dwAliveCount;
@@ -226,7 +235,8 @@ void CEntity::net_Destroy	()
 {
 	if (m_registered_member) {
 		m_registered_member	= false;
-        Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).unregister_member(this);
+		if (IsGameTypeSingle())
+			Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).unregister_member(this);
 	}
 
 	inherited::net_Destroy	();
@@ -321,7 +331,7 @@ void CEntity::shedule_Update	(u32 dt)
 			NET_Packet			P;
 			u_EventGen			(P,GE_ASSIGN_KILLER,ID());
 			P.w_u16				(u16(-1));
-			u_EventSend			(P);
+			if (IsGameTypeSingle())	u_EventSend			(P);
 		}
 	}
 }
@@ -340,7 +350,10 @@ void CEntity::ChangeTeam(int team, int squad, int group)
 
 	VERIFY2					(g_Alive(), "Try to change team of a dead object");
 	
-    VERIFY(m_registered_member);
+	if(IsGameTypeSingle())
+	{
+		VERIFY					(m_registered_member);
+	}
 	// remove from current team
 	on_before_change_team	();
 	Level().seniority_holder().team(g_Team()).squad(g_Squad()).group(g_Group()).unregister_member	(this);

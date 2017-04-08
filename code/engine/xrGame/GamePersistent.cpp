@@ -186,12 +186,13 @@ void CGamePersistent::OnGameStart()
 	UpdateGameType				();
 }
 
-LPCSTR GameTypeToString(EGameIDs gt, bool)
+LPCSTR GameTypeToString(EGameIDs gt, bool bShort)
 {
 	switch(gt)
 	{
 	case eGameIDSingle:
 		return "single";
+		break;
 	default :
 		return		"---";
 	}
@@ -202,7 +203,7 @@ EGameIDs ParseStringToGameType(LPCSTR str)
 	if (!xr_strcmp(str, "single")) 
 		return eGameIDSingle;
 	else
-        return eGameIDNoGame; //EGameIDs
+		return eGameIDNoGame; //EGameIDs
 }
 
 void CGamePersistent::UpdateGameType			()
@@ -548,7 +549,7 @@ void CGamePersistent::OnFrame	()
 			}
 		}
 #ifndef MASTER_GOLD
-		if (Level().CurrentViewEntity()) {
+		if (Level().CurrentViewEntity() && IsGameTypeSingle()) {
 			if (!g_actor || (g_actor->ID() != Level().CurrentViewEntity()->ID())) {
 				CCustomMonster	*custom_monster = smart_cast<CCustomMonster*>(Level().CurrentViewEntity());
 				if (custom_monster) // can be spectator in multiplayer
@@ -805,7 +806,7 @@ void CGamePersistent::LoadTitle(bool change_tip, shared_str map_name)
 
 bool CGamePersistent::CanBePaused()
 {
-	return g_pGameLevel && Level().IsDemoPlay();
+	return IsGameTypeSingle	() || (g_pGameLevel && Level().IsDemoPlay());
 }
 void CGamePersistent::SetPickableEffectorDOF(bool bSet)
 {

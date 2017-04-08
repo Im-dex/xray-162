@@ -21,8 +21,6 @@
 
 #include "object_broker.h"
 
-//#define DEMO_BUILD
-
 string128	ErrMsgBoxTemplate	[]	= {
 		"message_box_invalid_pass",
 		"message_box_invalid_host",
@@ -141,6 +139,8 @@ void CMainMenu::Activate	(bool bActivate)
 		(m_screenshotFrame == Device.dwFrame-1) ||
 		(m_screenshotFrame == Device.dwFrame+1))	return;
 
+	bool b_is_single				= IsGameTypeSingle();
+
 	if(g_dedicated_server && bActivate) return;
 
 	if(bActivate)
@@ -154,18 +154,25 @@ void CMainMenu::Activate	(bool bActivate)
 		if(!ReloadUI())				return;
 
 		m_Flags.set					(flRestoreConsole,Console->bVisible);
-		m_Flags.set	(flRestorePause,Device.Paused());
+
+		if(b_is_single)	m_Flags.set	(flRestorePause,Device.Paused());
 
 		Console->Hide				();
 
-        m_Flags.set(flRestorePauseStr, bShowPauseString);
-        bShowPauseString = FALSE;
-        if (!m_Flags.test(flRestorePause))
-            Device.Pause(TRUE, TRUE, FALSE, "mm_activate2");
+
+		if(b_is_single)
+		{
+			m_Flags.set					(flRestorePauseStr, bShowPauseString);
+			bShowPauseString			= FALSE;
+			if(!m_Flags.test(flRestorePause))
+				Device.Pause			(TRUE, TRUE, FALSE, "mm_activate2");
+		}
 
 		if(g_pGameLevel)
 		{
-            Device.seqFrame.Remove(g_pGameLevel);
+			if(b_is_single){
+				Device.seqFrame.Remove		(g_pGameLevel);
+			}
 			Device.seqRender.Remove			(g_pGameLevel);
 			CCameraManager::ResetPP			();
 		};
@@ -195,16 +202,22 @@ void CMainMenu::Activate	(bool bActivate)
 		CleanInternals						();
 		if(g_pGameLevel)
 		{
-            Device.seqFrame.Add(g_pGameLevel);
+			if(b_is_single){
+				Device.seqFrame.Add			(g_pGameLevel);
+
+			}
 			Device.seqRender.Add			(g_pGameLevel);
 		};
 		if(m_Flags.test(flRestoreConsole))
 			Console->Show			();
 
-        if (!m_Flags.test(flRestorePause))
-            Device.Pause(FALSE, TRUE, FALSE, "mm_deactivate1");
+		if(b_is_single)
+		{
+			if(!m_Flags.test(flRestorePause))
+				Device.Pause			(FALSE, TRUE, FALSE, "mm_deactivate1");
 
-        bShowPauseString = m_Flags.test(flRestorePauseStr);
+			bShowPauseString			= m_Flags.test(flRestorePauseStr);
+		}	
 
 		if(m_Flags.test(flRestoreCursor))
 			GetUICursor().Show			();
@@ -648,16 +661,14 @@ LPCSTR DelHyphens( LPCSTR c )
 	return buf;
 }
 
-//extern	int VerifyClientCheck(const char *key, unsigned short cskey);
-
 bool CMainMenu::IsCDKeyIsValid()
 {
-    return true;
+	return true;
 }
 
 bool		CMainMenu::ValidateCDKey					()
 {
-    return true;
+	return true;
 }
 
 void		CMainMenu::Show_CTMS_Dialog				()
@@ -681,9 +692,9 @@ void CMainMenu::OnConnectToMasterServerOkClicked(CUIWindow*, void*)
 
 LPCSTR CMainMenu::GetGSVer()
 {
-	static string256 buff;
+    static string256 buff;
     xr_strcpy(buff, 255, "1.7 by Im-dex");
-	return buff;
+    return buff;
 }
 
 LPCSTR CMainMenu::GetPlayerName()
@@ -693,7 +704,6 @@ LPCSTR CMainMenu::GetPlayerName()
 
 LPCSTR CMainMenu::GetCDKeyFromRegistry()
 {
-	string512 key;
 	return m_cdkey.c_str();
 }
 

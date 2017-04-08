@@ -1164,9 +1164,13 @@ void	CCharacterPhysicsSupport::	CreateShell						( CObject* who, Fvector& dp, Fv
 	m_eState=esDead;
 	m_flags.set(fl_skeleton_in_shell,TRUE);
 	
-    m_pPhysicsShell->SetPrefereExactIntegration();//use exact integration for ragdolls in single
-    m_pPhysicsShell->SetRemoveCharacterCollLADisable();
-
+	if(IsGameTypeSingle())
+	{
+		m_pPhysicsShell->SetPrefereExactIntegration	();//use exact integration for ragdolls in single
+		m_pPhysicsShell->SetRemoveCharacterCollLADisable();
+	}
+	else
+		m_pPhysicsShell->SetIgnoreDynamic();
 	m_pPhysicsShell->SetIgnoreSmall();
 	AddActiveWeaponCollision();
 }

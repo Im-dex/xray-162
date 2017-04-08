@@ -118,6 +118,7 @@ BOOL CActor::CanPickItem(const CFrustum& frustum, const Fvector& from, CObject* 
 void CActor::PickupModeUpdate()
 {
 	if(!m_bPickupMode)				return; // kUSE key pressed
+	if(!IsGameTypeSingle())			return;
 
 	//подбирание объекта
 	if(	m_pObjectWeLookingAt									&& 
@@ -230,6 +231,38 @@ void	CActor::PickupModeUpdate_COD	()
 void	CActor::Check_for_AutoPickUp()
 {
 	// mp only
+	if (!psActorFlags.test(AF_AUTOPICKUP))		return;
+	if (IsGameTypeSingle())						return;
+	if (Level().CurrentControlEntity() != this) return;
+	if (!g_Alive())								return;
+
+	Fvector bc; 
+	bc.add				(Position(), m_AutoPickUp_AABB_Offset);
+	Fbox APU_Box;
+	APU_Box.set			(Fvector().sub(bc, m_AutoPickUp_AABB), Fvector().add(bc, m_AutoPickUp_AABB));
+
+	xr_vector<ISpatial*>	ISpatialResult;
+	g_SpatialSpace->q_box   (ISpatialResult, 0, STYPE_COLLIDEABLE, bc, m_AutoPickUp_AABB);
+
+	// Determine visibility for dynamic part of scene
+	for (u32 o_it=0; o_it<ISpatialResult.size(); o_it++)
+	{
+		ISpatial*		spatial	= ISpatialResult[o_it];
+		CInventoryItem*	pIItem	= smart_cast<CInventoryItem*> (spatial->dcast_CObject());
+
+		if (0 == pIItem)														continue;
+		if (!pIItem->CanTake())													continue;
+		if (Level().m_feel_deny.is_object_denied(spatial->dcast_CObject()) )	continue;
+
+
+		CGrenade*	pGrenade	= smart_cast<CGrenade*> (pIItem);
+		if (pGrenade) continue;
+
+		if (APU_Box.Pick(pIItem->object().Position(), pIItem->object().Position()))
+		{
+			Game().SendPickUpEvent(ID(), pIItem->object().ID());
+		}		
+	}
 }
 
 
@@ -269,6 +302,10 @@ void CActor::feel_sound_new(CObject* who, int type, CSound_UserDataPtr user_data
 
 void CActor::Feel_Grenade_Update( float rad )
 {
+	if ( !IsGameTypeSingle() )
+	{
+		return;
+	}
 	// Find all nearest objects
 	Fvector pos_actor;
 	Center( pos_actor );

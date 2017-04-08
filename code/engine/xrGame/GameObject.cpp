@@ -1,6 +1,6 @@
 #include "pch_script.h"
 #include "GameObject.h"
-//#include "xrRender/RenderVisual.h"
+//#include "../Include/xrRender/RenderVisual.h"
 #include "xrRender/RenderVisual.h"
 #include "../xrphysics/PhysicsShell.h"
 #include "ai_space.h"
@@ -211,6 +211,12 @@ void CGameObject::OnEvent		(NET_Packet& P, u16 type)
 			}
 			SetHitInfo(Hitter, Weapon, HDS.bone(), HDS.p_in_bone_space, HDS.dir);
 			Hit				(&HDS);
+			//---------------------------------------------------------------------------
+			if (GameID() != eGameIDSingle)
+			{
+				Game().m_WeaponUsageStatistic->OnBullet_Check_Result(false);
+			}
+			//---------------------------------------------------------------------------
 		}
 		break;
 	case GE_DESTROY:

@@ -144,7 +144,7 @@ bool CGrenade::DropGrenade()
 
 void CGrenade::DiscardState()
 {
-	if((GetState()==eReady || GetState()==eThrow) )
+	if(IsGameTypeSingle() && (GetState()==eReady || GetState()==eThrow) )
 		OnStateSwitch(eIdle);
 }
 
@@ -277,6 +277,8 @@ void CGrenade::UpdateCL()
 {
 	inherited::UpdateCL			();
 	CExplosive::UpdateCL		();
+
+	if(!IsGameTypeSingle())	make_Interpolation();
 }
 
 
@@ -318,6 +320,11 @@ bool CGrenade::Action(u16 cmd, u32 flags)
 
 bool CGrenade::NeedToDestroyObject()	const
 {
+	if ( IsGameTypeSingle()			) return false;
+	if ( Remote()					) return false;
+	if ( TimePassedAfterIndependant() > m_dwGrenadeRemoveTime)
+		return true;
+
 	return false;
 }
 

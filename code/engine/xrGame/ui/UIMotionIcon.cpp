@@ -4,7 +4,7 @@
 #include "UIXmlInit.h"
 const LPCSTR MOTION_ICON_XML = "motion_icon.xml";
 
-CUIMotionIcon* g_pMotionIcon = NULL;
+CUIMotionIcon* g_pMotionIcon = nullptr;
 
 CUIMotionIcon::CUIMotionIcon()
 {
@@ -16,7 +16,7 @@ CUIMotionIcon::CUIMotionIcon()
 
 CUIMotionIcon::~CUIMotionIcon()
 {
-	g_pMotionIcon	= NULL;
+	g_pMotionIcon	= nullptr;
 }
 
 void CUIMotionIcon::ResetVisibility()
@@ -62,12 +62,18 @@ void CUIMotionIcon::Init(Frect const& zonemap_rect)
 
 void CUIMotionIcon::SetNoise(float Pos)
 {
+	if(!IsGameTypeSingle())
+		return;
+
 	Pos	= clampr(Pos, 0.f, 100.f);
 	m_noise_progress.SetPos(Pos/100.f);
 }
 
 void CUIMotionIcon::SetLuminosity(float Pos)
 {
+	if(!IsGameTypeSingle())
+		return;
+
 	m_luminosity	= Pos;
 }
 
@@ -78,6 +84,11 @@ void CUIMotionIcon::Draw()
 
 void CUIMotionIcon::Update()
 {
+	if(!IsGameTypeSingle())
+	{
+		inherited::Update();
+		return;
+	}
 	if(m_bchanged){
 		m_bchanged = false;
 		if( m_npc_visibility.size() )
@@ -105,6 +116,9 @@ void CUIMotionIcon::Update()
 
 void SetActorVisibility		(u16 who_id, float value)
 {
+	if(!IsGameTypeSingle())
+		return;
+
 	if(g_pMotionIcon)
 		g_pMotionIcon->SetActorVisibility(who_id, value);
 }

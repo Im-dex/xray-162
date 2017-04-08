@@ -98,6 +98,7 @@ float			g_aim_predict_time = 0.44f;
 int				g_keypress_on_start	= 1;
 
 ENGINE_API extern float	g_console_sensitive;
+
 //-----------------------------------------------------------
 
 		BOOL	g_bCheckTime			= FALSE;
@@ -521,7 +522,10 @@ public:
 			return;
 		}
 #endif
-
+		if(!IsGameTypeSingle()){
+			Msg("for single-mode only");
+			return;
+		}
 		if(!g_actor || !Actor()->g_Alive())
 		{
 			Msg("cannot make saved game because actor is dead :(");

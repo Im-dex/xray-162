@@ -31,7 +31,7 @@
 #include "phdebug.h"
 #endif
 
-//#include	"xrRender/KinematicsAnimated.h"
+//#include	"../Include/xrRender/KinematicsAnimated.h"
 #include "xrRender/Kinematics.h"
 
 #define GROUND_FRICTION	10.0f
@@ -108,7 +108,7 @@ CPHMovementControl::~CPHMovementControl(void)
 
 static ALife::EHitType	 DefineCollisionHitType	( u16 material_idx )	
 {
-	if(GMLib.GetMaterialByIdx( material_idx )->Flags.test(SGameMtl::flInjurious))
+	if(GMLib.GetMaterialByIdx( material_idx )->Flags.test(SGameMtl::flInjurious)&&IsGameTypeSingle())
 		return ALife::eHitTypeRadiation;
 	else									
 		return ALife::eHitTypeStrike;

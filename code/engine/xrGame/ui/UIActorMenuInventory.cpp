@@ -126,6 +126,8 @@ void CUIActorMenu::SendEvent_Item_Eat(PIItem pItem, u16 recipient)
 void CUIActorMenu::SendEvent_Item_Drop(PIItem pItem, u16 recipient)
 {
 	R_ASSERT(pItem->parent_id()==recipient);
+	if (!IsGameTypeSingle())
+		pItem->DenyTrade();
 	//pItem->SetDropManual			(TRUE);
 	NET_Packet					P;
 	pItem->object().u_EventGen	(P,GE_OWNERSHIP_REJECT,pItem->parent_id());
@@ -934,7 +936,7 @@ void CUIActorMenu::PropertiesBoxForWeapon( CUICellItem* cell_item, PIItem item, 
 		{
 		}
 	}
-	if ( smart_cast<CWeaponMagazined*>(pWeapon))
+	if ( smart_cast<CWeaponMagazined*>(pWeapon) && IsGameTypeSingle() )
 	{
 		bool b = ( pWeapon->GetAmmoElapsed() !=0 );
 		if ( !b )

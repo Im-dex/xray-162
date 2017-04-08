@@ -251,7 +251,7 @@ void CSpectator::IR_OnKeyboardHold(int cmd)
 			vmove.mad( right, -m_fTimeDelta*Accel_mul );
 			}break;
 		}
-		if (cam_active != eacFreeFly)
+		if (cam_active != eacFreeFly || (PS && PS->testFlag(GAME_PLAYER_FLAG_SPECTATOR)))
 			XFORM().c.add( vmove );
 	}
 }
@@ -431,7 +431,6 @@ BOOL			CSpectator::net_Spawn				( CSE_Abstract*	DC )
 
 	float tmp_roll = 0.f;
     cam_active = eacFreeFly;
-
 	look_idx				= 0;
 
 	cameras[cam_active]->Set(-E->o_Angle.y, -E->o_Angle.x, tmp_roll);// set's camera orientation
@@ -469,6 +468,7 @@ bool			CSpectator::SelectNextPlayerToLook	(bool const search_next)
 	{
 		game_PlayerState* ps = it->second;
 		if (!ps || ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD) /*|| (ps==PS)*/) continue;
+		
 		u16 id = ps->GameID;
 		CObject* pObject = Level().Objects.net_Find(id);
 		if (!pObject) continue;

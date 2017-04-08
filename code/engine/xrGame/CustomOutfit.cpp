@@ -33,7 +33,8 @@ CCustomOutfit::~CCustomOutfit()
 
 BOOL CCustomOutfit::net_Spawn(CSE_Abstract* DC)
 {
-    ReloadBonesProtection();
+	if(IsGameTypeSingle())
+		ReloadBonesProtection();
 
 	BOOL res = inherited::net_Spawn(DC);
 	return					(res);
@@ -56,6 +57,8 @@ void CCustomOutfit::net_Import(NET_Packet& P)
 void CCustomOutfit::OnH_A_Chield()
 {
 	inherited::OnH_A_Chield();
+	if (!IsGameTypeSingle())
+		ReloadBonesProtection();
 }
 
 
@@ -110,7 +113,9 @@ void CCustomOutfit::Load(LPCSTR section)
 
 void CCustomOutfit::ReloadBonesProtection()
 {
-	CObject* parent = smart_cast<CObject*>(Level().CurrentViewEntity());
+	CObject* parent = H_Parent();
+	if(IsGameTypeSingle())
+		parent = smart_cast<CObject*>(Level().CurrentViewEntity());
 
 	if(parent && parent->Visual() && m_BonesProtectionSect.size())
 		m_boneProtection->reload( m_BonesProtectionSect, smart_cast<IKinematics*>(parent->Visual()));
@@ -151,6 +156,17 @@ float CCustomOutfit::HitThroughArmor(float hit_power, s16 element, float ap, boo
 		float BoneArmor = ba*GetCondition();
 		if(/*!fis_zero(ba, EPS) && */(ap > BoneArmor))
 		{
+			//пуля пробила бронь
+			if(!IsGameTypeSingle())
+			{
+				float hit_fraction = (ap - BoneArmor) / ap;
+				if(hit_fraction < m_boneProtection->m_fHitFracActor)
+					hit_fraction = m_boneProtection->m_fHitFracActor;
+
+				NewHitPower *= hit_fraction;
+				NewHitPower *= m_boneProtection->getBoneProtection(element);
+			}
+
 			VERIFY(NewHitPower>=0.0f);
 		}
 		else
@@ -331,7 +347,9 @@ bool CCustomOutfit::install_upgrade_impl( LPCSTR section, bool test )
 
 void CCustomOutfit::AddBonesProtection(LPCSTR bones_section)
 {
-	CObject* parent = smart_cast<CObject*>(Level().CurrentViewEntity());
+	CObject* parent = H_Parent();
+	if(IsGameTypeSingle())
+		parent = smart_cast<CObject*>(Level().CurrentViewEntity());
 
 	if ( parent && parent->Visual() && m_BonesProtectionSect.size() )
 		m_boneProtection->add(bones_section, smart_cast<IKinematics*>( parent->Visual() ) );

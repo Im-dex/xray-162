@@ -626,6 +626,11 @@ void game_sv_GameState::Update		()
 	ping_filler tmp_functor;
 	m_server->ForEachClientDo(tmp_functor);
 	
+	if (!IsGameTypeSingle() && (Phase() == GAME_PHASE_INPROGRESS))
+	{
+		m_item_respawner.update(Level().timeServer());
+	}
+	
 	if (!g_dedicated_server)
 	{
 		if (Level().game) {
@@ -738,7 +743,11 @@ void game_sv_GameState::OnEvent (NET_Packet &tNetPacket, u16 type, u32 time, Cli
 
 			if(!e_src)  // && !IsGameTypeSingle() added by andy because of Phantom does not have server entity
 			{
-				break;
+				if( IsGameTypeSingle() ) break;
+
+				game_PlayerState* ps	= get_eid(id_src);
+				if (!ps)				break;
+				id_src					= ps->GameID;
 			}
 
 			OnHit(id_src, id_dest, tNetPacket);
@@ -791,7 +800,7 @@ void game_sv_GameState::OnEvent (NET_Packet &tNetPacket, u16 type, u32 time, Cli
 
 bool game_sv_GameState::CheckNewPlayer(xrClientData*)
 {
-    return true;
+	return true;
 }
 
 void game_sv_GameState::OnSwitchPhase(u32 old_phase, u32 new_phase)
@@ -802,7 +811,29 @@ void game_sv_GameState::OnSwitchPhase(u32 old_phase, u32 new_phase)
 
 void game_sv_GameState::AddDelayedEvent(NET_Packet &tNetPacket, u16 type, u32 time, ClientID sender )
 {
-    m_event_queue->Create(tNetPacket, type, time, sender);
+//	OnEvent(tNetPacket,type,time,sender);
+	if (IsGameTypeSingle())
+	{
+		m_event_queue->Create(tNetPacket,type,time,sender);
+		return;
+	}
+	switch (type)
+	{
+	case GAME_EVENT_PLAYER_STARTED:
+	case GAME_EVENT_PLAYER_READY:
+	case GAME_EVENT_VOTE_START:
+	case GAME_EVENT_VOTE_YES:
+	case GAME_EVENT_VOTE_NO:
+	case GAME_EVENT_PLAYER_AUTH:
+	case GAME_EVENT_CREATE_PLAYER_STATE:
+		{
+			m_event_queue->Create(tNetPacket,type,time,sender);
+		}break;
+	default:
+		{
+			m_event_queue->CreateSafe(tNetPacket,type,time,sender);
+		}break;
+	}
 }
 
 void game_sv_GameState::ProcessDelayedEvent		()
@@ -1212,6 +1243,22 @@ void game_sv_GameState::GenerateNewName			(char const * old_name, char * dest, u
 	xr_strcat	(dest, dest_size, new_suffix);
 }
 
-void game_sv_GameState::CheckPlayerName(xrClientData*)
+void game_sv_GameState::CheckPlayerName(xrClientData* CL)
 {
+	R_ASSERT	(CL && CL->ps);
+
+	char const *	current_name = NULL;
+	
+	u32				current_name_length = xr_strlen(current_name);
+
+
+	u32				new_name_dest_size = current_name_length + 16;
+	char *			new_name_dest = static_cast<char*>(
+		_alloca(new_name_dest_size));
+
+	while (FindPlayerName(current_name, CL))
+	{
+		GenerateNewName(current_name, new_name_dest, new_name_dest_size);
+		current_name = new_name_dest;
+	}
 }

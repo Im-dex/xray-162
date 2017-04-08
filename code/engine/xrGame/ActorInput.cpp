@@ -171,7 +171,13 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 				if(itm)
 				{
-                    inventory().Eat(itm);
+					if (IsGameTypeSingle())
+					{
+						inventory().Eat				(itm);
+					} else
+					{
+						inventory().ClientEat		(itm);
+					}
 					
 					SDrawStaticStruct* _s		= CurrentGameUI()->AddCustomStatic("item_used", true);
 					string1024					str;
@@ -407,25 +413,28 @@ void CActor::ActorUse()
 
 			VERIFY(pEntityAliveWeLookingAt);
 
-            if (pEntityAliveWeLookingAt->g_Alive())
-            {
-                TryToTalk();
-            }
-            else
-            {
-                //только если находимся в режиме single
-                CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(CurrentGameUI());
-                if (pGameSP)
-                {
-                    if (!m_pPersonWeLookingAt->deadbody_closed_status())
-                    {
-                        if (pEntityAliveWeLookingAt->AlreadyDie() &&
-                            pEntityAliveWeLookingAt->GetLevelDeathTime() + 3000 < Device.dwTimeGlobal)
-                            // 99.9% dead
-                            pGameSP->StartCarBody(this, m_pPersonWeLookingAt);
-                    }
-                }
-            }
+			if (IsGameTypeSingle())
+			{			
+
+				if(pEntityAliveWeLookingAt->g_Alive())
+				{
+					TryToTalk();
+				}else
+				{
+					//только если находимся в режиме single
+					CUIGameSP* pGameSP = smart_cast<CUIGameSP*>(CurrentGameUI());
+					if ( pGameSP )
+					{
+						if ( !m_pPersonWeLookingAt->deadbody_closed_status() )
+						{
+							if(pEntityAliveWeLookingAt->AlreadyDie() && 
+								pEntityAliveWeLookingAt->GetLevelDeathTime()+3000 < Device.dwTimeGlobal)
+								// 99.9% dead
+								pGameSP->StartCarBody(this, m_pPersonWeLookingAt );
+						}
+					}
+				}
+			}
 		}
 
 		collide::rq_result& RQ = HUD().GetCurrentRayQuery();

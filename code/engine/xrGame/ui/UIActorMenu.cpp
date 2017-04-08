@@ -44,10 +44,17 @@ void CUIActorMenu::SetActor(CInventoryOwner* io)
 	m_last_time			= Device.dwTimeGlobal;
 	m_pActorInvOwner	= io;
 	
-    if (io)
-        m_ActorCharacterInfo->InitCharacter(m_pActorInvOwner->object_id());
-    else
-        m_ActorCharacterInfo->ClearInfo();
+	if ( IsGameTypeSingle() )
+	{
+		if ( io )
+			m_ActorCharacterInfo->InitCharacter	(m_pActorInvOwner->object_id());
+		else
+			m_ActorCharacterInfo->ClearInfo();
+	}
+	else
+	{
+		UpdateActorMP();
+	}
 }
 
 void CUIActorMenu::SetPartner(CInventoryOwner* io)
@@ -830,8 +837,21 @@ void CUIActorMenu::ResetMode()
 
 void CUIActorMenu::UpdateActorMP()
 {
-    m_ActorCharacterInfo->ClearInfo();
-    m_ActorMoney->SetText("");
+	if ( !&Level() || !Level().game || !Game().local_player || !m_pActorInvOwner || IsGameTypeSingle() )
+	{
+		m_ActorCharacterInfo->ClearInfo();
+		m_ActorMoney->SetText( "" );
+		return;
+	}
+
+	int money = Game().local_player->money_for_round;
+
+	string64 buf;
+	xr_sprintf( buf, "%d RU", money );
+	m_ActorMoney->SetText( buf );
+
+	m_ActorCharacterInfo->InitCharacterMP( Game().local_player->getName(), "ui_npc_u_nebo_1" );
+
 }
 
 bool CUIActorMenu::CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_slot)
