@@ -4,8 +4,8 @@ project(xrNetServer)
 
 file(GLOB SRC *.h *.cpp)
 
-include_directories($ENV{DXSDK_DIR}/Include)
-link_directories($ENV{DXSDK_DIR}/x86)
+include_directories(${DXSDK_INCLUDE_DIR})
+link_directories(${DXSDK_LIB_DIR})
 add_definitions(-DXR_NETSERVER_EXPORTS -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h")

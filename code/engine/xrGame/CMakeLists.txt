@@ -3900,7 +3900,7 @@ source_group("Core\\Common\\NET Shared\\SecureMessages" FILES ${CORE_COMMON_NET_
 source_group("AI\\AMonsters\\monsters\\Rats\\states" FILES ${AI_AMONSTERS_MONSTERS_RATS_STATES})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ../xrServerEntities ../../3rd-party/luajit/include)
-link_directories($ENV{DXSDK_DIR}/lib/x86 ../../lib)
+link_directories(${DXSDK_LIB_DIR} ../../lib)
 add_definitions(-DXRGAME_EXPORTS -DdSINGLE -DMSVC -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h" /wd4237)

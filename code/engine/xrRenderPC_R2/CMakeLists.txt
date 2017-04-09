@@ -419,8 +419,8 @@ source_group("Interfase implementations\\Debug\\DebugRender" FILES ${INTERFASE_I
 source_group("Shading templates" FILES ${SHADING_TEMPLATES})
 source_group("Refactored\\Execution &amp; 3D\\Gamma" FILES ${REFACTORED_EXECUTION__AND__3D_GAMMA})
 
-include_directories($ENV{DXSDK_DIR}/Include ../../3rd-party/luajit/include)
-link_directories($ENV{DXSDK_DIR}/lib/x86 ../../lib)
+include_directories(${DXSDK_INCLUDE_DIR} ../../3rd-party/luajit/include)
+link_directories(${DXSDK_LIB_DIR} ../../lib)
 add_definitions(-DATIMGPUD_DLL -DXRRENDER_R2_EXPORTS -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h")

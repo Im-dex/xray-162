@@ -12,6 +12,10 @@ if(NOT EXISTS "$ENV{DXSDK_DIR}")
     message(FATAL_ERROR "DirectX SDK not found")
 endif()
 
+set(DXSDK_DIR $ENV{DXSDK_DIR})
+set(DXSDK_INCLUDE_DIR ${DXSDK_DIR}/include)
+set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x86)
+
 if (MSVC)
     if (MSVC_VERSION EQUAL 1900)
         set(VS_TOOLS_PATH $ENV{VS140COMNTOOLS})

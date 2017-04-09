@@ -388,8 +388,8 @@ source_group("editor\\environment\\sound_channels_manager\\channel" FILES ${EDIT
 source_group("editor\\environment\\weathers" FILES ${EDITOR_ENVIRONMENT_WEATHERS})
 source_group("Game API" FILES ${GAME_API})
 
-include_directories($ENV{DXSDK_DIR}/Include ../../3rd-party/luajit/include)
-link_directories($ENV{DXSDK_DIR}/lib/x86 ../../lib)
+include_directories(${DXSDK_INCLUDE_DIR} ../../3rd-party/luajit/include)
+link_directories(${DXSDK_LIB_DIR} ../../lib)
 add_definitions(-DENGINE_BUILD -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h")

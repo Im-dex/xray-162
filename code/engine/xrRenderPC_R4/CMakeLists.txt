@@ -490,8 +490,8 @@ source_group("Refactored\\Execution &amp; 3D\\Shaders\\Resources\\dx10_R_shader"
 source_group("Shading templates" FILES ${SHADING_TEMPLATES})
 source_group("Refactored\\Execution &amp; 3D\\Gamma" FILES ${REFACTORED_EXECUTION__AND__3D_GAMMA})
 
-include_directories($ENV{DXSDK_DIR}/Include ../../3rd-party/luajit/include)
-link_directories($ENV{DXSDK_DIR}/lib/x86 ../../lib)
+include_directories(${DXSDK_INCLUDE_DIR} ../../3rd-party/luajit/include)
+link_directories(${DXSDK_LIB_DIR} ../../lib)
 add_definitions(-DATIMGPUD_DLL -DXRRENDER_R4_EXPORTS -DUSE_DX11 -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h")
@@ -549,4 +549,4 @@ add_library(xrRender_R4 SHARED ${REFACTORED_EXECUTION__AND__3D_SHADERS_RESOURCES
                                ${INTERFASE_IMPLEMENTATIONS_MSAARENDER}
                                ${REFACTORED_HW}
                                ${SHADING_TEMPLATES_3DFLUID})
-target_link_libraries(xrRender_R4 nvapi dxguid d3dx11 D3DCompiler d3d11 dxgi dxerr d3d10 d3dx9 xrEngine xrCPU_Pipe xrParticles)
+target_link_libraries(xrRender_R4 nvapi dxguid d3dx11 D3DCompiler d3d11 ${DXSDK_LIB_DIR}/dxgi.lib dxerr d3d10 d3dx9 xrEngine xrCPU_Pipe xrParticles)
