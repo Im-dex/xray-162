@@ -5,7 +5,7 @@
 #include "monster_velocity_space.h"
 #include "control_direction_base.h"
 #include "control_movement_base.h"
-#include "control_animation_base.h"
+//#include "control_animation_base.h"
 
 #define ROTATION_JUMP_DELAY_MIN		3000
 #define ROTATION_JUMP_DELAY_MAX		5000

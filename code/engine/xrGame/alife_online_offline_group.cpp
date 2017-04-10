@@ -16,8 +16,8 @@
 #include "game_level_cross_table.h"
 #include "alife_online_offline_group_brain.h"
 #include "level_graph.h"
-#include "alife_monster_movement_manager.h"
-#include "alife_monster_detail_path_manager.h"
+//#include "alife_monster_movement_manager.h"
+//#include "alife_monster_detail_path_manager.h"
 
 #pragma warning(push)
 #pragma warning(disable:4995)

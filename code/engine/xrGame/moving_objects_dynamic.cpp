@@ -8,12 +8,12 @@
 
 #include "stdafx.h"
 #include "moving_objects.h"
-#include "ai_space.h"
-#include "level_graph.h"
+//#include "ai_space.h"
+//#include "level_graph.h"
 #include "moving_object.h"
 #include "moving_objects_impl.h"
 #include "magic_box3.h"
-#include "ai_obstacle.h"
+//#include "ai_obstacle.h"
 
 #ifndef MASTER_GOLD
 #	include "ai_debug.h"

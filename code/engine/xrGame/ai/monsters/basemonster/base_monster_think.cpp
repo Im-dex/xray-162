@@ -4,10 +4,10 @@
 #include "../ai_monster_squad_manager.h"
 #include "../../../profiler.h"
 #include "../state_manager.h"
-#include "../../../../xrphysics/PhysicsShell.h"
+//#include "../../../../xrphysics/PhysicsShell.h"
 #include "../../../detail_path_manager.h"
-#include "../monster_velocity_space.h"
-#include "../../../level.h"
+//#include "../monster_velocity_space.h"
+//#include "../../../level.h"
 #include "../control_animation_base.h"
 
 void CBaseMonster::Think()

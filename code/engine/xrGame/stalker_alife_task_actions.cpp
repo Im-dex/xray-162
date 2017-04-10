@@ -18,9 +18,9 @@
 #include "alife_simulator.h"
 #include "alife_object_registry.h"
 #include "stalker_decision_space.h"
-#include "cover_manager.h"
-#include "cover_evaluators.h"
-#include "cover_point.h"
+//#include "cover_manager.h"
+//#include "cover_evaluators.h"
+//#include "cover_point.h"
 #include "movement_manager_space.h"
 #include "detail_path_manager_space.h"
 #include "game_location_selector.h"
@@ -33,8 +33,8 @@
 #include "alife_human_brain.h"
 #include "alife_smart_terrain_task.h"
 
-#include "pch_script.h"
-#include "patrol_path_manager.h"
+//#include "pch_script.h"
+//#include "patrol_path_manager.h"
 
 using namespace StalkerSpace;
 using namespace StalkerDecisionSpace;

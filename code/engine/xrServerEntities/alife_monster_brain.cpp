@@ -8,16 +8,16 @@
 
 #include "stdafx.h"
 #include "alife_monster_brain.h"
-#include "object_broker.h"
+//#include "object_broker.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 
 #ifdef XRGAME_EXPORTS
 #	include "alife_monster_movement_manager.h"
 #	include "alife_monster_detail_path_manager.h"
-#	include "alife_monster_patrol_path_manager.h"
+//#	include "alife_monster_patrol_path_manager.h"
 #	include "ai_space.h"
-#	include "ef_storage.h"
-#	include "ef_primary.h"
+//#	include "ef_storage.h"
+//#	include "ef_primary.h"
 #	include "alife_simulator.h"
 #	include "alife_graph_registry.h"
 #	include "movement_manager_space.h"
@@ -26,8 +26,8 @@
 #	include "date_time.h"
 #	ifdef DEBUG
 #		include "level.h"
-#		include "map_location.h"
-#		include "map_manager.h"
+//#		include "map_location.h"
+//#		include "map_manager.h"
 #	endif
 #endif
 

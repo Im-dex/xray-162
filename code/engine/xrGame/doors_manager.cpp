@@ -6,7 +6,7 @@
 
 #include "stdafx.h"
 #include "doors_manager.h"
-#include "gameobject.h"
+//#include "gameobject.h"
 #include "doors_door.h"
 #include "doors_actor.h"
 

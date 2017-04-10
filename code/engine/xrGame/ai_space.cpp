@@ -14,14 +14,14 @@
 #include "ef_storage.h"
 #include "ai_space.h"
 #include "cover_manager.h"
-#include "cover_point.h"
+//#include "cover_point.h"
 #include "script_engine.h"
 #include "patrol_path_storage.h"
 #include "alife_simulator.h"
 #include "moving_objects.h"
 #include "doors_manager.h"
-#include "../xrEngine/dedicated_server_only.h"
-#include "../xrEngine/no_single.h"
+//#include "../xrEngine/dedicated_server_only.h"
+//#include "../xrEngine/no_single.h"
 
 ENGINE_API	bool g_dedicated_server;
 

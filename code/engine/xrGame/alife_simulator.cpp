@@ -15,7 +15,7 @@
 #include "mainmenu.h"
 #include "object_factory.h"
 #include "alife_object_registry.h"
-#include "../xrEngine/xr_ioconsole.h"
+//#include "../xrEngine/xr_ioconsole.h"
 
 #ifdef DEBUG
 #	include "moving_objects.h"

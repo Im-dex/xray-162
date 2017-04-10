@@ -8,17 +8,17 @@
 
 #include "stdafx.h"
 #include "moving_objects.h"
-#include "ai_space.h"
-#include "level_graph.h"
+//#include "ai_space.h"
+//#include "level_graph.h"
 #include "moving_object.h"
 #include "moving_objects_impl.h"
 #include "magic_box3.h"
 #include "ai_obstacle.h"
 
-#pragma warning(push)
+/*#pragma warning(push)
 #pragma warning(disable:4995)
 #include <malloc.h>
-#pragma warning(pop)
+#pragma warning(pop)*/
 
 #if 0
 #	define MSG(...) Msg(__VA_ARGS__)

@@ -24,12 +24,12 @@
 #include "gamepersistent.h"
 #include "actor_memory.h"
 #include "client_spawn_manager.h"
-#include "client_spawn_manager.h"
+//#include "client_spawn_manager.h"
 #include "memory_manager.h"
 #include "ai/monsters/basemonster/base_monster.h"
 
 #ifndef MASTER_GOLD
-#	include "actor.h"
+//#	include "actor.h"
 #	include "ai_debug.h"
 #endif // MASTER_GOLD
 

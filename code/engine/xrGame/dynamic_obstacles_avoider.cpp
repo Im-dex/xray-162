@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "dynamic_obstacles_avoider.h"
-#include "static_obstacles_avoider_inline.h"
+//#include "static_obstacles_avoider_inline.h"
 #include "ai_space.h"
 #include "moving_objects.h"
 #include "stalker_movement_manager_smart_cover.h"

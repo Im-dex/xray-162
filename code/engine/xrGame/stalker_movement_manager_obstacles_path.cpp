@@ -8,16 +8,16 @@
 
 #include "stdafx.h"
 #include "stalker_movement_manager_obstacles.h"
-#include "stalker_movement_manager_space.h"
-#include "ai_space.h"
+//#include "stalker_movement_manager_space.h"
+//#include "ai_space.h"
 #include "ai/stalker/ai_stalker.h"
-#include "restricted_object_obstacle.h"
+//#include "restricted_object_obstacle.h"
 #include "level_path_manager.h"
-#include "ai_object_location.h"
+//#include "ai_object_location.h"
 #include "moving_objects.h"
 #include "detail_path_manager.h"
 #include "level_path_builder.h"
-#include "ai_obstacle.h"
+//#include "ai_obstacle.h"
 
 #ifndef MASTER_GOLD
 #	include "ai_debug.h"

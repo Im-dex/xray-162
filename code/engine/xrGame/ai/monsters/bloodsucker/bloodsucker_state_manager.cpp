@@ -4,7 +4,7 @@
 
 #include "../control_animation_base.h"
 #include "../control_direction_base.h"
-#include "../control_movement_base.h"
+//#include "../control_movement_base.h"
 #include "../control_path_builder_base.h"
 
 #include "../states/monster_state_rest.h"
@@ -16,9 +16,9 @@
 #include "../states/monster_state_hitted.h"
 
 #include "bloodsucker_vampire.h"
-#include "bloodsucker_predator.h"
-#include "bloodsucker_state_capture_jump.h"
-#include "bloodsucker_attack_state.h"
+//#include "bloodsucker_predator.h"
+//#include "bloodsucker_state_capture_jump.h"
+//#include "bloodsucker_attack_state.h"
 
 
 CStateManagerBloodsucker::CStateManagerBloodsucker(CAI_Bloodsucker *monster) : inherited(monster)

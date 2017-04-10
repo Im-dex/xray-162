@@ -21,7 +21,7 @@
 #include "danger_manager.h"
 #include "agent_manager.h"
 #include "agent_member_manager.h"
-#include "agent_location_manager.h"
+//#include "agent_location_manager.h"
 #include "cover_point.h"
 #include "danger_cover_location.h"
 #include "cover_evaluators.h"

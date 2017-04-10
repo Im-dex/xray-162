@@ -8,7 +8,7 @@
 
 #include "pch_script.h"
 #include "ai_trader.h"
-#include "../../trade.h"
+//#include "../../trade.h"
 #include "../../script_entity_action.h"
 #include "../../script_game_object.h"
 #include "../../inventory.h"
@@ -16,7 +16,7 @@
 #include "../../artefact.h"
 #include "../../xrserver.h"
 #include "../../relation_registry.h"
-#include "../../../xrServerEntities/object_broker.h"
+//#include "../../../xrServerEntities/object_broker.h"
 #include "../../sound_player.h"
 #include "../../level.h"
 #include "../../script_callback_ex.h"

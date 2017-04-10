@@ -13,22 +13,22 @@
 
 #ifdef XRGAME_EXPORTS
 #	include "alife_human_object_handler.h"
-#	include "alife_monster_movement_manager.h"
-#	include "alife_monster_detail_path_manager.h"
-#	include "alife_monster_patrol_path_manager.h"
+//#	include "alife_monster_movement_manager.h"
+//#	include "alife_monster_detail_path_manager.h"
+//#	include "alife_monster_patrol_path_manager.h"
 #	include "ai_space.h"
 #	include "ef_storage.h"
 #	include "ef_primary.h"
 #	include "alife_simulator.h"
 #	include "alife_graph_registry.h"
-#	include "movement_manager_space.h"
-#	include "alife_smart_terrain_registry.h"
-#	include "alife_time_manager.h"
-#	include "date_time.h"
+//#	include "movement_manager_space.h"
+//#	include "alife_smart_terrain_registry.h"
+//#	include "alife_time_manager.h"
+//#	include "date_time.h"
 #	ifdef DEBUG
 #		include "level.h"
-#		include "map_location.h"
-#		include "map_manager.h"
+//#		include "map_location.h"
+//#		include "map_manager.h"
 #	endif
 #endif
 

@@ -11,7 +11,7 @@
 #include "ai/stalker/ai_stalker.h"
 #include "sight_manager.h"
 #include "stalker_movement_manager_smart_cover.h"
-#include "game_object_space.h"
+//#include "game_object_space.h"
 #include "effectorshot.h"
 
 typedef CStalkerAnimationManager::callback_params	callback_params;

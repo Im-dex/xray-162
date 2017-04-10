@@ -7,7 +7,7 @@
 
 #include "pch_script.h"
 #include "smart_cover.h"
-#include "smart_cover_storage.h"
+//#include "smart_cover_storage.h"
 #include "smart_cover_object.h"
 #include "ai_object_location.h"
 #include "smart_cover_action.h"

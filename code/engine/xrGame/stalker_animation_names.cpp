@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#include "stalker_animation_names.h"
+//#include "stalker_animation_names.h"
 
 LPCSTR state_names			[] = {
 	"cr_",

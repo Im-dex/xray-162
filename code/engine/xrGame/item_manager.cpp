@@ -18,7 +18,6 @@
 #include "profiler.h"
 #include "ai/stalker/ai_stalker.h"
 #include "stalker_movement_manager_smart_cover.h"
-#include "restricted_object.h"
 
 CItemManager::CItemManager			(CCustomMonster *object)
 {

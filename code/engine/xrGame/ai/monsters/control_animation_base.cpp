@@ -3,13 +3,13 @@
 #include "control_direction_base.h"
 #include "control_movement_base.h"
 #include "BaseMonster/base_monster.h"
-#include "../../PHMovementControl.h"
-#include "anim_triple.h"
+//#include "../../PHMovementControl.h"
+//#include "anim_triple.h"
 #include "xrRender/KinematicsAnimated.h"
 #include "../../detail_path_manager.h"
 #include "monster_velocity_space.h"
-#include "monster_event_manager.h"
-#include "control_jump.h"
+//#include "monster_event_manager.h"
+//#include "control_jump.h"
 #include "../../sound_player.h"
 
 // DEBUG purpose only

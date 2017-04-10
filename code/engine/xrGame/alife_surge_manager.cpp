@@ -13,13 +13,13 @@
 #include "alife_time_manager.h"
 #include "alife_graph_registry.h"
 #include "alife_schedule_registry.h"
-#include "alife_simulator_header.h"
+//#include "alife_simulator_header.h"
 #include "ai_space.h"
-#include "ef_storage.h"
-#include "ef_pattern.h"
-#include "graph_engine.h"
+//#include "ef_storage.h"
+//#include "ef_pattern.h"
+//#include "graph_engine.h"
 #include "xrserver.h"
-#include "alife_human_brain.h"
+//#include "alife_human_brain.h"
 
 using namespace ALife;
 

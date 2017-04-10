@@ -15,7 +15,7 @@
 #include "customzone.h"
 #include "space_restriction_manager.h"
 #include "space_restriction_bridge.h"
-#include "space_restriction_base.h"
+//#include "space_restriction_base.h"
 #include "inventory.h"
 #include "movement_manager_space.h"
 #include "detail_path_manager_space.h"

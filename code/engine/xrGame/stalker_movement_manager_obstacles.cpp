@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "stalker_movement_manager_obstacles.h"
-#include "stalker_movement_manager_space.h"
+//#include "stalker_movement_manager_space.h"
 #include "ai_space.h"
 #include "ai/stalker/ai_stalker.h"
 #include "restricted_object_obstacle.h"

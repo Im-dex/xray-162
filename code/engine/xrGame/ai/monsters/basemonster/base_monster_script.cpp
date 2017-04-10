@@ -1,7 +1,7 @@
 #include "pch_script.h"
 #include "base_monster.h"
 #include "../../../script_entity_action.h"
-#include "../../../phmovementcontrol.h"
+//#include "../../../phmovementcontrol.h"
 #include "../../../sight_manager.h"
 #include "../../../detail_path_manager.h"
 #include "../../../ai_object_location.h"
@@ -17,7 +17,7 @@
 #include "../control_path_builder_base.h"
 
 #include "../../../patrol_path_manager.h"
-#include "../../../patrol_path_manager_space.h"
+//#include "../../../patrol_path_manager_space.h"
 
 // #include "ai/monsters/ai_monster_squad.h"
 // #include "ai/monsters/ai_monster_squad_manager.h"

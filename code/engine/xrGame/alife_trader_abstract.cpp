@@ -12,7 +12,7 @@
 #include "specific_character.h"
 #include "ai_space.h"
 #include "alife_object_registry.h"
-#include "ai_debug.h"
+//#include "ai_debug.h"
 #include "alife_graph_registry.h"
 #include "xrServer.h"
 #include "alife_schedule_registry.h"

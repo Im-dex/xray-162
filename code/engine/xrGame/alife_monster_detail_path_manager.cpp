@@ -18,7 +18,7 @@
 #include "alife_smart_terrain_task.h"
 #include "alife_graph_registry.h"
 #include "graph_engine.h"
-#include "alife_monster_brain.h"
+//#include "alife_monster_brain.h"
 
 CALifeMonsterDetailPathManager::CALifeMonsterDetailPathManager	(object_type *object)
 {

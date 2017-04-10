@@ -13,7 +13,7 @@
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
 #include "inventory.h"
-#include "weaponmagazined.h"
+//#include "weaponmagazined.h"
 #include "movement_manager_space.h"
 #include "detail_path_manager_space.h"
 #include "memory_manager.h"
@@ -21,10 +21,10 @@
 #include "sight_manager.h"
 #include "ai_object_location.h"
 #include "stalker_movement_manager_smart_cover.h"
-#include "patrol_path_manager.h"
+//#include "patrol_path_manager.h"
 #include "sound_player.h"
 #include "ai/stalker/ai_stalker_space.h"
-#include "restricted_object.h"
+//#include "restricted_object.h"
 
 using namespace StalkerSpace;
 

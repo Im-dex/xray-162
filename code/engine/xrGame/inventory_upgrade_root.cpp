@@ -9,7 +9,7 @@
 #include "pch_script.h"
 #include "inventory_upgrade.h"
 #include "inventory_upgrade_root.h"
-#include "inventory_upgrade_group.h"
+//#include "inventory_upgrade_group.h"
 
 extern int g_upgrades_log;
 

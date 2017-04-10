@@ -22,7 +22,7 @@
 #include "visual_memory_manager.h"
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
-#include "restricted_object.h"
+//#include "restricted_object.h"
 #include "sound_player.h"
 #include "ai/stalker/ai_stalker_space.h"
 #include "stalker_decision_space.h"

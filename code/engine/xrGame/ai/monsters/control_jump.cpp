@@ -7,7 +7,7 @@
 #include "../../detail_path_manager.h"
 #include "../../level.h"
 #include "control_animation_base.h"
-#include "control_direction_base.h"
+//#include "control_direction_base.h"
 #include "control_movement_base.h"
 #include "control_path_builder_base.h"
 #include "monster_velocity_space.h"
@@ -15,9 +15,9 @@
 #include "../../level_graph.h"
 #include "../../ai_object_location.h"
 #include "../../CharacterPhysicsSupport.h"
-#ifdef DEBUG
-#include "../../level_debug.h"
-#endif
+//#ifdef DEBUG
+//#include "../../level_debug.h"
+//#endif
 
 #include "../../trajectories.h"
 #include "../../../xrPhysics/IPHWorld.h"

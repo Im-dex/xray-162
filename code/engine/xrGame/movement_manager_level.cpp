@@ -9,7 +9,7 @@
 #include "stdafx.h"
 #include "movement_manager.h"
 #include "profiler.h"
-#include "level_location_selector.h"
+//#include "level_location_selector.h"
 #include "level_path_manager.h"
 #include "detail_path_manager.h"
 #include "ai_object_location.h"

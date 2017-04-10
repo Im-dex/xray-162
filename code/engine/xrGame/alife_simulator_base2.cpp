@@ -8,8 +8,8 @@
 
 #include "stdafx.h"
 #include "alife_simulator_base.h"
-#include "relation_registry.h"
-#include "alife_registry_wrappers.h"
+//#include "relation_registry.h"
+//#include "alife_registry_wrappers.h"
 #include "xrServer_Objects_ALife_Items.h"
 #include "alife_graph_registry.h"
 #include "alife_object_registry.h"

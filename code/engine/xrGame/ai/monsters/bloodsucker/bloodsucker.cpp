@@ -10,12 +10,12 @@
 #include "../../../detail_path_manager.h"
 #include "../../../level_debug.h"
 #include "../monster_velocity_space.h"
-#include "../../../gamepersistent.h"
-#include "../../../game_object_space.h"
+//#include "../../../gamepersistent.h"
+//#include "../../../game_object_space.h"
 
 #include "../control_animation_base.h"
 #include "../control_movement_base.h"
-#include "../control_rotation_jump.h"
+//#include "../control_rotation_jump.h"
 
 #include "../../../sound_player.h"
 #include "../../../../xrEngine/camerabase.h"

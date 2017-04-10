@@ -11,8 +11,8 @@
 #include "script_engine.h"
 #include "object_broker.h"
 #include "smart_cover_loophole.h"
-#include "smart_cover_object.h"
-#include "ai_monster_space.h"
+//#include "smart_cover_object.h"
+//#include "ai_monster_space.h"
 #include "smart_cover_transition.hpp"
 
 using namespace MonsterSpace;

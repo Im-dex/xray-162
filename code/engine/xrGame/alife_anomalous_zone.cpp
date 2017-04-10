@@ -11,13 +11,13 @@
 #include "ai_space.h"
 #include "alife_simulator.h"
 #include "alife_time_manager.h"
-#include "alife_spawn_registry.h"
+//#include "alife_spawn_registry.h"
 #include "alife_graph_registry.h"
 
-#pragma warning(push)
+/*#pragma warning(push)
 #pragma warning(disable:4995)
 #include <malloc.h>
-#pragma warning(pop)
+#pragma warning(pop)*/
 
 CSE_ALifeItemWeapon	*CSE_ALifeAnomalousZone::tpfGetBestWeapon(ALife::EHitType &tHitType, float &fHitPower)
 {

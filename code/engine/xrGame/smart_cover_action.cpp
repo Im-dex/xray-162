@@ -7,8 +7,8 @@
 
 #include "pch_script.h"
 #include "smart_cover_action.h"
-#include "ai_monster_space.h"
-#include "ai_space.h"
+//#include "ai_monster_space.h"
+//#include "ai_space.h"
 #include "level_graph.h"
 #include "../xrServerEntities/object_broker.h"
 

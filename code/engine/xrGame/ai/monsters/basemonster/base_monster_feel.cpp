@@ -17,13 +17,13 @@
 #include "../../../script_callback_ex.h"
 #include "../../../script_game_object.h"
 #include "../../../game_object_space.h"
-#include "../../../ai_monster_space.h"
+//#include "../../../ai_monster_space.h"
 #include "../control_animation_base.h"
 #include "../../../UIGameCustom.h"
 #include "../../../UI/UIStatic.h"
 #include "../../../ai_object_location.h"
 #include "../../../profiler.h"
-#include "../../../ActorEffector.h"
+//#include "../../../ActorEffector.h"
 #include "../../../../xrEngine/CameraBase.h"
 
 void CBaseMonster::feel_sound_new(CObject* who, int eType, CSound_UserDataPtr user_data, const Fvector &Position, float power)

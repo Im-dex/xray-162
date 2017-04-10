@@ -15,7 +15,7 @@
 #include "inventory_upgrade_manager.h"
 #include "inventory_upgrade_group.h"
 #include "inventory_upgrade_root.h"
-#include "inventory_upgrade_property.h"
+//#include "inventory_upgrade_property.h"
 
 namespace inventory
 {

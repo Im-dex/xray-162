@@ -15,7 +15,7 @@
 #include "level_graph.h"
 #include "space_restriction.h"
 #include "space_restriction_bridge.h"
-#include "space_restriction_base.h"
+//#include "space_restriction_base.h"
 #include "profiler.h"
 #include "alife_simulator.h"
 #include "alife_object_registry.h"
