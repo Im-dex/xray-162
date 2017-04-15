@@ -15,6 +15,8 @@ Open command line at the root of repository and execute the following commands:
 * cd build
 * cmake .. -DBIN_PATH=%BIN_PATH% -G "Visual Studio 14 2015" -T "host=x64"
 
+If you want to build utils projects add -DBUILD_UTILS=ON parameter to cmake command line.
+
 Open generated solution and build the engine.
 
 > %BIN_PATH% - path to your stalker bin folder.
