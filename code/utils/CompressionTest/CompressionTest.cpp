@@ -1,8 +1,8 @@
     #include <stdio.h>
     #include <vector>
     #include <algorithm>
-    #include "../../xrcore/PPMd.h"
-    #include "../../xrcore/compression_ppmd_stream.h"
+    #include "xrcore/PPMd.h"
+    #include "xrcore/compression_ppmd_stream.h"
 
     #pragma warning( disable: 193 128 810 )
     #include "../xrcompress/lzo/lzo1x.h"

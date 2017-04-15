@@ -2,7 +2,7 @@
 
 //. #define MOD_COMPRESS
 
-#include "../../xrcore/xrCore.h"
+#include "xrcore/xrCore.h"
 
 #include "lzo\lzo1x.h"
 #include <mmsystem.h>
@@ -14,6 +14,3 @@
 #include <sys\stat.h>
 #include <malloc.h>
 #pragma warning	(default:4995)
-
-#pragma comment	(lib,"xrCore.lib")
-#pragma comment	(lib,"winmm")

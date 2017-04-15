@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "../../xrcore/xr_ini.h"
+#include "xrcore/xr_ini.h"
 #include "process.h"
 #include "xrAI.h"
 
@@ -15,14 +15,6 @@
 #include "spawn_patcher.h"
 
 #pragma comment(linker,"/STACK:0x800000,0x400000")
-
-#pragma comment(lib,"comctl32.lib")
-#pragma comment(lib,"d3dx9.lib")
-#pragma comment(lib,"IMAGEHLP.LIB")
-#pragma comment(lib,"winmm.LIB")
-#pragma comment(lib,"xrcdb.LIB")
-#pragma comment(lib,"MagicFM.LIB")
-#pragma comment(lib,"xrCore.LIB")
 
 extern LPCSTR LEVEL_GRAPH_NAME;
 

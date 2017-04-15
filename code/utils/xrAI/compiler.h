@@ -1,12 +1,10 @@
 #pragma once
 
-#pragma comment(lib,"FreeImage.lib")
-
-#include "../../xrcdb/xrCDB.h"
-#include "../../xrEngine/xrLevel.h"
+#include "xrcdb/xrCDB.h"
+#include "xrEngine/xrLevel.h"
 #include "AIMapExport.h"
 #include "Shader_xrLC.h"
-#include "../../editors/LevelEditor/Engine/communicate.h"
+#include "../../engine.vc2008/editors/LevelEditor/Engine/communicate.h"
 #include "Etextureparams.h"
 
 // base patch used all the time up to merging

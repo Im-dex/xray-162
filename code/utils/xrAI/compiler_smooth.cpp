@@ -4,7 +4,7 @@
 
 // MagicFM
 #pragma warning(disable:4995)
-#include <freemagic/MgcAppr3DPlaneFit.h>
+#include <mgc/MgcAppr3DPlaneFit.h>
 #pragma warning(default:4995)
 
 const float	RCAST_DepthValid = 0.2f;

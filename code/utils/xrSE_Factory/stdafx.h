@@ -8,10 +8,9 @@
 
 #pragma once
 
-#include "../../xrCore/xrCore.h"
+#include "xrCore/xrCore.h"
 
 #define STRINGIZE(a)			#a
-#define UP(a)					STRINGIZE(../../##a)
 //#undef	STRINGIZE
 
 #define WIN32_LEAN_AND_MEAN

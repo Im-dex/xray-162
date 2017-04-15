@@ -4,7 +4,7 @@
 #ifdef _EDITOR
 	#include "xrLevel.h"
 #else
-	#include "../../xrEngine/xrLevel.h"
+	#include "xrEngine/xrLevel.h"
 #endif
 
 #pragma pack(push,4)
