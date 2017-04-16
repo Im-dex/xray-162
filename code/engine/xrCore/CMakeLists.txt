@@ -48,9 +48,8 @@ set(MATH_EXT_BUFFER_VECTOR buffer_vector.h buffer_vector_inline.h)
 set(MATH_STLEXT FixedMap.h FixedSet.h FixedVector.h xrPool.h)
 
 set(MEM_MGR memory_allocation_stats.cpp memory_usage.cpp xrMemory.cpp xrMemory.h xrMemory_align.h
-            xrMemory_align.cpp xrMemory_debug.cpp xrMemory_POOL.cpp xrMEMORY_POOL.h xrMemory_pso_Copy.cpp
-            xrMemory_pso_Fill.cpp xrMemory_pso_Fill32.cpp xrMemory_pure.h xrMemory_subst_borland.h
-            xrMemory_subst_borland.cpp xrMemory_subst_msvc.h xrMemory_subst_msvc.cpp)
+            xrMemory_align.cpp xrMemory_debug.cpp xrMemory_POOL.cpp xrMEMORY_POOL.h xrMemory_pure.h
+            xrMemory_subst_borland.h xrMemory_subst_borland.cpp xrMemory_subst_msvc.h xrMemory_subst_msvc.cpp)
 set(MEM_MGR_DLMALLOC_ALLOCATOR ptmalloc3/malloc.c ptmalloc3/malloc-2.8.3.h ptmalloc3/sysdeps/win32/win32.c)
 set_source_files_properties(ptmalloc3/malloc.c ptmalloc3/sysdeps/win32/win32.c PROPERTIES COMPILE_FLAGS /Y-)
 set(MEM_MGR_DLMALLOC_WRAPPER doug_lea_allocator.h doug_lea_allocator.cpp memory_allocator_options.h)
