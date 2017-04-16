@@ -11,11 +11,24 @@
 #include "dds.h"
 #include <ddraw.h>
 
+typedef NV_ERROR_CODE (__cdecl *nvDXTcompressFuncT)(const RGBAImage*,
+                                                    nvCompressionOptions*);
+
+static nvDXTcompressFuncT nvDXTcompressFunc = nullptr;
+
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        u32  ul_reason_for_call, 
                        LPVOID lpReserved
 					 )
 {
+    auto dxtWrapHandle = LoadLibraryW(L"nvdxtwrap.dll");
+    if (!dxtWrapHandle) {
+        FATAL("nvdxtwrap.dll not found");
+    }
+    nvDXTcompressFunc = reinterpret_cast<nvDXTcompressFuncT>(GetProcAddress(dxtWrapHandle, "nvDXTCompressFunc"));
+    if (!nvDXTcompressFunc) {
+        FATAL("nvDXTCompressFunc not found");
+    }
     return TRUE;
 }
 
@@ -140,63 +153,62 @@ int DXTCompressImage	(LPCSTR out_name, u8* raw_data, u32 w, u32 h, u32 pitch,
 
 	HRESULT hr=-1;
 // convert to Options
-    CompressionOptions		nvOpt;
+    nvCompressionOptions		nvOpt;
     std::memset(&nvOpt,0, sizeof(nvOpt));
 
-    if (fmt->flags.is(STextureParams::flGenerateMipMaps))	nvOpt.MipMapType=dGenerateMipMaps;
-    else													nvOpt.MipMapType=dNoMipMaps;
+    if (fmt->flags.is(STextureParams::flGenerateMipMaps))	nvOpt.mipMapGeneration=kGenerateMipMaps;
+    else													nvOpt.mipMapGeneration=kNoMipMaps;
     nvOpt.bBinaryAlpha	    = !!(fmt->flags.is(STextureParams::flBinaryAlpha));
     nvOpt.bAlphaBorder		= !!(fmt->flags.is(STextureParams::flAlphaBorder));
     nvOpt.bBorder			= !!(fmt->flags.is(STextureParams::flColorBorder));
-    nvOpt.BorderColor.set	(color_get_R(fmt->border_color),color_get_G(fmt->border_color),color_get_B(fmt->border_color),color_get_A(fmt->border_color));
+    nvOpt.borderColor32F.set(color_get_R(fmt->border_color),color_get_G(fmt->border_color),color_get_B(fmt->border_color),color_get_A(fmt->border_color));
     nvOpt.bFadeColor		= !!(fmt->flags.is(STextureParams::flFadeToColor));
-	nvOpt.FadeToColor.set	(color_get_R(fmt->fade_color),color_get_G(fmt->fade_color),color_get_B(fmt->fade_color),0);
-    nvOpt.FadeAmount		= fmt->fade_amount;
+    nvOpt.fadeAmount32F		= fmt->fade_amount;
 	nvOpt.bFadeAlpha		= !!(fmt->flags.is(STextureParams::flFadeToAlpha));
-	nvOpt.FadeToAlpha		= color_get_A(fmt->fade_color);
-	nvOpt.FadeToDelay		= fmt->fade_delay;
+	nvOpt.fadeToColor32F.set(color_get_R(fmt->fade_color), color_get_G(fmt->fade_color), color_get_B(fmt->fade_color), color_get_A(fmt->fade_color));
+	nvOpt.fadeToDelay		= fmt->fade_delay;
     nvOpt.bDitherColor		= !!(fmt->flags.is(STextureParams::flDitherColor));
-	nvOpt.bDitherMIP0		= !!(fmt->flags.is(STextureParams::flDitherEachMIPLevel));
-	nvOpt.TextureType		= (fmt->type==STextureParams::ttCubeMap)?kTextureTypeCube:kTextureType2D;
+	nvOpt.bDitherMip0		= !!(fmt->flags.is(STextureParams::flDitherEachMIPLevel));
+	nvOpt.textureType		= (fmt->type==STextureParams::ttCubeMap)?kTextureTypeCubeMap:kTextureTypeTexture2D;
     switch(fmt->fmt){
-    case STextureParams::tfDXT1				: 	nvOpt.TextureFormat = kDXT1	; 	break;
-    case STextureParams::tfADXT1			: 	nvOpt.TextureFormat = kDXT1a; 	break;
-    case STextureParams::tfDXT3				: 	nvOpt.TextureFormat = kDXT3	; 	break;
-    case STextureParams::tfDXT5				: 	nvOpt.TextureFormat = kDXT5	; 	break;
+    case STextureParams::tfDXT1				: 	nvOpt.textureFormat = kDXT1	; 	break;
+    case STextureParams::tfADXT1			: 	nvOpt.textureFormat = kDXT1a; 	break;
+    case STextureParams::tfDXT3				: 	nvOpt.textureFormat = kDXT3	; 	break;
+    case STextureParams::tfDXT5				: 	nvOpt.textureFormat = kDXT5	; 	break;
 	case STextureParams::tf4444				:
-    case STextureParams::tf1555				: 	nvOpt.TextureFormat = k1555	; 	break;
-    case STextureParams::tf565				: 	nvOpt.TextureFormat = k565	; 	break;
-    case STextureParams::tfRGB				: 	nvOpt.TextureFormat = k888	; 	break;
-    case STextureParams::tfRGBA				: 	nvOpt.TextureFormat = k8888	; 	break;
-	case STextureParams::tfA8				: 	nvOpt.TextureFormat = kA8	; 	break;
-	case STextureParams::tfL8				: 	nvOpt.TextureFormat = kL8	; 	break;
-	case STextureParams::tfA8L8				: 	nvOpt.TextureFormat = kA8L8	; 	break;
+    case STextureParams::tf1555				: 	nvOpt.textureFormat = k1555	; 	break;
+    case STextureParams::tf565				: 	nvOpt.textureFormat = k565	; 	break;
+    case STextureParams::tfRGB				: 	nvOpt.textureFormat = k888	; 	break;
+    case STextureParams::tfRGBA				: 	nvOpt.textureFormat = k8888	; 	break;
+	case STextureParams::tfA8				: 	nvOpt.textureFormat = kA8	; 	break;
+	case STextureParams::tfL8				: 	nvOpt.textureFormat = kL8	; 	break;
+	case STextureParams::tfA8L8				: 	nvOpt.textureFormat = kA8L8	; 	break;
     }
 	
 	switch(fmt->mip_filter){
 	case STextureParams::kMIPFilterAdvanced	:	break;
 
-	case STextureParams::kMIPFilterPoint	:	nvOpt.MIPFilterType = kMIPFilterPoint		;	break;		
-	case STextureParams::kMIPFilterBox		:	nvOpt.MIPFilterType = kMIPFilterBox			;	break;
-	case STextureParams::kMIPFilterTriangle	:	nvOpt.MIPFilterType = kMIPFilterTriangle	;	break;	
-	case STextureParams::kMIPFilterQuadratic:	nvOpt.MIPFilterType = kMIPFilterQuadratic	;	break;	
-	case STextureParams::kMIPFilterCubic	:	nvOpt.MIPFilterType = kMIPFilterCubic		;	break;
+	case STextureParams::kMIPFilterPoint	:	nvOpt.mipFilterType = kMipFilterPoint		;	break;		
+	case STextureParams::kMIPFilterBox		:	nvOpt.mipFilterType = kMipFilterBox			;	break;
+	case STextureParams::kMIPFilterTriangle	:	nvOpt.mipFilterType = kMipFilterTriangle	;	break;	
+	case STextureParams::kMIPFilterQuadratic:	nvOpt.mipFilterType = kMipFilterQuadratic	;	break;	
+	case STextureParams::kMIPFilterCubic	:	nvOpt.mipFilterType = kMipFilterCubic		;	break;
 
-	case STextureParams::kMIPFilterCatrom	:	nvOpt.MIPFilterType = kMIPFilterCatrom		;	break;
-	case STextureParams::kMIPFilterMitchell	:	nvOpt.MIPFilterType = kMIPFilterMitchell	;	break;
+	case STextureParams::kMIPFilterCatrom	:	nvOpt.mipFilterType = kMipFilterCatrom		;	break;
+	case STextureParams::kMIPFilterMitchell	:	nvOpt.mipFilterType = kMipFilterMitchell	;	break;
 
-	case STextureParams::kMIPFilterGaussian	:	nvOpt.MIPFilterType = kMIPFilterGaussian	;	break;
-	case STextureParams::kMIPFilterSinc		:	nvOpt.MIPFilterType = kMIPFilterSinc		;	break;
-	case STextureParams::kMIPFilterBessel	:	nvOpt.MIPFilterType = kMIPFilterBessel		;	break;
+	case STextureParams::kMIPFilterGaussian	:	nvOpt.mipFilterType = kMipFilterGaussian	;	break;
+	case STextureParams::kMIPFilterSinc		:	nvOpt.mipFilterType = kMipFilterSinc		;	break;
+	case STextureParams::kMIPFilterBessel	:	nvOpt.mipFilterType = kMipFilterBessel		;	break;
 
-	case STextureParams::kMIPFilterHanning	:	nvOpt.MIPFilterType = kMIPFilterHanning		;	break;
-	case STextureParams::kMIPFilterHamming	:	nvOpt.MIPFilterType = kMIPFilterHamming		;	break;
-	case STextureParams::kMIPFilterBlackman	:	nvOpt.MIPFilterType = kMIPFilterBlackman	;	break;
-	case STextureParams::kMIPFilterKaiser	:	nvOpt.MIPFilterType = kMIPFilterKaiser		;	break;
+	case STextureParams::kMIPFilterHanning	:	nvOpt.mipFilterType = kMipFilterHanning		;	break;
+	case STextureParams::kMIPFilterHamming	:	nvOpt.mipFilterType = kMipFilterHamming		;	break;
+	case STextureParams::kMIPFilterBlackman	:	nvOpt.mipFilterType = kMipFilterBlackman	;	break;
+	case STextureParams::kMIPFilterKaiser	:	nvOpt.mipFilterType = kMipFilterKaiser		;	break;
 	}
 //-------------------
 	if ((fmt->flags.is(STextureParams::flGenerateMipMaps))&&(STextureParams::kMIPFilterAdvanced==fmt->mip_filter)){
-		nvOpt.MipMapType	= dUseExistingMipMaps;
+		nvOpt.mipMapGeneration = kUseExistingMipMaps;
 
 		u8* pImagePixels	= 0;
 		int numMipmaps		= GetPowerOf2Plus1(__min(w,h));
@@ -231,7 +243,7 @@ int DXTCompressImage	(LPCSTR out_name, u8* raw_data, u32 w, u32 h, u32 pitch,
 		u8* pixel			= pImagePixels;
 		for (u32 k=0; k<w*2*h; k++,pixel+=4)
 			pixels[k].set	(pixel[2],pixel[1],pixel[0],pixel[3]);
-		hr					= nvDXTcompress(pImage,&nvOpt,0,0);
+		hr					= nvDXTcompressFunc(&pImage,&nvOpt);
 		xr_free				(pImagePixels);
 	}else{
 		RGBAImage			pImage(w,h);
@@ -239,16 +251,16 @@ int DXTCompressImage	(LPCSTR out_name, u8* raw_data, u32 w, u32 h, u32 pitch,
 		u8* pixel			= raw_data;
 		for (u32 k=0; k<w*h; k++,pixel+=4)
 			pixels[k].set	(pixel[2],pixel[1],pixel[0],pixel[3]);
-		hr					= nvDXTcompress(pImage,&nvOpt,0,0);
+		hr					= nvDXTcompressFunc(&pImage,&nvOpt);
 	}
     _close					(gFileOut);
 	if (hr!=DD_OK){
 		switch (hr){
-		case DXTERR_INPUT_POINTER_ZERO:			MessageBox(0,"Empty source.","DXT compress error",MB_ICONERROR|MB_OK);			break;
-		case DXTERR_DEPTH_IS_NOT_3_OR_4:		MessageBox(0,"Source depth is not 3 or 4.","DXT compress error",MB_ICONERROR|MB_OK);			break;
-		case DXTERR_NON_POWER_2:				MessageBox(0,"Source size non power 2.","DXT compress error",MB_ICONERROR|MB_OK);					break;
-		case DXTERR_INCORRECT_NUMBER_OF_PLANES:	MessageBox(0,"Source incorrect number of planes.","DXT compress error",MB_ICONERROR|MB_OK);	break;
-		case DXTERR_NON_MUL4:					MessageBox(0,"Source size non mul 4.","DXT compress error",MB_ICONERROR|MB_OK);						break;
+		case NV_INPUT_POINTER_ZERO:		MessageBox(0,"Empty source.","DXT compress error",MB_ICONERROR|MB_OK);			break;
+		case NV_DEPTH_IS_NOT_3_OR_4:	MessageBox(0,"Source depth is not 3 or 4.","DXT compress error",MB_ICONERROR|MB_OK);			break;
+		case NV_IMAGE_NOT_POWER_2:		MessageBox(0,"Source size non power 2.","DXT compress error",MB_ICONERROR|MB_OK);					break;
+		case NV_NEED_4_PLANES_FOR_RGBE:	MessageBox(0,"Source incorrect number of planes.","DXT compress error",MB_ICONERROR|MB_OK);	break;
+		case NV_IMAGE_NOT_MULT4:		MessageBox(0,"Source size non mul 4.","DXT compress error",MB_ICONERROR|MB_OK);						break;
 		}
 		unlink				(out_name);
 		return 0;

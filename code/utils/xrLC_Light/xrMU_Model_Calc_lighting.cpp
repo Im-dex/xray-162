@@ -6,7 +6,7 @@
 //#include "xrLC_GlobalData.h"
 #include "light_point.h"
 //#include "xrDeflector.h"
-#include "../../xrcdb/xrcdb.h"
+#include "xrcdb/xrcdb.h"
 #include "../shader_xrlc.h"
 #include "mu_model_face.h"
 #include "xrface.h"

@@ -38,7 +38,10 @@ add_compile_options(/MP "$<$<CONFIG:RELWITHDEBINFO>:/GL>" "$<$<CONFIG:RELWITHDEB
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -D_HAS_EXCEPTIONS=0")
-                    
+
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /LARGEADDRESSAWARE")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
+
 set(SHARED_RELEASE_LINKER_FLAGS "/LTCG /OPT:REF /INCREMENTAL:NO")
 set(STATIC_RELEASE_LINKER_FLAGS "/LTCG")
 set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} ${SHARED_RELEASE_LINKER_FLAGS}")
@@ -164,6 +167,11 @@ if (${BUILD_UTILS})
     add_subdirectory(code/utils/CompressionTest)
     add_subdirectory(code/utils/LWO)
     add_subdirectory(code/utils/xrAI)
+    add_subdirectory(code/utils/xrDXT)
+    add_subdirectory(code/utils/xrLC_Light)
+    add_subdirectory(code/utils/xrLC_LightStab)
+    add_subdirectory(code/utils/xrDO_Light)
+    add_subdirectory(code/utils/xrLC)
 
     set_target_properties(ctool PROPERTIES FOLDER utils)
     set_target_properties(xrCompress PROPERTIES FOLDER utils)
@@ -173,4 +181,9 @@ if (${BUILD_UTILS})
     set_target_properties(CompressionTest PROPERTIES FOLDER utils)
     set_target_properties(LWO PROPERTIES FOLDER utils)
     set_target_properties(xrAI PROPERTIES FOLDER utils)
+    set_target_properties(xrDXT PROPERTIES FOLDER utils)
+    set_target_properties(xrLC_Light PROPERTIES FOLDER utils)
+    set_target_properties(xrLC_LightStab PROPERTIES FOLDER utils)
+    set_target_properties(xrDO_Light PROPERTIES FOLDER utils)
+    set_target_properties(xrLC PROPERTIES FOLDER utils)
 endif()

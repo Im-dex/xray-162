@@ -2,9 +2,7 @@
 #include "build.h"
 #include "ogf_face.h"
 #pragma warning(disable:4995)
-#include <freemagic/MgcCont3DMinSphere.h>
-
-#pragma comment(lib,"MagicFM.lib")
+#include "mgc/MgcCont3DMinSphere.h"
 
 BOOL	f_valid		(float f)
 {

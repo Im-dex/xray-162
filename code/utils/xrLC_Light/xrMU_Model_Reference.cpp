@@ -6,7 +6,7 @@
 
 
 
-#include "../../xrcdb/xrcdb.h"
+#include "xrcdb/xrcdb.h"
 #include "../shader_xrlc.h"
 #include "xrface.h"
 #include "serialize.h"

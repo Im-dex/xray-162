@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "../../3rd party/bugtrap/zlib/zlib.h"
-#pragma comment(lib, "zlib.lib")
+#include "../../3rd-party/zlib/zlib.h"
+
 void compress( LPCSTR f_in, LPCSTR f_out );
 void decompress( LPCSTR f_in, LPCSTR f_out );
 

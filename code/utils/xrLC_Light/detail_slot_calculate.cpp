@@ -42,7 +42,7 @@ public:
 	void					add			(float s)									{	rgb.add(s);	hemi+=s; sun+=s;				};
 	void					add			(base_color& s)								{	rgb.add(s.rgb);	hemi+=s.hemi; sun+=s.sun;	};
 	void					scale		(int samples)								{	mul	(1.f/float(samples));					};
-	void					max			(base_color& s)								{ 	rgb.max(s.rgb); hemi=_max(hemi,s.hemi); sun=_max(sun,s.sun); };
+	void					max			(base_color& s)								{ 	rgb.max(s.rgb); hemi=std::max(hemi,s.hemi); sun=std::max(sun,s.sun); };
 	void					lerp		(base_color& A, base_color& B, float s)		{ 	rgb.lerp(A.rgb,B.rgb,s); float is=1-s;  hemi=is*A.hemi+s*B.hemi; sun=is*A.sun+s*B.sun; };
 };
 
@@ -357,7 +357,7 @@ bool detail_slot_calculate( u32 _x, u32 _z, DetailSlot&	DS, DWORDVec& box_result
 			Fvector start;	start.set	(P.x,BB.max.y+EPS,P.z);
 			
 			float		r_u,r_v,r_range;
-			for (DWORDIt tit=box_result.begin(); tit!=box_result.end(); tit++)
+			for (auto tit=box_result.begin(); tit!=box_result.end(); tit++)
 			{
 				CDB::TRI&	T		= tris	[*tit];
 				Fvector		V[3]	= { verts[T.verts[0]], verts[T.verts[1]], verts[T.verts[2]] };

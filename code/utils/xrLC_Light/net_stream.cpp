@@ -51,7 +51,7 @@ void INetBlockReader::r(void *p,int cnt)
 	{
 		if( mem_reader.allocated() )
 		{
-			u32 read_cnt = _min( cnt, mem_reader.count() ); 
+			u32 read_cnt = std::min( static_cast<u32>(cnt), mem_reader.count() ); 
 			mem_reader.r( pointer, read_cnt );
 			pointer+=read_cnt;
 			cnt-=read_cnt;
@@ -206,7 +206,7 @@ void INetMemoryBuffWriter::w(const void* ptr, u32 count)
 		VERIFY(mem_writter.rest()>=0);
 		if( mem_writter.rest() != 0 )
 		{
-			u32 write_cnt = _min( count,  mem_writter.rest()  ); 
+			u32 write_cnt = std::min( count,  mem_writter.rest()  ); 
 			mem_writter.w( pointer, write_cnt );
 			count-=write_cnt;
 			pointer+=write_cnt;
@@ -306,7 +306,7 @@ CReadMemoryBlock::	~CReadMemoryBlock	()
 	//Memory.mem_free( data );
 }
 
-#include "../../xrCore/FS_impl.h"
+#include "xrCore/FS_impl.h"
 u32 INetReader::find_chunk				(u32 ID, BOOL* bCompressed)
 {
 	R_ASSERT( false );

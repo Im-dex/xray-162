@@ -2,9 +2,6 @@
 #include "build.h"
 #include "xrOcclusion.h"
 
-#pragma comment(lib,"xrOcclusion.lib")
-#pragma comment(lib,"winmm.lib")
-
 typedef xr_vector<u16>	vecW;
 typedef vecW::iterator	vecW_IT;
 

@@ -177,20 +177,17 @@ namespace lc_net
 		string_path data;
 		string_path files;
 		strconcat( sizeof(data),data,libraries,e->data_files(files));
-        std::lock_guard<decltype(run_task_lock)> lock(run_task_lock);
+        run_task_lock.lock();
 		bool ok = false;
 		run_task: ;
 
 		__try
 		{
 			
-			user.RunTask( data ,"RunTask",outStream,Finalize,&t_id,true);
+			user.RunTask( data,"RunTask",outStream,Finalize,&t_id,true);
 
 			ok = true;
 		}
-
-
-		
 		__except( EXCEPTION_EXECUTE_HANDLER )
 		{
 			if(!ok)
@@ -200,8 +197,7 @@ namespace lc_net
 			}
 		}
 
-		return;
-		
+        run_task_lock.unlock();
 	}
 	
 	struct exec_find
@@ -222,16 +218,21 @@ namespace lc_net
 		u32 id =u32(-1),  type = u32(-1);
 		read_task_caption( inStream, id, type );
 
-
 		send_receive_lock.lock();
+
 		exec_find f( id );
-		xr_vector<net_execution*>::iterator i = std::find_if( pool.begin(), pool.end(), f);
-		
-		if( i!= pool.end() )
-		{
-			send_receive_lock.unlock();
-			return nullptr;
-		}
+        bool found = false;
+        for (size_t i = 0; i < pool.size(); i++) {
+            if (f(pool[i])) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            send_receive_lock.unlock();
+            return nullptr;
+        }
 		
 		net_execution* e = execution_factory.create( type, id );
 		pool.push_back( e );

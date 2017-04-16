@@ -2,8 +2,8 @@
 #include "build.h"
 #include "ogf_face.h"
 //#include "std_classes.h"
-#include "../../xrcore/fs.h"
-#include "../../xrEngine/fmesh.h"
+#include "xrcore/fs.h"
+#include "xrEngine/fmesh.h"
 #include "xrOcclusion.h"
 
 

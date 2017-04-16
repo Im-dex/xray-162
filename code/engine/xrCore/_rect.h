@@ -30,7 +30,7 @@ public:
 	IC	SelfRef	set(const Self &r)										{ x1=r.x1;	y1=r.y1;	x2=r.x2;	y2=r.y2;	return *this;	};
 	IC	SelfRef	null( )										{ x1=T(0);	y1=T(0);	x2=T(0);	y2=T(0);		return *this;	};
 	
-	IC	SelfRef	invalidate()								{ lt.x=type_max(T); lt.y=type_max(T);	rb.x=type_min(T);	rb.y=type_min(T);	return *this;	};
+	IC	SelfRef	invalidate()								{ lt.x=type_max<T>; lt.y=type_max<T>;	rb.x=type_min<T>;	rb.y=type_min<T>;	return *this;	};
 	IC	bool	valide	  ()								{ return lt.x1 < rb.x && lt.y < rb.y; }
 	IC 	SelfRef	set_empty ()								{ return invalidate(); }
 	IC	bool	is_empty  ()								{ return !valide(); }

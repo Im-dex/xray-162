@@ -78,7 +78,7 @@ public:
 
 	void	set	(Fcolor &c)
 	{
-        std::memset(this 0, sizeof(Fmaterial));
+        std::memset(this, 0, sizeof(Fmaterial));
 		diffuse.r = ambient.r = c.r;
 		diffuse.g = ambient.g = c.g;
 		diffuse.b = ambient.b = c.b;

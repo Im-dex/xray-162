@@ -5,8 +5,8 @@ struct UVpoint {
 
 	IC void set(float _u, float _v)			{ u=_u; v=_v;					}
 	IC void set(UVpoint &p)					{ u=p.u; v=p.v;					}
-	IC void min(UVpoint &p)					{ u=_min(u,p.u); v=_min(v,p.v); }
-	IC void max(UVpoint &p)					{ u=_max(u,p.u); v=_max(v,p.v); }
+	IC void min(UVpoint &p)					{ u=std::min(u,p.u); v=std::min(v,p.v); }
+	IC void max(UVpoint &p)					{ u=std::max(u,p.u); v=std::max(v,p.v); }
 	IC void sub(UVpoint &p)					{ u-=p.u; v-=p.v;				}
 	IC	void add(UVpoint &p)				{ u+=p.u; v+=p.v;				}
 	IC void sub(UVpoint &p1, UVpoint &p2)	{ u=p1.u-p2.u; v=p1.v-p2.v;		}

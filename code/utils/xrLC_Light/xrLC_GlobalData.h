@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../shader_xrlc.h"
-#include "../../xrcore/xrPool.h"
+#include "xrcore/xrPool.h"
 //#include "xrface.h"
 #include "xrfacedefs.h"
 #include "xrdeflectordefs.h"

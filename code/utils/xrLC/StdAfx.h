@@ -19,7 +19,7 @@
 
 #define ECORE_API				// fake, to enable sharing with editors
 #define XR_EPROPS_API
-#include "../../xrcore/clsid.h"
+#include "xrcore/clsid.h"
 #include "defines.h"
 #include "cl_log.h"
 

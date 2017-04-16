@@ -6,7 +6,7 @@
 #include "global_slots_data.h"
 #include "b_build_texture.h"
 #include "global_slots_data.h"
-#include "../../xrcdb/xrcdb.h"
+#include "xrcdb/xrcdb.h"
 class Shader_xrLC_LIB;
 //-----------------------------------------------------------------
 struct global_claculation_data

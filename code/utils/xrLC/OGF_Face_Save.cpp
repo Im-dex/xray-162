@@ -2,8 +2,8 @@
 #include "build.h"
 #include "ogf_face.h"
 //#include "std_classes.h"
-#include "../../xrcore/fs.h"
-#include "../../xrEngine/fmesh.h"
+#include "xrcore/fs.h"
+#include "xrEngine/fmesh.h"
 
 using namespace std;
 
@@ -123,8 +123,6 @@ struct  r1v_vert	{
 	}
 };
 #pragma pack(pop)
-
-#pragma comment			(lib,"ETools.lib")
 
 void OGF::Save			(IWriter &fs)
 {

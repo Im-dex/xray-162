@@ -6,7 +6,7 @@
 #include "../xrLC_Light/xrLC_GlobalData.h"
 #include "../xrLC_Light/xrface.h"
 
-#include "../../xrcdb/xrcdb.h"
+#include "xrcdb/xrcdb.h"
 
 
 #define	GI_THREADS		2

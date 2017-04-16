@@ -2,7 +2,7 @@
 #include "xrMU_Model.h"
 #include "xrMU_Model_Reference.h"
 
-#include "../../xrcdb/xrcdb.h"
+#include "xrcdb/xrcdb.h"
 #include "../shader_xrlc.h"
 void xrMU_Model::export_cform_rcast	(CDB::CollectorPacked& CL, Fmatrix& xform)
 {

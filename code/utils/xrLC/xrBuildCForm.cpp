@@ -7,8 +7,8 @@
 #include "../xrLC_Light/xrLC_GlobalData.h"
 #include "../xrLC_Light/xrface.h"
 
-#include "../../xrcore/fs.h"
-#include "../../xrcdb/xrcdb.h"
+#include "xrcore/fs.h"
+#include "xrcdb/xrcdb.h"
 
 int GetVertexIndex(Vertex *F)
 {

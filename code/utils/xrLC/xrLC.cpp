@@ -8,21 +8,12 @@
 //#pragma comment(linker,"/STACK:0x800000,0x400000")
 //#pragma comment(linker,"/HEAP:0x70000000,0x10000000")
 
-#pragma comment(lib,"comctl32.lib")
-#pragma comment(lib,"d3dx9.lib")
-#pragma comment(lib,"IMAGEHLP.LIB")
-#pragma comment(lib,"winmm.LIB")
-#pragma comment(lib,"xrCDB.lib")
-#pragma comment(lib,"FreeImage.lib")
-#pragma comment(lib,"xrCore.lib")
-#pragma comment(lib,"xrLC_Light.lib")
-
 #define PROTECTED_BUILD
 
 #ifdef PROTECTED_BUILD
 #	define TRIVIAL_ENCRYPTOR_ENCODER
 #	define TRIVIAL_ENCRYPTOR_DECODER
-#	include "../../xrEngine/trivial_encryptor.h"
+#	include "xrEngine/trivial_encryptor.h"
 #	undef TRIVIAL_ENCRYPTOR_ENCODER
 #	undef TRIVIAL_ENCRYPTOR_DECODER
 #endif // PROTECTED_BUILD

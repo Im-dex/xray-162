@@ -2,7 +2,7 @@
 #define	_XRLC_LIGHT_H_
 #pragma once
 
-#include "../../xrCore/xrCore.h"
+#include "xrCore/xrCore.h"
 #ifdef XRLC_LIGHT_EXPORTS
 #	define XRLC_LIGHT_API __declspec(dllexport)
 #else
@@ -20,7 +20,7 @@
 
 //#include "cl_log.h"
 #include "_d3d_extensions.h"
-#include "../../editors/LevelEditor/Engine/communicate.h"
+#include "../editors/LevelEditor/Engine/communicate.h"
 //#include "Etextureparams.h"
 
 static const int	edge2idx3	[3][3]	= { {0,1,2},	{1,2,0},	{2,0,1}	};

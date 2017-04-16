@@ -4,7 +4,7 @@
 #include "xrEngine/xrLevel.h"
 #include "AIMapExport.h"
 #include "Shader_xrLC.h"
-#include "../../engine.vc2008/editors/LevelEditor/Engine/communicate.h"
+#include "../editors/LevelEditor/Engine/communicate.h"
 #include "Etextureparams.h"
 
 // base patch used all the time up to merging

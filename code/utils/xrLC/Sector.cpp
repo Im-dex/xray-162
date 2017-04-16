@@ -52,7 +52,7 @@ void CSector::BuildHierrarhy	()
 
 	// 
 	scene_bb.getsize(scene_size);
-	delimiter		=	_max(scene_size.x,_max(scene_size.y,scene_size.z));
+	delimiter		=	std::max(scene_size.x,std::max(scene_size.y,scene_size.z));
 	delimiter		*=	2;
 
 	int		iLevel					= 2;
