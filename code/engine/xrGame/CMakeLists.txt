@@ -2395,11 +2395,9 @@ set(AI_ANAVIGATION_GRAPHABSTRACT_GRAPHVERTEX graph_vertex.h
 
 set(AI_AMONSTERS_MONSTERS_FLESH_SCRIPT ai/Monsters/Flesh/flesh_script.cpp)
 
-set(CORE_SERVER_GAMES_PLAYERACCOUNTS gsc_dsigned_ltx.h
-                                     mixed_delegate.h
+set(CORE_SERVER_GAMES_PLAYERACCOUNTS mixed_delegate.h
                                      mixed_delegate_unique_tags.h
-                                     queued_async_method.h
-                                     gsc_dsigned_ltx.cpp)
+                                     queued_async_method.h)
 
 set(AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_MESSAGEBOX ui/UIMessageBox.h
                                                      ui/UIMessageBoxEx.h
@@ -3183,11 +3181,7 @@ set(CORE_CLIENT_OBJECTS_BASE_GAMEOBJECT_AI_OBSTACLE_MIN_OBB_MAGIC_BOX magic_box3
 set(AI_ASCRIPT_SCRIPTCLASSES script_bind_macroses.h)
 
 set(CORE_COMMON_NET_SHARED_SECUREMESSAGES secure_messaging.h
-                                          xr_dsa_signer.h
-                                          xr_dsa_verifyer.h
-                                          secure_messaging.cpp
-                                          xr_dsa_signer.cpp
-                                          xr_dsa_verifyer.cpp)
+                                          secure_messaging.cpp)
 
 set(AI_AMONSTERS_MONSTERS_RATS_STATES rat_states.h
                                       ai/monsters/rats/rat_state_activation.cpp
@@ -4950,4 +4944,4 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_DUMMYARTIFACT}
                           ${CORE_SERVER_SERVERENTITIES_OBJECTS}
                           ${CORE_SERVER_SERVERENTITIES_OBJECTS_ALIFE_SMARTCOVER})
-target_link_libraries(xrGame shell32 Shlwapi xrEngine luabind cs xrXMLParser crypto xrPhysics)
+target_link_libraries(xrGame shell32 Shlwapi xrEngine luabind cs xrXMLParser xrPhysics)
