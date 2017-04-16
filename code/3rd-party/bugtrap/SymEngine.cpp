@@ -1165,6 +1165,7 @@ BOOL CSymEngine::InitStackTrace(LPSTACKFRAME64 pStackFrame)
 		if (! GetThreadContext(hThread, &m_StartExceptionContext))
 			return FALSE;
 */
+#ifdef _M_IX86
 		__asm
 		{
 			push eax
@@ -1222,6 +1223,11 @@ BOOL CSymEngine::InitStackTrace(LPSTACKFRAME64 pStackFrame)
 			pop edi
 			pop eax
 		}
+#elif defined(_M_IX64)
+        RtlCaptureContext(&m_StartExceptionContext);
+#else
+#   error "Unsupported architecture"
+#endif
 	}
 
 	ZeroMemory(pStackFrame, sizeof(*pStackFrame));
@@ -2715,10 +2721,16 @@ BOOL CSymEngine::GetNextStackTraceEntry(CStackTraceEntry& rEntry)
 	if (hModule != NULL)
 		GetModuleFileName(hModule, rEntry.m_szModule, countof(rEntry.m_szModule));
 	DWORD64 dwExceptionAddress = m_swContext.m_stFrame.AddrPC.Offset;
-	WORD wExceptionSegment; // wExceptionSegment = m_swContext.m_stFrame.AddrPC.Segment;
-	__asm { mov word ptr [wExceptionSegment], cs }
+    WORD wExceptionSegment = m_swContext.m_stFrame.AddrPC.Segment;
+#ifdef _M_IX86
 	_stprintf_s(rEntry.m_szAddress, countof(rEntry.m_szAddress),
-	            _T("%04lX:%08llu"), wExceptionSegment, dwExceptionAddress);
+	            _T("%04lX:%08I64X"), wExceptionSegment, dwExceptionAddress);
+#elif defined(_M_IX64)
+    _stprintf_s(rEntry.m_szAddress, countof(rEntry.m_szAddress),
+                _T("%04lX:%016lX"), wExceptionSegment, dwExceptionAddress);
+#else
+#   error "Unsupported architecture"
+#endif
 
 	BYTE arrSymBuffer[512];
 	ZeroMemory(arrSymBuffer, sizeof(arrSymBuffer));
