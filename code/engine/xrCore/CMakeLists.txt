@@ -16,7 +16,7 @@ set(COMPRESSOR_PPMD_CORE_ALLOCATOR SubAlloc.hpp)
 set(COMPRESSOR_PPMD_STREAM compression_ppmd_stream.h compression_ppmd_stream_inline.h)
 set(COMPRESSOR_RT rt_compressor.cpp rt_compressor.h rt_compressor9.cpp)
 
-set(DEBUG_CORE xrDebug.cpp xrDebug.h xrDebug_macros.h xrDebugNew.cpp)
+set(DEBUG_CORE xrDebug.h xrDebug_macros.h xrDebugNew.cpp)
 set_source_files_properties(xrDebug.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 file(GLOB DEBUG_CORE_BLACKBOX_H blackbox/*.h)
 file(GLOB DEBUG_CORE_BLACKBOX_CPP blackbox/*.cpp)
