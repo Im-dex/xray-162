@@ -17,7 +17,6 @@ XRCORE_API	Dmatrix			Didentity;
 XRCORE_API	CRandom			Random;
 
 #ifdef _M_AMD64
-u16			getFPUsw()		{ return 0;	}
 
 namespace	FPU 
 {
@@ -46,7 +45,13 @@ namespace	FPU
 		_control87	( _RC_NEAR, MCW_RC );
 	}
 
-	void		initialize		()				{}
+	void		initialize		() {
+#ifndef XRCORE_STATIC
+        m24r();
+#endif	//XRCORE_STATIC
+
+        ::Random.seed(u32(CPU::GetCLK() % (1i64 << 32i64)));
+	}
 };
 #else
 u16 getFPUsw() 

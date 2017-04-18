@@ -81,8 +81,9 @@ void BuildStackTrace	()
 
 	context.Eip				= program_counter();
 #ifndef _EDITOR
-	__asm					mov context.Ebp, ebp
-	__asm					mov context.Esp, esp
+    // TODO: find replacement
+	//__asm					mov context.Ebp, ebp
+	//__asm					mov context.Esp, esp
 #else // _EDITOR
 	__asm					mov EBP, ebp
 	__asm					mov ESP, esp

@@ -22,7 +22,7 @@
 #ifdef _M_AMD64
 #define DEBUG_INVOKE	DebugBreak	()
 #else
-#define DEBUG_INVOKE	__asm		{ int 3 }
+#define DEBUG_INVOKE	__debugbreak()
 #endif
 
 XRCORE_API	xrDebug		Debug;
