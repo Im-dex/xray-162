@@ -78,26 +78,6 @@ CRenderDevice *get_device()
 }
 #endif
 
-int bit_and(int i, int j)
-{
-	return			(i & j);
-}
-
-int bit_or(int i, int j)
-{
-	return			(i | j);
-}
-
-int bit_xor(int i, int j)
-{
-	return			(i ^ j);
-}
-
-int bit_not(int i)
-{
-	return			(~i);
-}
-
 LPCSTR user_name()
 {
 	return			(Core.UserName);
@@ -183,12 +163,6 @@ IC	profile_timer_script	operator+	(const profile_timer_script &portion0, const p
 	return					(result);
 }
 
-// IC	std::ostream& operator<<(std::ostream &stream, profile_timer_script &timer)
-// {
-// 	stream					<< timer.time();
-// 	return					(stream);
-// }
-
 #ifdef XRGAME_EXPORTS
 ICF	u32	script_time_global	()	{ return Device.dwTimeGlobal; }
 ICF	u32	script_time_global_async	()	{ return Device.TimerAsync_MMT(); }
@@ -226,10 +200,6 @@ void CScriptEngine::script_register(lua_State *L)
 	function	(L,	"prefetch",							prefetch_module);
 	function	(L,	"verify_if_thread_is_running",		verify_if_thread_is_running);
 	function	(L,	"editor",							is_editor);
-	function	(L,	"bit_and",							bit_and);
-	function	(L,	"bit_or",							bit_or);
-	function	(L,	"bit_xor",							bit_xor);
-	function	(L,	"bit_not",							bit_not);
 	function	(L, "user_name",						user_name);
 	function	(L, "time_global",						script_time_global);
 	function	(L, "time_global_async",				script_time_global_async);
