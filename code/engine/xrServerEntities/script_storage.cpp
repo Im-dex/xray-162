@@ -294,16 +294,18 @@ void CScriptStorage::reinit	()
 		}
 	}; // struct lua;
 
-	luajit::open_lib	(lua(),	"",					luaopen_base);
-	luajit::open_lib	(lua(),	LUA_LOADLIBNAME,	luaopen_package);
-	luajit::open_lib	(lua(),	LUA_TABLIBNAME,		luaopen_table);
-	luajit::open_lib	(lua(),	LUA_IOLIBNAME,		luaopen_io);
-	luajit::open_lib	(lua(),	LUA_OSLIBNAME,		luaopen_os);
-	luajit::open_lib	(lua(),	LUA_MATHLIBNAME,	luaopen_math);
-	luajit::open_lib	(lua(),	LUA_STRLIBNAME,		luaopen_string);
-
+	luajit::open_lib(lua(),	"",			luaopen_base);
+	luajit::open_lib(lua(),	LUA_LOADLIBNAME,	luaopen_package);
+	luajit::open_lib(lua(),	LUA_TABLIBNAME,		luaopen_table);
+	luajit::open_lib(lua(),	LUA_IOLIBNAME,		luaopen_io);
+	luajit::open_lib(lua(),	LUA_OSLIBNAME,		luaopen_os);
+	luajit::open_lib(lua(),	LUA_MATHLIBNAME,	luaopen_math);
+	luajit::open_lib(lua(),	LUA_STRLIBNAME,		luaopen_string);
+	// Added sv3nk
+	luajit::open_lib(lua(), LUA_BITLIBNAME,		luaopen_bit);
+	luajit::open_lib(lua(), LUA_FFILIBNAME,		luaopen_ffi);
 #ifdef DEBUG
-	luajit::open_lib	(lua(),	LUA_DBLIBNAME,		luaopen_debug);
+	luajit::open_lib(lua(),	LUA_DBLIBNAME,		luaopen_debug);
 #endif // #ifdef DEBUG
 
 	if (!strstr(Core.Params,"-nojit")) {
