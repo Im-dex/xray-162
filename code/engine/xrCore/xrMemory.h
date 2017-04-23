@@ -134,6 +134,6 @@ extern		bool		mem_initialized;
 
 XRCORE_API void vminfo			(size_t *_free, size_t *reserved, size_t *committed);
 XRCORE_API void log_vminfo		();
-XRCORE_API u32	mem_usage_impl	(HANDLE heap_handle, u32* pBlocksUsed, u32* pBlocksFree);
+XRCORE_API u32	mem_usage_impl	(u32* pBlocksUsed, u32* pBlocksFree);
 
 #endif // xrMemoryH
