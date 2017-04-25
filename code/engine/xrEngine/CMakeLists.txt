@@ -47,12 +47,10 @@ set(INTERFACES_RENDER_EXECUTION__AND__3D_SHADERS_TEXTURES tntQAVI.h
                                                           xrImage_Resampler.h
                                                           xrTheora_Stream.h
                                                           xrTheora_Surface.h
-                                                          xrTheora_Surface_mmx.h
                                                           tntQAVI.cpp
                                                           xrImage_Resampler.cpp
                                                           xrTheora_Stream.cpp
-                                                          xrTheora_Surface.cpp
-                                                          xrTheora_Surface_mmx.cpp)
+                                                          xrTheora_Surface.cpp)
 
 set(EDITOR_ENVIRONMENT_MANAGER editor_environment_manager.hpp
                                editor_environment_manager.cpp)
