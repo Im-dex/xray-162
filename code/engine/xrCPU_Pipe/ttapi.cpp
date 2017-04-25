@@ -39,7 +39,7 @@ DWORD WINAPI ttapiThreadProc( LPVOID lpParameter )
 				// Msg( "0x%8.8X Fast %u" , dwId , i );
 				goto process;
 			}
-			__asm pause;
+			_mm_pause();
 		}
 
 		// Moderate
@@ -91,7 +91,7 @@ void SetThreadName( DWORD dwThreadID , LPCSTR szThreadName )
   }
   __try
   {
-    RaiseException( 0x406D1388, 0, sizeof(info)/sizeof(DWORD), (DWORD*)&info );
+    RaiseException( 0x406D1388, 0, sizeof(info)/sizeof(DWORD), (ULONG_PTR*)&info );
   }
   __except (EXCEPTION_CONTINUE_EXECUTION)
   {
