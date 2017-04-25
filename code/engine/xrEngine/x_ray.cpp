@@ -328,7 +328,7 @@ Memory.mem_usage();
 	destroyEngine();
 }
 
-static BOOL CALLBACK logDlgProc( HWND hw, UINT msg, WPARAM wp, LPARAM lp )
+static INT_PTR CALLBACK logDlgProc( HWND hw, UINT msg, WPARAM wp, LPARAM lp )
 {
 	switch( msg ){
 		case WM_DESTROY:
@@ -675,7 +675,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 	SetThreadAffinityMask		(GetCurrentThread(),1);
 
 	// Title window
-	logoWindow					= CreateDialog(GetModuleHandle(NULL),	MAKEINTRESOURCE(IDD_STARTUP), 0, logDlgProc );
+	logoWindow					= CreateDialog(GetModuleHandle(NULL),	MAKEINTRESOURCE(IDD_STARTUP), nullptr, logDlgProc );
 	
 	HWND logoPicture			= GetDlgItem(logoWindow, IDC_STATIC_LOGO);
 	RECT logoRect;
