@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: BugTrap utilities.
@@ -70,8 +70,8 @@ void ValidateScrollInfo(SCROLLINFO* pSInfo);
 BOOL DeleteFolder(PCTSTR pszFolder);
 BOOL CreateFolder(PCTSTR pszFolder);
 BOOL CreateParentFolder(PCTSTR pszFileName);
-BOOL CreateTempFolder(PTSTR pszTempPath, DWORD dwTempPathSize);
-DWORD GetCanonicalAppName(PTSTR pszAppName, DWORD dwBufferSize, BOOL bAllowSpaces);
+BOOL CreateTempFolder(PTSTR pszTempPath, size_t nTempPathSize);
+size_t GetCanonicalAppName(PTSTR pszAppName, size_t nBufferSize, BOOL bAllowSpaces);
 BOOL GetCompleteLogFileName(PTSTR pszCompleteLogFileName, PCTSTR pszLogFileName, PCTSTR pszDefFileExtension);
 
 // Strings processing.

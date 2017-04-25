@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Input stream.
@@ -25,9 +25,9 @@
  * @param nCount - size of the array.
  * @return number of written bytes.
  */
-int COutputStream::WriteBytes(const unsigned char* arrBytes, int nCount)
+size_t COutputStream::WriteBytes(const unsigned char* arrBytes, size_t nCount)
 {
-	int nNumWritten = 0;
+	size_t nNumWritten = 0;
 	while (nNumWritten < nCount)
 	{
 		if (! WriteByte(arrBytes[nNumWritten]))
@@ -42,9 +42,9 @@ int COutputStream::WriteBytes(const unsigned char* arrBytes, int nCount)
  * @param nCount - number of bytes to write.
  * @return number of written bytes.
  */
-int COutputStream::WriteByte(unsigned char bValue, int nCount)
+size_t COutputStream::WriteByte(unsigned char bValue, size_t nCount)
 {
-	int nNumWritten = 0;
+	size_t nNumWritten = 0;
 	while (nNumWritten < nCount)
 	{
 		if (! WriteByte(bValue))
@@ -58,20 +58,20 @@ int COutputStream::WriteByte(unsigned char bValue, int nCount)
  * @param pInputStream - input stream.
  * @return number of written bytes.
  */
-int COutputStream::WriteStream(CInputStream* pInputStream)
+size_t COutputStream::WriteStream(CInputStream* pInputStream)
 {
-	int nNumWritten = 0;
+	size_t nNumWritten = 0;
 	for (;;)
 	{
 		unsigned char arrBuffer[1024];
-		int nNumRead = pInputStream->ReadBytes(arrBuffer, sizeof(arrBuffer));
-		if (nNumRead <= 0)
+		size_t nNumRead = pInputStream->ReadBytes(arrBuffer, sizeof(arrBuffer));
+		if (nNumRead == 0 || nNumRead == MAXSIZE_T)
 			goto end;
 		unsigned char* pBuffer = arrBuffer;
 		while (nNumRead > 0)
 		{
-			int nNumWrittenTemp = WriteBytes(pBuffer, nNumRead);
-			if (nNumWrittenTemp <= 0)
+			size_t nNumWrittenTemp = WriteBytes(pBuffer, nNumRead);
+			if (nNumWrittenTemp == 0 || nNumWrittenTemp == MAXSIZE_T)
 				goto end;
 			nNumRead -= nNumWrittenTemp;
 			nNumWritten += nNumWrittenTemp;

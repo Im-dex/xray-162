@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Precomplied header file.
@@ -20,6 +20,15 @@
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
+/// Comment out this if you don't want to use VDMDBG at all
+//#define USE_VDMDBG
+/// Comment out this if you don't want to read image header
+//#define READ_IMAGEHEADER
+
+#ifdef _WIN64
+ #undef USE_VDMDBG
+#endif
+
 #include <windows.h>
 #include <windowsx.h>
 #include <tchar.h>
@@ -31,7 +40,6 @@
 #include <stdlib.h>
 #include <psapi.h>
 #include <tlhelp32.h>
-#include <vdmdbg.h>
 #include <dbghelp.h>
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -41,8 +49,13 @@
 #include <process.h>
 #include <zmouse.h>
 #include <limits.h>
+#include <minizip/zip.h>
 #include <stdio.h>
-#include "../minizip/zip.h"
+#include <new.h>
+
+#ifdef USE_VDMDBG
+ #include <vdmdbg.h>
+#endif
 
 struct _IMAGELIST { }; // unresolved typeref token
 
@@ -58,12 +71,28 @@ struct _IMAGELIST { }; // unresolved typeref token
 
 #include <malloc.h>
 
-#define countof(array) (sizeof(array) / sizeof((array)[0]))
-
-#ifdef _MANAGED
- #ifdef _DEBUG
-  #pragma comment(lib, "zlibMSD.lib")
- #else
-  #pragma comment(lib, "zlibMS.lib")
- #endif
+#ifndef MAXSIZE_T
+ #define MAXSIZE_T		((SIZE_T)~((SIZE_T)0))
 #endif
+
+#ifndef MAXSSIZE_T
+ #define MAXSSIZE_T		((SSIZE_T)(MAXSIZE_T >> 1))
+#endif
+
+#ifndef MINSSIZE_T
+ #define MINSSIZE_T		((SSIZE_T)~MAXSSIZE_T)
+#endif
+
+#ifndef MAXUINT
+ #define MAXUINT		((UINT)~((UINT)0))
+#endif
+
+#ifndef MAXINT
+ #define MAXINT			((INT)(MAXUINT >> 1))
+#endif
+
+#ifndef MININT
+ #define MININT			((INT)~MAXINT)
+#endif
+
+#define countof(array) (sizeof(array) / sizeof((array)[0]))

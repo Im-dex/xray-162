@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Input stream.
@@ -25,5 +25,5 @@ public:
 	/// Read one byte from the stream. This function is required.
 	virtual bool ReadByte(unsigned char& bValue) = 0;
 	/// Read array of bytes from the stream. This function is optional.
-	virtual int ReadBytes(unsigned char* arrBytes, int nCount);
+	virtual size_t ReadBytes(unsigned char* arrBytes, size_t nCount);
 };

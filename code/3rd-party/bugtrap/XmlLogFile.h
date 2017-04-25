@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: XML log file.
@@ -14,12 +14,12 @@
 
 #pragma once
 
-#include "LogFile.h"
+#include "InMemLogFile.h"
 
 /**
  * @brief XML log file.
  */
-class CXmlLogFile : public CLogFile
+class CXmlLogFile : public CInMemLogFile
 {
 public:
 	/// Initialize the object.
@@ -27,13 +27,18 @@ public:
 	/// Load entries into memory.
 	virtual BOOL LoadEntries(void);
 	/// Save entries into disk.
-	virtual BOOL SaveEntries(bool bCrash);
+	virtual BOOL SaveEntries(BOOL bCrash);
 	/// Add new log entry.
-	virtual void WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry);
+	virtual BOOL WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry);
 
 private:
+	/// Protects the class from being accidentally copied.
+	CXmlLogFile(const CXmlLogFile& rLogFile);
+	/// Protects the class from being accidentally copied.
+	CXmlLogFile& operator=(const CXmlLogFile& rLogFile);
+
 	/// Log entry data.
-	struct CXmlLogEntry : public CLogFile::CLogEntry
+	struct CXmlLogEntry : public CInMemLogFile::CLogEntry
 	{
 #pragma warning(push)
 #pragma warning(disable : 4200) // nonstandard extension used : zero-sized array in struct/union
@@ -54,19 +59,19 @@ private:
 		/// Get log level.
 		virtual PCTSTR GetLogLevel(void) const = 0;
 		/// Get log level length.
-		virtual int GetLogLevelLength(void) const = 0;
+		virtual DWORD GetLogLevelLength(void) const = 0;
 		/// Set time statistics.
 		virtual void SetTimeStatistics(PCTSTR pszTimeStatistics) = 0;
 		/// Get time statistics.
 		virtual PCTSTR GetTimeStatistics(void) const = 0;
 		/// Get time statistics length.
-		virtual int GetTimeStatisticsLength(void) const = 0;
+		virtual DWORD GetTimeStatisticsLength(void) const = 0;
 		/// Set entry text.
 		virtual void SetEntryText(PCTSTR pszEntryText) = 0;
 		/// Get entry text.
 		virtual PCTSTR GetEntryText(void) const = 0;
 		/// Get entry text length.
-		virtual int GetEntryTextLength(void) const = 0;
+		virtual DWORD GetEntryTextLength(void) const = 0;
 	};
 
 	/// Log record that keeps strings.
@@ -84,8 +89,8 @@ private:
 		virtual PCTSTR GetLogLevel(void) const
 		{ return m_strLogLevel; }
 		/// Get log level length.
-		virtual int GetLogLevelLength(void) const
-		{ return m_strLogLevel.GetLength(); }
+		virtual DWORD GetLogLevelLength(void) const
+		{ return (DWORD)m_strLogLevel.GetLength(); }
 		/// Set time statistics.
 		virtual void SetTimeStatistics(PCTSTR pszTimeStatistics)
 		{ m_strTimeStatistics = pszTimeStatistics; }
@@ -93,8 +98,8 @@ private:
 		virtual PCTSTR GetTimeStatistics(void) const
 		{ return m_strTimeStatistics; }
 		/// Get time statistics length.
-		virtual int GetTimeStatisticsLength(void) const
-		{ return m_strTimeStatistics.GetLength(); }
+		virtual DWORD GetTimeStatisticsLength(void) const
+		{ return (DWORD)m_strTimeStatistics.GetLength(); }
 		/// Set entry text.
 		virtual void SetEntryText(PCTSTR pszEntryText)
 		{ m_strEntryText = pszEntryText; }
@@ -102,8 +107,8 @@ private:
 		virtual PCTSTR GetEntryText(void) const
 		{ return m_strEntryText; }
 		/// Get entry text length.
-		virtual int GetEntryTextLength(void) const
-		{ return m_strEntryText.GetLength(); }
+		virtual DWORD GetEntryTextLength(void) const
+		{ return (DWORD)m_strEntryText.GetLength(); }
 
 	private:
 		/// Log level.
@@ -130,8 +135,8 @@ private:
 		virtual PCTSTR GetLogLevel(void) const
 		{ return m_pszLogLevel; }
 		/// Get log level length.
-		virtual int GetLogLevelLength(void) const
-		{ return _tcslen(m_pszLogLevel); }
+		virtual DWORD GetLogLevelLength(void) const
+		{ return (DWORD)_tcslen(m_pszLogLevel); }
 		/// Set time statistics.
 		virtual void SetTimeStatistics(PCTSTR pszTimeStatistics)
 		{ m_pszTimeStatistics = pszTimeStatistics; }
@@ -139,8 +144,8 @@ private:
 		virtual PCTSTR GetTimeStatistics(void) const
 		{ return m_pszTimeStatistics; }
 		/// Get time statistics length.
-		virtual int GetTimeStatisticsLength(void) const
-		{ return _tcslen(m_pszTimeStatistics); }
+		virtual DWORD GetTimeStatisticsLength(void) const
+		{ return (DWORD)_tcslen(m_pszTimeStatistics); }
 		/// Set entry text.
 		virtual void SetEntryText(PCTSTR pszEntryText)
 		{ m_pszEntryText = pszEntryText; }
@@ -148,8 +153,8 @@ private:
 		virtual PCTSTR GetEntryText(void) const
 		{ return m_pszEntryText; }
 		/// Get entry text length.
-		virtual int GetEntryTextLength(void) const
-		{ return _tcslen(m_pszEntryText); }
+		virtual DWORD GetEntryTextLength(void) const
+		{ return (DWORD)_tcslen(m_pszEntryText); }
 
 	private:
 		/// Log level.
@@ -160,10 +165,6 @@ private:
 		PCTSTR m_pszEntryText;
 	};
 
-	/// Protects the class from being accidentally copied.
-	CXmlLogFile(const CXmlLogFile& rLogFile);
-	/// Protects the class from being accidentally copied.
-	CXmlLogFile& operator=(const CXmlLogFile& rLogFile);
 	/// Get default log file extension.
 	virtual PCTSTR GetLogFileExtension(void) const;
 	/// Allocate log entry.
@@ -175,9 +176,9 @@ private:
 };
 
 inline CXmlLogFile::CXmlLogFile(void) :
-	CLogFile(sizeof("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
-					"<log>\r\n"
-					"</log>") - 1)
+	CInMemLogFile(sizeof("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
+	                     "<log>\r\n"
+	                     "</log>") - 1)
 {
 }
 

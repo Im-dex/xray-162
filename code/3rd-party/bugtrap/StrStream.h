@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: String (in-memory) stream class.
@@ -23,7 +23,7 @@ public:
 	/// Initialize the object.
 	CStrStream(void);
 	/// Initialize the object.
-	explicit CStrStream(int nSize);
+	explicit CStrStream(size_t nSize);
 	/// Makes a copy of string data.
 	CStrStream(PCSTR pszStrData);
 	/// Makes a copy of string data.
@@ -37,31 +37,31 @@ public:
 	/// Get string data.
 	operator PCTSTR(void) const;
 	/// Get string length.
-	int GetLength(void) const;
+	size_t GetLength(void) const;
 	/// Return true if string is empty.
 	bool IsEmpty(void) const;
 	/// Get string character.
-	TCHAR operator[](int nPosition) const;
+	TCHAR operator[](size_t nPosition) const;
 	/// Get/set string character.
-	TCHAR& operator[](int nPosition);
+	TCHAR& operator[](size_t nPosition);
 	/// Get string character.
-	TCHAR GetAt(int nPosition) const;
+	TCHAR GetAt(size_t nPosition) const;
 	/// Set string character.
-	void SetAt(int nPosition, TCHAR chData);
+	void SetAt(size_t nPosition, TCHAR chData);
 	/// Extract substring from the stream.
-	void Substring(CStrHolder& rStrHolder, int nPosition, int nLength = -1) const;
+	void Substring(CStrHolder& rStrHolder, size_t nPosition, size_t nLength = MAXSIZE_T) const;
 	/// Extract substring from the stream.
-	void Substring(CStrStream& rStrStream, int nPosition, int nLength = -1) const;
+	void Substring(CStrStream& rStrStream, size_t nPosition, size_t nLength = MAXSIZE_T) const;
 	/// Insert single character to the stream.
-	void Insert(TCHAR chData, int nPosition);
+	void Insert(TCHAR chData, size_t nPosition);
 	/// Insert substring to the stream.
-	void Insert(PCTSTR pszSubstring, int nPosition);
+	void Insert(PCTSTR pszSubstring, size_t nPosition);
 	/// Insert substring to the stream.
-	void Insert(const CStrHolder& rStrHolder, int nPosition);
+	void Insert(const CStrHolder& rStrHolder, size_t nPosition);
 	/// Insert substring to the stream.
-	void Insert(const CStrStream& rStrStream, int nPosition);
+	void Insert(const CStrStream& rStrStream, size_t nPosition);
 	/// Delete substring from the string.
-	void Delete(int nPosition, int nLength = -1);
+	void Delete(size_t nPosition, size_t nLength = MAXSIZE_T);
 	/// Trim a string.
 	void Trim(void);
 	/// Makes a copy of string data.
@@ -111,15 +111,15 @@ private:
 	/// Clear internal data.
 	void InitBuffer(void);
 	/// Initialize new string.
-	void InitBuffer(int nSize);
+	void InitBuffer(size_t nSize);
 	/// Reallocates string buffer if necessary.
-	void EnsureSize(int nSize, bool bAdaptiveGrowth);
+	void EnsureSize(size_t nSize, bool bAdaptiveGrowth);
 	/// Initialize new string.
-	void InitData(PCTSTR pszStrData, int nLength);
+	void InitData(PCTSTR pszStrData, size_t nLength);
 	/// Copy string into the existing buffer.
-	void CopyData(PCTSTR pszStrData, int nLength);
+	void CopyData(PCTSTR pszStrData, size_t nLength);
 	/// Append string to the existing data.
-	void AppendData(PCTSTR pszStrData, int nLength);
+	void AppendData(PCTSTR pszStrData, size_t nLength);
 #ifdef _UNICODE
 	/// Initialize new string.
 	void InitData(PCSTR pszStrData);
@@ -136,18 +136,18 @@ private:
 	void AppendData(PCWSTR pszStrData);
 #endif
 	/// Insert substring to the stream.
-	void Insert(PCTSTR pszSubstring, int nPosition, int nLength);
+	void Insert(PCTSTR pszSubstring, size_t nPosition, size_t nLength);
 	/// Validate string position.
-	void ValidateIndex(int nPosition) const;
+	void ValidateIndex(size_t nPosition) const;
 	/// Validate string position and length.
-	void ValidateIndex(int nPosition, int& nLength) const;
+	void ValidateIndex(size_t nPosition, size_t& nLength) const;
 
 	/// Stream data data.
 	PTSTR m_pszData;
 	/// String length.
-	int m_nLength;
+	size_t m_nLength;
 	/// Buffer size.
-	int m_nSize;
+	size_t m_nSize;
 };
 
 inline CStrStream::CStrStream(void)
@@ -158,7 +158,7 @@ inline CStrStream::CStrStream(void)
 /**
  * @param nSize - initial buffer size.
  */
-inline CStrStream::CStrStream(int nSize)
+inline CStrStream::CStrStream(size_t nSize)
 {
 	InitBuffer(nSize);
 }
@@ -171,7 +171,7 @@ inline CStrStream::~CStrStream(void)
 /**
  * @return stream length.
  */
-inline int CStrStream::GetLength(void) const
+inline size_t CStrStream::GetLength(void) const
 {
 	return m_nLength;
 }
@@ -368,7 +368,7 @@ inline CStrStream& CStrStream::operator<<(const CStrStream& rStrStream)
  * @param nPosition - character position within the string.
  * @return character value.
  */
-inline TCHAR CStrStream::GetAt(int nPosition) const
+inline TCHAR CStrStream::GetAt(size_t nPosition) const
 {
 	ValidateIndex(nPosition);
 	return m_pszData[nPosition];
@@ -378,7 +378,7 @@ inline TCHAR CStrStream::GetAt(int nPosition) const
  * @param nPosition - character position within the string.
  * @return character value.
  */
-inline TCHAR CStrStream::operator[](int nPosition) const
+inline TCHAR CStrStream::operator[](size_t nPosition) const
 {
 	ValidateIndex(nPosition);
 	return m_pszData[nPosition];
@@ -388,7 +388,7 @@ inline TCHAR CStrStream::operator[](int nPosition) const
  * @param nPosition - character position within the string.
  * @param chData - character value.
  */
-inline void CStrStream::SetAt(int nPosition, TCHAR chData)
+inline void CStrStream::SetAt(size_t nPosition, TCHAR chData)
 {
 	ValidateIndex(nPosition);
 	m_pszData[nPosition] = chData;
@@ -398,7 +398,7 @@ inline void CStrStream::SetAt(int nPosition, TCHAR chData)
  * @param nPosition - character position within the string.
  * @return reference to character value.
  */
-inline TCHAR& CStrStream::operator[](int nPosition)
+inline TCHAR& CStrStream::operator[](size_t nPosition)
 {
 	ValidateIndex(nPosition);
 	return m_pszData[nPosition];
@@ -409,7 +409,7 @@ inline TCHAR& CStrStream::operator[](int nPosition)
  * @param nPosition - start position.
  * @param nLength - length of the extracted string.
  */
-inline void CStrStream::Substring(CStrStream& rStrStream, int nPosition, int nLength) const
+inline void CStrStream::Substring(CStrStream& rStrStream, size_t nPosition, size_t nLength) const
 {
 	ValidateIndex(nPosition, nLength);
 	rStrStream.CopyData(m_pszData + nPosition, nLength);
@@ -418,10 +418,10 @@ inline void CStrStream::Substring(CStrStream& rStrStream, int nPosition, int nLe
 /**
  * @param nPosition - start position.
  */
-inline void CStrStream::ValidateIndex(int nPosition) const
+inline void CStrStream::ValidateIndex(size_t nPosition) const
 {
-	_ASSERTE(nPosition >= 0 && nPosition < m_nLength);
-	if (nPosition < 0 || nPosition >= m_nLength)
+	_ASSERTE(nPosition < m_nLength);
+	if (nPosition >= m_nLength)
 		RaiseException(STATUS_ARRAY_BOUNDS_EXCEEDED, 0, 0, NULL);
 }
 
@@ -429,7 +429,7 @@ inline void CStrStream::ValidateIndex(int nPosition) const
  * @param chData - character value.
  * @param nPosition - start position.
  */
-inline void CStrStream::Insert(TCHAR chData, int nPosition)
+inline void CStrStream::Insert(TCHAR chData, size_t nPosition)
 {
 	Insert(&chData, nPosition, 1);
 }
@@ -438,7 +438,7 @@ inline void CStrStream::Insert(TCHAR chData, int nPosition)
  * @param pszSubstring - inserted string buffer.
  * @param nPosition - start position.
  */
-inline void CStrStream::Insert(PCTSTR pszSubstring, int nPosition)
+inline void CStrStream::Insert(PCTSTR pszSubstring, size_t nPosition)
 {
 	Insert(pszSubstring, nPosition, _tcslen(pszSubstring));
 }
@@ -447,7 +447,7 @@ inline void CStrStream::Insert(PCTSTR pszSubstring, int nPosition)
  * @param rStrStream - inserted string buffer.
  * @param nPosition - start position.
  */
-inline void CStrStream::Insert(const CStrStream& rStrStream, int nPosition)
+inline void CStrStream::Insert(const CStrStream& rStrStream, size_t nPosition)
 {
 	Insert(rStrStream.m_pszData, nPosition, rStrStream.m_nLength);
 }
@@ -486,7 +486,7 @@ inline CStrStream& CStrStream::operator<<(const CStrHolder& rStrHolder)
  * @param rStrHolder - inserted string buffer.
  * @param nPosition - start position.
  */
-inline void CStrStream::Insert(const CStrHolder& rStrHolder, int nPosition)
+inline void CStrStream::Insert(const CStrHolder& rStrHolder, size_t nPosition)
 {
 	Insert((PCTSTR)rStrHolder, nPosition, rStrHolder.GetLength());
 }

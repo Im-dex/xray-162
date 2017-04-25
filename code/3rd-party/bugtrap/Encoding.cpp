@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Text encoding/decoding.
@@ -53,13 +53,13 @@ CAnsiDecoder CAnsiDecoder::m_instance;
  * @param nCharSize - upon return keeps character size.
  * @return Unicode character value.
  */
-static DWORD GetUnicodeValue(const TCHAR* pchValue, int& nCharSize)
+static DWORD GetUnicodeValue(const TCHAR* pchValue, size_t& nCharSize)
 {
 #ifndef _UNICODE
 	WCHAR arrUnicodeChar[2];
 	arrUnicodeChar[0] = arrUnicodeChar[1] = 0;
 	nCharSize = IsDBCSLeadByte(*pchValue) ? 2 : 1;
-	MultiByteToWideChar(CP_ACP, 0, pchValue, nCharSize, arrUnicodeChar, countof(arrUnicodeChar));
+	MultiByteToWideChar(CP_ACP, 0, pchValue, (int)nCharSize, arrUnicodeChar, countof(arrUnicodeChar));
 #else
 	const WCHAR* arrUnicodeChar = pchValue;
 #endif
@@ -145,7 +145,7 @@ bool CUTF8EncStream::WriteUTF8Hex(DWORD dwUnicodeChar)
 {
 	_ASSERTE(m_pOutputStream != NULL);
 	CHAR szHexValue[16];
-	int nLength;
+	size_t nLength;
 	if (dwUnicodeChar <= ASCII_MAX)
 	{
 		if (! m_pOutputStream->WriteByte((BYTE)dwUnicodeChar))
@@ -172,10 +172,10 @@ bool CUTF8EncStream::WriteUTF8Hex(DWORD dwUnicodeChar)
  */
 bool CUTF8EncStream::WriteUTF8Bin(PCTSTR pszString)
 {
-	int nPosition = 0;
+	size_t nPosition = 0;
 	while (pszString[nPosition] != _T('\0'))
 	{
-		int nCharSize;
+		size_t nCharSize;
 		if (! WriteUTF8Bin(pszString + nPosition, nCharSize))
 			return false;
 		nPosition += nCharSize;
@@ -189,10 +189,10 @@ bool CUTF8EncStream::WriteUTF8Bin(PCTSTR pszString)
  */
 bool CUTF8EncStream::WriteUTF8Hex(PCTSTR pszString)
 {
-	int nPosition = 0;
+	size_t nPosition = 0;
 	while (pszString[nPosition] != _T('\0'))
 	{
-		int nCharSize;
+		size_t nCharSize;
 		if (! WriteUTF8Hex(pszString + nPosition, nCharSize))
 			return false;
 		nPosition += nCharSize;
@@ -205,7 +205,7 @@ bool CUTF8EncStream::WriteUTF8Hex(PCTSTR pszString)
  * @param nCharSize - upon return keeps character size.
  * @return true if data has been written.
  */
-bool CUTF8EncStream::WriteUTF8Bin(const TCHAR* pchValue, int& nCharSize)
+bool CUTF8EncStream::WriteUTF8Bin(const TCHAR* pchValue, size_t& nCharSize)
 {
 	DWORD dwUnicodeChar = GetUnicodeValue(pchValue, nCharSize);
 	return WriteUTF8Bin(dwUnicodeChar);
@@ -216,7 +216,7 @@ bool CUTF8EncStream::WriteUTF8Bin(const TCHAR* pchValue, int& nCharSize)
  * @param nCharSize - upon return keeps number of bytes in character.
  * @return true if data has been written.
  */
-bool CUTF8EncStream::WriteUTF8Hex(const TCHAR* pchValue, int& nCharSize)
+bool CUTF8EncStream::WriteUTF8Hex(const TCHAR* pchValue, size_t& nCharSize)
 {
 	DWORD dwUnicodeChar = GetUnicodeValue(pchValue, nCharSize);
 	return WriteUTF8Hex(dwUnicodeChar);
@@ -230,9 +230,9 @@ bool CUTF8EncStream::WriteUTF8Hex(const TCHAR* pchValue, int& nCharSize)
  * @param nBufferSize - size of output buffer.
  * @return true if operation has been completed successfully.
  */
-bool Write7BitEncodedInt(int nValue, PBYTE pBuffer, int& nPosition, int nBufferSize)
+bool Write7BitEncodedInt(size_t nValue, PBYTE pBuffer, size_t& nPosition, size_t nBufferSize)
 {
-	int nOldPosition = nPosition;
+	size_t nOldPosition = nPosition;
 	while (nValue >= 0x80)
 	{
 		if (nPosition >= nBufferSize)
@@ -258,9 +258,9 @@ error:
  * @param nBufferSize - size of output buffer.
  * @return decoded integer value.
  */
-int Read7BitEncodedInt(PBYTE pBuffer, int& nPosition, int nBufferSize)
+size_t Read7BitEncodedInt(PBYTE pBuffer, size_t& nPosition, size_t nBufferSize)
 {
-	int nValue = 0, nShift = 0;
+	size_t nValue = 0, nShift = 0;
 	for (;;)
 	{
 		if (nPosition >= nBufferSize)
@@ -283,7 +283,7 @@ int Read7BitEncodedInt(PBYTE pBuffer, int& nPosition, int nBufferSize)
  * @param nBufferSize - size of output buffer.
  * @return true if operation has been completed successfully.
  */
-bool WriteBinaryString(CUTF8EncStream& rEncStream, PCTSTR pszString, PBYTE pBuffer, int& nPosition, int nBufferSize)
+bool WriteBinaryString(CUTF8EncStream& rEncStream, PCTSTR pszString, PBYTE pBuffer, size_t& nPosition, size_t nBufferSize)
 {
 	CStream* pStream = rEncStream.GetStream();
 	_ASSERTE(pStream != NULL);
@@ -293,17 +293,16 @@ bool WriteBinaryString(CUTF8EncStream& rEncStream, PCTSTR pszString, PBYTE pBuff
 	_ASSERTE((uStreamFeatures & (CStream::SF_GETLENGTH | CStream::SF_SETPOSITION)) == (CStream::SF_GETLENGTH | CStream::SF_SETPOSITION));
 	if ((uStreamFeatures & (CStream::SF_GETLENGTH | CStream::SF_SETPOSITION)) != (CStream::SF_GETLENGTH | CStream::SF_SETPOSITION))
 		return false;
-	int nOldPosition = nPosition;
+	size_t nOldPosition = nPosition;
 	rEncStream.Reset();
 	rEncStream.WriteUTF8Bin(pszString);
 	pStream->SetPosition(0, FILE_BEGIN);
-	int nLength = pStream->GetLength();
-	_ASSERTE(nLength >= 0);
+	size_t nLength = pStream->GetLength();
 	if (! Write7BitEncodedInt(nLength, pBuffer, nPosition, nBufferSize))
 		return false;
 	if (nBufferSize - nPosition >= nLength)
 	{
-		int nNumRead = pStream->ReadBytes(pBuffer + nPosition, nLength);
+		size_t nNumRead = pStream->ReadBytes(pBuffer + nPosition, nLength);
 		_ASSERTE(nNumRead == nLength);
 		if (nNumRead == nLength)
 		{
@@ -323,7 +322,7 @@ bool WriteBinaryString(CUTF8EncStream& rEncStream, PCTSTR pszString, PBYTE pBuff
  * @param nBufferSize - size of output buffer.
  * @return true if operation has been completed successfully.
  */
-bool WriteBinaryString(PCTSTR pszString, PBYTE pBuffer, int& nPosition, int nBufferSize)
+bool WriteBinaryString(PCTSTR pszString, PBYTE pBuffer, size_t& nPosition, size_t nBufferSize)
 {
 	CMemStream MemStream;
 	CUTF8EncStream EncStream(&MemStream);
@@ -338,14 +337,14 @@ bool WriteBinaryString(PCTSTR pszString, PBYTE pBuffer, int& nPosition, int nBuf
  * @param nCharSize - number of symbols in one character.
  * @return number of bytes in one character.
  */
-int UTF8DecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+size_t UTF8DecodeChar(const BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 {
-	nCharSize = -1;
-	if (nNumBytes <= 0)
+	nCharSize = MAXSIZE_T;
+	if (nNumBytes == 0)
 		return 0;
 	BYTE bValue = pBytes[0];
 	DWORD dwUnicodeChar;
-	int nNumBytesInChar;
+	size_t nNumBytesInChar;
 	if ((bValue & UTF8_1ST_OF_4) == UTF8_1ST_OF_4)
 	{
 		if (4 > nNumBytes)
@@ -398,7 +397,7 @@ int UTF8DecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCh
 		_ASSERTE(arrUnicodeChar[1] == 0);
 	}
 #else
-	int nWordsInChar;
+	size_t nWordsInChar;
 	if ((HIGH_SURROGATE_START <= arrUnicodeChar[0] && arrUnicodeChar[0] <= HIGH_SURROGATE_END) &&
 		(LOW_SURROGATE_START <= arrUnicodeChar[1] && arrUnicodeChar[1] <= LOW_SURROGATE_END))
 	{
@@ -408,7 +407,7 @@ int UTF8DecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCh
 	{
 		nWordsInChar = 1;
 	}
-	nCharSize = WideCharToMultiByte(CP_ACP, 0, arrUnicodeChar, nWordsInChar, arrChar, countof(arrChar), NULL, NULL);
+	nCharSize = WideCharToMultiByte(CP_ACP, 0, arrUnicodeChar, (int)nWordsInChar, arrChar, countof(arrChar), NULL, NULL);
 #endif
 	return nNumBytesInChar;
 }
@@ -421,11 +420,11 @@ int UTF8DecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCh
  * @param nCharSize - number of symbols in one character.
  * @return number of bytes in one character.
  */
-int UTF16BeDecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+size_t UTF16BeDecodeChar(BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 {
 	if (UTF16BeToLeChar(pBytes, nNumBytes) < 0)
 	{
-		nCharSize = -1;
+		nCharSize = MAXSIZE_T;
 		return 0;
 	}
 	return UTF16LeDecodeChar(pBytes, nNumBytes, arrChar, nCharSize);
@@ -439,9 +438,9 @@ int UTF16BeDecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharS
  * @param nCharSize - number of symbols in one character.
  * @return number of bytes in one character.
  */
-int UTF16LeDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+size_t UTF16LeDecodeChar(const BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 {
-	int nNumBytesInChar = GetUnicodeCharSize(pBytes);
+	size_t nNumBytesInChar = GetUnicodeCharSize(pBytes);
 	if (nNumBytes >= nNumBytesInChar)
 	{
 #ifdef _UNICODE
@@ -451,13 +450,13 @@ int UTF16LeDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& 
 			arrChar[1] = *((const WCHAR*)pBytes + 1);
 		nCharSize = nNumBytesInChar / sizeof(WCHAR);
 #else
-		nCharSize = WideCharToMultiByte(CP_ACP, 0, (const WCHAR*)pBytes, nNumBytesInChar, arrChar, countof(arrChar), NULL, NULL) / sizeof(WCHAR);
-		if (nCharSize <= 0)
+		nCharSize = WideCharToMultiByte(CP_ACP, 0, (const WCHAR*)pBytes, (int)nNumBytesInChar, arrChar, countof(arrChar), NULL, NULL) / sizeof(WCHAR);
+		if (nCharSize == 0)
 			nNumBytesInChar = 0;
 #endif
 	}
 	else
-		nCharSize = -1;
+		nCharSize = MAXSIZE_T;
 	return nNumBytesInChar;
 }
 
@@ -469,14 +468,14 @@ int UTF16LeDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& 
  * @param nCharSize - number of symbols in one character.
  * @return number of bytes in one character.
  */
-int AnsiDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+size_t AnsiDecodeChar(const BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 {
 	int nNumBytesInChar = IsDBCSLeadByte(*pBytes) ? 2 : 1;
-	if (nNumBytes >= nNumBytesInChar)
+	if (nNumBytes >= (size_t)nNumBytesInChar)
 	{
 #ifdef _UNICODE
 		nCharSize = MultiByteToWideChar(CP_ACP, 0, (const CHAR*)pBytes, nNumBytesInChar, arrChar, countof(arrChar));
-		if (nCharSize <= 0)
+		if (nCharSize == 0)
 			nNumBytesInChar = 0;
 #else
 		arrChar[0] = *(const CHAR*)pBytes;
@@ -486,7 +485,7 @@ int AnsiDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCh
 #endif
 	}
 	else
-		nCharSize = -1;
+		nCharSize = MAXSIZE_T;
 	return nNumBytesInChar;
 }
 
@@ -498,12 +497,12 @@ int AnsiDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCh
  * @param nBufferSize - size of output buffer (in characters).
  * @return number of characters in resulting string including null-terminator.
  */
-int UTF8DecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+size_t UTF8DecodeString(const BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 {
 	if (! nBufferSize)
 		return 0;
 	bool bAddNullTerminator;
-	if (nNumBytes < 0)
+	if (nNumBytes == MAXSIZE_T)
 	{
 		nNumBytes = strlen((PCSTR)pBytes);
 		--nBufferSize;
@@ -511,13 +510,13 @@ int UTF8DecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBu
 	}
 	else
 		bAddNullTerminator = false;
-	int nBytePos = 0, nCharPos = 0;
+	size_t nBytePos = 0, nCharPos = 0;
 	while (nBytePos < nNumBytes)
 	{
 		TCHAR arrChar[2];
-		int nCharSize;
-		int nNumBytesInChar = UTF8DecodeChar(pBytes + nBytePos, nNumBytes - nBytePos, arrChar, nCharSize);
-		if (nNumBytesInChar <= 0 || nCharPos + nCharSize > nBufferSize)
+		size_t nCharSize;
+		size_t nNumBytesInChar = UTF8DecodeChar(pBytes + nBytePos, nNumBytes - nBytePos, arrChar, nCharSize);
+		if (nNumBytesInChar == 0 || nCharPos + nCharSize > nBufferSize)
 			break;
 		nBytePos += nNumBytesInChar;
 		pszString[nCharPos++] = arrChar[0];
@@ -537,7 +536,7 @@ int UTF8DecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBu
  * @param nBufferSize - size of output buffer (in characters).
  * @return number of characters in resulting string including null-terminator.
  */
-int UTF16BeDecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+size_t UTF16BeDecodeString(BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 {
 	if (UTF16BeToLeString(pBytes, nNumBytes) == 0)
 		return 0;
@@ -552,18 +551,17 @@ int UTF16BeDecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBuffe
  * @param nBufferSize - size of output buffer (in characters).
  * @return number of characters in resulting string including null-terminator.
  */
-int UTF16LeDecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+size_t UTF16LeDecodeString(const BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 {
 #ifdef _UNICODE
-	if (nNumBytes < 0)
+	if (nNumBytes == MAXSIZE_T)
 		nNumBytes = (wcslen((const WCHAR*)pBytes) + 1) * sizeof(WCHAR);
 	if (nNumBytes > nBufferSize)
 		nNumBytes = nBufferSize;
 	CopyMemory(pszString, pBytes, nNumBytes);
 	return nNumBytes;
 #else
-	int nResult = WideCharToMultiByte(CP_ACP, 0, (const WCHAR*)pBytes, nNumBytes / sizeof(WCHAR), pszString, nBufferSize, NULL, NULL);
-	return (nResult >= 0 ? nResult : 0);
+	return WideCharToMultiByte(CP_ACP, 0, (const WCHAR*)pBytes, (int)(nNumBytes / sizeof(WCHAR)), pszString, (int)nBufferSize, NULL, NULL);
 #endif
 }
 
@@ -575,13 +573,12 @@ int UTF16LeDecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int 
  * @param nBufferSize - size of output buffer (in characters).
  * @return number of characters in resulting string including null-terminator.
  */
-int AnsiDecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+size_t AnsiDecodeString(const BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 {
 #ifdef _UNICODE
-	int nResult = MultiByteToWideChar(CP_ACP, 0, (const CHAR*)pBytes, nNumBytes, pszString, nBufferSize);
-	return (nResult >= 0 ? nResult : 0);
+	return MultiByteToWideChar(CP_ACP, 0, (const CHAR*)pBytes, (int)nNumBytes, pszString, (int)nBufferSize);
 #else
-	if (nNumBytes < 0)
+	if (nNumBytes == MAXSIZE_T)
 		nNumBytes = strlen((const CHAR*)pBytes) + 1;
 	if (nNumBytes > nBufferSize)
 		nNumBytes = nBufferSize;
@@ -595,7 +592,7 @@ int AnsiDecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBu
  * @param pBytes - array of bytes.
  * @return number of bytes in one character.
  */
-int GetUTF8CharSize(const BYTE* pBytes)
+size_t GetUTF8CharSize(const BYTE* pBytes)
 {
 	BYTE bValue = *pBytes;
 	if ((bValue & UTF8_1ST_OF_4) == UTF8_1ST_OF_4)
@@ -624,7 +621,7 @@ bool IsUnicodeLeadChar(const BYTE* pBytes)
  * @param pBytes - array of bytes.
  * @return number of bytes in one character.
  */
-int GetUnicodeCharSize(const BYTE* pBytes)
+size_t GetUnicodeCharSize(const BYTE* pBytes)
 {
 	WCHAR chValue1 = ((const WCHAR*)pBytes)[0];
 	if (HIGH_SURROGATE_START <= chValue1 && chValue1 <= HIGH_SURROGATE_END)
@@ -642,15 +639,15 @@ int GetUnicodeCharSize(const BYTE* pBytes)
  * @param nNumBytes - buffer size in bytes.
  * @return number of bytes in one character.
  */
-int UTF16BeToLeChar(BYTE* pBytes, int nNumBytes)
+size_t UTF16BeToLeChar(BYTE* pBytes, size_t nNumBytes)
 {
 	if (nNumBytes < 1)
-		return -1;
+		return MAXSIZE_T;
 	WCHAR chValue1 = SWAP16(((WCHAR*)pBytes)[0]);
 	if (LOW_SURROGATE_START <= chValue1 && chValue1 <= LOW_SURROGATE_END)
 	{
 		if (nNumBytes < 2)
-			return -1;
+			return MAXSIZE_T;
 		WCHAR chValue2 = SWAP16(((WCHAR*)pBytes)[1]);
 		if (HIGH_SURROGATE_START <= chValue2 && chValue2 <= HIGH_SURROGATE_END)
 		{
@@ -669,13 +666,13 @@ int UTF16BeToLeChar(BYTE* pBytes, int nNumBytes)
  * @param nNumBytes - buffer size in bytes.
  * @return number of processed bytes.
  */
-int UTF16BeToLeString(BYTE* pBytes, int nNumBytes)
+size_t UTF16BeToLeString(BYTE* pBytes, size_t nNumBytes)
 {
-	int nBytePos = 0;
+	size_t nBytePos = 0;
 	while (nBytePos < nNumBytes)
 	{
-		int nResult = UTF16BeToLeChar(pBytes + nBytePos, nNumBytes - nBytePos);
-		if (nResult < 0)
+		size_t nResult = UTF16BeToLeChar(pBytes + nBytePos, nNumBytes - nBytePos);
+		if (nResult == MAXSIZE_T)
 			break;
 		nBytePos += nResult;
 	}
@@ -687,7 +684,7 @@ int UTF16BeToLeString(BYTE* pBytes, int nNumBytes)
  * @param nCharSize - upon return keeps character size.
  * @return size of the character after UTF-8 encoding.
  */
-int GetCharSizeInUTF8(const TCHAR* pchValue, int& nCharSize)
+size_t GetCharSizeInUTF8(const TCHAR* pchValue, size_t& nCharSize)
 {
 	DWORD dwUnicodeChar = GetUnicodeValue(pchValue, nCharSize);
 	if (dwUnicodeChar <= ASCII_MAX)
@@ -704,13 +701,13 @@ int GetCharSizeInUTF8(const TCHAR* pchValue, int& nCharSize)
  * @param pszString - input string that needs to be encoded in UTF-8 format.
  * @return size of the character encoded in UTF-8 format.
  */
-int GetStringSizeInUTF8(PCTSTR pszString)
+size_t GetStringSizeInUTF8(PCTSTR pszString)
 {
 	_ASSERTE(pszString != NULL);
-	int nUTF8StringSize = 0;
+	size_t nUTF8StringSize = 0;
 	while (*pszString)
 	{
-		int nCharSize;
+		size_t nCharSize;
 		nUTF8StringSize += GetCharSizeInUTF8(pszString, nCharSize);
 		pszString += nCharSize;
 	}
@@ -767,18 +764,18 @@ void CDecInputStream::SetInputStream(CInputStream* pInputStream)
  * @param nNumBytes - number of bytes to read.
  * @return number of bytes available in a buffer.
  */
-int CDecInputStream::FillBuffer(int nNumBytes)
+size_t CDecInputStream::FillBuffer(size_t nNumBytes)
 {
 	_ASSERTE(m_pInputStream != NULL);
-	int nBytesLeft = m_nInputBufferLength - m_nInputBufferPos;
+	size_t nBytesLeft = m_nInputBufferLength - m_nInputBufferPos;
 	if (nBytesLeft < nNumBytes && ! m_bEndOfFile)
 	{
 		MoveMemory(m_arrInputBuffer, m_arrInputBuffer + m_nInputBufferPos, nBytesLeft);
 		m_nInputBufferPos = 0;
-		int nFreeSize = sizeof(m_arrInputBuffer) - nBytesLeft;
-		int nBytesRead = m_pInputStream->ReadBytes(m_arrInputBuffer + nBytesLeft, nFreeSize);
-		if (nBytesRead < 0)
-			return -1;
+		size_t nFreeSize = sizeof(m_arrInputBuffer) - nBytesLeft;
+		size_t nBytesRead = m_pInputStream->ReadBytes(m_arrInputBuffer + nBytesLeft, nFreeSize);
+		if (nBytesRead == MAXSIZE_T)
+			return MAXSIZE_T;
 		m_nInputBufferLength = nBytesLeft + nBytesRead;
 		m_bEndOfFile = nBytesRead < nFreeSize;
 		nBytesLeft = m_nInputBufferLength;
@@ -790,20 +787,19 @@ int CDecInputStream::FillBuffer(int nNumBytes)
  * @param arrChar - character data.
  * @return number of characters in one symbol.
  */
-int CDecInputStream::ReadChar(TCHAR arrChar[2])
+size_t CDecInputStream::ReadChar(TCHAR arrChar[2])
 {
 	// one character in UTF-16 encoding may require up to 4 bytes
 	// one character in UTF-8 encoding may require up to 4 bytes
 	// one character in ANSI encoding may require up to 2 bytes
 	// make sure at least one character can be read from the buffer
 	// (i.e. at least 4 bytes should be available)
-	int nBytesLeft = FillBuffer(4);
-	if (nBytesLeft <= 0)
+	size_t nBytesLeft = FillBuffer(4);
+	if (nBytesLeft == 0 || nBytesLeft == MAXSIZE_T)
 		return nBytesLeft;
-	int nNumBytesInChar, nCharSize;
+	size_t nNumBytesInChar, nCharSize;
 	_ASSERTE(m_pDecoder != NULL);
 	nNumBytesInChar = m_pDecoder->DecodeChar(m_arrInputBuffer + m_nInputBufferPos, nBytesLeft, arrChar, nCharSize);
-	_ASSERTE(nNumBytesInChar >= 0);
 	if (nCharSize > 0)
 		m_nInputBufferPos += nNumBytesInChar;
 	else
@@ -819,8 +815,8 @@ bool CDecInputStream::ReadPreamble(TEXT_ENCODING& eEncoding)
 {
 	// make sure at least 4 bytes are available in a buffer;
 	// this should be enough for any preamble.
-	int nBytesLeft = FillBuffer(4);
-	if (nBytesLeft <= 0)
+	size_t nBytesLeft = FillBuffer(4);
+	if (nBytesLeft == 0 || nBytesLeft == MAXSIZE_T)
 		return false;
 	PBYTE pBytes = m_arrInputBuffer + m_nInputBufferPos;
 	if (nBytesLeft >= sizeof(g_arrUTF16LEPreamble) &&
@@ -851,10 +847,10 @@ bool CDecInputStream::ReadPreamble(TEXT_ENCODING& eEncoding)
  * @param arrChar - character data.
  * @return number of characters in one symbol.
  */
-int CStrInputStream::ReadChar(TCHAR arrChar[2])
+size_t CStrInputStream::ReadChar(TCHAR arrChar[2])
 {
 	_ASSERTE(m_pStrStream != NULL);
-	int nLength = m_pStrStream->GetLength();
+	size_t nLength = m_pStrStream->GetLength();
 	if (m_nPosition >= nLength)
 		return 0;
 	arrChar[0] = ((PCTSTR)m_pStrStream)[m_nPosition++];
@@ -867,7 +863,7 @@ int CStrInputStream::ReadChar(TCHAR arrChar[2])
 		if (m_nPosition >= nLength)
 		{
 			_ASSERT(FALSE);
-			return -1;
+			return MAXSIZE_T;
 		}
 		arrChar[1] = ((PCTSTR)m_pStrStream)[m_nPosition++];
 		return 2;

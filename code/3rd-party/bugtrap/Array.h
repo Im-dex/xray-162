@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009ß IntelleSoft.
  * All rights reserved.
  *
  * Description: Simple dynamic array.
@@ -33,7 +33,7 @@ public:
 	};
 
 	/// Initialize the object.
-	explicit CArray(int nSize = DEFAULT_SIZE);
+	explicit CArray(size_t nSize = DEFAULT_SIZE);
 	/// Destroy the object.
 	~CArray(void);
 	/// Makes a copy of array.
@@ -43,43 +43,43 @@ public:
 	/// Append another array.
 	void Append(const CArray& rArray);
 	/// Ensures that the array has enough space.
-	void EnsureSize(int nSize, bool bAdaptiveGrowth = true);
+	void EnsureSize(size_t nSize, bool bAdaptiveGrowth = true);
 	/// Set number of array item.
-	void SetCount(int nCount);
+	void SetCount(size_t nCount);
 	/// Get number of items in the array.
-	int GetCount(void) const;
+	size_t GetCount(void) const;
 	/// Get buffer size (in elements).
-	int GetSize(void) const;
+	size_t GetSize(void) const;
 	/// Add new item.
 	DATA_TYPE& AddItem(void);
 	/// Add new item.
 	void AddItem(const DATA_TYPE& rItem);
 	/// Insert an element at a specified index; grow the array if necessary.
-	void InsertItem(int nItemPos, const DATA_TYPE& rItem);
+	void InsertItem(size_t nItemPos, const DATA_TYPE& rItem);
 	/// Insert an element at a specified index; grow the array if necessary.
-	DATA_TYPE& InsertItem(int nItemPos);
+	DATA_TYPE& InsertItem(size_t nItemPos);
 	/// Insert an element according to the array sort order; grow the array if necessary.
-	int InsertOrderedItem(const DATA_TYPE& rItem, bool bAscending = true, bool bAllowDuplicates = true);
+	size_t InsertOrderedItem(const DATA_TYPE& rItem, bool bAscending = true, bool bAllowDuplicates = true);
 	/// Delete the item.
-	void DeleteItem(int nItemPos);
+	void DeleteItem(size_t nItemPos);
 	/// Delete all items.
 	void DeleteAll(bool bFree = false);
 	/// Sets an element at a given position.
-	void SetAt(int nItemPos, const DATA_TYPE& rItem);
+	void SetAt(size_t nItemPos, const DATA_TYPE& rItem);
 	/// Returns element at a given position.
-	const DATA_TYPE& GetAt(int nItemPos) const;
+	const DATA_TYPE& GetAt(size_t nItemPos) const;
 	/// Return true if array contains no elements.
 	bool IsEmpty(void) const;
 	/// Sort the contents of the array.
 	void QSort(bool bAscending = true);
 	/// Search elements in a sorted array for the specified data.
-	int BSearch(const DATA_TYPE& rKey, bool bAscending = true) const;
+	size_t BSearch(const DATA_TYPE& rKey, bool bAscending = true) const;
 	/// Search elements in an unsorted array for the specified data.
-	int LSearch(const DATA_TYPE& rKey) const;
+	size_t LSearch(const DATA_TYPE& rKey) const;
 	/// Set or get the element.
-	DATA_TYPE& operator[](int nItemPos);
+	DATA_TYPE& operator[](size_t nItemPos);
 	/// Get the element.
-	const DATA_TYPE& operator[](int nItemPos) const;
+	const DATA_TYPE& operator[](size_t nItemPos) const;
 	/// Get array buffer.
 	operator DATA_TYPE*(void);
 	/// Get array buffer.
@@ -87,7 +87,7 @@ public:
 
 private:
 	/// Validate item index.
-	void ValidateIndex(int nItemPos) const;
+	void ValidateIndex(size_t nItemPos) const;
 	/// Compare two elements.
 	typedef int (*TCompareFunc)(const DATA_TYPE& rData1, const DATA_TYPE& rData2);
 	/// Compare two elements.
@@ -95,28 +95,28 @@ private:
 	/// Compare two elements.
 	static int CompareDesc(const DATA_TYPE& rData1, const DATA_TYPE& rData2);
 	/// Sort the contents of the array.
-	static void PrivQSort(DATA_TYPE* arrData, TCompareFunc pfnCompare, int nLowPos, int nHighPos);
+	static void PrivQSort(DATA_TYPE* arrData, TCompareFunc pfnCompare, size_t nLowPos, size_t nHighPos);
 
 	/// Array data.
 	DATA_TYPE* m_arrData;
 	/// Number of items in the array.
-	int m_nCount;
+	size_t m_nCount;
 	/// Size of array.
-	int m_nSize;
+	size_t m_nSize;
 };
 
 /**
  * @param nSize - the number of initially allocated elements.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::CArray(int nSize)
+CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::CArray(size_t nSize)
 {
 	m_nSize = nSize;
 	m_nCount = 0;
 	if (nSize > 0)
 	{
 		m_arrData = (DATA_TYPE*)new BYTE[nSize * sizeof(DATA_TYPE)];
-		if (! m_arrData)
+		if (m_arrData == NULL)
 		{
 			m_nSize = 0;
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
@@ -136,18 +136,15 @@ CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::CArray(const CArray& rArray)
 	if (m_nSize)
 	{
 		m_arrData = (DATA_TYPE*)new BYTE[m_nSize * sizeof(DATA_TYPE)];
-		if (! m_arrData)
+		if (m_arrData == NULL)
 		{
 			m_nSize = m_nCount = 0;
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
 		}
-		else
+		for (size_t i = 0; i < m_nCount; ++i)
 		{
-			for (int i = 0; i < m_nCount; ++i)
-			{
-				INSTANCE_TRAITS::Constructor(m_arrData[i]);
-				INSTANCE_TRAITS::Assignment(m_arrData[i], rArray.m_arrData[i]);
-			}
+			INSTANCE_TRAITS::Constructor(m_arrData[i]);
+			INSTANCE_TRAITS::Assignment(m_arrData[i], rArray.m_arrData[i]);
 		}
 	}
 	else
@@ -164,7 +161,7 @@ CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>& CArray<DATA_TYPE, INSTANCE_T
 	if (this != &rArray)
 	{
 		SetCount(rArray.m_nCount);
-		for (int i = 0; i < m_nCount; ++i)
+		for (size_t i = 0; i < m_nCount; ++i)
 			INSTANCE_TRAITS::Assignment(m_arrData[i], rArray.m_arrData[i]);
 	}
 	return *this;
@@ -182,9 +179,9 @@ inline CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::~CArray(void)
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
 void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::Append(const CArray& rArray)
 {
-	int nTotalCount = m_nCount + rArray.m_nCount;
+	size_t nTotalCount = m_nCount + rArray.m_nCount;
 	EnsureSize(nTotalCount, false);
-	for (int nSrcPos = 0, nDstPos = m_nCount; nDstPos < nTotalCount; ++nSrcPos, ++nDstPos)
+	for (size_t nSrcPos = 0, nDstPos = m_nCount; nDstPos < nTotalCount; ++nSrcPos, ++nDstPos)
 	{
 		INSTANCE_TRAITS::Constructor(m_arrData[nDstPos]);
 		INSTANCE_TRAITS::Assignment(m_arrData[nDstPos], rArray.m_arrData[nSrcPos]);
@@ -197,25 +194,29 @@ void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::Append(const CArray& rA
  * @param bAdaptiveGrowth - true for adaptive growth.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::EnsureSize(int nSize, bool bAdaptiveGrowth)
+void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::EnsureSize(size_t nSize, bool bAdaptiveGrowth)
 {
 	if (m_nSize < nSize)
 	{
 		if (bAdaptiveGrowth)
-			nSize *= 2;
-		DATA_TYPE* arrData = (DATA_TYPE*)new BYTE[nSize * sizeof(DATA_TYPE)];
-		if (! arrData)
-			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
-		else
 		{
-			if (m_arrData)
-			{
-				CopyMemory(arrData, m_arrData, m_nCount * sizeof(DATA_TYPE));
-				delete[] (PBYTE)m_arrData;
-			}
-			m_arrData = arrData;
-			m_nSize = nSize;
+			if (nSize <= 10)
+				nSize = 10;
+			else if (nSize <= 100)
+				nSize += nSize;
+			else
+				nSize += nSize / 2;
 		}
+		DATA_TYPE* arrData = (DATA_TYPE*)new BYTE[nSize * sizeof(DATA_TYPE)];
+		if (arrData == NULL)
+			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
+		if (m_arrData)
+		{
+			CopyMemory(arrData, m_arrData, m_nCount * sizeof(DATA_TYPE));
+			delete[] (PBYTE)m_arrData;
+		}
+		m_arrData = arrData;
+		m_nSize = nSize;
 	}
 }
 
@@ -223,17 +224,17 @@ void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::EnsureSize(int nSize, b
  * @param nCount - the new array size (number of elements).
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::SetCount(int nCount)
+void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::SetCount(size_t nCount)
 {
 	EnsureSize(nCount, false);
 	if (nCount < m_nCount)
 	{
-		for (int i = nCount; i < m_nCount; ++i)
+		for (size_t i = nCount; i < m_nCount; ++i)
 			INSTANCE_TRAITS::Destructor(m_arrData[i]);
 	}
 	else if (nCount > m_nCount)
 	{
-		for (int i = m_nCount; i < nCount; ++i)
+		for (size_t i = m_nCount; i < nCount; ++i)
 			INSTANCE_TRAITS::Constructor(m_arrData[i]);
 	}
 	m_nCount = nCount;
@@ -252,10 +253,10 @@ inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::AddItem(const DA
  * @param nItemPos - index of an element.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::ValidateIndex(int nItemPos) const
+inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::ValidateIndex(size_t nItemPos) const
 {
-	_ASSERTE(nItemPos >= 0 && nItemPos < m_nCount);
-	if (nItemPos < 0 || nItemPos >= m_nCount)
+	_ASSERTE(nItemPos < m_nCount);
+	if (nItemPos >= m_nCount)
 		RaiseException(STATUS_ARRAY_BOUNDS_EXCEEDED, 0, 0, NULL);
 }
 
@@ -274,7 +275,7 @@ DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::AddItem(void)
  * @param nItemPos - an integer index of deleted element.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::DeleteItem(int nItemPos)
+void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::DeleteItem(size_t nItemPos)
 {
 	ValidateIndex(nItemPos);
 	INSTANCE_TRAITS::Destructor(m_arrData[nItemPos]);
@@ -301,7 +302,7 @@ void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::DeleteAll(bool bFree)
  * @param rItem - the element to be placed in this array.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertItem(int nItemPos, const DATA_TYPE& rItem)
+inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertItem(size_t nItemPos, const DATA_TYPE& rItem)
 {
 	INSTANCE_TRAITS::Assignment(InsertItem(nItemPos), rItem);
 }
@@ -313,11 +314,11 @@ inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertItem(int n
  * @return position of the inserted item.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertOrderedItem(const DATA_TYPE& rItem, bool bAscending, bool bAllowDuplicates)
+inline size_t CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertOrderedItem(const DATA_TYPE& rItem, bool bAscending, bool bAllowDuplicates)
 {
-	int nInsertPos = BSearch(rItem, bAscending);
-	if (nInsertPos < 0)
-		nInsertPos = -(nInsertPos + 1);
+	size_t nInsertPos = BSearch(rItem, bAscending);
+	if (nInsertPos & ~MAXSSIZE_T)
+		nInsertPos = ~nInsertPos;
 	else if (! bAllowDuplicates)
 		return nInsertPos;
 	InsertItem(nInsertPos, rItem);
@@ -329,11 +330,29 @@ inline int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertOrderedItem
  * @return a reference to newly inserted element.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertItem(int nItemPos)
+DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertItem(size_t nItemPos)
 {
-	ValidateIndex(nItemPos);
-	EnsureSize(m_nCount + 1, true);
-	MoveMemory(m_arrData + nItemPos + 1, m_arrData + nItemPos, (m_nCount++ - nItemPos) * sizeof(DATA_TYPE));
+	_ASSERTE(nItemPos <= m_nCount);
+	if (nItemPos >= m_nCount + 1)
+		RaiseException(STATUS_ARRAY_BOUNDS_EXCEEDED, 0, 0, NULL);
+	size_t nSize = m_nCount + 1;
+	if (m_nSize < nSize)
+	{
+		nSize += nSize / 2;
+		DATA_TYPE* arrData = (DATA_TYPE*)new BYTE[nSize * sizeof(DATA_TYPE)];
+		if (arrData == NULL)
+			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
+		CopyMemory(arrData, m_arrData, nItemPos * sizeof(DATA_TYPE));
+		CopyMemory(arrData + nItemPos + 1, m_arrData + nItemPos, (m_nCount - nItemPos) * sizeof(DATA_TYPE));
+		delete[] (PBYTE)m_arrData;
+		m_arrData = arrData;
+		m_nSize = nSize;
+	}
+	else
+	{
+		MoveMemory(m_arrData + nItemPos + 1, m_arrData + nItemPos, (m_nCount - nItemPos) * sizeof(DATA_TYPE));
+	}
+	++m_nCount;
 	INSTANCE_TRAITS::Constructor(m_arrData[nItemPos]);
 	return m_arrData[nItemPos];
 }
@@ -343,7 +362,7 @@ DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::InsertItem(int nI
  * @return the reference of an element at the specified position.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::operator[](int nItemPos)
+inline DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::operator[](size_t nItemPos)
 {
 	ValidateIndex(nItemPos);
 	return m_arrData[nItemPos];
@@ -354,7 +373,7 @@ inline DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::operator[]
  * @return the constant reference of an element at the specified position.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline const DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::operator[](int nItemPos) const
+inline const DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::operator[](size_t nItemPos) const
 {
 	ValidateIndex(nItemPos);
 	return m_arrData[nItemPos];
@@ -364,7 +383,7 @@ inline const DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::oper
  * @return the number of elements in the array.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetCount(void) const
+inline size_t CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetCount(void) const
 {
 	return m_nCount;
 }
@@ -373,7 +392,7 @@ inline int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetCount(void) co
  * @return allocated size of the array.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetSize(void) const
+inline size_t CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetSize(void) const
 {
 	return m_nSize;
 }
@@ -410,7 +429,7 @@ inline bool CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::IsEmpty(void) co
  * @param rItem - new data value.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::SetAt(int nItemPos, const DATA_TYPE& rItem)
+inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::SetAt(size_t nItemPos, const DATA_TYPE& rItem)
 {
 	ValidateIndex(nItemPos);
 	INSTANCE_TRAITS::Assignment(m_arrData[nItemPos], rItem);
@@ -421,7 +440,7 @@ inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::SetAt(int nItemP
  * @return element value.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline const DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetAt(int nItemPos) const
+inline const DATA_TYPE& CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetAt(size_t nItemPos) const
 {
 	ValidateIndex(nItemPos);
 	return m_arrData[nItemPos];
@@ -466,12 +485,12 @@ inline void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::QSort(bool bAsce
  * @param nHighPos - rightmost array index.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::PrivQSort(DATA_TYPE* arrData, TCompareFunc pfnCompare, int nLowPos, int nHighPos)
+void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::PrivQSort(DATA_TYPE* arrData, TCompareFunc pfnCompare, size_t nLowPos, size_t nHighPos)
 {
 	if (nLowPos < nHighPos)
 	{
-		int nLeft = nLowPos;
-		int nRight = nHighPos;
+		size_t nLeft = nLowPos;
+		size_t nRight = nHighPos;
 		DATA_TYPE& DataPivot = arrData[nLowPos];
 		while (nLeft <= nRight)
 		{
@@ -499,10 +518,10 @@ void CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::PrivQSort(DATA_TYPE* ar
  * @return element number where the data was found or negative index if no data found.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::BSearch(const DATA_TYPE& rKey, bool bAscending) const
+size_t CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::BSearch(const DATA_TYPE& rKey, bool bAscending) const
 {
 	TCompareFunc pfnCompare = bAscending ? &CompareAsc : &CompareDesc;
-	int nLowPos = 0, nHighPos = 0, nMiddlePos = 0;
+	size_t nLowPos = 0, nHighPos = 0, nMiddlePos = 0;
 	while (nLowPos <= nHighPos)
 	{
 		nMiddlePos = (nLowPos + nHighPos) / 2;
@@ -514,7 +533,7 @@ int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::BSearch(const DATA_TYPE&
 		else
 			return nMiddlePos;
 	}
-	return -(nMiddlePos + 1);
+	return ~nMiddlePos;
 }
 
 /**
@@ -522,12 +541,12 @@ int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::BSearch(const DATA_TYPE&
  * @return element number where the data was found or -1 if no data found.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-int CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::LSearch(const DATA_TYPE& rKey) const
+size_t CArray<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::LSearch(const DATA_TYPE& rKey) const
 {
-	for (int i = 0; i < m_nCount; ++i)
+	for (size_t i = 0; i < m_nCount; ++i)
 	{
 		if (COMPARE_TRAITS::Compare(m_arrData[i], rKey))
 			return i;
 	}
-	return -1;
+	return MAXSIZE_T;
 }

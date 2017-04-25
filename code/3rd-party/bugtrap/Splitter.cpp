@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Splitter control class.
@@ -324,7 +324,7 @@ LRESULT CALLBACK CSplitter::SplitterWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
 	HDC hdc;
 	DWORD dwResult;
 
-	CSplitter* _this  = (CSplitter*)GetWindowLongPtr(hwnd, GWL_USERDATA);
+	CSplitter* _this  = (CSplitter*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	_ASSERTE(_this != NULL);
 	switch(uMsg)
 	{
@@ -412,7 +412,7 @@ void CSplitter::Attach(HWND hwnd)
 	_ASSERTE(hwnd != NULL);
 	_ASSERTE(m_hwnd == NULL);
 	m_hwnd = hwnd;
-	SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	m_pfnOldSplitterWndProc = SubclassWindow(hwnd, SplitterWndProc);
 	ResetSplitterPos();
 	InvalidateRect(hwnd, NULL, TRUE);
@@ -423,7 +423,7 @@ void CSplitter::Detach(void)
 	if (m_pfnOldSplitterWndProc)
 	{
 		SubclassWindow(m_hwnd, m_pfnOldSplitterWndProc);
-		SetWindowLongPtr(m_hwnd, GWL_USERDATA, NULL);
+		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, NULL);
 		ClearSplitterPos();
 		ClearPanels();
 		InvalidateRect(m_hwnd, NULL, TRUE);

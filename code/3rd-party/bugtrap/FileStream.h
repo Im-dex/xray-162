@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: File stream class.
@@ -21,11 +21,11 @@ class CFileStream : public CStream
 {
 public:
 	/// Initialize the object.
-	explicit CFileStream(int nBufferSize = 1024);
+	explicit CFileStream(size_t nBufferSize = 1024);
 	/// Initialize the object.
-	CFileStream(PCTSTR pszFileName, DWORD dwCreationDisposition, DWORD dwDesiredAccess = GENERIC_READ | GENERIC_WRITE, DWORD dwShareMode = 0, DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL, int nBufferSize = 1024);
+	CFileStream(PCTSTR pszFileName, DWORD dwCreationDisposition, DWORD dwDesiredAccess = GENERIC_READ | GENERIC_WRITE, DWORD dwShareMode = 0, DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL, size_t nBufferSize = 1024);
 	/// Initialize the object.
-	CFileStream(HANDLE hFile, int nBufferSize = 1024);
+	CFileStream(HANDLE hFile, size_t nBufferSize = 1024);
 	/// Destroy the object.
 	virtual ~CFileStream(void);
 	/// Get list of supported features.
@@ -37,31 +37,31 @@ public:
 	/// Closes the stream.
 	virtual void Close(void);
 	/// Get stream name.
-	virtual bool GetName(PTSTR pszName, int nNameSize) const;
+	virtual bool GetName(PTSTR pszName, size_t nNameSize) const;
 	/// Get last IO error code.
 	virtual long GetLastError(void) const;
 	/// Return number of bytes in the stream.
-	virtual int GetLength(void) const;
+	virtual size_t GetLength(void) const;
 	/// Get current position.
-	virtual int GetPosition(void) const;
+	virtual size_t GetPosition(void) const;
 	/// Set current position.
-	virtual int SetPosition(int nOffset, int nMoveMethod);
+	virtual size_t SetPosition(ptrdiff_t nOffset, int nMoveMethod);
 	/// Return true if end of stream has been reached.
 	virtual bool IsEndOfStream(void) const;
 	/// Read one byte from the stream.
 	virtual bool ReadByte(unsigned char& bValue);
 	/// Read array of bytes from the stream.
-	virtual int ReadBytes(unsigned char* arrBytes, int nCount);
+	virtual size_t ReadBytes(unsigned char* arrBytes, size_t nCount);
 	/// Move the end-of-file position for the specified stream to the current position of the stream pointer.
-	virtual int SetLength(int nLength);
+	virtual size_t SetLength(size_t nLength);
 	/// Write one byte to the stream.
 	virtual bool WriteByte(unsigned char bValue);
 	/// Write array of bytes to the stream.
-	virtual int WriteBytes(const unsigned char* arrBytes, int nCount);
+	virtual size_t WriteBytes(const unsigned char* arrBytes, size_t nCount);
 	/// Set buffer size.
-	void SetBufferSize(int nBufferSize);
+	void SetBufferSize(size_t nBufferSize);
 	/// Get buffer size.
-	int GetBufferSize(void) const;
+	size_t GetBufferSize(void) const;
 
 private:
 	/// Object can't be copied.
@@ -69,9 +69,9 @@ private:
 	/// Object can't be copied.
 	CFileStream& operator=(const CFileStream& rStream);
 	/// Initialize member variables.
-	void InitVars(int nBufferSize);
+	void InitVars(size_t nBufferSize);
 	/// Initialize input/output buffer.
-	void InitBuffer(int nBufferSize);
+	void InitBuffer(size_t nBufferSize);
 	/// Reset file handle.
 	void ResetFile(LONG lLastError);
 	/// Clear buffer contents.
@@ -103,11 +103,11 @@ private:
 	/// Input/output buffer.
 	PBYTE m_pBuffer;
 	/// Buffer size.
-	int m_nBufferSize;
+	size_t m_nBufferSize;
 	/// Number of bytes stored in a buffer.
-	int m_nBufferLength;
+	size_t m_nBufferLength;
 	/// Buffer read/write position.
-	int m_nBufferPos;
+	size_t m_nBufferPos;
 	/// Type of data in a buffer.
 	BUFFER_TYPE m_eBufferType;
 };
@@ -115,7 +115,7 @@ private:
 /**
  * @param nBufferSize - buffer size.
  */
-inline CFileStream::CFileStream(int nBufferSize)
+inline CFileStream::CFileStream(size_t nBufferSize)
 {
 	InitVars(nBufferSize);
 }
@@ -128,7 +128,7 @@ inline CFileStream::CFileStream(int nBufferSize)
  * @param dwFlagsAndAttributes - the file attributes and flags.
  * @param nBufferSize - buffer size.
  */
-inline CFileStream::CFileStream(PCTSTR pszFileName, DWORD dwCreationDisposition, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes, int nBufferSize)
+inline CFileStream::CFileStream(PCTSTR pszFileName, DWORD dwCreationDisposition, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes, size_t nBufferSize)
 {
 	InitVars(nBufferSize);
 	Open(pszFileName, dwCreationDisposition, dwDesiredAccess, dwShareMode, dwFlagsAndAttributes);
@@ -138,7 +138,7 @@ inline CFileStream::CFileStream(PCTSTR pszFileName, DWORD dwCreationDisposition,
  * @param hFile - existing file handle.
  * @param nBufferSize - buffer size.
  */
-inline CFileStream::CFileStream(HANDLE hFile, int nBufferSize)
+inline CFileStream::CFileStream(HANDLE hFile, size_t nBufferSize)
 {
 	_ASSERTE(hFile != INVALID_HANDLE_VALUE);
 	InitVars(nBufferSize);
@@ -154,7 +154,7 @@ inline CFileStream::~CFileStream(void)
 /**
  * @param nBufferSize - buffer size.
  */
-inline void CFileStream::InitVars(int nBufferSize)
+inline void CFileStream::InitVars(size_t nBufferSize)
 {
 	ResetFile(NOERROR);
 	InitBuffer(nBufferSize);
@@ -187,7 +187,7 @@ inline long CFileStream::GetLastError(void) const
 /**
  * @return size of buffer.
  */
-inline int CFileStream::GetBufferSize(void) const
+inline size_t CFileStream::GetBufferSize(void) const
 {
 	return m_nBufferSize;
 }

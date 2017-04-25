@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: XML generator.
@@ -108,7 +108,7 @@ BOOL CXmlWriter::WriteEscaped(PCTSTR pszString, DWORD dwEscapeFlags)
 			++dwPosition;
 			break;
 		default:
-			int nCharSize;
+			size_t nCharSize;
 			if (dwEscapeFlags & EF_ESCAPENONASCIICHARS)
 			{
 				if (! m_EncStream.WriteAscii("&#x"))
@@ -123,7 +123,7 @@ BOOL CXmlWriter::WriteEscaped(PCTSTR pszString, DWORD dwEscapeFlags)
 				if (! m_EncStream.WriteUTF8Bin(pszString + dwPosition, nCharSize))
 					return FALSE;
 			}
-			dwPosition += nCharSize;
+			dwPosition += (DWORD)nCharSize;
 		}
 	}
 	return TRUE;
@@ -339,7 +339,7 @@ BOOL CXmlWriter::WriteEndElement(void)
 	_ASSERTE(m_eWriterState == WS_ELEMENT || m_eWriterState == WS_TEXT);
 	if (m_eWriterState != WS_ELEMENT && m_eWriterState != WS_TEXT)
 		return FALSE;
-	int nItemIndex = m_arrOpenElements.GetCount();
+	size_t nItemIndex = m_arrOpenElements.GetCount();
 	_ASSERTE(nItemIndex > 0);
 	if (nItemIndex < 1)
 		return FALSE;
@@ -423,7 +423,7 @@ BOOL CXmlWriter::WriteTagIndent(void)
 BOOL CXmlWriter::WriteIndent(void)
 {
 	_ASSERTE(m_chIndentChar != '\0');
-	int iNumOpenElements = m_arrOpenElements.GetCount();
+	size_t iNumOpenElements = m_arrOpenElements.GetCount();
 	return (iNumOpenElements > 0 ? m_EncStream.WriteByte(m_chIndentChar, m_dwIndentation * iNumOpenElements) : TRUE);
 }
 
@@ -513,7 +513,7 @@ BOOL CXmlWriter::WriteCharEntity(TCHAR ch)
 	_ASSERTE(m_eWriterState == WS_TEXT || m_eWriterState == WS_ATTRUBUTE);
 	if (m_eWriterState != WS_TEXT && m_eWriterState != WS_ATTRUBUTE)
 		return FALSE;
-	int nCharSize;
+	size_t nCharSize;
 	TCHAR arrChar[2] = { ch, _T('\0') };
 	if (! m_EncStream.WriteAscii("&#x"))
 		return FALSE;
@@ -553,7 +553,7 @@ BOOL CXmlWriter::WriteEndDocument(void)
 	_ASSERTE(m_eWriterState == WS_TEXT);
 	if (m_eWriterState != WS_TEXT)
 		return FALSE;
-	int nNumElements = m_arrOpenElements.GetCount();
+	size_t nNumElements = m_arrOpenElements.GetCount();
 	while (nNumElements > 0)
 	{
 		if (! WriteEndElement())

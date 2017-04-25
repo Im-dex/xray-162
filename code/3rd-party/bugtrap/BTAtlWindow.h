@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: This class provides better error handling for ATL/WTL windows.
@@ -69,9 +69,15 @@ protected:
 private:
 #if ! defined _ATL_NO_EXCEPTIONS || defined _EXCEPTION_
 	/// This window procedure intercepts C++ exceptions.
-	LRESULT PrivWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT CppExceptionHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	/// Exception filter.
 	LONG (CALLBACK * m_pfnFilter)(PEXCEPTION_POINTERS pExceptionPointers);
+ #ifdef _M_X64
+	/// This window procedure saves exception context.
+	LRESULT SaveExceptionContext(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	/// Exception context.
+	EXCEPTION_POINTERS m_ExceptionPointers;
+ #endif // _M_X64
 #endif // _ATL_NO_EXCEPTIONS && ! _EXCEPTION_
 	/// Cached address of base window procedure.
 	WNDPROC m_pfnBaseWndProc;
@@ -89,17 +95,39 @@ inline WNDPROC BTWindow<BASE_CLASS>::GetWindowProc()
 }
 
 #if ! defined _ATL_NO_EXCEPTIONS || defined _EXCEPTION_
+ #ifdef _M_X64
 /**
  * @param hWnd - window handle.
  * @param uMsg - specifies the Windows message to be processed.
- * @param wParam - provides additional information used in processing the message.
- * @param lParam - provides additional information used in processing the message.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
  * @return the return value depends on the message.
  */
 template <class BASE_CLASS>
-LRESULT BTWindow<BASE_CLASS>::PrivWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	try {
+LRESULT BTWindow<BASE_CLASS>::SaveExceptionContext(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	__try {
 		return (*m_pfnBaseWndProc)(hWnd, uMsg, wParam, lParam);
+	} __except (CopyMemory(&m_ExceptionPointers, GetExceptionInformation(), sizeof(m_ExceptionPointers)), EXCEPTION_CONTINUE_SEARCH) {
+		return 0;
+	}
+}
+ #endif // _M_X64
+
+/**
+ * @param hWnd - window handle.
+ * @param uMsg - specifies the Windows message to be processed.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
+ * @return the return value depends on the message.
+ */
+template <class BASE_CLASS>
+LRESULT BTWindow<BASE_CLASS>::CppExceptionHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	try {
+#ifdef _M_X64
+		return SaveExceptionContext(hWnd, uMsg, wParam, lParam);
+#else
+		return (*m_pfnBaseWndProc)(hWnd, uMsg, wParam, lParam);
+#endif// ! _M_X64
 	}
 #ifndef _ATL_NO_EXCEPTIONS
 	catch (CAtlException& rException) {
@@ -109,7 +137,7 @@ LRESULT BTWindow<BASE_CLASS>::PrivWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam
 	}
 #endif // _ATL_NO_EXCEPTIONS
 #ifdef _EXCEPTION_
-	catch (exception& rException) {
+	catch (std::exception& rException) {
 		// extract error message
 		const CHAR* pszErrorMessageA = rException.what();
 		if (pszErrorMessageA != NULL && *pszErrorMessageA != '\0') {
@@ -137,8 +165,8 @@ LRESULT BTWindow<BASE_CLASS>::PrivWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam
 /**
  * @param hWnd - window handle.
  * @param uMsg - specifies the Windows message to be processed.
- * @param wParam - provides additional information used in processing the message.
- * @param lParam - provides additional information used in processing the message.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
  * @return the return value depends on the message.
  */
 template <class BASE_CLASS>
@@ -149,7 +177,7 @@ LRESULT BTWindow<BASE_CLASS>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	BTWindow* pThis = (BTWindow*)hWnd;
 #if ! defined _ATL_NO_EXCEPTIONS || defined _EXCEPTION_
 	__try {
-		return pThis->PrivWindowProc(hWnd, uMsg, wParam, lParam);
+		return pThis->CppExceptionHandler(hWnd, uMsg, wParam, lParam);
 	} __except ((*pThis->m_pfnFilter)(GetExceptionInformation())) {
 		pThis->m_pfnFilter = &BT_SehFilter;
 		return 0;
@@ -200,9 +228,15 @@ protected:
 private:
 #if ! defined _ATL_NO_EXCEPTIONS || defined _EXCEPTION_
 	/// This dialog procedure intercepts C++ exceptions.
-	INT_PTR PrivDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	INT_PTR CppExceptionHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	/// Exception filter.
 	LONG (CALLBACK * m_pfnFilter)(PEXCEPTION_POINTERS pExceptionPointers);
+ #ifdef _M_X64
+	/// This window procedure saves exception context.
+	INT_PTR SaveExceptionContext(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	/// Exception context.
+	EXCEPTION_POINTERS m_ExceptionPointers;
+ #endif // _M_X64
 #endif // _ATL_NO_EXCEPTIONS && ! _EXCEPTION_
 	/// Cached address of base dialog procedure.
 	DLGPROC m_pfnBaseDlgProc;
@@ -220,17 +254,39 @@ inline DLGPROC BTDialog<BASE_CLASS>::GetDialogProc()
 }
 
 #if ! defined _ATL_NO_EXCEPTIONS || defined _EXCEPTION_
+ #ifdef _M_X64
 /**
  * @param hWnd - window handle.
  * @param uMsg - specifies the Windows message to be processed.
- * @param wParam - provides additional information used in processing the message.
- * @param lParam - provides additional information used in processing the message.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
  * @return the return value depends on the message.
  */
 template <class BASE_CLASS>
-INT_PTR BTDialog<BASE_CLASS>::PrivDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	try {
+INT_PTR BTDialog<BASE_CLASS>::SaveExceptionContext(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	__try {
 		return (*m_pfnBaseDlgProc)(hWnd, uMsg, wParam, lParam);
+	} __except (CopyMemory(&m_ExceptionPointers, GetExceptionInformation(), sizeof(m_ExceptionPointers)), EXCEPTION_CONTINUE_SEARCH) {
+		return 0;
+	}
+}
+ #endif // _M_X64
+
+/**
+ * @param hWnd - window handle.
+ * @param uMsg - specifies the Windows message to be processed.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
+ * @return the return value depends on the message.
+ */
+template <class BASE_CLASS>
+INT_PTR BTDialog<BASE_CLASS>::CppExceptionHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	try {
+#ifdef _M_X64
+		return SaveExceptionContext(hWnd, uMsg, wParam, lParam);
+#else
+		return (*m_pfnBaseDlgProc)(hWnd, uMsg, wParam, lParam);
+#endif// ! _M_X64
 	}
 #ifndef _ATL_NO_EXCEPTIONS
 	catch (CAtlException& rException) {
@@ -240,7 +296,7 @@ INT_PTR BTDialog<BASE_CLASS>::PrivDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam
 	}
 #endif // _ATL_NO_EXCEPTIONS
 #ifdef _EXCEPTION_
-	catch (exception& rException) {
+	catch (std::exception& rException) {
 		// extract error message
 		const CHAR* pszErrorMessageA = rException.what();
 		if (pszErrorMessageA != NULL && *pszErrorMessageA != '\0') {
@@ -268,8 +324,8 @@ INT_PTR BTDialog<BASE_CLASS>::PrivDialogProc(HWND hWnd, UINT uMsg, WPARAM wParam
 /**
  * @param hWnd - window handle.
  * @param uMsg - specifies the Windows message to be processed.
- * @param wParam - provides additional information used in processing the message.
- * @param lParam - provides additional information used in processing the message.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
  * @return the return value depends on the message.
  */
 template <class BASE_CLASS>
@@ -280,7 +336,7 @@ INT_PTR BTDialog<BASE_CLASS>::DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 	BTDialog* pThis = (BTDialog*)hWnd;
 #if ! defined _ATL_NO_EXCEPTIONS || defined _EXCEPTION_
 	__try {
-		return pThis->PrivDialogProc(hWnd, uMsg, wParam, lParam);
+		return pThis->CppExceptionHandler(hWnd, uMsg, wParam, lParam);
 	} __except ((*pThis->m_pfnFilter)(GetExceptionInformation())) {
 		pThis->m_pfnFilter = &BT_SehFilter;
 		return 0;

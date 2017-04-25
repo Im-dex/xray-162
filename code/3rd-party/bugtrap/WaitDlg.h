@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Wait dialog.
@@ -13,6 +13,8 @@
  */
 
 #pragma once
+
+#include "AnimProgressBar.h"
 
 /**
  * @addtogroup BugTrapUI BugTrap Graphical User Interface
@@ -30,7 +32,7 @@ public:
 	/// Destroy the object.
 	~CWaitDialog(void);
 	/// Shows wait dialog.
-	void BeginWait(HWND hwndParent);
+	BOOL BeginWait(HWND hwndParent);
 	/// Closes wait dialog.
 	void EndWait(void);
 
@@ -41,11 +43,29 @@ private:
 	CWaitDialog& operator=(const CWaitDialog& rWaitDialog);
 	/// Initialize member variables.
 	void InitVars(void);
+	/// Thread procedure that displays wait dialog.
+	static UINT CALLBACK WaitThreadProc(PVOID pParam);
+	/// Dialog procedure of wait dialog.
+	static INT_PTR CALLBACK WaitDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	/// WM_INITDIALOG handler of wait dialog.
+	static BOOL WaitDlg_OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam);
+	/// WM_NCHITTEST handler of wait dialog.
+	static UINT WaitDlg_OnNCHitTest(HWND hwnd, int x, int y);
+	/// WM_COMMAND handler of wait dialog.
+	static void WaitDlg_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
+	/// WM_DESTROY handler of wait dialog.
+	static void WaitDlg_OnDestroy(HWND hwnd);
 
-	/// Handle of previous cursor.
-	HCURSOR m_hOldCursor;
-	/// Handle of wait message window.
+	/// Flag indicating window de-initialization.
+	static BOOL m_bDone;
+	/// Progress control.
+	static CAnimProgressBar m_pbAnim;
+	/// Thread handle where wait dialog is displayed.
+	HANDLE m_hThread;
+	/// Wait dialog handle.
 	HWND m_hwndWait;
+	/// Parent window handle.
+	HWND m_hwndParent;
 };
 
 inline CWaitDialog::CWaitDialog(void)
@@ -56,12 +76,6 @@ inline CWaitDialog::CWaitDialog(void)
 inline CWaitDialog::~CWaitDialog(void)
 {
 	EndWait();
-}
-
-inline void CWaitDialog::InitVars(void)
-{
-	m_hOldCursor = NULL;
-	m_hwndWait = NULL;
 }
 
 /** @} */

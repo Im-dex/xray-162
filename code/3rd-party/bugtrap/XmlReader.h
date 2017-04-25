@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: XML parser.
@@ -49,7 +49,7 @@ public:
 		typedef CAttributesListBase::POSITION POSITION;
 
 		/// Return number of items in collection.
-		int GetCount(void) const;
+		size_t GetCount(void) const;
 		/// Tests for the empty-hash condition (no elements).
 		bool IsEmpty(void) const;
 		/// Returns attribute value for a given name.
@@ -242,21 +242,21 @@ private:
 		/// Set text decoder.
 		bool SetDecoder(CBaseDecoder* pDecoder);
 		/// Get stream name.
-		bool GetName(PTSTR pszName, int nNameSize) const;
+		bool GetName(PTSTR pszName, size_t nNameSize) const;
 		/// Read character from the stream.
-		int ReadChar(TCHAR arrChar[2]);
+		size_t ReadChar(TCHAR arrChar[2]);
 		/// Return true if back buffer is empty.
 		bool IsBackBufferEmpty(void) const;
 		/// Get number of elements in a back buffer.
-		int GetBackBufferLength(void) const;
+		size_t GetBackBufferLength(void) const;
 		/// Reserve space for multiple characters.
-		void PrepareBackBuffer(int nNumChars);
+		void PrepareBackBuffer(size_t nNumChars);
 		/// Put character back to the buffer.
 		void PutCharBack(TCHAR chValue);
 		/// Put character back to the buffer.
-		void PutCharBack(const TCHAR arrChar[2], int nCharSize);
+		void PutCharBack(const TCHAR arrChar[2], size_t nCharSize);
 		/// Put character back to the buffer.
-		void PutCharsBack(const TCHAR* pChars, int nNumChars);
+		void PutCharsBack(const TCHAR* pChars, size_t nNumChars);
 		/// Put character back to the buffer.
 		void PutCharsBack(PCTSTR pszString);
 		/// Put character back to the buffer.
@@ -264,23 +264,23 @@ private:
 		/// Put character back to the buffer.
 		void UnsafePutCharBack(TCHAR chValue);
 		/// Put character back to the buffer.
-		void UnsafePutCharBack(const TCHAR arrChar[2], int nCharSize);
+		void UnsafePutCharBack(const TCHAR arrChar[2], size_t nCharSize);
 		/// Put character back to the buffer.
-		void UnsafePutCharsBack(const TCHAR* pChars, int nNumChars);
+		void UnsafePutCharsBack(const TCHAR* pChars, size_t nNumChars);
 		/// Put character back to the buffer.
 		void UnsafePutCharsBack(PCTSTR pszString);
 		/// Put character back to the buffer.
 		void UnsafePutCharsBack(const CStrStream& rStream);
 		/// Remove N characters from the buffer.
-		void UnsafeCutChars(int nNumChars);
+		void UnsafeCutChars(size_t nNumChars);
 		/// Remove N characters from the buffer.
-		void UnsafeSkipChars(int nNumChars);
+		void UnsafeSkipChars(size_t nNumChars);
 		/// Write single character.
 		void WriteChar(TCHAR chValue);
 		/// Write single character.
-		void WriteChar(const TCHAR arrChar[2], int nCharSize);
+		void WriteChar(const TCHAR arrChar[2], size_t nCharSize);
 		/// Write multiple characters.
-		void WriteChars(const TCHAR* pChars, int nNumChars);
+		void WriteChars(const TCHAR* pChars, size_t nNumChars);
 		/// Write multiple characters.
 		void WriteChars(PCTSTR pszString);
 		/// Write multiple characters.
@@ -288,9 +288,9 @@ private:
 		/// Write single character.
 		void UnsafeWriteChar(TCHAR chValue);
 		/// Write single character.
-		void UnsafeWriteChar(const TCHAR arrChar[2], int nCharSize);
+		void UnsafeWriteChar(const TCHAR arrChar[2], size_t nCharSize);
 		/// Write multiple characters.
-		void UnsafeWriteChars(const TCHAR* pChars, int nNumChars);
+		void UnsafeWriteChars(const TCHAR* pChars, size_t nNumChars);
 		/// Write multiple characters.
 		void UnsafeWriteChars(PCTSTR pszString);
 		/// Write multiple characters.
@@ -315,11 +315,11 @@ private:
 		/// Buffer that keeps characters put back.
 		PTCHAR m_pBackBuffer;
 		/// Read position in the back buffer.
-		int m_nBackBufferReadPos;
+		size_t m_nBackBufferReadPos;
 		/// Write position in the back buffer.
-		int m_nBackBufferWritePos;
+		size_t m_nBackBufferWritePos;
 		/// Size of back buffer.
-		int m_nBackBufferSize;
+		size_t m_nBackBufferSize;
 	};
 
 	/// Node handler prototype.
@@ -348,9 +348,9 @@ private:
 		/// Initialize the object.
 		CXmlSearchTable(void);
 		/// Initialize the object.
-		CXmlSearchTable(CXmlSearchParams arrSearchParams[], int nNumParams);
+		CXmlSearchTable(CXmlSearchParams arrSearchParams[], size_t nNumParams);
 		/// Set search table.
-		void SetSearchTable(CXmlSearchParams arrSearchParams[], int nNumParams);
+		void SetSearchTable(CXmlSearchParams arrSearchParams[], size_t nNumParams);
 		/// Pre-fetched node handler.
 		FNodeHandler m_pfnPrefetchedHandler;
 		/// Current adjacent mode flag.
@@ -358,7 +358,7 @@ private:
 		/// Array of search parameters.
 		CXmlSearchParams* m_arrSearchParams;
 		/// Number of parameters in the array.
-		int m_nNumParams;
+		size_t m_nNumParams;
 	};
 
 	/// XML parser.
@@ -421,23 +421,23 @@ private:
 		/// Destroy search tables.
 		void DeleteSearchTables(void);
 		/// Read character from the stream.
-		int ReadChar(TCHAR arrChar[2]);
+		size_t ReadChar(TCHAR arrChar[2]);
 		/// Get next character from the buffer.
-		int ReadChar(TCHAR arrChar[2], bool bRequired);
+		size_t ReadChar(TCHAR arrChar[2], bool bRequired);
 		/// Put character to the stream.
 		void PutCharToStream(CStrStream& rOutputStream, TCHAR chValue);
 		/// Put character to the stream.
-		void PutCharToStream(CStrStream& rOutputStream, const TCHAR arrChar[2], int nCharSize);
+		void PutCharToStream(CStrStream& rOutputStream, const TCHAR arrChar[2], size_t nCharSize);
 		/// Put characters to the stream.
-		void PutCharsToStream(CStrStream& rOutputStream, const TCHAR* pChars, int nNumChars);
+		void PutCharsToStream(CStrStream& rOutputStream, const TCHAR* pChars, size_t nNumChars);
 		/// Reserve space for multiple characters.
-		void PrepareBackBuffer(int nNumChars);
+		void PrepareBackBuffer(size_t nNumChars);
 		/// Put character back to the buffer.
 		void PutCharBack(TCHAR chValue);
 		/// Put character back to the buffer.
-		void PutCharBack(const TCHAR arrChar[2], int nCharSize);
+		void PutCharBack(const TCHAR arrChar[2], size_t nCharSize);
 		/// Put character back to the buffer.
-		void PutCharsBack(const TCHAR* pChars, int nNumChars);
+		void PutCharsBack(const TCHAR* pChars, size_t nNumChars);
 		/// Put character back to the buffer.
 		void PutCharsBack(PCTSTR pszString);
 		/// Put character back to the buffer.
@@ -445,15 +445,15 @@ private:
 		/// Put character back to the buffer.
 		void UnsafePutCharBack(TCHAR chValue);
 		/// Put character back to the buffer.
-		void UnsafePutCharBack(const TCHAR arrChar[2], int nCharSize);
+		void UnsafePutCharBack(const TCHAR arrChar[2], size_t nCharSize);
 		/// Put character back to the buffer.
-		void UnsafePutCharsBack(const TCHAR* pChars, int nNumChars);
+		void UnsafePutCharsBack(const TCHAR* pChars, size_t nNumChars);
 		/// Put character back to the buffer.
 		void UnsafePutCharsBack(PCTSTR pszString);
 		/// Put character back to the buffer.
 		void UnsafePutCharsBack(const CStrStream& rStream);
 		/// Get next non-space character from the buffer.
-		int ReadNonSpaceChar(TCHAR arrChar[2]);
+		size_t ReadNonSpaceChar(TCHAR arrChar[2]);
 		/// Get entity character.
 		TCHAR GetEntityChar(void) const;
 		/// Get entities map.
@@ -487,11 +487,11 @@ private:
 		/// Skip string.
 		XML_RESULT SkipString(void);
 		/// Read numeric entity.
-		XML_RESULT ReadNumericEntity(int& nValueLength);
+		XML_RESULT ReadNumericEntity(size_t& nValueLength);
 		/// Read named entity.
-		XML_RESULT ReadNamedEntity(int& nValueLength);
+		XML_RESULT ReadNamedEntity(size_t& nValueLength);
 		/// Read entity.
-		XML_RESULT ReadEntity(int& nValueLength);
+		XML_RESULT ReadEntity(size_t& nValueLength);
 		/// Read text.
 		XML_RESULT ReadText(CStrStream& rOutputStream, PCTSTR pszTerminators, bool bInAttribute);
 		/// Read text.
@@ -554,7 +554,7 @@ private:
 		/// Parser state.
 		PARSER_STATE m_eParserState;
 		/// Number of conditional entries.
-		int m_nNumEntries;
+		size_t m_nNumEntries;
 	};
 
 	/// Map of XML entities and their values.
@@ -676,7 +676,7 @@ inline void CXmlReader::CXmlInputStream::WriteChar(TCHAR chValue)
  * @param arrChar - character.
  * @param nCharSize - size of character.
  */
-inline void CXmlReader::CXmlInputStream::WriteChar(const TCHAR arrChar[2], int nCharSize)
+inline void CXmlReader::CXmlInputStream::WriteChar(const TCHAR arrChar[2], size_t nCharSize)
 {
 	PrepareBackBuffer(nCharSize);
 	UnsafeWriteChar(arrChar, nCharSize);
@@ -695,7 +695,7 @@ inline void CXmlReader::CXmlInputStream::PutCharBack(TCHAR chValue)
  * @param arrChar - character.
  * @param nCharSize - size of character.
  */
-inline void CXmlReader::CXmlInputStream::PutCharBack(const TCHAR arrChar[2], int nCharSize)
+inline void CXmlReader::CXmlInputStream::PutCharBack(const TCHAR arrChar[2], size_t nCharSize)
 {
 	PrepareBackBuffer(nCharSize);
 	UnsafePutCharBack(arrChar, nCharSize);
@@ -705,7 +705,7 @@ inline void CXmlReader::CXmlInputStream::PutCharBack(const TCHAR arrChar[2], int
  * @param pChars - array of characters.
  * @param nNumChars - number of characters.
  */
-inline void CXmlReader::CXmlInputStream::WriteChars(const TCHAR* pChars, int nNumChars)
+inline void CXmlReader::CXmlInputStream::WriteChars(const TCHAR* pChars, size_t nNumChars)
 {
 	PrepareBackBuffer(nNumChars);
 	UnsafeWriteChars(pChars, nNumChars);
@@ -715,7 +715,7 @@ inline void CXmlReader::CXmlInputStream::WriteChars(const TCHAR* pChars, int nNu
  * @param pChars - array of characters.
  * @param nNumChars - number of characters.
  */
-inline void CXmlReader::CXmlInputStream::PutCharsBack(const TCHAR* pChars, int nNumChars)
+inline void CXmlReader::CXmlInputStream::PutCharsBack(const TCHAR* pChars, size_t nNumChars)
 {
 	PrepareBackBuffer(nNumChars);
 	UnsafePutCharsBack(pChars, nNumChars);
@@ -735,7 +735,7 @@ inline void CXmlReader::CXmlParser::PutCharToStream(CStrStream& rOutputStream, T
  * @param arrChar - character.
  * @param nCharSize - size of character in bytes.
  */
-inline void CXmlReader::CXmlParser::PutCharToStream(CStrStream& rOutputStream, const TCHAR arrChar[2], int nCharSize)
+inline void CXmlReader::CXmlParser::PutCharToStream(CStrStream& rOutputStream, const TCHAR arrChar[2], size_t nCharSize)
 {
 	_ASSERTE(nCharSize > 0 && nCharSize <= 2);
 	rOutputStream << arrChar[0];
@@ -748,9 +748,9 @@ inline void CXmlReader::CXmlParser::PutCharToStream(CStrStream& rOutputStream, c
  * @param pChars - characters array.
  * @param nNumChars - number of characters in the array.
  */
-inline void CXmlReader::CXmlParser::PutCharsToStream(CStrStream& rOutputStream, const TCHAR* pChars, int nNumChars)
+inline void CXmlReader::CXmlParser::PutCharsToStream(CStrStream& rOutputStream, const TCHAR* pChars, size_t nNumChars)
 {
-	for (int nCharNum = 0; nCharNum < nNumChars; ++nCharNum)
+	for (size_t nCharNum = 0; nCharNum < nNumChars; ++nCharNum)
 		rOutputStream << pChars[nCharNum];
 }
 
@@ -777,7 +777,7 @@ inline CXmlReader::XML_RESULT CXmlReader::CXmlParser::ProcInstrHandler(CXmlNode&
 /**
  * @return number of items in the collection.
  */
-inline int CXmlReader::CAttributesList::GetCount(void) const
+inline size_t CXmlReader::CAttributesList::GetCount(void) const
 {
 	return CAttributesListBase::GetCount();
 }
@@ -855,7 +855,7 @@ inline bool CXmlReader::CXmlInputStream::IsBackBufferEmpty(void) const
 /**
  * @return number of characters in a back buffer.
  */
-inline int CXmlReader::CXmlInputStream::GetBackBufferLength(void) const
+inline size_t CXmlReader::CXmlInputStream::GetBackBufferLength(void) const
 {
 	return (m_nBackBufferReadPos <= m_nBackBufferWritePos ?
 				m_nBackBufferWritePos - m_nBackBufferReadPos :
@@ -865,7 +865,7 @@ inline int CXmlReader::CXmlInputStream::GetBackBufferLength(void) const
 /**
  * @param nNumChars - number of characters to cut.
  */
-inline void CXmlReader::CXmlInputStream::UnsafeCutChars(int nNumChars)
+inline void CXmlReader::CXmlInputStream::UnsafeCutChars(size_t nNumChars)
 {
 	_ASSERTE(GetBackBufferLength() >= nNumChars);
 	m_nBackBufferWritePos = (m_nBackBufferWritePos - nNumChars + m_nBackBufferSize) % m_nBackBufferSize;
@@ -874,7 +874,7 @@ inline void CXmlReader::CXmlInputStream::UnsafeCutChars(int nNumChars)
 /**
  * @param nNumChars - number of characters to cut.
  */
-inline void CXmlReader::CXmlInputStream::UnsafeSkipChars(int nNumChars)
+inline void CXmlReader::CXmlInputStream::UnsafeSkipChars(size_t nNumChars)
 {
 	_ASSERTE(GetBackBufferLength() >= nNumChars);
 	m_nBackBufferReadPos += nNumChars;
@@ -895,7 +895,7 @@ inline void CXmlReader::CXmlInputStream::UnsafeWriteChar(TCHAR chValue)
  * @param arrChar - character.
  * @param nCharSize - size of character.
  */
-inline void CXmlReader::CXmlInputStream::UnsafeWriteChar(const TCHAR arrChar[2], int nCharSize)
+inline void CXmlReader::CXmlInputStream::UnsafeWriteChar(const TCHAR arrChar[2], size_t nCharSize)
 {
 	_ASSERTE(nCharSize >= 0 && nCharSize < 2);
 	UnsafeWriteChar(arrChar[0]);
@@ -917,7 +917,7 @@ inline void CXmlReader::CXmlInputStream::UnsafePutCharBack(TCHAR chValue)
  * @param arrChar - character.
  * @param nCharSize - size of character.
  */
-inline void CXmlReader::CXmlInputStream::UnsafePutCharBack(const TCHAR arrChar[2], int nCharSize)
+inline void CXmlReader::CXmlInputStream::UnsafePutCharBack(const TCHAR arrChar[2], size_t nCharSize)
 {
 	_ASSERTE(nCharSize >= 0 && nCharSize < 2);
 	if (nCharSize > 1)
@@ -929,9 +929,9 @@ inline void CXmlReader::CXmlInputStream::UnsafePutCharBack(const TCHAR arrChar[2
  * @param pChars - array of characters.
  * @param nNumChars - number of characters.
  */
-inline void CXmlReader::CXmlInputStream::UnsafeWriteChars(const TCHAR* pChars, int nNumChars)
+inline void CXmlReader::CXmlInputStream::UnsafeWriteChars(const TCHAR* pChars, size_t nNumChars)
 {
-	for (int nCharPos = 0; nCharPos < nNumChars; ++nCharPos)
+	for (size_t nCharPos = 0; nCharPos < nNumChars; ++nCharPos)
 		UnsafeWriteChar(pChars[nCharPos]);
 }
 
@@ -939,10 +939,13 @@ inline void CXmlReader::CXmlInputStream::UnsafeWriteChars(const TCHAR* pChars, i
  * @param pChars - array of characters.
  * @param nNumChars - number of characters.
  */
-inline void CXmlReader::CXmlInputStream::UnsafePutCharsBack(const TCHAR* pChars, int nNumChars)
+inline void CXmlReader::CXmlInputStream::UnsafePutCharsBack(const TCHAR* pChars, size_t nNumChars)
 {
-	for (int nCharPos = nNumChars - 1; nCharPos >= 0; --nCharPos)
-		UnsafePutCharBack(pChars[nCharPos]);
+	if (nNumChars > 0)
+	{
+		for (size_t nCharPos = nNumChars - 1; nCharPos >= 0; --nCharPos)
+			UnsafePutCharBack(pChars[nCharPos]);
+	}
 }
 
 /**
@@ -1061,7 +1064,7 @@ inline bool CXmlReader::CXmlInputStream::SetDecoder(CBaseDecoder* pDecoder)
  * @param nNameSize - size of stream name buffer.
  * @return true if name was retrieved.
  */
-inline bool CXmlReader::CXmlInputStream::GetName(PTSTR pszName, int nNameSize) const
+inline bool CXmlReader::CXmlInputStream::GetName(PTSTR pszName, size_t nNameSize) const
 {
 	_ASSERTE(m_pInputStream != NULL);
 	return m_pInputStream->GetName(pszName, nNameSize);
@@ -1071,7 +1074,7 @@ inline bool CXmlReader::CXmlInputStream::GetName(PTSTR pszName, int nNameSize) c
  * @param arrChar - character data.
  * @return number of characters in one symbol.
  */
-inline int CXmlReader::CXmlParser::ReadChar(TCHAR arrChar[2])
+inline size_t CXmlReader::CXmlParser::ReadChar(TCHAR arrChar[2])
 {
 	return m_rXmlInputStream.ReadChar(arrChar);
 }
@@ -1080,7 +1083,7 @@ inline int CXmlReader::CXmlParser::ReadChar(TCHAR arrChar[2])
  * Specifies number of characters to reserve space for.
  * @param nNumChars - number of characters to reserve space for.
  */
-inline void CXmlReader::CXmlParser::PrepareBackBuffer(int nNumChars)
+inline void CXmlReader::CXmlParser::PrepareBackBuffer(size_t nNumChars)
 {
 	m_rXmlInputStream.PrepareBackBuffer(nNumChars);
 }
@@ -1097,7 +1100,7 @@ inline void CXmlReader::CXmlParser::PutCharBack(TCHAR chValue)
  * @param arrChar - character.
  * @param nCharSize - size of character.
  */
-inline void CXmlReader::CXmlParser::PutCharBack(const TCHAR arrChar[2], int nCharSize)
+inline void CXmlReader::CXmlParser::PutCharBack(const TCHAR arrChar[2], size_t nCharSize)
 {
 	m_rXmlInputStream.PutCharBack(arrChar, nCharSize);
 }
@@ -1106,7 +1109,7 @@ inline void CXmlReader::CXmlParser::PutCharBack(const TCHAR arrChar[2], int nCha
  * @param pChars - character array.
  * @param nNumChars - array length.
  */
-inline void CXmlReader::CXmlParser::PutCharsBack(const TCHAR* pChars, int nNumChars)
+inline void CXmlReader::CXmlParser::PutCharsBack(const TCHAR* pChars, size_t nNumChars)
 {
 	m_rXmlInputStream.PutCharsBack(pChars, nNumChars);
 }
@@ -1123,7 +1126,7 @@ inline void CXmlReader::CXmlParser::UnsafePutCharBack(TCHAR chValue)
  * @param arrChar - character.
  * @param nCharSize - size of character.
  */
-inline void CXmlReader::CXmlParser::UnsafePutCharBack(const TCHAR arrChar[2], int nCharSize)
+inline void CXmlReader::CXmlParser::UnsafePutCharBack(const TCHAR arrChar[2], size_t nCharSize)
 {
 	m_rXmlInputStream.UnsafePutCharBack(arrChar, nCharSize);
 }
@@ -1132,7 +1135,7 @@ inline void CXmlReader::CXmlParser::UnsafePutCharBack(const TCHAR arrChar[2], in
  * @param pChars - character array.
  * @param nNumChars - array length.
  */
-inline void CXmlReader::CXmlParser::UnsafePutCharsBack(const TCHAR* pChars, int nNumChars)
+inline void CXmlReader::CXmlParser::UnsafePutCharsBack(const TCHAR* pChars, size_t nNumChars)
 {
 	m_rXmlInputStream.UnsafePutCharsBack(pChars, nNumChars);
 }
@@ -1146,7 +1149,7 @@ inline CXmlReader::CXmlSearchTable::CXmlSearchTable(void)
  * @param arrSearchParams - array of search parameters.
  * @param nNumParams - number of parameters in the array.
  */
-inline CXmlReader::CXmlSearchTable::CXmlSearchTable(CXmlSearchParams arrSearchParams[], int nNumParams)
+inline CXmlReader::CXmlSearchTable::CXmlSearchTable(CXmlSearchParams arrSearchParams[], size_t nNumParams)
 {
 	SetSearchTable(arrSearchParams, nNumParams);
 }

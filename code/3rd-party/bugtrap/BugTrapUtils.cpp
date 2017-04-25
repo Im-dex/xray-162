@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: BugTrap utilities.
@@ -221,10 +221,10 @@ BOOL CreateParentFolder(PCTSTR pszFileName)
 /**
  * @brief Generate temporary folder name and creates it.
  * @param pszTempPath - generated temporary path name.
- * @param dwTempPathSize - size of path buffer in characters.
+ * @param nTempPathSize - size of path buffer in characters.
  * @return true if operation was completed successfully.
  */
-BOOL CreateTempFolder(PTSTR pszTempPath, DWORD dwTempPathSize)
+BOOL CreateTempFolder(PTSTR pszTempPath, size_t nTempPathSize)
 {
 	TCHAR szSysTempPath[MAX_PATH];
 	GetTempPath(countof(szSysTempPath), szSysTempPath);
@@ -232,7 +232,7 @@ BOOL CreateTempFolder(PTSTR pszTempPath, DWORD dwTempPathSize)
 	DWORD dwTicks = GetTickCount();
 	for (;;)
 	{
-		_stprintf_s(pszTempPath, dwTempPathSize, _T("%s\\TEMP%lu"), szSysTempPath, dwTicks);
+		_stprintf_s(pszTempPath, nTempPathSize, _T("%s\\TEMP%lu"), szSysTempPath, dwTicks);
 		if (CreateDirectory(pszTempPath, NULL))
 			return TRUE;
 		if (GetLastError() != ERROR_ALREADY_EXISTS)
@@ -244,49 +244,49 @@ BOOL CreateTempFolder(PTSTR pszTempPath, DWORD dwTempPathSize)
 /**
  * @brief Get canonical application name (all non-alphanumeric characters are stripped).
  * @param pszAppName - buffer for resulting application name.
- * @param dwBufferSize - size of file name buffer.
+ * @param nBufferSize - size of file name buffer.
  * @param bAllowSpaces - true if spaces are allowed.
  * @return length of the name.
  */
-DWORD GetCanonicalAppName(PTSTR pszAppName, DWORD dwBufferSize, BOOL bAllowSpaces)
+size_t GetCanonicalAppName(PTSTR pszAppName, size_t nBufferSize, BOOL bAllowSpaces)
 {
-	if (dwBufferSize == 0)
+	if (nBufferSize == 0)
 		return 0;
 	if (*g_szAppName != _T('\0'))
 	{
-		--dwBufferSize;
-		DWORD dwStrLength = _tcslen(g_szAppName);
-		if (dwStrLength > dwBufferSize)
-			dwStrLength = dwBufferSize;
-		DWORD dwSrcPos = 0, dwDstPos = 0;
+		--nBufferSize;
+		size_t nStrLength = _tcslen(g_szAppName);
+		if (nStrLength > nBufferSize)
+			nStrLength = nBufferSize;
+		size_t nSrcPos = 0, nDstPos = 0;
 		WORD wCharMask = C1_ALPHA | C1_DIGIT;
 		if (bAllowSpaces)
 			wCharMask |= C1_SPACE;
-		while (dwSrcPos < dwStrLength)
+		while (nSrcPos < nStrLength)
 		{
 			WORD arrCharType[2];
 #ifdef _UNICODE
-			int nCharSize = GetUnicodeCharSize((const BYTE*)(g_szAppName + dwSrcPos)) / sizeof(WCHAR);
-			GetStringTypeW(CT_CTYPE1, g_szAppName + dwSrcPos, nCharSize, arrCharType);
+			size_t nCharSize = GetUnicodeCharSize((const BYTE*)(g_szAppName + nSrcPos)) / sizeof(WCHAR);
+			GetStringTypeW(CT_CTYPE1, g_szAppName + nSrcPos, (int)nCharSize, arrCharType);
 #else
-			int nCharSize = IsDBCSLeadByte(g_szAppName[dwSrcPos]) ? 2 : 1;
-			GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, g_szAppName + dwSrcPos, nCharSize, arrCharType);
+			size_t nCharSize = IsDBCSLeadByte(g_szAppName[nSrcPos]) ? 2 : 1;
+			GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, g_szAppName + nSrcPos, (int)nCharSize, arrCharType);
 #endif
 			if (*arrCharType & wCharMask)
 			{
-				pszAppName[dwDstPos++] = g_szAppName[dwSrcPos++];
+				pszAppName[nDstPos++] = g_szAppName[nSrcPos++];
 				if (nCharSize > 1)
-					pszAppName[dwDstPos++] = g_szAppName[dwSrcPos++];
+					pszAppName[nDstPos++] = g_szAppName[nSrcPos++];
 			}
 			else
 			{
 				/*if (*arrCharType & C1_SPACE)
-					pszAppName[dwDstPos++] = _T('_');*/
-				dwSrcPos += nCharSize;
+					pszAppName[nDstPos++] = _T('_');*/
+				nSrcPos += (DWORD)nCharSize;
 			}
 		}
-		pszAppName[dwDstPos] = _T('\0');
-		return dwDstPos;
+		pszAppName[nDstPos] = _T('\0');
+		return nDstPos;
 	}
 	else
 	{
@@ -295,7 +295,7 @@ DWORD GetCanonicalAppName(PTSTR pszAppName, DWORD dwBufferSize, BOOL bAllowSpace
 			return FALSE;
 		PTSTR pszFileName = PathFindFileName(szAppFileName);
 		PathRemoveExtension(pszFileName);
-		_tcscpy_s(pszAppName, dwBufferSize, pszFileName);
+		_tcscpy_s(pszAppName, nBufferSize, pszFileName);
 		return _tcslen(pszAppName);
 	}
 }
@@ -391,7 +391,7 @@ void CListViewOrder::ClearSortParams(HWND hwndList)
 /**
  * @param hwndList - list view control.
  * @param iColumnNumber - active column number.
- * @param bAscending - ascending/desceinding sort order.
+ * @param bAscending - ascending/descending sort order.
  */
 void CListViewOrder::SetSortParams(HWND hwndList, int iColumnNumber, BOOL bAscending)
 {

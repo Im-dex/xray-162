@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Base stream interface.
@@ -49,15 +49,15 @@ public:
 	/// Closes the stream. This function is optional.
 	virtual void Close(void);
 	/// Get stream name. This function is optional.
-	virtual bool GetName(PTSTR pszName, int nNameSize) const;
+	virtual bool GetName(PTSTR pszName, size_t nNameSize) const;
 	/// Get last IO error code. This function is optional.
 	virtual long GetLastError(void) const;
 	/// Return number of bytes in the stream. This function is optional.
-	virtual int GetLength(void) const;
+	virtual size_t GetLength(void) const;
 	/// Get current position. This function is optional.
-	virtual int GetPosition(void) const;
+	virtual size_t GetPosition(void) const;
 	/// Set current position. This function is optional.
-	virtual int SetPosition(int nOffset, int nMoveMethod);
+	virtual size_t SetPosition(ptrdiff_t nOffset, int nMoveMethod);
 };
 
 inline CBaseStream::~CBaseStream(void)
@@ -89,7 +89,7 @@ inline void CBaseStream::Close(void)
  * @param nNameSize - size of stream name buffer.
  * @return true if name was retrieved.
  */
-inline bool CBaseStream::GetName(PTSTR pszName, int nNameSize) const
+inline bool CBaseStream::GetName(PTSTR pszName, size_t nNameSize) const
 {
 	if (nNameSize > 0)
 		*pszName = _T('0');
@@ -99,17 +99,17 @@ inline bool CBaseStream::GetName(PTSTR pszName, int nNameSize) const
 /**
  * @return number of bytes in the stream.
  */
-inline int CBaseStream::GetLength(void) const
+inline size_t CBaseStream::GetLength(void) const
 {
-	return -1;
+	return MAXSIZE_T;
 }
 
 /**
  * @return current stream position.
  */
-inline int CBaseStream::GetPosition(void) const
+inline size_t CBaseStream::GetPosition(void) const
 {
-	return -1;
+	return MAXSIZE_T;
 }
 
 /**
@@ -117,9 +117,9 @@ inline int CBaseStream::GetPosition(void) const
  * @param nMoveMethod - start point.
  * @return new position value.
  */
-inline int CBaseStream::SetPosition(int /*nOffset*/, int /*nMoveMethod*/)
+inline size_t CBaseStream::SetPosition(ptrdiff_t /*nOffset*/, int /*nMoveMethod*/)
 {
-	return -1;
+	return MAXSIZE_T;
 }
 
 /**

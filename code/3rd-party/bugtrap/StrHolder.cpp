@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Dynamic string holder.
@@ -50,8 +50,8 @@ void CStrHolder::InitData(PCSTR pszStrData)
 		m_pData->m_nLength = nSize - 1;
 		m_pData->m_nUsageCount = 1;
 #else
-		int nLength = strlen(pszStrData);
-		int nSize = nLength + 1;
+		size_t nLength = strlen(pszStrData);
+		size_t nSize = nLength + 1;
 		m_pData = (CStringData*)new BYTE[sizeof(CStringData) + sizeof(CHAR) * nSize];
 		if (! m_pData)
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
@@ -72,8 +72,8 @@ void CStrHolder::InitData(PCWSTR pszStrData)
 	if (pszStrData && *pszStrData)
 	{
 #ifdef _UNICODE
-		int nLength = wcslen(pszStrData);
-		int nSize = nLength + 1;
+		size_t nLength = wcslen(pszStrData);
+		size_t nSize = nLength + 1;
 		m_pData = (CStringData*)new BYTE[sizeof(CStringData) + sizeof(WCHAR) * nSize];
 		if (! m_pData)
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
@@ -81,11 +81,11 @@ void CStrHolder::InitData(PCWSTR pszStrData)
 		m_pData->m_nLength = nLength;
 		m_pData->m_nUsageCount = 1;
 #else
-		int nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
+		size_t nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
 		m_pData = (CStringData*)new BYTE[sizeof(CStringData) + sizeof(CHAR) * nSize];
 		if (! m_pData)
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
-		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pData->m_szData, nSize, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pData->m_szData, (int)nSize, NULL, NULL);
 		m_pData->m_nLength = nSize - 1;
 		m_pData->m_nUsageCount = 1;
 #endif
@@ -111,8 +111,8 @@ void CStrHolder::InitData(const CStrStream& rStrStream)
 {
 	if (! rStrStream.IsEmpty())
 	{
-		int nLength = rStrStream.GetLength();
-		int nSize = nLength + 1;
+		size_t nLength = rStrStream.GetLength();
+		size_t nSize = nLength + 1;
 		m_pData = (CStringData*)new BYTE[sizeof(CStringData) + sizeof(WCHAR) * nSize];
 		if (! m_pData)
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);

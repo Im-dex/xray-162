@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: XML parser.
@@ -148,7 +148,7 @@ CXmlReader::CXmlSearchParams::CXmlSearchParams(PCTSTR pszSequence, FNodeHandler 
  * @param arrSearchParams - array of search parameters.
  * @param nNumParams - number of parameters in the array.
  */
-void CXmlReader::CXmlSearchTable::SetSearchTable(CXmlSearchParams arrSearchParams[], int nNumParams)
+void CXmlReader::CXmlSearchTable::SetSearchTable(CXmlSearchParams arrSearchParams[], size_t nNumParams)
 {
 	m_pfnPrefetchedHandler = NULL;
 	m_dwAdjacentMode = AM_NONE;
@@ -308,19 +308,19 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ProcessNode(CXmlNode& rXmlNode, C
 		return (this->*pfnHandler)(rXmlNode, pParam);
 	}
 	CXmlSearchParams* arrSearchParams = rSearchTable.m_arrSearchParams;
-	int nNumParams = rSearchTable.m_nNumParams;
-	for (int nParamNum = 0; nParamNum < nNumParams; ++nParamNum)
+	size_t nNumParams = rSearchTable.m_nNumParams;
+	for (size_t nParamNum = 0; nParamNum < nNumParams; ++nParamNum)
 		arrSearchParams[nParamNum].m_bActive = true;
-	int nSequencePos = 0,
-		nDefaultParamNum = -1,
+	size_t nSequencePos = 0,
+		nDefaultParamNum = MAXSIZE_T,
 		nDefaultSequenceLength = 0,
-		nLongestParamNum = -1,
+		nLongestParamNum = MAXSIZE_T,
 		nLongestSequenceLength = 0;
 	for (;;)
 	{
 		TCHAR arrChar[2];
-		int nCharSize = ReadChar(arrChar, false);
-		if (nCharSize < 0)
+		size_t nCharSize = ReadChar(arrChar, false);
+		if (nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		else if (nCharSize == 0)
 		{
@@ -330,7 +330,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ProcessNode(CXmlNode& rXmlNode, C
 			return XMLR_ERROR;
 		}
 		bool bNotEmptyCriteria = false;
-		for (int nParamNum = 0; nParamNum < nNumParams; ++nParamNum)
+		for (size_t nParamNum = 0; nParamNum < nNumParams; ++nParamNum)
 		{
 			CXmlSearchParams* pSearchParams = arrSearchParams + nParamNum;
 			if (pSearchParams->m_bActive)
@@ -355,9 +355,9 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ProcessNode(CXmlNode& rXmlNode, C
 		}
 		if (! bNotEmptyCriteria)
 		{
-			if (nLongestParamNum >= 0)
+			if (nLongestParamNum != MAXSIZE_T)
 			{
-				int nRestoreLength = 1 + nLongestSequenceLength - nDefaultSequenceLength;
+				size_t nRestoreLength = 1 + nLongestSequenceLength - nDefaultSequenceLength;
 				CXmlSearchParams* pSearchParams = arrSearchParams + nLongestParamNum;
 				PrepareBackBuffer(nRestoreLength + nCharSize);
 				UnsafePutCharBack(arrChar, nCharSize);
@@ -365,7 +365,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ProcessNode(CXmlNode& rXmlNode, C
 			}
 			else
 				PutCharBack(arrChar, nCharSize);
-			if (nDefaultParamNum >= 0)
+			if (nDefaultParamNum != MAXSIZE_T)
 			{
 				CXmlSearchParams* pSearchParams = arrSearchParams + nDefaultParamNum;
 				FNodeHandler pfnHandler = pSearchParams->m_pfnHandler;
@@ -406,19 +406,19 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ProcessNode(CXmlNode& rXmlNode, C
  * @param arrChar - character data.
  * @return number of characters in one symbol.
  */
-int CXmlReader::CXmlParser::ReadNonSpaceChar(TCHAR arrChar[2])
+size_t CXmlReader::CXmlParser::ReadNonSpaceChar(TCHAR arrChar[2])
 {
 	for (;;)
 	{
-		int nCharSize = ReadChar(arrChar, true);
-		if (nCharSize > 0)
+		size_t nCharSize = ReadChar(arrChar, true);
+		if (nCharSize > 0 && nCharSize != MAXSIZE_T)
 		{
 			_ASSERTE(nCharSize < 2);
 			WORD arrCharType[2];
 #ifdef _UNICODE
-			GetStringTypeW(CT_CTYPE1, arrChar, nCharSize, arrCharType);
+			GetStringTypeW(CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #else
-			GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, nCharSize, arrCharType);
+			GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #endif
 			if (*arrCharType & C1_SPACE)
 				continue;
@@ -437,15 +437,15 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::SkipSpaces(bool bRequired)
 	for (;;)
 	{
 		TCHAR arrChar[2];
-		int nCharSize = ReadChar(arrChar, true);
-		if (nCharSize <= 0)
+		size_t nCharSize = ReadChar(arrChar, true);
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		_ASSERTE(nCharSize < 2);
 		WORD arrCharType[2];
 #ifdef _UNICODE
-		GetStringTypeW(CT_CTYPE1, arrChar, nCharSize, arrCharType);
+		GetStringTypeW(CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #else
-		GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, nCharSize, arrCharType);
+		GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #endif
 		if ((*arrCharType & C1_SPACE) == 0)
 		{
@@ -481,9 +481,9 @@ bool CXmlReader::CXmlInputStream::ReadCharFromBackBuffer(TCHAR& chValue)
  * @param arrChar - character data.
  * @return number of characters in one symbol.
  */
-int CXmlReader::CXmlInputStream::ReadChar(TCHAR arrChar[2])
+size_t CXmlReader::CXmlInputStream::ReadChar(TCHAR arrChar[2])
 {
-	int nCharSize;
+	size_t nCharSize;
 	if (ReadCharFromBackBuffer(arrChar[0]))
 	{
 #ifdef _UNICODE
@@ -495,7 +495,7 @@ int CXmlReader::CXmlInputStream::ReadChar(TCHAR arrChar[2])
 			if (! ReadCharFromBackBuffer(arrChar[1]))
 			{
 				_ASSERT(FALSE);
-				nCharSize = -1;
+				nCharSize = MAXSIZE_T;
 			}
 			else
 				nCharSize = 2;
@@ -516,17 +516,17 @@ int CXmlReader::CXmlInputStream::ReadChar(TCHAR arrChar[2])
  * @param bRequired - true if character is required.
  * @return number of characters in one symbol.
  */
-int CXmlReader::CXmlParser::ReadChar(TCHAR arrChar[2], bool bRequired)
+size_t CXmlReader::CXmlParser::ReadChar(TCHAR arrChar[2], bool bRequired)
 {
-	int nCharSize = ReadChar(arrChar);
-	if (nCharSize < 0)
+	size_t nCharSize = ReadChar(arrChar);
+	if (nCharSize == MAXSIZE_T)
 	{
 		m_pszErrorMessage = g_pszXmlInputError;
 	}
 	else if (nCharSize == 0 && bRequired)
 	{
 		m_pszErrorMessage = g_pszXmlErrorUnexpectedEndOfStream;
-		nCharSize = -1;
+		nCharSize = MAXSIZE_T;
 	}
 	return nCharSize;
 }
@@ -535,12 +535,12 @@ int CXmlReader::CXmlParser::ReadChar(TCHAR arrChar[2], bool bRequired)
  * Specifies number of characters to reserve space for.
  * @param nNumChars - number of characters to reserve space for.
  */
-void CXmlReader::CXmlInputStream::PrepareBackBuffer(int nNumChars)
+void CXmlReader::CXmlInputStream::PrepareBackBuffer(size_t nNumChars)
 {
-	int nCharsUsed = GetBackBufferLength();
+	size_t nCharsUsed = GetBackBufferLength();
 	if (nCharsUsed + nNumChars >= m_nBackBufferSize)
 	{
-		int nNewBufferSize = (m_nBackBufferSize + nNumChars) * 2;
+		size_t nNewBufferSize = (m_nBackBufferSize + nNumChars) * 2;
 		PTCHAR pBackBuffer = new TCHAR[nNewBufferSize];
 		if (pBackBuffer == NULL)
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
@@ -666,13 +666,13 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadTextEx(CStrStream* pOutputStr
 	}
 	TCHAR chLastLn = _T('\0');
 	TCHAR chEntity = GetEntityChar();
-	int nSkipChars = 0;
+	size_t nSkipChars = 0;
 	XML_RESULT eResult;
 	for (;;)
 	{
 		TCHAR arrChar[2];
 		WORD arrCharType[2];
-		int nCharSize = ReadChar(arrChar, false);
+		size_t nCharSize = ReadChar(arrChar, false);
 		if (nCharSize == 0)
 		{
 			if (! bEndOfDocument)
@@ -682,9 +682,9 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadTextEx(CStrStream* pOutputStr
 			}
 			return XMLR_EOF;
 		}
-		if (nCharSize < 0)
+		if (nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
-		if (nSkipChars <= 0)
+		if (nSkipChars == 0)
 		{
 			if (_tcschr(pszTerminators, *arrChar))
 			{
@@ -702,9 +702,9 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadTextEx(CStrStream* pOutputStr
 		else
 			--nSkipChars;
 #ifdef _UNICODE
-		GetStringTypeW(CT_CTYPE1, arrChar, nCharSize, arrCharType);
+		GetStringTypeW(CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #else
-		GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, nCharSize, arrCharType);
+		GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #endif
 		if (*arrCharType & C1_SPACE)
 		{
@@ -745,12 +745,12 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadTextEx(CStrStream* pOutputStr
  * @param nValueLength - value length.
  * @return XML result code.
  */
-CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNumericEntity(int& nValueLength)
+CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNumericEntity(size_t& nValueLength)
 {
 	nValueLength = 0;
 	TCHAR arrChar[2];
-	int nCharSize = ReadChar(arrChar, true);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadChar(arrChar, true);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	XML_RESULT eResult;
 	DWORD dwUnicodeChar = 0;
@@ -766,7 +766,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNumericEntity(int& nValueLeng
 	if (eResult != XMLR_CONTINUE)
 		return XMLR_ERROR;
 	nCharSize = ReadChar(arrChar, true);
-	if (nCharSize <= 0)
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	if (*arrChar != _T(';'))
 	{
@@ -795,7 +795,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNumericEntity(int& nValueLeng
 	PutCharBack(arrCharW, nCharSize);
 #else
 	CHAR arrCharA[2];
-	nCharSize = WideCharToMultiByte(CP_ACP, 0, arrCharW, nCharSize, arrCharA, countof(arrCharA), NULL, NULL);
+	nCharSize = WideCharToMultiByte(CP_ACP, 0, arrCharW, (int)nCharSize, arrCharA, countof(arrCharA), NULL, NULL);
 	PutCharBack(arrCharA, nCharSize);
 #endif
 	nValueLength += nCharSize;
@@ -806,7 +806,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNumericEntity(int& nValueLeng
  * @param nValueLength - value length.
  * @return XML result code.
  */
-CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNamedEntity(int& nValueLength)
+CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNamedEntity(size_t& nValueLength)
 {
 	nValueLength = 0;
 	CStrStream strEntityName(32);
@@ -814,8 +814,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNamedEntity(int& nValueLength
 	if (eResult != XMLR_CONTINUE)
 		return XMLR_ERROR;
 	TCHAR arrChar[2];
-	int nCharSize = ReadChar(arrChar, true);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadChar(arrChar, true);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	if (*arrChar != _T(';'))
 	{
@@ -847,12 +847,12 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNamedEntity(int& nValueLength
  * @param nValueLength - value length.
  * @return XML result code.
  */
-CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadEntity(int& nValueLength)
+CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadEntity(size_t& nValueLength)
 {
 	nValueLength = 0;
 	TCHAR arrChar[2];
-	int nCharSize = ReadChar(arrChar, true);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadChar(arrChar, true);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	if (*arrChar == _T('#'))
 	{
@@ -875,8 +875,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadDecNumber(DWORD& dwNumber)
 	for (;;)
 	{
 		TCHAR arrChar[2];
-		int nCharSize = ReadChar(arrChar, true);
-		if (nCharSize <= 0)
+		size_t nCharSize = ReadChar(arrChar, true);
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		if (*arrChar >= _T('0') && *arrChar <= _T('9'))
 		{
@@ -901,8 +901,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadHexNumber(DWORD& dwNumber)
 	for (;;)
 	{
 		TCHAR arrChar[2];
-		int nCharSize = ReadChar(arrChar, true);
-		if (nCharSize <= 0)
+		size_t nCharSize = ReadChar(arrChar, true);
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		if (*arrChar >= _T('0') && *arrChar <= _T('9'))
 		{
@@ -938,8 +938,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadUntilEx(CStrStream* pOutputSt
 	while (*pszTemp)
 	{
 		TCHAR arrChar[2];
-		int nCharSize = ReadChar(arrChar, true);
-		if (nCharSize <= 0)
+		size_t nCharSize = ReadChar(arrChar, true);
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		_ASSERTE(nCharSize <= 2);
 		if (arrChar[0] == pszTemp[0] &&
@@ -950,7 +950,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadUntilEx(CStrStream* pOutputSt
 		}
 		if (pOutputStream != NULL)
 		{
-			int nNumChars = pszTemp - pszTerminator;
+			size_t nNumChars = pszTemp - pszTerminator;
 			PutCharsToStream(*pOutputStream, pszTerminator, nNumChars);
 			PutCharToStream(*pOutputStream, arrChar, nCharSize);
 		}
@@ -965,19 +965,19 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadUntilEx(CStrStream* pOutputSt
  */
 CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadNameEx(CStrStream* pOutputStream)
 {
-	int nCharPos = 0;
+	size_t nCharPos = 0;
 	for (;;)
 	{
 		TCHAR arrChar[2];
-		int nCharSize = ReadChar(arrChar, true);
-		if (nCharSize <= 0)
+		size_t nCharSize = ReadChar(arrChar, true);
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		_ASSERTE(nCharSize <= 2);
 		WORD arrCharType[2];
 #ifdef _UNICODE
-		GetStringTypeW(CT_CTYPE1, arrChar, nCharSize, arrCharType);
+		GetStringTypeW(CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #else
-		GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, nCharSize, arrCharType);
+		GetStringTypeA(LOCALE_USER_DEFAULT, CT_CTYPE1, arrChar, (int)nCharSize, arrCharType);
 #endif
 		if (nCharPos == 0 ?
 				(*arrCharType & C1_ALPHA) || *arrChar == _T('_') || *arrChar == _T(':') :
@@ -1027,8 +1027,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::TagHandler(CXmlNode& rXmlNode, TA
 	_ASSERTE(rXmlNode.m_eNodeType == CXmlNode::XNT_UNDEFINED);
 	XML_RESULT eResult;
 	TCHAR arrChar[2];
-	int nCharSize = ReadChar(arrChar, true);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadChar(arrChar, true);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	if (*arrChar == _T('/'))
 	{
@@ -1085,7 +1085,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::TagHandler(CXmlNode& rXmlNode, TA
 	for (;;)
 	{
 		nCharSize = ReadNonSpaceChar(arrChar);
-		if (nCharSize <= 0)
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		CArray<CStrHolder>& arrOpenElements = m_rReader.m_arrOpenElements;
 		switch (eTagType)
@@ -1100,7 +1100,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::TagHandler(CXmlNode& rXmlNode, TA
 				}
 				rXmlNode.m_eNodeType = CXmlNode::XNT_ELEMENT;
 				nCharSize = ReadChar(arrChar, true);
-				if (nCharSize <= 0)
+				if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 					return XMLR_ERROR;
 				if (*arrChar != _T('>'))
 				{
@@ -1117,8 +1117,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::TagHandler(CXmlNode& rXmlNode, TA
 			{
 				if (rXmlNode.m_eNodeType == CXmlNode::XNT_ELEMENT_END)
 				{
-					int nLastElement = arrOpenElements.GetCount() - 1;
-					if (nLastElement < 0 ||
+					size_t nLastElement = arrOpenElements.GetCount() - 1;
+					if (nLastElement == MAXSIZE_T ||
 						_tcscmp(arrOpenElements.GetAt(nLastElement), rXmlNode.m_strNodeName) != 0)
 					{
 						m_pszErrorMessage = g_pszXmlErrorInvalidClosingElement;
@@ -1141,7 +1141,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::TagHandler(CXmlNode& rXmlNode, TA
 			if (*arrChar == _T('?'))
 			{
 				nCharSize = ReadChar(arrChar, true);
-				if (nCharSize <= 0)
+				if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 					return XMLR_ERROR;
 				if (*arrChar != _T('>'))
 				{
@@ -1193,7 +1193,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::TagHandler(CXmlNode& rXmlNode, TA
 		if (eResult != XMLR_CONTINUE)
 			return XMLR_ERROR;
 		nCharSize = ReadNonSpaceChar(arrChar);
-		if (nCharSize <= 0)
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		if (*arrChar != _T('='))
 		{
@@ -1215,8 +1215,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::TagHandler(CXmlNode& rXmlNode, TA
 CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadStringEx(CStrStream* pOutputStream)
 {
 	TCHAR arrChar[2];
-	int nCharSize = ReadNonSpaceChar(arrChar);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadNonSpaceChar(arrChar);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	TCHAR szQuote[2] = { *arrChar, _T('\0') };
 	if (*szQuote != _T('\"') && *szQuote != _T('\''))
@@ -1233,7 +1233,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::ReadStringEx(CStrStream* pOutputS
 	if (eResult != XMLR_CONTINUE)
 		return XMLR_ERROR;
 	nCharSize = ReadChar(arrChar, true);
-	if (nCharSize <= 0)
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	_ASSERTE(*arrChar == *szQuote);
 	if (*arrChar != *szQuote)
@@ -1269,8 +1269,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::CommentHandler(CXmlNode& rXmlNode
 	if (eResult != XMLR_CONTINUE)
 		return XMLR_ERROR;
 	TCHAR arrChar[2];
-	int nCharSize = ReadChar(arrChar, true);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadChar(arrChar, true);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	if (*arrChar != _T('>'))
 	{
@@ -1348,7 +1348,7 @@ CInputStream* CXmlReader::CXmlParser::CreateInputStream(PCTSTR pszUrl)
 		PathAppend(szFileName, pszUrl);
 		pszUrl = szFileName;
 	}
-	CFileStream* pFileStream = new CFileStream(0);
+	CFileStream* pFileStream = new CFileStream();
 	if (pFileStream == NULL)
 	{
 		m_pszErrorMessage = g_pszXmlErrorOutOfMemory;
@@ -1407,8 +1407,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DocTypeHandler(CXmlNode& /*rXmlNo
 	if (eResult != XMLR_CONTINUE)
 		return XMLR_ERROR;
 	TCHAR arrChar[2];
-	int nCharSize = ReadNonSpaceChar(arrChar);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadNonSpaceChar(arrChar);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	if (*arrChar != _T('>') && *arrChar != _T('['))
 	{
@@ -1441,7 +1441,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DocTypeHandler(CXmlNode& /*rXmlNo
 			return XMLR_ERROR;
 		}
 		nCharSize = ReadNonSpaceChar(arrChar);
-		if (nCharSize <= 0)
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 	}
 	if (*arrChar == _T('['))
@@ -1456,7 +1456,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DocTypeHandler(CXmlNode& /*rXmlNo
 		if (eResult != XMLR_EOF)
 			return XMLR_ERROR;
 		nCharSize = ReadNonSpaceChar(arrChar);
-		if (nCharSize <= 0)
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 	}
 	if (*arrChar != _T('>'))
@@ -1489,8 +1489,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdEntityHandler(CXmlNode& /*rXml
 	if (eResult != XMLR_CONTINUE)
 		return XMLR_ERROR;
 	TCHAR arrChar[2];
-	int nCharSize = ReadNonSpaceChar(arrChar);
-	if (nCharSize <= 0)
+	size_t nCharSize = ReadNonSpaceChar(arrChar);
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	bool bDtdEntity;
 	if (*arrChar == _T('%'))
@@ -1510,7 +1510,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdEntityHandler(CXmlNode& /*rXml
 	if (eResult != XMLR_CONTINUE)
 		return XMLR_ERROR;
 	nCharSize = ReadNonSpaceChar(arrChar);
-	if (nCharSize <= 0)
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	PutCharBack(arrChar, nCharSize);
 	if (*arrChar == _T('\"') || *arrChar == _T('\''))
@@ -1526,7 +1526,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdEntityHandler(CXmlNode& /*rXml
 			rMapEntities.SetAt(strEntityName, strEntityValue);
 		}
 		nCharSize = ReadNonSpaceChar(arrChar);
-		if (nCharSize <= 0)
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		if (*arrChar != _T('>'))
 		{
@@ -1543,7 +1543,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdEntityHandler(CXmlNode& /*rXml
 		if (eResult != XMLR_CONTINUE)
 			return XMLR_ERROR;
 		nCharSize = ReadNonSpaceChar(arrChar);
-		if (nCharSize <= 0)
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		if (*arrChar != _T('>'))
 		{
@@ -1561,7 +1561,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdEntityHandler(CXmlNode& /*rXml
 			if (eResult != XMLR_CONTINUE)
 				return XMLR_ERROR;
 			nCharSize = ReadNonSpaceChar(arrChar);
-			if (nCharSize <= 0)
+			if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 				return XMLR_ERROR;
 			if (*arrChar != _T('>'))
 			{
@@ -1580,8 +1580,8 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdEntityHandler(CXmlNode& /*rXml
 			for (;;)
 			{
 				TCHAR arrChar[2];
-				int nCharSize = decInputStream.ReadChar(arrChar);
-				if (nCharSize <= 0)
+				size_t nCharSize = decInputStream.ReadChar(arrChar);
+				if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 					break;
 				PutCharToStream(strEntityValue, arrChar, nCharSize);
 			}
@@ -1612,13 +1612,13 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdCondtionHandler(CXmlNode& /*rX
 		return XMLR_ERROR;
 	}
 	TCHAR arrChar[2];
-	int nCharSize;
+	size_t nCharSize;
 	CStrStream strCondition(16);
 	XML_RESULT eResult;
 	for (;;)
 	{
 		nCharSize = ReadNonSpaceChar(arrChar);
-		if (nCharSize <= 0)
+		if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 			return XMLR_ERROR;
 		if (*arrChar != _T('%'))
 		{
@@ -1630,7 +1630,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdCondtionHandler(CXmlNode& /*rX
 		}
 		else
 		{
-			int nValueLength;
+			size_t nValueLength;
 			eResult = ReadEntity(nValueLength);
 			if (eResult != XMLR_CONTINUE)
 				return XMLR_ERROR;
@@ -1647,7 +1647,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdCondtionHandler(CXmlNode& /*rX
 		return XMLR_ERROR;
 	}
 	nCharSize = ReadNonSpaceChar(arrChar);
-	if (nCharSize <= 0)
+	if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 		return XMLR_ERROR;
 	if (*arrChar != _T('['))
 	{
@@ -1675,7 +1675,7 @@ CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdCondtionHandler(CXmlNode& /*rX
  */
 CXmlReader::XML_RESULT CXmlReader::CXmlParser::DtdCondtionEndHandler(CXmlNode& /*rXmlNode*/, PVOID /*pParam*/)
 {
-	if (m_eParserState != PS_DTD_DOCUMENT && m_eParserState != PS_EMBEDDED_DTD && m_nNumEntries <= 0)
+	if (m_eParserState != PS_DTD_DOCUMENT && m_eParserState != PS_EMBEDDED_DTD && m_nNumEntries == 0)
 	{
 		m_pszErrorMessage = g_pszXmlErrorUnexpectedToken;
 		return XMLR_ERROR;
@@ -1793,7 +1793,7 @@ int CXmlReader::GotoNextElement(CXmlNode& rXmlNode, DWORD dwGotoFlags)
 {
 	for (;;)
 	{
-		int iResult = ReadNext(rXmlNode);
+		size_t iResult = ReadNext(rXmlNode);
 		if (iResult == 0)
 		{
 			if (dwGotoFlags & XGF_ALLOW_ELEMENT_END)
@@ -1801,7 +1801,7 @@ int CXmlReader::GotoNextElement(CXmlNode& rXmlNode, DWORD dwGotoFlags)
 			m_pszErrorMessage = g_pszXmlErrorUnexpectedEndOfStream;
 			return XMLR_ERROR;
 		}
-		else if (iResult < 0)
+		else if (iResult == MAXSIZE_T)
 		{
 			return XMLR_ERROR;
 		}
@@ -1826,7 +1826,7 @@ int CXmlReader::GotoNextElement(CXmlNode& rXmlNode, DWORD dwGotoFlags)
  */
 int CXmlReader::GotoNextElementEnd(CXmlNode& rXmlNode, DWORD dwGotoFlags)
 {
-	int iNestedCount = 0;
+	size_t iNestedCount = 0;
 	for (;;)
 	{
 		int iResult = ReadNext(rXmlNode);
@@ -1835,7 +1835,7 @@ int CXmlReader::GotoNextElementEnd(CXmlNode& rXmlNode, DWORD dwGotoFlags)
 			m_pszErrorMessage = g_pszXmlErrorUnexpectedEndOfStream;
 			return XMLR_ERROR;
 		}
-		else if (iResult < 0)
+		else if (iResult == MAXSIZE_T)
 		{
 			return XMLR_ERROR;
 		}
@@ -1891,7 +1891,7 @@ int CXmlReader::GotoNextElement(PCTSTR pszName, CXmlNode& rXmlNode, DWORD dwGoto
 int CXmlReader::GotoElement(PCTSTR pszName, CXmlNode& rXmlNode, DWORD dwGotoFlags)
 {
 	CXmlNode XmlNode;
-	int iNestedCount = 0;
+	size_t iNestedCount = 0;
 	for (;;)
 	{
 		int iResult = ReadNext(XmlNode);
@@ -1902,7 +1902,7 @@ int CXmlReader::GotoElement(PCTSTR pszName, CXmlNode& rXmlNode, DWORD dwGotoFlag
 			m_pszErrorMessage = g_pszXmlErrorUnexpectedEndOfStream;
 			return XMLR_ERROR;
 		}
-		else if (iResult < 0)
+		else if (iResult == MAXSIZE_T)
 		{
 			return XMLR_ERROR;
 		}
@@ -1954,7 +1954,7 @@ int CXmlReader::GotoText(CXmlNode& rXmlNode, DWORD dwGotoFlags)
 			m_pszErrorMessage = g_pszXmlErrorUnexpectedEndOfStream;
 			return XMLR_ERROR;
 		}
-		else if (iResult < 0)
+		else if (iResult == MAXSIZE_T)
 		{
 			return XMLR_ERROR;
 		}

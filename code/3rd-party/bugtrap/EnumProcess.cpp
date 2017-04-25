@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Process enumerator.
@@ -232,8 +232,8 @@ BOOL CEnumProcess::GetCurrentProcess(CProcessEntry& rEntry)
 	rEntry.m_dwProcessID = GetCurrentProcessId();
 	GetModuleFileName(NULL, rEntry.m_szProcessName, countof(rEntry.m_szProcessName));
 	PCTSTR pszProcessName = PathFindFileName(rEntry.m_szProcessName);
-	DWORD dwProcessName = _tcslen(pszProcessName);
-	MoveMemory(rEntry.m_szProcessName, pszProcessName, (dwProcessName + 1) * sizeof(TCHAR));
+	size_t nProcessName = _tcslen(pszProcessName);
+	MoveMemory(rEntry.m_szProcessName, pszProcessName, (nProcessName + 1) * sizeof(TCHAR));
 	return TRUE;
 }
 
@@ -265,13 +265,13 @@ BOOL CEnumProcess::GetProcessFirst(CEnumProcess::CProcessEntry& rEntry)
 		// Use PSAPI functions
 		BOOL bResult;
 		DWORD cbNeeded;
-		DWORD dwArraySize = m_arrProcesses.GetSize();
+		DWORD dwArraySize = (DWORD)m_arrProcesses.GetSize();
 		m_arrProcesses.SetCount(dwArraySize);
 
 		for (;;)
 		{
 			cbNeeded = 0;
-			dwArraySize = m_arrProcesses.GetCount();
+			dwArraySize = (DWORD)m_arrProcesses.GetCount();
 			DWORD dwBufferSize = dwArraySize * sizeof(DWORD);
 			bResult = FEnumProcesses(m_arrProcesses, dwBufferSize, &cbNeeded);
 
@@ -288,7 +288,7 @@ BOOL CEnumProcess::GetProcessFirst(CEnumProcess::CProcessEntry& rEntry)
 		if (! bResult)
 			return FALSE;
 		m_arrProcesses.SetCount(cbNeeded / sizeof(DWORD));
-		return FillPStructPSAPI(m_arrProcesses[(int)(m_dwCurrentProcess++)], rEntry);
+		return FillPStructPSAPI(m_arrProcesses[(size_t)(m_dwCurrentProcess++)], rEntry);
 	}
 }
 
@@ -303,9 +303,9 @@ BOOL CEnumProcess::GetProcessNext(CEnumProcess::CProcessEntry& rEntry)
 
 #ifdef USE_VDMDBG
 	// We have some 16-bit processes to get
-	if ((int)m_dwCurrentProcess16 < m_arrProcesses16.GetCount())
+	if (m_dwCurrentProcess16 < m_arrProcesses16.GetCount())
 	{
-		rEntry = m_arrProcesses16[(int)(m_dwCurrentProcess16++)];
+		rEntry = m_arrProcesses16[m_dwCurrentProcess16++];
 		return TRUE;
 	}
 	rEntry.m_hTask16 = 0;
@@ -323,9 +323,9 @@ BOOL CEnumProcess::GetProcessNext(CEnumProcess::CProcessEntry& rEntry)
 	else
 	{
 		// Use PSAPI functions
-		if ((int)m_dwCurrentProcess >= m_arrProcesses.GetCount())
+		if (m_dwCurrentProcess >= (DWORD)m_arrProcesses.GetCount())
 			return FALSE;
-		if (! FillPStructPSAPI(m_arrProcesses[(int)(m_dwCurrentProcess++)], rEntry))
+		if (! FillPStructPSAPI(m_arrProcesses[(size_t)(m_dwCurrentProcess++)], rEntry))
 			return FALSE;
 	}
 
@@ -388,13 +388,13 @@ BOOL CEnumProcess::GetModuleFirst(DWORD dwProcessID, CEnumProcess::CModuleEntry&
 		{
 			BOOL bResult;
 			DWORD cbNeeded;
-			DWORD dwArraySize = m_arrModules.GetSize();
+			DWORD dwArraySize = (DWORD)m_arrModules.GetSize();
 			m_arrModules.SetCount(dwArraySize);
 
 			for (;;)
 			{
 				cbNeeded = 0;
-				dwArraySize = m_arrModules.GetCount();
+				dwArraySize = (DWORD)m_arrModules.GetCount();
 				DWORD dwBufferSize = dwArraySize * sizeof(HMODULE);
 				bResult = FEnumProcessModules(hProcess, m_arrModules, dwBufferSize, &cbNeeded);
 
@@ -412,7 +412,7 @@ BOOL CEnumProcess::GetModuleFirst(DWORD dwProcessID, CEnumProcess::CModuleEntry&
 			if (! bResult)
 				return FALSE;
 			m_arrModules.SetCount(cbNeeded / sizeof(HMODULE));
-			return FillMStructPSAPI(dwProcessID, m_arrModules[(int)(m_dwCurrentModule++)], rEntry);
+			return FillMStructPSAPI(dwProcessID, m_arrModules[(size_t)(m_dwCurrentModule++)], rEntry);
 		}
 		return FALSE;
 	}
@@ -444,9 +444,9 @@ BOOL CEnumProcess::GetModuleNext(DWORD dwProcessID, CEnumProcess::CModuleEntry& 
 	else
 	{
 		// Use PSAPI functions
-		if ((int)m_dwCurrentModule >= m_arrModules.GetCount())
+		if (m_dwCurrentModule >= m_arrModules.GetCount())
 			return FALSE;
-		return FillMStructPSAPI(dwProcessID, m_arrModules[(int)(m_dwCurrentModule++)], rEntry);
+		return FillMStructPSAPI(dwProcessID, m_arrModules[(size_t)(m_dwCurrentModule++)], rEntry);
 	}
 }
 
@@ -534,8 +534,8 @@ BOOL CEnumProcess::FillPStructPSAPI(DWORD dwProcessID, CEnumProcess::CProcessEnt
 			FGetModuleFileNameEx(hProcess, hModule, rEntry.m_szProcessName, countof(rEntry.m_szProcessName)))
 		{
 			PCTSTR pszProcessName = PathFindFileName(rEntry.m_szProcessName);
-			DWORD dwProcessName = _tcslen(pszProcessName);
-			MoveMemory(rEntry.m_szProcessName, pszProcessName, (dwProcessName + 1) * sizeof(TCHAR));
+			size_t nProcessName = _tcslen(pszProcessName);
+			MoveMemory(rEntry.m_szProcessName, pszProcessName, (nProcessName + 1) * sizeof(TCHAR));
 			CloseHandle(hProcess);
 			return TRUE;
 		}

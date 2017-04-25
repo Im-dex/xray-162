@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Text encoding/decoding.
@@ -17,14 +17,16 @@
 #include "Stream.h"
 #include "StrStream.h"
 
-/// Lower value of Unicode high-surrogate character.
-//#define HIGH_SURROGATE_START   0xD800
-/// Higher value of Unicode high-surrogate character.
-//#define HIGH_SURROGATE_END     0xDBFF
-/// Lower value of Unicode low-surrogate character.
-//#define LOW_SURROGATE_START    0xDC00
-/// Higher value of Unicode low-surrogate character.
-//#define LOW_SURROGATE_END      0xDFFF
+#ifndef HIGH_SURROGATE_START
+ /// Lower value of Unicode high-surrogate character.
+ #define HIGH_SURROGATE_START   0xD800
+ /// Higher value of Unicode high-surrogate character.
+ #define HIGH_SURROGATE_END     0xDBFF
+ /// Lower value of Unicode low-surrogate character.
+ #define LOW_SURROGATE_START    0xDC00
+ /// Higher value of Unicode low-surrogate character.
+ #define LOW_SURROGATE_END      0xDFFF
+#endif
 
 /// Text encoding.
 enum TEXT_ENCODING
@@ -60,17 +62,17 @@ public:
 	/// Write data to the buffer.
 	bool WriteByte(BYTE bValue);
 	/// Write data to the buffer.
-	bool WriteByte(BYTE bValue, int nCount);
+	bool WriteByte(BYTE bValue, size_t nCount);
 	/// Write data to the buffer.
-	bool WriteBytes(const BYTE* pBytes, int nCount);
+	bool WriteBytes(const BYTE* pBytes, size_t nCount);
 	/// Write data to the buffer.
 	bool WriteAscii(PCSTR pszString);
 	/// Write data to the buffer.
-	bool WriteUTF8Bin(const TCHAR* pchValue, int& nCharSize);
+	bool WriteUTF8Bin(const TCHAR* pchValue, size_t& nCharSize);
 	/// Write data to the buffer.
 	bool WriteUTF8Bin(PCTSTR pszString);
 	/// Write data to the buffer.
-	bool WriteUTF8Hex(const TCHAR* pchValue, int& nCharSize);
+	bool WriteUTF8Hex(const TCHAR* pchValue, size_t& nCharSize);
 	/// Write data to the buffer.
 	bool WriteUTF8Hex(PCTSTR pszString);
 	/// Write other pre-encoded data to the buffer.
@@ -154,7 +156,7 @@ inline void CUTF8EncStream::SetOutputStream(COutputStream* pOutputStream)
 inline bool CUTF8EncStream::WriteAscii(PCSTR pszString)
 {
 	_ASSERTE(m_pOutputStream != NULL);
-	int nLength = strlen(pszString);
+	size_t nLength = strlen(pszString);
 	return (m_pOutputStream->WriteBytes((const BYTE*)pszString, nLength) == nLength);
 }
 
@@ -163,7 +165,7 @@ inline bool CUTF8EncStream::WriteAscii(PCSTR pszString)
  * @param nCount - number of bytes to be added.
  * @return true if data has been written.
  */
-inline bool CUTF8EncStream::WriteBytes(const BYTE* pBytes, int nCount)
+inline bool CUTF8EncStream::WriteBytes(const BYTE* pBytes, size_t nCount)
 {
 	_ASSERTE(m_pOutputStream != NULL);
 	return (m_pOutputStream->WriteBytes(pBytes, nCount) == nCount);
@@ -174,7 +176,7 @@ inline bool CUTF8EncStream::WriteBytes(const BYTE* pBytes, int nCount)
  * @param nCount - number of bytes to be added.
  * @return true if data has been written.
  */
-inline bool CUTF8EncStream::WriteByte(BYTE bValue, int nCount)
+inline bool CUTF8EncStream::WriteByte(BYTE bValue, size_t nCount)
 {
 	_ASSERTE(m_pOutputStream != NULL);
 	return (m_pOutputStream->WriteByte(bValue, nCount) == nCount);
@@ -211,25 +213,25 @@ inline bool CUTF8EncStream::Write(const CUTF8EncStream& rEncStream)
 }
 
 // Other encoding/decoding functions.
-int Read7BitEncodedInt(PBYTE pBuffer, int& nPosition, int nBufferSize);
-bool Write7BitEncodedInt(int nValue, PBYTE pBuffer, int& nPosition, int nBufferSize);
-bool WriteBinaryString(CUTF8EncStream& rEncStream, PCTSTR pszString, PBYTE pBuffer, int& nPosition, int nBufferSize);
-bool WriteBinaryString(PCTSTR pszString, PBYTE pBuffer, int& nPosition, int nBufferSize);
-int UTF8DecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize);
-int UTF16BeDecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize);
-int UTF16LeDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize);
-int AnsiDecodeChar(const BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize);
-int UTF8DecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize);
-int UTF16BeDecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize);
-int UTF16LeDecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize);
-int AnsiDecodeString(const BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize);
-int GetUTF8CharSize(const BYTE* pBytes);
-int GetUnicodeCharSize(const BYTE* pBytes);
+size_t Read7BitEncodedInt(PBYTE pBuffer, size_t& nPosition, size_t nBufferSize);
+bool Write7BitEncodedInt(size_t nValue, PBYTE pBuffer, size_t& nPosition, size_t nBufferSize);
+bool WriteBinaryString(CUTF8EncStream& rEncStream, PCTSTR pszString, PBYTE pBuffer, size_t& nPosition, size_t nBufferSize);
+bool WriteBinaryString(PCTSTR pszString, PBYTE pBuffer, size_t& nPosition, size_t nBufferSize);
+size_t UTF8DecodeChar(const BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize);
+size_t UTF16BeDecodeChar(BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize);
+size_t UTF16LeDecodeChar(const BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize);
+size_t AnsiDecodeChar(const BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize);
+size_t UTF8DecodeString(const BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize);
+size_t UTF16BeDecodeString(BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize);
+size_t UTF16LeDecodeString(const BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize);
+size_t AnsiDecodeString(const BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize);
+size_t GetUTF8CharSize(const BYTE* pBytes);
+size_t GetUnicodeCharSize(const BYTE* pBytes);
 bool IsUnicodeLeadChar(const BYTE* pBytes);
-int UTF16BeToLeChar(BYTE* pBytes, int nNumBytes);
-int UTF16BeToLeString(BYTE* pBytes, int nNumBytes);
-int GetCharSizeInUTF8(const TCHAR* pchValue, int& nCharSize);
-int GetStringSizeInUTF8(PCTSTR pszString);
+size_t UTF16BeToLeChar(BYTE* pBytes, size_t nNumBytes);
+size_t UTF16BeToLeString(BYTE* pBytes, size_t nNumBytes);
+size_t GetCharSizeInUTF8(const TCHAR* pchValue, size_t& nCharSize);
+size_t GetStringSizeInUTF8(PCTSTR pszString);
 
 /// Base decoder interface.
 class CBaseDecoder
@@ -240,9 +242,9 @@ public:
 	/// Return current encoding.
 	virtual TEXT_ENCODING GetEncoding(void) = 0;
 	/// Decode single character.
-	virtual int DecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize) = 0;
+	virtual size_t DecodeChar(BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize) = 0;
 	/// Decode string of characters.
-	virtual int DecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize) = 0;
+	virtual size_t DecodeString(BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize) = 0;
 	/// Get appropriate decoder base.
 	static CBaseDecoder* GetDecoder(TEXT_ENCODING eEncoding);
 	/// Get appropriate decoder base.
@@ -257,10 +259,10 @@ public:
 	virtual TEXT_ENCODING GetEncoding(void)
 	{ return TXTENC_UTF8; }
 	/// Decode single character.
-	virtual int DecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+	virtual size_t DecodeChar(BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 	{ return UTF8DecodeChar(pBytes, nNumBytes, arrChar, nCharSize); }
 	/// Decode string of characters.
-	virtual int DecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+	virtual size_t DecodeString(BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 	{ return UTF8DecodeString(pBytes, nNumBytes, pszString, nBufferSize); }
 	/// Get single object instance.
 	static CUTF8Decoder& GetInstance(void)
@@ -286,10 +288,10 @@ public:
 	virtual TEXT_ENCODING GetEncoding(void)
 	{ return TXTENC_UTF16LE; }
 	/// Decode single character.
-	virtual int DecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+	virtual size_t DecodeChar(BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 	{ return UTF16LeDecodeChar(pBytes, nNumBytes, arrChar, nCharSize); }
 	/// Decode string of characters.
-	virtual int DecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+	virtual size_t DecodeString(BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 	{ return UTF16LeDecodeString(pBytes, nNumBytes, pszString, nBufferSize); }
 	/// Get single object instance.
 	static CUTF16LeDecoder& GetInstance(void)
@@ -315,10 +317,10 @@ public:
 	virtual TEXT_ENCODING GetEncoding(void)
 	{ return TXTENC_UTF16BE; }
 	/// Decode single character.
-	virtual int DecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+	virtual size_t DecodeChar(BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 	{ return UTF16BeDecodeChar(pBytes, nNumBytes, arrChar, nCharSize); }
 	/// Decode string of characters.
-	virtual int DecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+	virtual size_t DecodeString(BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 	{ return UTF16BeDecodeString(pBytes, nNumBytes, pszString, nBufferSize); }
 	/// Get single object instance.
 	static CUTF16BeDecoder& GetInstance(void)
@@ -344,10 +346,10 @@ public:
 	virtual TEXT_ENCODING GetEncoding(void)
 	{ return TXTENC_ANSI; }
 	/// Decode single character.
-	virtual int DecodeChar(BYTE* pBytes, int nNumBytes, TCHAR arrChar[2], int& nCharSize)
+	virtual size_t DecodeChar(BYTE* pBytes, size_t nNumBytes, TCHAR arrChar[2], size_t& nCharSize)
 	{ return AnsiDecodeChar(pBytes, nNumBytes, arrChar, nCharSize); }
 	/// Decode string of characters.
-	virtual int DecodeString(BYTE* pBytes, int nNumBytes, PTSTR pszString, int nBufferSize)
+	virtual size_t DecodeString(BYTE* pBytes, size_t nNumBytes, PTSTR pszString, size_t nBufferSize)
 	{ return AnsiDecodeString(pBytes, nNumBytes, pszString, nBufferSize); }
 	/// Get single object instance.
 	static CAnsiDecoder& GetInstance(void)
@@ -372,7 +374,7 @@ public:
 	/// Object destructor.
 	virtual ~CCharInputStream(void) { }
 	/// Read character from the stream.
-	virtual int ReadChar(TCHAR arrChar[2]) = 0;
+	virtual size_t ReadChar(TCHAR arrChar[2]) = 0;
 	/// Get byte order mark. This function is optional.
 	virtual bool ReadPreamble(TEXT_ENCODING& /*eEncoding*/)
 	{ return false; }
@@ -383,7 +385,7 @@ public:
 	virtual bool SetDecoder(CBaseDecoder* /*pDecoder*/)
 	{ return false; }
 	/// Get stream name. This function is optional.
-	virtual bool GetName(PTSTR pszName, int nNameSize) const
+	virtual bool GetName(PTSTR pszName, size_t nNameSize) const
 	{ if (nNameSize > 0) *pszName = _T('0'); return false; }
 	/// Read and apply byte order mark.
 	bool CheckEncoding(void);
@@ -398,7 +400,7 @@ public:
 	/// Initialize the object.
 	explicit CDecInputStream(CInputStream* pInputStream = NULL);
 	/// Read character from the stream.
-	virtual int ReadChar(TCHAR arrChar[2]);
+	virtual size_t ReadChar(TCHAR arrChar[2]);
 	/// Get byte order mark. This function is optional.
 	virtual bool ReadPreamble(TEXT_ENCODING& eEncoding);
 	/// Get text decoder.
@@ -406,7 +408,7 @@ public:
 	/// Set text decoder.
 	virtual bool SetDecoder(CBaseDecoder* pDecoder);
 	/// Get stream name.
-	virtual bool GetName(PTSTR pszName, int nNameSize) const;
+	virtual bool GetName(PTSTR pszName, size_t nNameSize) const;
 	/// Attach input stream to the object.
 	void SetInputStream(CInputStream* pInputStream);
 	/// Get pointer to the input stream.
@@ -418,7 +420,7 @@ private:
 	/// Object can't be copied.
 	CDecInputStream& operator=(const CDecInputStream& rStream);
 	/// Fill buffer with bytes.
-	int FillBuffer(int nNumBytes);
+	size_t FillBuffer(size_t nNumBytes);
 
 	/// Input stream attached to the object.
 	CInputStream* m_pInputStream;
@@ -427,9 +429,9 @@ private:
 	/// Binary buffer for encoded data.
 	BYTE m_arrInputBuffer[1024];
 	/// Position in the buffer.
-	int m_nInputBufferPos;
+	size_t m_nInputBufferPos;
 	/// Number of bytes in the buffer.
-	int m_nInputBufferLength;
+	size_t m_nInputBufferLength;
 	/// True after reaching end of file.
 	bool m_bEndOfFile;
 };
@@ -475,7 +477,7 @@ inline bool CDecInputStream::SetDecoder(CBaseDecoder* pDecoder)
  * @param nNameSize - size of stream name buffer.
  * @return true if name was retrieved.
  */
-inline bool CDecInputStream::GetName(PTSTR pszName, int nNameSize) const
+inline bool CDecInputStream::GetName(PTSTR pszName, size_t nNameSize) const
 {
 	_ASSERTE(m_pInputStream != NULL);
 	return m_pInputStream->GetName(pszName, nNameSize);
@@ -488,7 +490,7 @@ public:
 	/// Initialize the object.
 	explicit CStrInputStream(const CStrStream* pStrStream = NULL);
 	/// Read character from the stream.
-	virtual int ReadChar(TCHAR arrChar[2]);
+	virtual size_t ReadChar(TCHAR arrChar[2]);
 	/// Attach input stream to the object.
 	void SetStrStream(const CStrStream* pStrStream);
 	/// Get pointer to the input stream.
@@ -503,7 +505,7 @@ private:
 	/// Stream attached to the object.
 	const CStrStream* m_pStrStream;
 	/// Current position in the stream.
-	int m_nPosition;
+	size_t m_nPosition;
 };
 
 /**

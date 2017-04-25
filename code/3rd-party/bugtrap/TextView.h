@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Text view control class.
@@ -58,7 +58,7 @@ private:
 	/// Window procedure of text view window.
 	static LRESULT CALLBACK TextViewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	/// Draw window client area.
-	void DrawTextView(HDC hdc, RECT* prcPaint);
+	void DrawTextView(HDC hdc, const RECT* prcPaint);
 	/// Resize text view client area.
 	void ResizeTextView(BOOL bIgnoreScrollPos);
 	/// Scroll text view client area.
@@ -70,7 +70,7 @@ private:
 	/// Load cache from file.
 	void LoadCache(void);
 	/// Load line to the cache.
-	void CacheLine(DWORD dw—achedLineNum);
+	BOOL CacheLine(DWORD dwCachedLineNum, HDC hdc, const TEXTMETRIC& tmetr);
 	/// Get current font metrics.
 	void GetTextMetrics(PTEXTMETRIC pTextMetric);
 

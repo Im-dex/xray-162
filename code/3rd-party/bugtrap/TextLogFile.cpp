@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Text log file.
@@ -34,7 +34,7 @@ BOOL CTextLogFile::LoadEntries(void)
 	HANDLE hFile = CreateFile(pszLogFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
-		DWORD dwFileSize = GetFileSize(hFile, NULL);
+		DWORD dwFileSize = (DWORD)GetFileSize(hFile, NULL);
 		if (dwFileSize == 0)
 		{
 			// ignore empty files
@@ -136,7 +136,7 @@ end:
  * @param bCrash - true if crash has occurred.
  * @return true if the log was saved successfully.
  */
-BOOL CTextLogFile::SaveEntries(bool /*bCrash*/)
+BOOL CTextLogFile::SaveEntries(BOOL /*bCrash*/)
 {
 #ifdef _DEBUG
 	DWORD dwStartTime = GetTickCount();
@@ -170,7 +170,7 @@ BOOL CTextLogFile::SaveEntries(bool /*bCrash*/)
  * @param bAddCrLf - true if CR/LF must be added.
  * @return pointer to the new entry.
  */
-CTextLogFile::CTextLogEntry* CTextLogFile::AllocLogEntry(const BYTE* pbData, DWORD dwSize, bool bAddCrLf)
+CTextLogFile::CTextLogEntry* CTextLogFile::AllocLogEntry(const BYTE* pbData, DWORD dwSize, BOOL bAddCrLf)
 {
 	DWORD dwFullSize = bAddCrLf ? dwSize + 2 : dwSize;
 	CTextLogEntry* pLogEntry = (CTextLogEntry*)new BYTE[sizeof(CTextLogEntry) + dwFullSize];
@@ -194,12 +194,12 @@ CTextLogFile::CTextLogEntry* CTextLogFile::AllocLogEntry(const BYTE* pbData, DWO
  * @param bAddCrLf - true if CR/LF must be added.
  * @return true if entry was added.
  */
-BOOL CTextLogFile::AddToHead(const BYTE* pbData, DWORD dwSize, bool bAddCrLf)
+BOOL CTextLogFile::AddToHead(const BYTE* pbData, DWORD dwSize, BOOL bAddCrLf)
 {
 	CTextLogEntry* pLogEntry = AllocLogEntry(pbData, dwSize, bAddCrLf);
 	if (pLogEntry)
 	{
-		CLogFile::AddToHead(pLogEntry);
+		CInMemLogFile::AddToHead(pLogEntry);
 		return TRUE;
 	}
 	else
@@ -212,12 +212,12 @@ BOOL CTextLogFile::AddToHead(const BYTE* pbData, DWORD dwSize, bool bAddCrLf)
  * @param bAddCrLf - true if CR/LF must be added.
  * @return true if entry was added.
  */
-BOOL CTextLogFile::AddToTail(const BYTE* pbData, DWORD dwSize, bool bAddCrLf)
+BOOL CTextLogFile::AddToTail(const BYTE* pbData, DWORD dwSize, BOOL bAddCrLf)
 {
 	CTextLogEntry* pLogEntry = AllocLogEntry(pbData, dwSize, bAddCrLf);
 	if (pLogEntry)
 	{
-		CLogFile::AddToTail(pLogEntry);
+		CInMemLogFile::AddToTail(pLogEntry);
 		return TRUE;
 	}
 	else
@@ -228,12 +228,12 @@ BOOL CTextLogFile::AddToTail(const BYTE* pbData, DWORD dwSize, bool bAddCrLf)
  * @param bAddCrLf - true if CR/LF must be added.
  * @return true if entry was added.
  */
-BOOL CTextLogFile::AddToHead(bool bAddCrLf)
+BOOL CTextLogFile::AddToHead(BOOL bAddCrLf)
 {
 	const BYTE* pBuffer = m_MemStream.GetBuffer();
 	if (pBuffer == NULL)
 		return FALSE;
-	DWORD dwLength = m_MemStream.GetLength();
+	DWORD dwLength = (DWORD)m_MemStream.GetLength();
 	_ASSERTE(dwLength > 0);
 	return AddToHead(pBuffer, dwLength, bAddCrLf);
 }
@@ -242,12 +242,12 @@ BOOL CTextLogFile::AddToHead(bool bAddCrLf)
  * @param bAddCrLf - true if CR/LF must be added.
  * @return true if entry was added.
  */
-BOOL CTextLogFile::AddToTail(bool bAddCrLf)
+BOOL CTextLogFile::AddToTail(BOOL bAddCrLf)
 {
 	const BYTE* pBuffer = m_MemStream.GetBuffer();
 	if (pBuffer == NULL)
 		return FALSE;
-	DWORD dwLength = m_MemStream.GetLength();
+	DWORD dwLength = (DWORD)m_MemStream.GetLength();
 	_ASSERTE(dwLength > 0);
 	return AddToTail(pBuffer, dwLength, bAddCrLf);
 }
@@ -257,38 +257,31 @@ BOOL CTextLogFile::AddToTail(bool bAddCrLf)
  * @param eEntryMode - entry mode.
  * @param rcsConsoleAccess - provides synchronous access to the console.
  * @param pszEntry - log entry text.
+ * @return true if operation was completed successfully.
  */
-void CTextLogFile::WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry)
+BOOL CTextLogFile::WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry)
 {
+	BOOL bResult = TRUE;
 	BUGTRAP_LOGLEVEL eLogFileLevel = GetLogLevel();
 	if (eLogLevel <= eLogFileLevel)
 	{
-		DWORD dwLogEchoMode = GetLogEchoMode();
-		HANDLE hConsole = GetConsoleHandle();
-		BOOL bLogEcho = (dwLogEchoMode & BTLE_DBGOUT) != 0;
-		BOOL bConsoleOutput = hConsole || bLogEcho;
-		if (bConsoleOutput)
-			EnterCriticalSection(&rcsConsoleAccess);
 		SYSTEMTIME st;
 		GetLocalTime(&st);
-		FillEntryText(eLogLevel, &st, pszEntry);
-		if (hConsole)
-			WriteTextToConsole(hConsole);
-		if (bLogEcho)
-			WriteTextToDebugConsole();
+		if (! WriteLogEntryToConsole(eLogLevel, &st, rcsConsoleAccess, pszEntry))
+			FillEntryText(eLogLevel, &st, pszEntry);
 		EncodeEntryText();
 		switch (eEntryMode)
 		{
 		case EM_APPEND:
-			AddToTail(false);
+			AddToTail(FALSE);
 			break;
 		case EM_INSERT:
-			AddToHead(false);
+			AddToHead(FALSE);
 			break;
 		default:
 			_ASSERT(FALSE);
+			bResult = FALSE;
 		}
-		if (bConsoleOutput)
-			LeaveCriticalSection(&rcsConsoleAccess);
 	}
+	return bResult;
 }

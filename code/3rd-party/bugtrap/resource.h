@@ -36,6 +36,7 @@
 #define IDD_TRANSFERSTATUS_PANE         134
 #define IDS_COLUMN_ADDRESS              134
 #define IDS_COLUMN_FILE                 135
+#define IDD_DESCRIBE_ERROR_DLG          135
 #define IDS_COLUMN_LINE                 136
 #define IDB_SORTARROWS                  136
 #define IDS_COLUMN_MODULE               137
@@ -72,7 +73,6 @@
 #define IDC_BODY                        1019
 #define IDC_URL                         1020
 #define IDC_URL_PREFIX                  1021
-#define IDC_EMAIL                       1022
 #define IDC_CPU_TEXT                    1023
 #define IDC_OS_TEXT                     1024
 #define IDC_MEM_TEXT                    1025
@@ -99,14 +99,17 @@
 #define IDC_FILEFORMAT_FRAME            1046
 #define IDC_IMAGE_COMMANDS              1047
 #define IDC_VERSION_STRING              1049
+#define IDC_PROGRESS_BAR                1050
+#define IDC_DETAILS                     1051
+#define IDC_STATIC_VERSION              1052
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1050
+#define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

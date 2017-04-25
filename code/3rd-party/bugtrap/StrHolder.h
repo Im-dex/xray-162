@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Dynamic string holder.
@@ -45,13 +45,13 @@ public:
 	/// Free string data.
 	void Free(void);
 	/// Get string length.
-	int GetLength(void) const;
+	size_t GetLength(void) const;
 	/// Return true if string is empty.
 	BOOL IsEmpty(void) const;
 	/// Get string character.
-	TCHAR GetAt(int nPosition) const;
+	TCHAR GetAt(size_t nPosition) const;
 	/// Get string character.
-	TCHAR operator[](int nPosition) const;
+	TCHAR operator[](size_t nPosition) const;
 	/// Object comparison.
 	friend bool operator==(const CStrHolder& rStrHolder1, const CStrHolder& rStrHolder2);
 	/// Object comparison.
@@ -89,9 +89,9 @@ private:
 	struct CStringData
 	{
 		/// Usage counter.
-		int m_nUsageCount;
+		size_t m_nUsageCount;
 		/// String length.
-		int m_nLength;
+		size_t m_nLength;
 #pragma warning(push)
 #pragma warning(disable : 4200) // nonstandard extension used : zero-sized array in struct/union
 		/// Pointer to the string.
@@ -127,7 +127,7 @@ inline CStrHolder::operator PCTSTR(void) const
 /**
  * @return string length.
  */
-inline int CStrHolder::GetLength(void) const
+inline size_t CStrHolder::GetLength(void) const
 {
 	_ASSERTE(m_pData != NULL);
 	return m_pData->m_nLength;
@@ -252,7 +252,7 @@ inline void CStrHolder::CopyData(const CStrStream& rStrStream)
  * @param nPosition - character position within the string.
  * @return character value.
  */
-inline TCHAR CStrHolder::GetAt(int nPosition) const
+inline TCHAR CStrHolder::GetAt(size_t nPosition) const
 {
 	_ASSERTE(nPosition < m_pData->m_nLength);
 	if (nPosition >= m_pData->m_nLength)
@@ -264,7 +264,7 @@ inline TCHAR CStrHolder::GetAt(int nPosition) const
  * @param nPosition - character position within the string.
  * @return character value.
  */
-inline TCHAR CStrHolder::operator[](int nPosition) const
+inline TCHAR CStrHolder::operator[](size_t nPosition) const
 {
 	_ASSERTE(nPosition < m_pData->m_nLength);
 	if (nPosition >= m_pData->m_nLength)

@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: XML log file.
@@ -56,7 +56,7 @@ BOOL CXmlLogFile::LoadEntries(void)
 	CFileStream FileStream;
 	if (FileStream.Open(pszLogFileName, OPEN_EXISTING, GENERIC_READ, FILE_SHARE_READ))
 	{
-		int nFileSize = FileStream.GetLength();
+		size_t nFileSize = FileStream.GetLength();
 		if (nFileSize == 0)
 		{
 			// ignore empty files
@@ -175,7 +175,7 @@ end:
  * @param bCrash - true if crash has occurred.
  * @return true if the log was saved successfully.
  */
-BOOL CXmlLogFile::SaveEntries(bool /*bCrash*/)
+BOOL CXmlLogFile::SaveEntries(BOOL /*bCrash*/)
 {
 #ifdef _DEBUG
 	DWORD dwStartTime = GetTickCount();
@@ -239,15 +239,15 @@ CXmlLogFile::CXmlLogEntry* CXmlLogFile::AllocLogEntry(const CBaseLogRecord& rLog
 
 		_tcscpy_s(pchPointer, dwLogLevelSize, pszLogLevel);
 		pchPointer += dwLogLevelSize;
-		dwLogLevelSize = GetStringSizeInUTF8(pszLogLevel);
+		dwLogLevelSize = (DWORD)GetStringSizeInUTF8(pszLogLevel);
 
 		_tcscpy_s(pchPointer, dwTimeStatisticsSize, pszTimeStatistics);
 		pchPointer += dwTimeStatisticsSize;
-		dwTimeStatisticsSize = GetStringSizeInUTF8(pszTimeStatistics);
+		dwTimeStatisticsSize = (DWORD)GetStringSizeInUTF8(pszTimeStatistics);
 
 		_tcscpy_s(pchPointer, dwEntryTextSize, pszEntryText);
 		pchPointer += dwEntryTextSize;
-		dwEntryTextSize = GetStringSizeInUTF8(pszEntryText);
+		dwEntryTextSize = (DWORD)GetStringSizeInUTF8(pszEntryText);
 
 		*pchPointer = _T('\0');
 		pLogEntry->m_dwSize = dwLogLevelSize + dwTimeStatisticsSize + dwEntryTextSize +
@@ -269,7 +269,7 @@ BOOL CXmlLogFile::AddToHead(const CBaseLogRecord& rLogRecord)
 	CXmlLogEntry* pLogEntry = AllocLogEntry(rLogRecord);
 	if (pLogEntry)
 	{
-		CLogFile::AddToHead(pLogEntry);
+		CInMemLogFile::AddToHead(pLogEntry);
 		return TRUE;
 	}
 	else
@@ -285,7 +285,7 @@ BOOL CXmlLogFile::AddToTail(const CBaseLogRecord& rLogRecord)
 	CXmlLogEntry* pLogEntry = AllocLogEntry(rLogRecord);
 	if (pLogEntry)
 	{
-		CLogFile::AddToTail(pLogEntry);
+		CInMemLogFile::AddToTail(pLogEntry);
 		return TRUE;
 	}
 	else
@@ -297,28 +297,17 @@ BOOL CXmlLogFile::AddToTail(const CBaseLogRecord& rLogRecord)
  * @param eEntryMode - entry mode.
  * @param rcsConsoleAccess - provides synchronous access to the console.
  * @param pszEntry - log entry text.
+ * @return true if operation was completed successfully.
  */
-void CXmlLogFile::WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry)
+BOOL CXmlLogFile::WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry)
 {
+	BOOL bResult = TRUE;
 	BUGTRAP_LOGLEVEL eLogFileLevel = GetLogLevel();
 	if (eLogLevel <= eLogFileLevel)
 	{
-		DWORD dwLogEchoMode = GetLogEchoMode();
-		HANDLE hConsole = GetConsoleHandle();
-		BOOL bLogEcho = (dwLogEchoMode & BTLE_DBGOUT) != 0;
-		BOOL bConsoleOutput = hConsole || bLogEcho;
-		if (bConsoleOutput)
-			EnterCriticalSection(&rcsConsoleAccess);
 		SYSTEMTIME st;
 		GetLocalTime(&st);
-		if (hConsole || bLogEcho)
-		{
-			FillEntryText(eLogLevel, &st, pszEntry);
-			if (hConsole)
-				WriteTextToConsole(hConsole);
-			if (bLogEcho)
-				WriteTextToDebugConsole();
-		}
+		WriteLogEntryToConsole(eLogLevel, &st, rcsConsoleAccess, pszEntry);
 		PCTSTR pszLogLevelPrefix = GetLogLevelPrefix(eLogLevel);
 		TCHAR szTimeStatistics[32];
 		GetTimeStatistics(&st, szTimeStatistics, countof(szTimeStatistics));
@@ -336,8 +325,8 @@ void CXmlLogFile::WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMod
 			break;
 		default:
 			_ASSERT(FALSE);
+			bResult = FALSE;
 		}
-		if (bConsoleOutput)
-			LeaveCriticalSection(&rcsConsoleAccess);
 	}
+	return bResult;
 }

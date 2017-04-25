@@ -41,6 +41,8 @@ EXPORTS
 	; Silent mode configuration
 	BT_GetActivityType
 	BT_SetActivityType
+	BT_GetExitMode
+	BT_SetExitMode
 	BT_GetReportFilePath
 	BT_SetReportFilePath
 	BT_GetMailProfile
@@ -87,7 +89,13 @@ EXPORTS
 	; Internal functions
 	BT_InstallSehFilter
 	BT_UninstallSehFilter
-	BT_MakeSnapshot
+	BT_InterceptSUEF
+	BT_SaveSnapshot
+	BT_SaveSnapshotEx
+	BT_SendSnapshot
+	BT_SendSnapshotEx
+	BT_MailSnapshot
+	BT_MailSnapshotEx
 	BT_SehFilter
 	BT_CallSehFilter
 	BT_CppFilter

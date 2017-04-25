@@ -120,7 +120,7 @@ private:
 	/// Initialize particular recipient record.
 	void InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, const CStrHolder& strName);
 	/// Initialize recipients list.
-	void InitRecipients(ULONG ulRecipClass, lpMapiRecipDesc lpRecips, int& nRecipIndex, const CArray<CStrHolder>& arrRecipients);
+	void InitRecipients(ULONG ulRecipClass, lpMapiRecipDesc lpRecips, size_t& nRecipIndex, const CArray<CStrHolder>& arrRecipients);
 
 	/// Mapi session handle.
 	LHANDLE m_hSession;

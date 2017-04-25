@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Text view control class.
@@ -49,9 +49,9 @@ void CTextView::InitVars(void)
 
 /**
  * @param hdc - drawing context.
- * @param prcPaint - the rectangle in which the painting is requested.
+ * @param prcPaint - the rectangle where the painting is requested.
  */
-void CTextView::DrawTextView(HDC hdc, RECT* prcPaint)
+void CTextView::DrawTextView(HDC hdc, const RECT* prcPaint)
 {
 	_ASSERTE(g_pResManager != NULL);
 	if (prcPaint == NULL)
@@ -97,9 +97,10 @@ void CTextView::DrawTextView(HDC hdc, RECT* prcPaint)
 	TEXTMETRIC tmetr;
 	::GetTextMetrics(hdcMem, &tmetr);
 
-	DWORD dwNumLines = m_arrLines.GetCount();
+	DWORD dwNumLines = (DWORD)m_arrLines.GetCount();
 	DWORD dwTopLineNum = GetScrollPos(m_hwnd, SB_VERT);
 	DWORD dwTopVisLineNum = dwTopLineNum + prcPaint->top / tmetr.tmHeight;
+	BOOL bSizeChanged = FALSE;
 
 	if (dwTopVisLineNum < dwNumLines)
 	{
@@ -114,8 +115,8 @@ void CTextView::DrawTextView(HDC hdc, RECT* prcPaint)
 
 		for (DWORD dwLineNum = dwTopVisLineNum; dwLineNum <= dwBottomVisLineNum; ++dwLineNum)
 		{
-			CacheLine(dwLineNum);
-			const CLineInfo& rLineInfo = m_arrLines[(int)dwLineNum];
+			bSizeChanged |= CacheLine(dwLineNum, hdc, tmetr);
+			const CLineInfo& rLineInfo = m_arrLines[(size_t)dwLineNum];
 			int nTextWidth = LOWORD(TabbedTextOut(hdcMem, nHorPos, nVertPos, m_pTextCache + rLineInfo.m_dwTextStart, rLineInfo.m_dwLength, 0, NULL, -nHorPos));
 			if (rLineInfo.m_bTruncated)
 				TextOut(hdcMem, nHorPos + nTextWidth, nVertPos, g_szEllipsis, g_dwEllipsisLength);
@@ -134,6 +135,9 @@ void CTextView::DrawTextView(HDC hdc, RECT* prcPaint)
 	DeleteDC(hdcMem);
 	DeleteBitmap(hbmpMem);
 #endif
+
+	if (bSizeChanged)
+		RedrawWindow(m_hwnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE);
 }
 
 /**
@@ -174,7 +178,7 @@ void CTextView::ResizeTextView(BOOL bIgnoreScrollPos)
 	}
 	else
 		nOldVertPos = sinfo.nPos = 0;
-	int nNumLines = m_arrLines.GetCount();
+	int nNumLines = (int)m_arrLines.GetCount();
 	sinfo.fMask = SIF_POS | SIF_PAGE | SIF_RANGE;
 	sinfo.nMin = 0;
 	sinfo.nMax = nNumLines > 0 ? nNumLines - 1 : 0;
@@ -294,7 +298,7 @@ LRESULT CALLBACK CTextView::TextViewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
 	int zDelta, zTotal, nScrollCode, nScrollBarType;
 	LONG lWindowStyle;
 
-	CTextView* _this  = (CTextView*)GetWindowLongPtr(hwnd, GWL_USERDATA);
+	CTextView* _this  = (CTextView*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	_ASSERTE(_this != NULL);
 	switch(uMsg)
 	{
@@ -413,7 +417,7 @@ void CTextView::Attach(HWND hwnd)
 
 	m_hwnd = hwnd;
 	m_pfnOldTextViewWndProc = SubclassWindow(hwnd, TextViewWndProc);
-	SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	// Preserve original window styles that could be modified by SetScrollInfo().
 	m_lOldStyle = GetWindowLong(hwnd, GWL_STYLE);
 	ResizeTextView(TRUE);
@@ -425,7 +429,7 @@ void CTextView::Detach(void)
 	if (m_pfnOldTextViewWndProc)
 	{
 		SubclassWindow(m_hwnd, m_pfnOldTextViewWndProc);
-		SetWindowLongPtr(m_hwnd, GWL_USERDATA, NULL);
+		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, NULL);
 
 		SCROLLINFO sinfo;
 		ZeroMemory(&sinfo, sizeof(sinfo));
@@ -520,9 +524,9 @@ void CTextView::CountLines(void)
 			if (dwBytesLeft > 0)
 			{
 				TCHAR arrChar[2];
-				int nNumBytesInChar, nCharSize;
+				size_t nNumBytesInChar, nCharSize;
 				nNumBytesInChar = m_pDecoder->DecodeChar(pFileBuffer + dwBufferPos, dwBytesLeft, arrChar, nCharSize);
-				if (nCharSize <= 0)
+				if (nCharSize == 0 || nCharSize == MAXSIZE_T)
 				{
 					++dwBufferPos;
 					++dwFilePos;
@@ -531,8 +535,8 @@ void CTextView::CountLines(void)
 				}
 				else
 				{
-					dwBufferPos += nNumBytesInChar;
-					dwFilePos += nNumBytesInChar;
+					dwBufferPos += (DWORD)nNumBytesInChar;
+					dwFilePos += (DWORD)nNumBytesInChar;
 				}
 				if (nCharSize == 1 && (arrChar[0] == _T('\r') || arrChar[0] == _T('\n')))
 				{
@@ -551,7 +555,7 @@ void CTextView::CountLines(void)
 				else
 				{
 					++dwNumSymbols;
-					dwNumChars += nCharSize;
+					dwNumChars += (DWORD)nCharSize;
 					bGotoNewLine = dwNumSymbols == MAX_NUMBER_OF_SYMBOLS;
 					chPrevLineEnd = _T('\0');
 					bSkipLineEnd = bLineEndChar = FALSE;
@@ -603,7 +607,7 @@ void CTextView::LoadCache(void)
 	_ASSERTE(m_hFile != INVALID_HANDLE_VALUE);
 	m_dwFirstCachedLine = m_dwNumCachedLines = 0;
 	m_nMaxLineWidth = 0;
-	DWORD dwNumLines = m_arrLines.GetCount();
+	DWORD dwNumLines = (DWORD)m_arrLines.GetCount();
 	if (dwNumLines > 0)
 	{
 		HDC hdc = GetDC(m_hwnd);
@@ -622,7 +626,7 @@ void CTextView::LoadCache(void)
 				goto end;
 			}
 		}
-		const CLineInfo& rLineInfo = m_arrLines[0];
+		const CLineInfo& rLineInfo = m_arrLines[(size_t)0];
 		SetFilePointer(m_hFile, rLineInfo.m_dwLineStart, NULL, FILE_BEGIN);
 		DWORD dwLineBufferPos = 0, dwTextCachePos = 0;
 		for (;;)
@@ -642,13 +646,13 @@ void CTextView::LoadCache(void)
 					dwLineBufferPos = 0;
 					break;
 				}
-				CLineInfo& rLineInfo = m_arrLines[(int)m_dwNumCachedLines];
+				CLineInfo& rLineInfo = m_arrLines[(size_t)m_dwNumCachedLines];
 				if (dwTextCachePos + rLineInfo.m_dwLength > TEXT_CACHE_SIZE)
 					goto end;
 				DWORD dwLineSize;
 				if (m_dwNumCachedLines + 1 < dwNumLines)
 				{
-					const CLineInfo& rNextLineInfo = m_arrLines[(int)(m_dwNumCachedLines + 1)];
+					const CLineInfo& rNextLineInfo = m_arrLines[(size_t)(m_dwNumCachedLines + 1)];
 					dwLineSize = rNextLineInfo.m_dwLineStart - rLineInfo.m_dwLineStart; // line size includes line end
 				}
 				else
@@ -681,23 +685,22 @@ end:
 
 /**
  * @param dwCachedLineNum - index of cached line.
+ * @param hdc - graphics device context.
+ * @param tmetr - text metrics.
+ * @return true if window size has been changed.
  */
-void CTextView::CacheLine(DWORD dwCachedLineNum)
+BOOL CTextView::CacheLine(DWORD dwCachedLineNum, HDC hdc, const TEXTMETRIC& tmetr)
 {
 	if (dwCachedLineNum >= m_dwFirstCachedLine && dwCachedLineNum < m_dwFirstCachedLine + m_dwNumCachedLines)
-		return;
+		return FALSE;
 
-	HDC hdc = GetDC(m_hwnd);
-	HFONT hOldFont = g_pResManager->m_hFixedFont ? SelectFont(hdc, g_pResManager->m_hFixedFont) : NULL;
-	TEXTMETRIC tmetr;
-	::GetTextMetrics(hdc, &tmetr);
 	int nExtraWidth = tmetr.tmAveCharWidth + LOWORD(GetTabbedTextExtent(hdc, g_szEllipsis, g_dwEllipsisLength, 0, NULL));
 	int nMaxLineWidth = 0;
 
-	DWORD dwNumLines = m_arrLines.GetCount();
+	DWORD dwNumLines = (DWORD)m_arrLines.GetCount();
 	_ASSERT(dwCachedLineNum < dwNumLines);
 	// Put new line into the middle of cache
-	const CLineInfo& rLineInfo = m_arrLines[(int)dwCachedLineNum];
+	const CLineInfo& rLineInfo = m_arrLines[(size_t)dwCachedLineNum];
 	DWORD dwFirstCachedLine = dwCachedLineNum,
 		  dwLastCachedLine = dwCachedLineNum,
 		  dwTotalSize = rLineInfo.m_dwLength;
@@ -709,7 +712,7 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 			BOOL bLineNumberChanged = FALSE;
 			if (dwFirstCachedLine > 0)
 			{
-				const CLineInfo& rLineInfo = m_arrLines[(int)(dwFirstCachedLine - 1)];
+				const CLineInfo& rLineInfo = m_arrLines[(size_t)(dwFirstCachedLine - 1)];
 				if (dwTotalSize + rLineInfo.m_dwLength <= TEXT_CACHE_SIZE)
 				{
 					dwTotalSize += rLineInfo.m_dwLength;
@@ -724,7 +727,7 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 			BOOL bLineNumberChanged = FALSE;
 			if (dwLastCachedLine + 1 < dwNumLines)
 			{
-				const CLineInfo& rLineInfo = m_arrLines[(int)(dwLastCachedLine + 1)];
+				const CLineInfo& rLineInfo = m_arrLines[(size_t)(dwLastCachedLine + 1)];
 				if (dwTotalSize + rLineInfo.m_dwLength <= TEXT_CACHE_SIZE)
 				{
 					dwTotalSize += rLineInfo.m_dwLength;
@@ -749,8 +752,8 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 		dwNumLoadedLines = dwNumCachedLines - dwNumMappedLines;
 		dwLastLoadedLine = dwFirstLoadedLine + dwNumLoadedLines - 1;
 
-		const CLineInfo& rLineInfo1 = m_arrLines[(int)dwFirstMappedLine];
-		const CLineInfo& rLineInfo2 = m_arrLines[(int)dwLastMappedLine];
+		const CLineInfo& rLineInfo1 = m_arrLines[(size_t)dwFirstMappedLine];
+		const CLineInfo& rLineInfo2 = m_arrLines[(size_t)dwLastMappedLine];
 		dwFromMemOffset = rLineInfo1.m_dwTextStart;
 		dwToMemOffset = 0;
 		dwLoadOffset = dwMemSize = rLineInfo2.m_dwTextStart + rLineInfo2.m_dwLength - rLineInfo1.m_dwTextStart;
@@ -765,14 +768,14 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 		dwNumLoadedLines = dwNumCachedLines - dwNumMappedLines;
 		dwLastLoadedLine = dwFirstLoadedLine + dwNumLoadedLines - 1;
 
-		const CLineInfo& rLineInfo1 = m_arrLines[(int)dwFirstMappedLine];
-		const CLineInfo& rLineInfo2 = m_arrLines[(int)dwLastMappedLine];
+		const CLineInfo& rLineInfo1 = m_arrLines[(size_t)dwFirstMappedLine];
+		const CLineInfo& rLineInfo2 = m_arrLines[(size_t)dwLastMappedLine];
 		dwFromMemOffset = rLineInfo1.m_dwTextStart;
 		dwToMemOffset = 0;
 		dwMemSize = rLineInfo2.m_dwTextStart + rLineInfo2.m_dwLength - rLineInfo1.m_dwTextStart;
 		for (DWORD dwLineNum = dwFirstLoadedLine; dwLineNum <= dwLastLoadedLine; ++dwLineNum)
 		{
-			const CLineInfo& rLineInfo = m_arrLines[(int)dwLineNum];
+			const CLineInfo& rLineInfo = m_arrLines[(size_t)dwLineNum];
 			dwToMemOffset += rLineInfo.m_dwLength;
 		}
 		dwLoadOffset = 0;
@@ -793,7 +796,7 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 		MoveMemory(m_pTextCache + dwToMemOffset, m_pTextCache + dwFromMemOffset, dwMemSize * sizeof(TCHAR));
 		for (DWORD dwLineNum = dwFirstMappedLine; dwLineNum <= dwLastMappedLine; ++dwLineNum)
 		{
-			CLineInfo& rLineInfo = m_arrLines[(int)dwLineNum];
+			CLineInfo& rLineInfo = m_arrLines[(size_t)dwLineNum];
 			rLineInfo.m_dwTextStart = dwToMemOffset;
 			dwToMemOffset += rLineInfo.m_dwLength;
 		}
@@ -802,24 +805,24 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 	if (dwNumLoadedLines > 0)
 	{
 		DWORD dwLineBufferPos = 0, dwLineNum = dwFirstLoadedLine;
-		const CLineInfo& rLineInfo = m_arrLines[(int)dwLineNum];
+		const CLineInfo& rLineInfo = m_arrLines[(size_t)dwLineNum];
 		SetFilePointer(m_hFile, rLineInfo.m_dwLineStart, NULL, FILE_BEGIN);
 		while (dwLineNum <= dwLastLoadedLine)
 		{
 			DWORD dwNumRead = 0;
 			if (! ReadFile(m_hFile, m_pLineBuffer + dwLineBufferPos, m_dwLineBufferSize - dwLineBufferPos, &dwNumRead, NULL))
-				return;
+				return FALSE;
 			dwNumRead += dwLineBufferPos;
 			dwLineBufferPos = 0;
 			if (dwNumRead == 0)
 				break;
 			while (dwLineNum <= dwLastLoadedLine)
 			{
-				CLineInfo& rLineInfo = m_arrLines[(int)dwLineNum];
+				CLineInfo& rLineInfo = m_arrLines[(size_t)dwLineNum];
 				DWORD dwLineSize;
 				if (dwLineNum < dwLastLoadedLine)
 				{
-					const CLineInfo& rNextLineInfo = m_arrLines[(int)(dwLineNum + 1)];
+					const CLineInfo& rNextLineInfo = m_arrLines[(size_t)(dwLineNum + 1)];
 					dwLineSize = rNextLineInfo.m_dwLineStart - rLineInfo.m_dwLineStart; // line size including line end
 				}
 				else
@@ -847,6 +850,7 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 	m_dwFirstCachedLine = dwFirstCachedLine;
 	m_dwNumCachedLines = dwNumCachedLines;
 	nMaxLineWidth += nExtraWidth;
+	BOOL bSizeChanged;
 	if (m_nMaxLineWidth < nMaxLineWidth)
 	{
 		m_nMaxLineWidth = nMaxLineWidth;
@@ -857,8 +861,10 @@ void CTextView::CacheLine(DWORD dwCachedLineNum)
 		sinfo.nMin = 0;
 		sinfo.nMax = nMaxLineWidth - 1;
 		SetScrollInfo(m_hwnd, SB_HORZ, &sinfo, TRUE);
+		bSizeChanged = TRUE;
 	}
-	if (hOldFont)
-		SelectFont(hdc, hOldFont);
-	ReleaseDC(m_hwnd, hdc);
+	else
+		bSizeChanged = FALSE;
+
+	return bSizeChanged;
 }

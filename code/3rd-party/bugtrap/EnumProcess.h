@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Process enumerator.
@@ -17,11 +17,6 @@
 #pragma once
 
 #include "Array.h"
-
-/// Comment out this if you don't want to use VDMDBG at all
-//#define USE_VDMDBG
-/// Comment out this if you don't want to read image header
-//#define READ_IMAGEHEADER
 
 #ifdef USE_VDMDBG
 /// 16-bit enumeration functions loaded from VDMDBG.DLL.
@@ -144,9 +139,9 @@ public:
 	void SetMethod(DWORD dwMethod);
 
 private:
-	/// Protects the class from being accidentally copied.
+	/// Protects object from being accidentally copied.
 	CEnumProcess(const CEnumProcess& rEnumProcess);
-	/// Protects the class from being accidentally copied.
+	/// Protects object from being accidentally copied.
 	CEnumProcess& operator=(const CEnumProcess& rEnumProcess);
 
 #ifdef READ_IMAGEHEADER

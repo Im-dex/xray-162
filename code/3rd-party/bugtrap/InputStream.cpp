@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Input stream.
@@ -24,9 +24,9 @@
  * @param nCount - size of the array.
  * @return number of retrieved bytes.
  */
-int CInputStream::ReadBytes(unsigned char* arrBytes, int nCount)
+size_t CInputStream::ReadBytes(unsigned char* arrBytes, size_t nCount)
 {
-	int nNumRead = 0;
+	size_t nNumRead = 0;
 	while (nNumRead < nCount)
 	{
 		if (! ReadByte(arrBytes[nNumRead]))

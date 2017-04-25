@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Hyper-link control class.
@@ -89,7 +89,7 @@ void CHyperLink::DrawHyperLink(HDC hdc) const
 		FillRect(hdc, &rcClient, hBrush);
 	}
 	SetTextColor(hdc, m_rgbCurrentColor);
-	TextOut(hdc, 1, 1, szLinkText, _tcslen(szLinkText));
+	TextOut(hdc, 1, 1, szLinkText, (int)_tcslen(szLinkText));
 	SetTextColor(hdc, GetSysColor(COLOR_BTNTEXT));
 	if (hOldFont)
 		SelectFont(hdc, hOldFont);
@@ -139,7 +139,7 @@ LRESULT CALLBACK CHyperLink::HyperLinkWndProc(HWND hwnd, UINT uMsg, WPARAM wPara
 	DWORD dwResult;
 	HDC hdc;
 
-	CHyperLink* _this  = (CHyperLink*)GetWindowLongPtr(hwnd, GWL_USERDATA);
+	CHyperLink* _this  = (CHyperLink*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	_ASSERTE(_this != NULL);
 	switch(uMsg)
 	{
@@ -331,7 +331,7 @@ void CHyperLink::Attach(HWND hwnd)
 	_ASSERTE(m_hwnd == NULL);
 	_ASSERTE(g_pResManager != NULL);
 	m_hwnd = hwnd;
-	SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	m_pfnOldHyperLinkWndProc = SubclassWindow(hwnd, HyperLinkWndProc);
 	InvalidateRect(hwnd, NULL, TRUE);
 }
@@ -341,7 +341,7 @@ void CHyperLink::Detach(void)
 	if (m_pfnOldHyperLinkWndProc)
 	{
 		SubclassWindow(m_hwnd, m_pfnOldHyperLinkWndProc);
-		SetWindowLongPtr(m_hwnd, GWL_USERDATA, NULL);
+		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, NULL);
 		InvalidateRect(m_hwnd, NULL, TRUE);
 		m_pfnOldHyperLinkWndProc = NULL;
 		m_hwnd = NULL;
@@ -360,7 +360,7 @@ void CHyperLink::GetHyperLinkSize(SIZE& size) const
 		hOldFont = SelectFont(hdc, g_pResManager->m_hUnderlinedFont);
 	TCHAR szLinkText[MAX_PATH];
 	GetWindowText(m_hwnd, szLinkText, countof(szLinkText));
-	GetTextExtentPoint32(hdc, szLinkText, _tcslen(szLinkText), &size);
+	GetTextExtentPoint32(hdc, szLinkText, (int)_tcslen(szLinkText), &size);
 	if (hOldFont)
 		SelectFont(hdc, hOldFont);
 	ReleaseDC(m_hwnd, hdc);

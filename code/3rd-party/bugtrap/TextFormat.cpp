@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Text format analyzer.
@@ -41,9 +41,9 @@ DWORD DetectFileFormat(PCTSTR pszFileName, HANDLE hFile, BOOL& bTextFile, TEXT_E
 		return 0;
 	}
 	static const TCHAR szXmlFileExt[] = _T(".xml");
-	const DWORD dwXmlFileExtLength = countof(szXmlFileExt) - 1;
-	DWORD dwFileNameLength = _tcslen(pszFileName);
-	BOOL bIsXmlFile = dwFileNameLength >= dwXmlFileExtLength && _tcsicmp(pszFileName + dwFileNameLength - dwXmlFileExtLength, szXmlFileExt) == 0;
+	const size_t nXmlFileExtLength = countof(szXmlFileExt) - 1;
+	size_t nFileNameLength = _tcslen(pszFileName);
+	BOOL bIsXmlFile = nFileNameLength >= nXmlFileExtLength && _tcsicmp(pszFileName + nFileNameLength - nXmlFileExtLength, szXmlFileExt) == 0;
 	bTextFile = TRUE;
 	DWORD dwStartPos, dwCharSize, dwOffsetFromStart;
 	if (dwNumRead >= sizeof(g_arrUTF16LEPreamble) && memcmp(arrBuffer, g_arrUTF16LEPreamble, sizeof(g_arrUTF16LEPreamble)) == 0)

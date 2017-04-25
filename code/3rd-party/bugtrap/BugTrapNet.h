@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: .NET interface to BugTrap.
@@ -27,6 +27,7 @@ using namespace System::Reflection;
 using namespace System::ComponentModel;
 using namespace System::Collections;
 using namespace System::Diagnostics;
+using namespace System::IO;
 
 #include <vcclr.h>
 
@@ -46,7 +47,8 @@ namespace IntelleSoft
 			ShowUI     = BTA_SHOWUI,
 			SaveReport = BTA_SAVEREPORT,
 			MailReport = BTA_MAILREPORT,
-			SendReport = BTA_SENDREPORT
+			SendReport = BTA_SENDREPORT,
+            Custom = BTA_CUSTOM
 		};
 
 		[Flags]
@@ -59,16 +61,21 @@ namespace IntelleSoft
 			ListProcesses  = BTF_LISTPROCESSES,
 			ShowAdvancedUI = BTF_SHOWADVANCEDUI,
 			ScreenCapture  = BTF_SCREENCAPTURE,
-			NativeInfo     = BTF_NATIVEINFO
+			NativeInfo     = BTF_NATIVEINFO,
+			InterceptSUEF  = BTF_INTERCEPTSUEF,
+			DescribeError  = BTF_DESCRIBEERROR,
+			RestartApp     = BTF_RESTARTAPP
 		};
 
 		public enum class LogLevelType
 		{
-			None    = BTLL_NONE,
-			Error   = BTLL_ERROR,
-			Warning = BTLL_WARNING,
-			Info    = BTLL_INFO,
-			All     = BTLL_ALL
+			None      = BTLL_NONE,
+			Error     = BTLL_ERROR,
+			Warning   = BTLL_WARNING,
+			Important = BTLL_IMPORTANT,
+			Info      = BTLL_INFO,
+			Verbose   = BTLL_VERBOSE,
+			All       = BTLL_ALL
 		};
 
 		[Flags]
@@ -97,7 +104,8 @@ namespace IntelleSoft
 		public enum class LogFormatType
 		{
 			Xml  = BTLF_XML,
-			Text = BTLF_TEXT
+			Text = BTLF_TEXT,
+			Stream = BTLF_STREAM
 		};
 
 		public enum class DialogMessageType
@@ -113,7 +121,7 @@ namespace IntelleSoft
 		};
 
 		[Flags]
-		public enum class MinidumpType
+        public enum class MinidumpType : UInt32
 		{
 			Normal                         = MiniDumpNormal,
 			WithDataSegs                   = MiniDumpWithDataSegs,
@@ -357,12 +365,16 @@ namespace IntelleSoft
 
 		private:
 			void PrvOpen(String^ fileName, LogFormatType logFormat);
+			void ValidateHandle(void);
+			static void ValidateIoResult(BOOL bResult);
 
 			IntPtr handle;
 			LogLevelType defaultLogLevel;
 		};
 
 		public delegate void UnhandledExceptionDelegate(Object^ sender, UnhandledExceptionEventArgs^ args);
+
+        public delegate void CustomActivityDelegate(Object^ sender, String^ reportFilePath);
 
 		public ref class ExceptionHandler
 		{
@@ -380,11 +392,9 @@ namespace IntelleSoft
 			static event UnhandledExceptionDelegate^ afterUnhandledExceptionEvent;
 			static void HandleException(System::Exception^ exception, Object^ sender, UnhandledExceptionEventArgs^ args);
 
-#ifdef _DEBUG
-		public:
-			static void HandleException(System::Exception^ exception);
-#endif
+			static void ValidateIoResult(BOOL bResult);
 
+            static event CustomActivityDelegate^ customActivityEvent;
 		internal:
 			static property System::Exception^ Exception
 			{
@@ -412,7 +422,7 @@ namespace IntelleSoft
 
 			static void FireBeforeUnhandledExceptionEvent(void);
 			static void FireAfterUnhandledExceptionEvent(void);
-
+            static void FireCustomActivityEvent(String^ reportFilePath);
 		public:
 			static const int HttpPort = BUGTRAP_HTTP_PORT;
 
@@ -427,6 +437,12 @@ namespace IntelleSoft
 				void add(UnhandledExceptionDelegate^ value);
 				void remove(UnhandledExceptionDelegate^ value);
 			}
+
+            static event CustomActivityDelegate^ CustomActivity
+            {
+                void add(CustomActivityDelegate^ value);
+                void remove(CustomActivityDelegate^ value);
+            }
 
 			static property String^ AppName
 			{
@@ -519,9 +535,17 @@ namespace IntelleSoft
 
 			static void SetMailProfile(String^ profile, String^ password);
 			static void ExportRegKey(String^ fileName, String^ key);
-			static void MakeSnapshot(String^ fileName);
+			static void SaveSnapshot(String^ fileName);
+			static void SaveSnapshot(System::Exception^ exception, String^ fileName);
+			static void SendSnapshot(void);
+			static void SendSnapshot(System::Exception^ exception);
+			static void MailSnapshot(void);
+			static void MailSnapshot(System::Exception^ exception);
 			static void InstallHandler(void);
 			static void UninstallHandler(void);
+			static void HandleException(System::Exception^ exception);
+			static void InstallSehFilter(void);
+			static void UninstallSehFilter(void);
 		};
 
 		static inline ExceptionHandler::ExceptionHandler(void)
@@ -582,6 +606,11 @@ namespace IntelleSoft
 			afterUnhandledExceptionEvent(Sender, Arguments);
 		}
 
+        inline void ExceptionHandler::FireCustomActivityEvent(String^ reportFilePath)
+		{
+			customActivityEvent(Sender, reportFilePath);
+		}
+
 		inline void ExceptionHandler::BeforeUnhandledException::add(UnhandledExceptionDelegate^ value)
 		{
 			beforeUnhandledExceptionEvent += value;
@@ -601,6 +630,16 @@ namespace IntelleSoft
 		{
 			afterUnhandledExceptionEvent -= value;
 		}
+
+        inline void ExceptionHandler::CustomActivity::add(CustomActivityDelegate^ value)
+        {
+            customActivityEvent += value;
+        }
+
+        inline void ExceptionHandler::CustomActivity::remove(CustomActivityDelegate^ value)
+        {
+            customActivityEvent -= value;
+        }
 
 		inline String^ ExceptionHandler::AppName::get(void)
 		{
@@ -777,13 +816,40 @@ namespace IntelleSoft
 		{
 			pin_ptr<const wchar_t> wstrFileName(PtrToStringChars(fileName));
 			pin_ptr<const wchar_t> wstrKey(PtrToStringChars(key));
-			BT_ExportRegistryKey(wstrFileName, wstrKey);
+			if (! BT_ExportRegistryKey(wstrFileName, wstrKey))
+				throw gcnew Win32Exception();
 		}
 
-		inline void ExceptionHandler::MakeSnapshot(String^ fileName)
+		inline void ExceptionHandler::SaveSnapshot(String^ fileName)
 		{
 			pin_ptr<const wchar_t> wstrFileName(PtrToStringChars(fileName));
-			BT_MakeSnapshot(wstrFileName);
+			ValidateIoResult(BT_SaveSnapshot(wstrFileName));
+		}
+
+		inline void ExceptionHandler::SendSnapshot(void)
+		{
+			ValidateIoResult(BT_SendSnapshot());
+		}
+
+		inline void ExceptionHandler::MailSnapshot(void)
+		{
+			ValidateIoResult(BT_MailSnapshot());
+		}
+
+		inline void ExceptionHandler::ValidateIoResult(BOOL bResult)
+		{
+			if (! bResult)
+				throw gcnew IOException();
+		}
+
+		inline void ExceptionHandler::InstallSehFilter(void)
+		{
+			BT_InstallSehFilter();
+		}
+
+		inline void ExceptionHandler::UninstallSehFilter(void)
+		{
+			BT_UninstallSehFilter();
 		}
 
 		inline LogFile::LogFile(void)
@@ -858,6 +924,18 @@ namespace IntelleSoft
 		inline void LogFile::Append(String^ format, ... array<Object^>^ args)
 		{
 			Append(this->defaultLogLevel, format, args);
+		}
+
+		inline void LogFile::ValidateHandle(void)
+		{
+			if (this->handle == IntPtr::Zero)
+				throw gcnew InvalidOperationException();
+		}
+
+		inline void LogFile::ValidateIoResult(BOOL bResult)
+		{
+			if (! bResult)
+				throw gcnew IOException();
 		}
 	}
 }

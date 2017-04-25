@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Hex view control class.
@@ -51,7 +51,7 @@ private:
 	/// Window procedure of hex view window.
 	static LRESULT CALLBACK HexViewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	/// Draw window client area.
-	void DrawHexView(HDC hdc, RECT* prcPaint);
+	void DrawHexView(HDC hdc, const RECT* prcPaint);
 	/// Resize hex view client area.
 	void ResizeHexView(BOOL bIgnoreScrollPos);
 	/// Scroll hex view client area.

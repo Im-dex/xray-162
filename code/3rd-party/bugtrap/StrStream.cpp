@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: String (memory) stream class.
@@ -30,7 +30,7 @@ void CStrStream::InitBuffer(void)
 /**
  * @param nSize - initial buffer size.
  */
-void CStrStream::InitBuffer(int nSize)
+void CStrStream::InitBuffer(size_t nSize)
 {
 	if (nSize)
 	{
@@ -55,7 +55,7 @@ void CStrStream::InitBuffer(int nSize)
  * @param nSize - requested buffer size.
  * @param bAdaptiveGrowth - true for adaptive growth.
  */
-void CStrStream::EnsureSize(int nSize, bool bAdaptiveGrowth)
+void CStrStream::EnsureSize(size_t nSize, bool bAdaptiveGrowth)
 {
 	if (m_nSize < nSize)
 	{
@@ -79,11 +79,11 @@ void CStrStream::EnsureSize(int nSize, bool bAdaptiveGrowth)
  * @param pszStrData - data source.
  * @param nLength - string length.
  */
-void CStrStream::InitData(PCTSTR pszStrData, int nLength)
+void CStrStream::InitData(PCTSTR pszStrData, size_t nLength)
 {
 	if (pszStrData && *pszStrData)
 	{
-		int nSize = nLength + 1;
+		size_t nSize = nLength + 1;
 		InitBuffer(nSize);
 		_tcsncpy_s(m_pszData, nSize, pszStrData, nLength);
 		m_nLength = nLength;
@@ -96,13 +96,13 @@ void CStrStream::InitData(PCTSTR pszStrData, int nLength)
  * @param pszStrData - data source.
  * @param nLength - string length.
  */
-void CStrStream::CopyData(PCTSTR pszStrData, int nLength)
+void CStrStream::CopyData(PCTSTR pszStrData, size_t nLength)
 {
 	if (m_pszData != pszStrData)
 	{
 		if (pszStrData && *pszStrData)
 		{
-			int nSize = nLength + 1;
+			size_t nSize = nLength + 1;
 			EnsureSize(nSize, false);
 			_tcsncpy_s(m_pszData, nSize, pszStrData, nLength);
 			m_nLength = nLength;
@@ -116,11 +116,11 @@ void CStrStream::CopyData(PCTSTR pszStrData, int nLength)
  * @param pszStrData - data source.
  * @param nLength - string length.
  */
-void CStrStream::AppendData(PCTSTR pszStrData, int nLength)
+void CStrStream::AppendData(PCTSTR pszStrData, size_t nLength)
 {
 	if (pszStrData && *pszStrData)
 	{
-		int nNewLength = m_nLength + nLength;
+		size_t nNewLength = m_nLength + nLength;
 		EnsureSize(nNewLength + 1, true);
 		_tcsncpy_s(m_pszData + m_nLength, nLength + 1, pszStrData, nLength);
 		m_nLength = nNewLength;
@@ -172,7 +172,7 @@ void CStrStream::AppendData(PCSTR pszStrData)
 	{
 		int nSize = MultiByteToWideChar(CP_ACP, 0, pszStrData, -1, NULL, 0);
 		_ASSERTE(nSize > 0);
-		int nNewSize = m_nLength + nSize;
+		size_t nNewSize = m_nLength + nSize;
 		EnsureSize(nNewSize, true);
 		MultiByteToWideChar(CP_ACP, 0, pszStrData, -1, m_pszData + m_nLength, nSize);
 		m_nLength = nNewSize - 1;
@@ -188,10 +188,10 @@ void CStrStream::InitData(PCWSTR pszStrData)
 {
 	if (pszStrData && *pszStrData)
 	{
-		int nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
+		size_t nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
 		_ASSERTE(nSize > 0);
 		InitBuffer(nSize);
-		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pszData, nSize, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pszData, (int)nSize, NULL, NULL);
 		m_nLength = nSize - 1;
 	}
 	else
@@ -205,10 +205,10 @@ void CStrStream::CopyData(PCWSTR pszStrData)
 {
 	if (pszStrData && *pszStrData)
 	{
-		int nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
+		size_t nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
 		_ASSERTE(nSize > 0);
 		EnsureSize(nSize, false);
-		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pszData, nSize, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pszData, (int)nSize, NULL, NULL);
 		m_nLength = nSize - 1;
 	}
 	else
@@ -222,11 +222,11 @@ void CStrStream::AppendData(PCWSTR pszStrData)
 {
 	if (pszStrData && *pszStrData)
 	{
-		int nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
+		size_t nSize = WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, NULL, 0, NULL, NULL);
 		_ASSERTE(nSize > 0);
-		int nNewSize = m_nLength + nSize;
+		size_t nNewSize = m_nLength + nSize;
 		EnsureSize(nNewSize, true);
-		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pszData + m_nLength, nSize, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, pszStrData, -1, m_pszData + m_nLength, (int)nSize, NULL, NULL);
 		m_nLength = nNewSize - 1;
 	}
 }
@@ -266,13 +266,13 @@ void CStrStream::Free(void)
  * @param nPosition - start position.
  * @param nLength - length of the extracted string.
  */
-void CStrStream::ValidateIndex(int nPosition, int& nLength) const
+void CStrStream::ValidateIndex(size_t nPosition, size_t& nLength) const
 {
-	_ASSERTE(nPosition >= 0 && nPosition <= m_nLength);
-	if (nPosition < 0 || nPosition > m_nLength)
+	_ASSERTE(nPosition <= m_nLength);
+	if (nPosition > m_nLength)
 		RaiseException(STATUS_ARRAY_BOUNDS_EXCEEDED, 0, 0, NULL);
-	int nMaxLength = m_nLength - nPosition;
-	if (nLength < 0)
+	size_t nMaxLength = m_nLength - nPosition;
+	if (nLength == MAXSIZE_T)
 		nLength = nMaxLength;
 	else
 	{
@@ -287,10 +287,10 @@ void CStrStream::ValidateIndex(int nPosition, int& nLength) const
  * @param nPosition - start position.
  * @param nLength - length of the extracted string.
  */
-void CStrStream::Substring(CStrHolder& rStrHolder, int nPosition, int nLength) const
+void CStrStream::Substring(CStrHolder& rStrHolder, size_t nPosition, size_t nLength) const
 {
 	ValidateIndex(nPosition, nLength);
-	int nEndPosition = nPosition + nLength;
+	size_t nEndPosition = nPosition + nLength;
 	TCHAR chData = m_pszData[nEndPosition];
 	m_pszData[nEndPosition] = _T('\0');
 	rStrHolder = m_pszData + nPosition;
@@ -302,13 +302,13 @@ void CStrStream::Substring(CStrHolder& rStrHolder, int nPosition, int nLength) c
  * @param nPosition - start position.
  * @param nLength - length of the inserted string.
  */
-void CStrStream::Insert(PCTSTR pszSubstring, int nPosition, int nLength)
+void CStrStream::Insert(PCTSTR pszSubstring, size_t nPosition, size_t nLength)
 {
 	ValidateIndex(nPosition);
-	int nNewLength = m_nLength + nLength;
+	size_t nNewLength = m_nLength + nLength;
 	EnsureSize(nNewLength + 1, true);
-	int nNextPosition = nPosition + nLength;
-	int nNextLength = m_nLength - nPosition;
+	size_t nNextPosition = nPosition + nLength;
+	size_t nNextLength = m_nLength - nPosition;
 	MoveMemory(m_pszData + nNextPosition, m_pszData + nPosition, (nNextLength + 1) * sizeof(TCHAR));
 	MoveMemory(m_pszData + nPosition, pszSubstring, nLength * sizeof(TCHAR));
 	m_nLength = nNewLength;
@@ -318,10 +318,10 @@ void CStrStream::Insert(PCTSTR pszSubstring, int nPosition, int nLength)
  * @param nPosition - start position.
  * @param nLength - length of the extracted string.
  */
-void CStrStream::Delete(int nPosition, int nLength)
+void CStrStream::Delete(size_t nPosition, size_t nLength)
 {
 	ValidateIndex(nPosition, nLength);
-	int nNewLength = m_nLength - nLength;
+	size_t nNewLength = m_nLength - nLength;
 	MoveMemory(m_pszData + nPosition, m_pszData + nLength, (nNewLength + 1) * sizeof(TCHAR));
 	m_nLength = nNewLength;
 }

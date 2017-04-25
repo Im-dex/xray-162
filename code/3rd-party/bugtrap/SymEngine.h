@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Low-level wrapper for Debug Help API.
@@ -85,14 +85,35 @@ public:
 		/// Protects the class from being accidentally copied.
 		CScreenShot& operator=(const CScreenShot& rScreenShot);
 
-		/// Bitmap information.
-		PBITMAPINFO m_pBmpInfo;
-		/// Bitmap bits.
-		PBYTE m_pBitsArray;
-		/// Bitmap header size.
-		DWORD m_dwBmpHdrSize;
-		/// Image size.
-		DWORD m_dwBitsArraySize;
+		/// Per-monitor bitmap information.
+		struct CBitmapInfo
+		{
+		public:
+			/// Initialize an object.
+			CBitmapInfo(void);
+			/// De-initialize the object.
+			~CBitmapInfo(void);
+			/// Free allocated memory; reset all member variables.
+			void Free(void);
+
+			/// Bitmap information.
+			PBITMAPINFO m_pBmpInfo;
+			/// Bitmap bits.
+			PBYTE m_pBitsArray;
+			/// Bitmap header size.
+			DWORD m_dwBmpHdrSize;
+			/// Image size.
+			DWORD m_dwBitsArraySize;
+
+		private:
+			/// Destroy allocated objects.
+			void Destroy(void);
+		};
+
+		/// An array of bitmaps.
+		CBitmapInfo* m_arrBitmaps;
+		/// Number of monitors.
+		DWORD m_dwNumMonitors;
 	};
 
 	/// Smart pointer to the screen-shot.
@@ -132,12 +153,12 @@ public:
 		CStackTraceEntry(void);
 		/// Module name that contains the entry.
 		TCHAR m_szModule[MAX_PATH];
-		/// Address of еру entry.
+		/// Address of current instruction.
 		TCHAR m_szAddress[32];
-		/// Function where еру entry is located.
+		/// Function where current instruction is located.
 		TCHAR m_szFunctionName[512];
 		/// Byte offset from the beginning of the function.
-		TCHAR m_szFunctionOffset[16];
+		TCHAR m_szFunctionOffset[32];
 		/// User-friendly function name and offset.
 		TCHAR m_szFunctionInfo[512];
 		/// Name of source file that contains the entry.
@@ -145,7 +166,7 @@ public:
 		/// Number of line in source file.
 		TCHAR m_szLineNumber[16];
 		/// Byte offset from the beginning of the line.
-		TCHAR m_szLineOffset[16];
+		TCHAR m_szLineOffset[32];
 		/// User-friendly line number and offset.
 		TCHAR m_szLineInfo[64];
 	};
@@ -277,6 +298,7 @@ private:
 	{
 		/// Initialize the object.
 		CRegistersValues(void);
+#if defined _M_IX86
 		/// EAX register.
 		TCHAR m_szEax[16];
 		/// EBX register.
@@ -309,6 +331,42 @@ private:
 		TCHAR m_szSegGs[16];
 		/// EFLAGS register.
 		TCHAR m_szEFlags[16];
+#elif defined _M_X64
+		/// RAX register.
+		TCHAR m_szRax[32];
+		/// RBX register.
+		TCHAR m_szRbx[32];
+		/// RCX register.
+		TCHAR m_szRcx[32];
+		/// RDX register.
+		TCHAR m_szRdx[32];
+		/// RSI register.
+		TCHAR m_szRsi[32];
+		/// RDI register.
+		TCHAR m_szRdi[32];
+		/// RSP register.
+		TCHAR m_szRsp[32];
+		/// RBP register.
+		TCHAR m_szRbp[32];
+		/// RIP register.
+		TCHAR m_szRip[32];
+		/// CS register.
+		TCHAR m_szSegCs[16];
+		/// DS register.
+		TCHAR m_szSegDs[16];
+		/// SS register.
+		TCHAR m_szSegSs[16];
+		/// ES register.
+		TCHAR m_szSegEs[16];
+		/// FS register.
+		TCHAR m_szSegFs[16];
+		/// GS register.
+		TCHAR m_szSegGs[16];
+		/// EFLAGS register.
+		TCHAR m_szEFlags[16];
+#else
+ #error CPU architecture is not supported.
+#endif
 	};
 
 	/// Handle to the process for which symbols are to be maintained.
@@ -369,13 +427,17 @@ private:
 	/// Get string representation of system exception code.
 	static PCTSTR ConvertExceptionCodeToString(DWORD dwException);
 	/// Adapter for ReadProcessMemory() function called from StackWalk64() function.
-	static BOOL CALLBACK ReadProcessMemoryProc64(HANDLE hProcess, DWORD64 pBaseAddress, PVOID pBuffer, DWORD nSize, PDWORD pNumberOfBytesRead);
+	static BOOL CALLBACK ReadProcessMemoryProc64(HANDLE hProcess, DWORD64 pBaseAddress, PVOID pBuffer, DWORD dwSize, PDWORD pdwNumberOfBytesRead);
 	/// Safely copy memory blocks.
 	static void SafeCopy(PVOID pDestination, PVOID pSource, DWORD dwSize);
 	/// Add new file to zip archive.
 	static BOOL AddFileToArchive(zipFile hZipFile, PCTSTR pszFilePath, PCTSTR pszFileName);
 	/// Adjust exception stack frame according to C++ exception.
 	BOOL AdjustExceptionStackFrame(void);
+	/// Inittialize stack from the thread/exception context.
+	static void InitStackFrame(LPSTACKFRAME64 pStackFrame, const CONTEXT* pContext);
+	/// Set stack frame structure to initial value.
+	static BOOL GetCurrentThreadContext(PCONTEXT pContext);
 	/// Set stack frame structure to initial value.
 	BOOL InitStackTrace(HANDLE hThread);
 	/// Set stack frame structure to initial value.
@@ -384,8 +446,12 @@ private:
 	void GetWin32StackTrace(CUTF8EncStream& rEncStream, DWORD dwThreadID, HANDLE hThread, PCSTR pszThreadStatus);
 	/// Get stack trace info for the interrupted thread.
 	void GetWin32StackTrace(CXmlWriter& rXmlWriter, DWORD dwThreadID, HANDLE hThread, PCTSTR pszThreadStatus);
-	/// Get error reason information.
-	void GetErrorReason(CXmlWriter& rXmlWriter);
+	/// Get error information in XML format.
+	BOOL GetErrorInfo(CXmlWriter& rXmlWriter);
+#ifdef _MANAGED
+	/// Get error information in XML format.
+	BOOL GetErrorInfo(CXmlWriter& rXmlWriter, CNetStackTrace* pNetStackTrace, gcroot<Exception^> exception, DWORD dwNestedLevel);
+#endif
 	/// Get register values.
 	void GetRegistersInfo(CXmlWriter& rXmlWriter);
 	/// Get system error information.
@@ -440,7 +506,7 @@ private:
 	void GetSysErrorInfo(CSysErrorInfo& rErrorInfo);
 	/// Get COM error reason.
 	BOOL GetComErrorInfo(CComErrorInfo& rErrorInfo);
-	/// Get crash location and reason.
+	/// Get crash location and error reason.
 	BOOL GetErrorInfo(CErrorInfo& rErrorInfo);
 	/// Get string with CPU registers for the crash.
 	void GetRegistersValues(CRegistersValues& rRegVals);
@@ -457,13 +523,15 @@ private:
 	/// Get string with CPU registers for the crash.
 	void GetRegistersString(CUTF8EncStream& rEncStream);
 	/// Get crash location and reason.
-	void GetWin32ErrorString(CUTF8EncStream& rEncStream);
+	BOOL GetWin32ErrorString(CUTF8EncStream& rEncStream);
 #ifdef _MANAGED
 	/// Get crash location and reason.
-	void GetNetErrorString(CUTF8EncStream& rEncStream);
+	BOOL GetNetErrorString(CUTF8EncStream& rEncStream);
+	/// Get crash location and reason.
+	BOOL GetNetErrorStringEx(CUTF8EncStream& rEncStream);
 #endif
 	/// Get crash location and reason.
-	void GetErrorString(CUTF8EncStream& rEncStream);
+	BOOL GetErrorString(CUTF8EncStream& rEncStream);
 	/// Get system error description.
 	void GetSysErrorString(CUTF8EncStream& rEncStream);
 	/// Get COM error reason.
@@ -478,6 +546,12 @@ private:
 	static void GetEnvironmentStrings(CUTF8EncStream& rEncStream);
 	/// Get process environment strings.
 	static void GetEnvironmentStrings(CXmlWriter& rXmlWriter);
+	/// Get the list of computer IP addresses.
+	static void GetComputerIPs(CStrStream& rStream);
+	/// Get the list of computer IP addresses.
+	static void GetComputerIPs(CUTF8EncStream& rEncStream);
+	/// Get the list of computer IP addresses.
+	static void GetComputerIPs(CXmlWriter& rXmlWriter);
 	/// Get date-time string.
 	void GetDateTime(PTSTR pszDateTime, DWORD dwDateTimeSize);
 	/// Get time-stamp string.
@@ -509,6 +583,8 @@ public:
 	BOOL ArchiveReportFiles(PCTSTR pszReportFolder, PCTSTR pszArchiveFileName);
 	/// Writes crash log and mini-dump to zip archive.
 	BOOL WriteReportArchive(PCTSTR pszArchiveFileName, CEnumProcess* pEnumProcess);
+	/// Append file to the report.
+	static BOOL AppendFileToReport(PCTSTR pszArchiveFileName, PCTSTR pszFileName);
 	/// Write report files to a folder.
 	BOOL WriteReportFiles(PCTSTR pszFolderName, CEnumProcess* pEnumProcess);
 	/// Writes crash log to file.
@@ -529,6 +605,8 @@ public:
 	BOOL GetFirstStackTraceEntry(CStackTraceEntry& rEntry, HANDLE hThread = NULL);
 	/// Get structured representation of lower call stack entry.
 	BOOL GetNextStackTraceEntry(CStackTraceEntry& rEntry);
+	/// Check the stack trace for a certain module
+	BOOL CheckStackTrace(HMODULE hModule);
 #ifdef _MANAGED
 	/// Get structured representation of topmost call stack entry.
 	BOOL GetFirstStackTraceEntry(CNetStackTrace::CNetStackTraceEntry& rEntry);
@@ -538,13 +616,17 @@ public:
 	/// Get string with CPU registers for the crash.
 	void GetRegistersString(PTSTR pszRegString, DWORD dwRegStringSize);
 	/// Get crash location and error reason.
-	void GetWin32ErrorString(CStrStream& rStream);
+	BOOL GetWin32ErrorString(CStrStream& rStream);
 #ifdef _MANAGED
+	/// Return true if .NET exception info is valid.
+	BOOL IsNetException(void) const;
 	/// Get crash location and error reason.
-	void GetNetErrorString(CStrStream& rStream);
+	BOOL GetNetErrorString(CStrStream& rStream);
+	/// Get crash location and error reason, including inner exception info.
+	BOOL GetNetErrorStringEx(CStrStream& rStream);
 #endif
 	/// Get crash location and error reason.
-	void GetErrorString(CStrStream& rStream);
+	BOOL GetErrorString(CStrStream& rStream);
 	/// Get description of system CPUs.
 	static void GetCpuString(CStrStream& rStream);
 	/// Get user-friendly module version string.
@@ -566,14 +648,23 @@ inline CSymEngine::CStackWalkContext::CStackWalkContext(void)
  * @param hProcess - handle to the process.
  * @param pBaseAddress - base of memory area.
  * @param pBuffer - data buffer.
- * @param nSize - number of bytes to read.
- * @param pNumberOfBytesRead - number of bytes read.
+ * @param dwSize - number of bytes to read.
+ * @param pdwNumberOfBytesRead - number of bytes read.
  * @return if the function succeeds, the return value is nonzero.
  */
-inline BOOL CALLBACK CSymEngine::ReadProcessMemoryProc64(HANDLE hProcess, DWORD64 pBaseAddress, PVOID pBuffer, DWORD nSize, PDWORD pNumberOfBytesRead)
+inline BOOL CALLBACK CSymEngine::ReadProcessMemoryProc64(HANDLE hProcess, DWORD64 pBaseAddress, PVOID pBuffer, DWORD dwSize, PDWORD pdwNumberOfBytesRead)
 {
 	hProcess;
-	return ReadProcessMemory(GetCurrentProcess(), (PVOID)pBaseAddress, pBuffer, nSize, pNumberOfBytesRead);
+#if defined _M_IX86
+	return ReadProcessMemory(GetCurrentProcess(), (PVOID)pBaseAddress, pBuffer, dwSize, pdwNumberOfBytesRead);
+#elif defined _M_X64
+	size_t nNumberOfBytesRead;
+	BOOL bResult = ReadProcessMemory(GetCurrentProcess(), (PVOID)pBaseAddress, pBuffer, dwSize, &nNumberOfBytesRead);
+	*pdwNumberOfBytesRead = (DWORD)nNumberOfBytesRead;
+	return bResult;
+#else
+ #error CPU architecture is not supported.
+#endif
 }
 
 /**
@@ -584,10 +675,31 @@ inline BOOL CSymEngine::IsMiniDumpSupported(void) const
 	return (FMiniDumpWriteDump != NULL);
 }
 
-inline CSymEngine::CScreenShot::~CScreenShot(void)
+inline CSymEngine::CScreenShot::CBitmapInfo::CBitmapInfo(void)
+{
+	ZeroMemory(this, sizeof(*this));
+}
+
+inline CSymEngine::CScreenShot::CBitmapInfo::~CBitmapInfo(void)
+{
+	Destroy();
+}
+
+inline void CSymEngine::CScreenShot::CBitmapInfo::Free(void)
+{
+	Destroy();
+	ZeroMemory(this, sizeof(*this));
+}
+
+inline void CSymEngine::CScreenShot::CBitmapInfo::Destroy(void)
 {
 	delete[] (PBYTE)m_pBitsArray;
 	delete[] (PBYTE)m_pBmpInfo;
+}
+
+inline CSymEngine::CScreenShot::~CScreenShot(void)
+{
+	delete[] m_arrBitmaps;
 }
 
 inline CSymEngine::CSysErrorInfo::CSysErrorInfo(void)
@@ -629,18 +741,20 @@ inline void CSymEngine::GetReportFileName(PTSTR pszFileName, DWORD dwBufferSize)
 
 /**
  * @param rStream - stream object.
+ * @return true if error info is not empty.
  */
-inline void CSymEngine::GetErrorString(CStrStream& rStream)
+inline BOOL CSymEngine::GetErrorString(CStrStream& rStream)
 {
-	GetWin32ErrorString(rStream);
+	return GetWin32ErrorString(rStream);
 }
 
 /**
  * @param rEncStream - UTF-8 encoder object.
+ * @return true if error info is not empty.
  */
-inline void CSymEngine::GetErrorString(CUTF8EncStream& rEncStream)
+inline BOOL CSymEngine::GetErrorString(CUTF8EncStream& rEncStream)
 {
-	GetWin32ErrorString(rEncStream);
+	return GetWin32ErrorString(rEncStream);
 }
 
 #endif
@@ -701,6 +815,14 @@ inline void CSymEngine::GetNetThreadsList(CUTF8EncStream& rEncStream)
 inline void CSymEngine::GetNetThreadsList(CXmlWriter& rXmlWriter)
 {
 	rXmlWriter; // TBD
+}
+
+/**
+ * @return true if .NET exception info is valid.
+ */
+inline BOOL CSymEngine::IsNetException(void) const
+{
+	return (NetThunks::IsNetException() && m_pNetStackTrace != NULL);
 }
 
 #endif

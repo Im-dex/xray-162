@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Transfer Progress dialog.
@@ -99,7 +99,8 @@ static void TransferStatusPane_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT c
 	{
 	case IDCANCEL:
 		HWND hwndParent = GetParent(hwnd);
-		EndDialog(hwndParent, IDCANCEL);
+		int nResult = g_pTransferThreadParams->GetErrorCode() == ERROR_SUCCESS;
+		EndDialog(hwndParent, nResult);
 		break;
 	}
 }
@@ -339,7 +340,7 @@ INT_PTR CALLBACK TransferProgressDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,
 			// on Windows 98 this causes an access violation in user32.dll
 			// why does it crash? - because this is Windows 98
 			//DestroyWindow(hwndPane);
-			// rather then destroy the window, let's hide it
+			// rather than destroying the window, let's hide it
 			ShowWindow(hwndPane, SW_HIDE);
 			// stop progress animation
 			StopProgressAnimation(hwndPane);
@@ -353,7 +354,7 @@ INT_PTR CALLBACK TransferProgressDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam,
 				SendMessage(hwndPane, DM_SETDEFID, IDCANCEL, 0);
 			}
 			else
-				EndDialog(hwndDlg, IDCANCEL);
+				EndDialog(hwndDlg, FALSE);
 		}
 		return TRUE;
 	default:

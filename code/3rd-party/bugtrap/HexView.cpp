@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Hex view control class.
@@ -45,9 +45,9 @@ void CHexView::InitVars(void)
 
 /**
  * @param hdc - drawing conHex.
- * @param prcPaint - the rectangle in which the painting is requested.
+ * @param prcPaint - the rectangle where the painting is requested.
  */
-void CHexView::DrawHexView(HDC hdc, RECT* prcPaint)
+void CHexView::DrawHexView(HDC hdc, const RECT* prcPaint)
 {
 	_ASSERTE(g_pResManager != NULL);
 	if (prcPaint == NULL)
@@ -336,7 +336,7 @@ LRESULT CALLBACK CHexView::HexViewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 	int zDelta, zTotal, nScrollCode, nScrollBarType;
 	LONG lWindowStyle;
 
-	CHexView* _this  = (CHexView*)GetWindowLongPtr(hwnd, GWL_USERDATA);
+	CHexView* _this  = (CHexView*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	_ASSERTE(_this != NULL);
 	switch(uMsg)
 	{
@@ -455,7 +455,7 @@ void CHexView::Attach(HWND hwnd)
 
 	m_hwnd = hwnd;
 	m_pfnOldHexViewWndProc = SubclassWindow(hwnd, HexViewWndProc);
-	SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	// Preserve original window styles that could be modified by SetScrollInfo().
 	m_lOldStyle = GetWindowLong(hwnd, GWL_STYLE);
 	ResizeHexView(TRUE);
@@ -467,7 +467,7 @@ void CHexView::Detach(void)
 	if (m_pfnOldHexViewWndProc)
 	{
 		SubclassWindow(m_hwnd, m_pfnOldHexViewWndProc);
-		SetWindowLongPtr(m_hwnd, GWL_USERDATA, NULL);
+		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, NULL);
 
 		SCROLLINFO sinfo;
 		ZeroMemory(&sinfo, sizeof(sinfo));

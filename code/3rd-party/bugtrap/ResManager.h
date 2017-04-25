@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Custom resources manager.
@@ -13,6 +13,8 @@
  */
 
 #pragma once
+
+#define SEND_MSG_TIMEOUT              500
 
 /**
  * @addtogroup ResManager Custom resource manager.
@@ -72,6 +74,10 @@ private:
 	CResManager(const CResManager& rResManager);
 	/// Protects the class from being accidentally copied.
 	CResManager& operator=(const CResManager& rResManager);
+	/// True if app icon was loaded from the resources and should be destroyed.
+	bool m_bDestroyBigAppIcon;
+	/// True if app icon was loaded from the resources and should be destroyed.
+	bool m_bDestroySmallAppIcon;
 };
 
 /** @} */

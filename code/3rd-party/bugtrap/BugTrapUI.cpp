@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Common BugTrap UI routines.
@@ -22,13 +22,22 @@
 #include "MainDlg.h"
 #include "SimpleDlg.h"
 #include "SendMailDlg.h"
+#include "DescribeErrorDlg.h"
 #include "Globals.h"
 #include "Encoding.h"
 #include "MemStream.h"
+#include "VersionInfoString.h"
+
+#ifdef _MANAGED
+#include "NetThunks.h"
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+/// Flag indicating whatever UI should be visible.
+static BOOL g_bShowUI = FALSE;
 
 /**
  * @addtogroup BugTrapUI BugTrap Graphical User Interface
@@ -62,6 +71,24 @@ void GetDefaultMailURL(PTSTR pszURLString, DWORD dwURLSize)
 }
 
 /**
+ * @brief Return true if standard MAPI message editor should be shown.
+ * @return true if standard MAPI message editor should be shown.
+ */
+static inline BOOL ShowMapiMessageEditor(void)
+{
+	return (g_bShowUI && (g_dwFlags & BTF_EDITMAIL) == 0);
+}
+
+/**
+ * @brief Return true if custom BugTrap message editor should be shown.
+ * @return true if custom BugTrap message editor should be shown.
+ */
+static inline BOOL ShowBtMessageEditor(void)
+{
+	return (g_bShowUI && (g_dwFlags & BTF_EDITMAIL) != 0);
+}
+
+/**
  * @brief Send e-mail message through Simple MPI facilities.
  * @param hwndParent - parent window handle (valid if user interface is enabled).
  * @param pszSubject - subject text.
@@ -73,7 +100,7 @@ BOOL SendEMail(HWND hwndParent, PCTSTR pszSubject, PCTSTR pszMessage)
 	if (*g_szSupportEMail == _T('\0'))
 		return FALSE;
 	CWaitCursor wait;
-	if (g_eActivityType == BTA_SHOWUI)
+	if (g_bShowUI)
 		wait.BeginWait();
 	if (g_pMapiSession == NULL)
 	{
@@ -88,7 +115,7 @@ BOOL SendEMail(HWND hwndParent, PCTSTR pszSubject, PCTSTR pszMessage)
 			if (! g_pMapiSession->Logon(g_szMailProfile, g_szMailPassword))
 				return FALSE;
 		}
-		else if (g_eActivityType == BTA_SHOWUI)
+		else if (g_bShowUI)
 		{
 			wait.EndWait();
 			if (! g_pMapiSession->Logon(hwndParent))
@@ -111,57 +138,69 @@ BOOL SendEMail(HWND hwndParent, PCTSTR pszSubject, PCTSTR pszMessage)
 		message.GetAttachments().AddItem(g_szInternalReportFilePath);
 		message.GetAttachmentTitles().AddItem(PathFindFileName(g_szInternalReportFilePath));
 	}
-	BOOL bShowMessageEditor = g_eActivityType == BTA_SHOWUI && (g_dwFlags & BTF_EDITMAIL) == 0;
-	return g_pMapiSession->Send(message, bShowMessageEditor, hwndParent);
+	return g_pMapiSession->Send(message, ShowMapiMessageEditor(), hwndParent);
 }
 
 /**
  * @brief Send bug report through e-mail either using custom or system dialogs.
  * @param hwndParent - parent window handle.
+ * @return true if operation was completed successfully.
  */
-void SendReport(HWND hwndParent)
+BOOL MailTempReport(HWND hwndParent)
 {
-	if (*g_szSupportEMail)
+	if (*g_szSupportEMail == _T('\0'))
+		return FALSE;
+	TCHAR szSubject[MAX_PATH];
+	GetDefaultMailSubject(szSubject, countof(szSubject));
+	return SendEMail(hwndParent, szSubject, NULL);
+}
+
+/**
+ * @brief Send bug report through e-mail either using custom or system dialogs.
+ * @param hwndParent - parent window handle.
+ * @return true if operation was completed successfully.
+ */
+BOOL MailTempReportEx(HWND hwndParent)
+{
+	if (*g_szSupportEMail == _T('\0'))
+		return FALSE;
+	BOOL bResult;
+	if (ShowBtMessageEditor())
 	{
-		BOOL bResult;
-		if (g_eActivityType == BTA_SHOWUI && (g_dwFlags & BTF_EDITMAIL) != 0)
+		bResult = DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_SEND_MAIL_DLG), hwndParent, SendMailDlgProc) == IDOK;
+	}
+	else if (g_dwFlags & BTF_ATTACHREPORT)
+	{
+		bResult = MailTempReport(hwndParent);
+	}
+	else
+	{
+		CWaitCursor wait;
+		if (g_bShowUI)
+			wait.BeginWait();
+		TCHAR szURLString[MAX_PATH];
+		GetDefaultMailURL(szURLString, countof(szURLString));
+		bResult = ShellExecute(NULL, _T("open"), szURLString, NULL, NULL, SW_SHOWDEFAULT) == ERROR_SUCCESS;
+	}
+	if (g_bShowUI)
+	{
+		TCHAR szProjectName[32], szMessageText[128];
+		LoadString(g_hInstance, IDS_BUGTRAP_NAME, szProjectName, countof(szProjectName));
+		if (bResult)
 		{
-			bResult = DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_SEND_MAIL_DLG), hwndParent, SendMailDlgProc) == IDOK;
+			SetForegroundWindow(hwndParent);
+			LoadString(g_hInstance, IDS_STATUS_REPORTSENT, szMessageText, countof(szMessageText));
+			::MessageBox(hwndParent, szMessageText, szProjectName, MB_ICONINFORMATION | MB_OK);
+			EndDialog(hwndParent, FALSE);
 		}
-		else if (g_dwFlags & BTF_ATTACHREPORT)
+		else if ((g_dwFlags & BTF_EDITMAIL) == 0)
 		{
-			TCHAR szSubject[MAX_PATH];
-			GetDefaultMailSubject(szSubject, countof(szSubject));
-			bResult = SendEMail(hwndParent, szSubject, NULL);
-		}
-		else
-		{
-			CWaitCursor wait;
-			if (g_eActivityType == BTA_SHOWUI)
-				wait.BeginWait();
-			TCHAR szURLString[MAX_PATH];
-			GetDefaultMailURL(szURLString, countof(szURLString));
-			bResult = ShellExecute(NULL, _T("open"), szURLString, NULL, NULL, SW_SHOWDEFAULT) == ERROR_SUCCESS;
-		}
-		if (g_eActivityType == BTA_SHOWUI)
-		{
-			TCHAR szProjectName[32], szMessageText[128];
-			LoadString(g_hInstance, IDS_BUGTRAP_NAME, szProjectName, countof(szProjectName));
-			if (bResult)
-			{
-				SetForegroundWindow(hwndParent);
-				LoadString(g_hInstance, IDS_STATUS_REPORTSENT, szMessageText, countof(szMessageText));
-				::MessageBox(hwndParent, szMessageText, szProjectName, MB_ICONINFORMATION | MB_OK);
-				EndDialog(hwndParent, FALSE);
-			}
-			else if ((g_dwFlags & BTF_EDITMAIL) == 0)
-			{
-				SetForegroundWindow(hwndParent);
-				LoadString(g_hInstance, IDS_ERROR_TRANSFERFAILED, szMessageText, countof(szMessageText));
-				::MessageBox(hwndParent, szMessageText, szProjectName, MB_ICONERROR | MB_OK);
-			}
+			SetForegroundWindow(hwndParent);
+			LoadString(g_hInstance, IDS_ERROR_TRANSFERFAILED, szMessageText, countof(szMessageText));
+			::MessageBox(hwndParent, szMessageText, szProjectName, MB_ICONERROR | MB_OK);
 		}
 	}
+	return bResult;
 }
 
 /// Protocol message type.
@@ -256,7 +295,7 @@ static DWORD WaitForPendingSocketRequest(CTransferThreadParams* pTransferThreadP
  * @param pTransferThreadParams - thread parameters.
  * @return error code.
  */
-static DWORD WSASubmitReport(PCTSTR pszHostName, CTransferThreadParams* pTransferThreadParams)
+static DWORD WSASendReport(PCTSTR pszHostName, CTransferThreadParams* pTransferThreadParams)
 {
 	typedef BOOL (WINAPI *PFCancelIo)(HANDLE hFile); /// Type definition of pointer to CancelIO() function.
 	HMODULE hKernelDll = GetModuleHandle(_T("KERNEL32.DLL"));
@@ -267,24 +306,23 @@ static DWORD WSASubmitReport(PCTSTR pszHostName, CTransferThreadParams* pTransfe
 	HANDLE hFile = CreateFile(g_szInternalReportFilePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile != INVALID_HANDLE_VALUE)
 	{
-		const int nAppNameSize = sizeof(DWORD) + countof(g_szAppName) * sizeof(DWORD);
-		const int nAppVersionSize = sizeof(DWORD) + countof(g_szAppVersion) * sizeof(DWORD);
-		const int nReportFileExtensionSize = sizeof(DWORD) + 8 * sizeof(DWORD);
-		const int nNotificationEMailSize = sizeof(DWORD) + countof(g_szNotificationEMail) * sizeof(DWORD);
-		const int nMaxHeaderSize =
+		const DWORD dwAppNameSize = sizeof(DWORD) + countof(g_szAppName) * sizeof(DWORD);
+		const DWORD dwAppVersionSize = sizeof(DWORD) + countof(g_szAppVersion) * sizeof(DWORD);
+		const DWORD dwReportFileExtensionSize = sizeof(DWORD) + 8 * sizeof(DWORD);
+		const DWORD dwNotificationEMailSize = sizeof(DWORD) + countof(g_szNotificationEMail) * sizeof(DWORD);
+		const DWORD dwMaxHeaderSize =
 						sizeof(DWORD) +            // Protocol signature
 						sizeof(DWORD) +            // Data size
 						sizeof(BYTE) +             // Message type
 						sizeof(DWORD) +            // Message flags
-						nAppNameSize +             // Application name
-						nAppVersionSize +          // Application version
-						nReportFileExtensionSize + // Report file extension
-						nNotificationEMailSize +   // Notification e-mail
-						sizeof(BYTE);              // Report data type
+						dwAppNameSize +             // Application name
+						dwAppVersionSize +          // Application version
+						dwReportFileExtensionSize + // Report file extension
+						dwNotificationEMailSize;    // Notification e-mail
 
 		DWORD dwFileSize = GetFileSize(hFile, NULL);
-		int nBufferSize = max(nMaxHeaderSize, min(dwFileSize, g_dwMaxBufferSize));
-		PBYTE pBuffer = new BYTE[nBufferSize];
+		DWORD dwBufferSize = max(dwMaxHeaderSize, min(dwFileSize, g_dwMaxBufferSize));
+		PBYTE pBuffer = new BYTE[dwBufferSize];
 		if (pBuffer)
 		{
 			WSADATA wd;
@@ -359,7 +397,7 @@ static DWORD WSASubmitReport(PCTSTR pszHostName, CTransferThreadParams* pTransfe
 							goto end; // Internal error.
 						}
 
-						int nHeaderPosition = 0;
+						size_t nHeaderPosition = 0;
 
 						// Protocol signature.
 						*(PDWORD)(pBuffer + nHeaderPosition) = g_dwProtocolSignature;
@@ -378,14 +416,14 @@ static DWORD WSASubmitReport(PCTSTR pszHostName, CTransferThreadParams* pTransfe
 						nHeaderPosition += sizeof(DWORD);
 
 						// Application name.
-						if (! WriteBinaryString(EncStream, g_szAppName, pBuffer, nHeaderPosition, nBufferSize))
+						if (! WriteBinaryString(EncStream, g_szAppName, pBuffer, nHeaderPosition, dwBufferSize))
 						{
 							dwErrorCode = ERROR_INTERNAL_ERROR;
 							goto end; // Internal error.
 						}
 
 						// Application version.
-						if (! WriteBinaryString(EncStream, g_szAppVersion, pBuffer, nHeaderPosition, nBufferSize))
+						if (! WriteBinaryString(EncStream, g_szAppVersion, pBuffer, nHeaderPosition, dwBufferSize))
 						{
 							dwErrorCode = ERROR_INTERNAL_ERROR;
 							goto end; // Internal error.
@@ -393,28 +431,28 @@ static DWORD WSASubmitReport(PCTSTR pszHostName, CTransferThreadParams* pTransfe
 
 						// Report file extension.
 						PCTSTR pszReportFileExtension = CSymEngine::GetReportFileExtension();
-						if (! WriteBinaryString(EncStream, pszReportFileExtension, pBuffer, nHeaderPosition, nBufferSize))
+						if (! WriteBinaryString(EncStream, pszReportFileExtension, pBuffer, nHeaderPosition, dwBufferSize))
 						{
 							dwErrorCode = ERROR_INTERNAL_ERROR;
 							goto end; // Internal error.
 						}
 
 						// Notification e-mail.
-						if (! WriteBinaryString(EncStream, g_szNotificationEMail, pBuffer, nHeaderPosition, nBufferSize))
+						if (! WriteBinaryString(EncStream, g_szNotificationEMail, pBuffer, nHeaderPosition, dwBufferSize))
 						{
 							dwErrorCode = ERROR_INTERNAL_ERROR;
 							goto end; // Internal error.
 						}
 
-						_ASSERTE(nHeaderPosition <= nBufferSize);
+						_ASSERTE((DWORD)nHeaderPosition <= dwBufferSize);
 						// Store real data size.
-						((PDWORD)pBuffer)[1] = nHeaderPosition + dwFileSize;
+						((PDWORD)pBuffer)[1] = (DWORD)nHeaderPosition + dwFileSize;
 
 						WSAOVERLAPPED ov;
 						ZeroMemory(&ov, sizeof(ov));
 						ov.hEvent = hCompletionEvent;
 
-						DWORD dwPacketSize = nHeaderPosition;
+						DWORD dwPacketSize = (DWORD)nHeaderPosition;
 						for (;;)
 						{
 							WSABUF buf;
@@ -438,7 +476,7 @@ static DWORD WSASubmitReport(PCTSTR pszHostName, CTransferThreadParams* pTransfe
 								buf.buf += dwProcessedNumber;
 								buf.len -= dwProcessedNumber;
 							}
-							if (! ReadFile(hFile, pBuffer, nBufferSize, &dwPacketSize, NULL) || dwPacketSize == 0)
+							if (! ReadFile(hFile, pBuffer, dwBufferSize, &dwPacketSize, NULL) || dwPacketSize == 0)
 							{
 								if (hwndSink)
 									PostMessage(hwndSink, UM_CHECKINGERRORSTATUS, 0, 0);
@@ -687,7 +725,7 @@ static DWORD WaitForPendingInternetRequest(CTransferThreadParams* pTransferThrea
  * @param pTransferThreadParams - thread parameters.
  * @return error code.
  */
-static DWORD HTTPSubmitReport(PCTSTR pszSupportUrl, CTransferThreadParams* pTransferThreadParams)
+static DWORD HTTPSendReport(PCTSTR pszSupportUrl, CTransferThreadParams* pTransferThreadParams)
 {
 #define MESSAGE_HEADER                    _T("Content-Type: multipart/form-data; boundary=") _T(SECTION_BOUNDARY)
 
@@ -719,8 +757,8 @@ static DWORD HTTPSubmitReport(PCTSTR pszSupportUrl, CTransferThreadParams* pTran
 		if (hFile != INVALID_HANDLE_VALUE)
 		{
 			DWORD dwFileSize = GetFileSize(hFile, NULL);
-			DWORD nBufferSize = min(dwFileSize, g_dwMaxBufferSize);
-			PBYTE pBuffer = new BYTE[nBufferSize];
+			DWORD dwBufferSize = min(dwFileSize, g_dwMaxBufferSize);
+			PBYTE pBuffer = new BYTE[dwBufferSize];
 			if (pBuffer != NULL)
 			{
 				TCHAR szUserName[INTERNET_MAX_USER_NAME_LENGTH],
@@ -812,7 +850,7 @@ static DWORD HTTPSubmitReport(PCTSTR pszSupportUrl, CTransferThreadParams* pTran
 									const BYTE* pFormData = MemStream.GetBuffer();
 									if (pFormData != NULL)
 									{
-										DWORD dwFormDataLength = MemStream.GetLength();
+										DWORD dwFormDataLength = (DWORD)MemStream.GetLength();
 										_ASSERTE(dwFormDataLength > 0);
 
 										INTERNET_BUFFERS InetBuf;
@@ -866,7 +904,7 @@ static DWORD HTTPSubmitReport(PCTSTR pszSupportUrl, CTransferThreadParams* pTran
 												if (bDataEnd)
 													break;
 												DWORD dwBytesRead = 0;
-												if (! ReadFile(hFile, pBuffer, nBufferSize, &dwBytesRead, NULL) || dwBytesRead == 0)
+												if (! ReadFile(hFile, pBuffer, dwBufferSize, &dwBytesRead, NULL) || dwBytesRead == 0)
 												{
 													bDataEnd = TRUE;
 													pBytes = (const BYTE*)szTrailer;
@@ -1010,11 +1048,11 @@ static UINT CALLBACK TransferThreadProc(PVOID pParam)
 		if (dwErrorCode == ERROR_SUCCESS)
 		{
 			static const TCHAR szHttpPrefix[] = _T("http://");
-			static const int nHttpPrefixLength = countof(szHttpPrefix) - 1;
+			static const size_t nHttpPrefixLength = countof(szHttpPrefix) - 1;
 			if (_tcsnicmp(g_szSupportHost, szHttpPrefix, nHttpPrefixLength) == 0)
-				dwErrorCode = HTTPSubmitReport(g_szSupportHost, pTransferThreadParams);
+				dwErrorCode = HTTPSendReport(g_szSupportHost, pTransferThreadParams);
 			else
-				dwErrorCode = WSASubmitReport(g_szSupportHost, pTransferThreadParams);
+				dwErrorCode = WSASendReport(g_szSupportHost, pTransferThreadParams);
 		}
 		pTransferThreadParams->PostCompletionMessage();
 		return dwErrorCode;
@@ -1037,36 +1075,66 @@ HANDLE StartTransferThread(CTransferThreadParams* pTransferThreadParams)
 /**
  * Close transfer thread handle and free used memory.
  * @param hTransferThread - thread handle.
+ * @return completion code.
  */
-void CloseTransferThread(HANDLE hTransferThread)
+DWORD CloseTransferThread(HANDLE hTransferThread)
 {
+	DWORD dwErrorCode;
 	if (hTransferThread)
 	{
 		WaitForSingleObject(hTransferThread, INFINITE);
+		GetExitCodeThread(hTransferThread, &dwErrorCode);
 		CloseHandle(hTransferThread);
 	}
+	else
+		dwErrorCode = ERROR_INTERNAL_ERROR;
+	return dwErrorCode;
 }
 
 /**
- * @brief Submit bug report through network protocol.
+ * @brief Submit bug report over network protocol.
  * @param hwndParent - parent window handle (valid if user interface is enabled).
+ * @return true if operation was completed successfully.
  */
-void SubmitReport(HWND hwndParent)
+BOOL SendTempReport(HWND hwndParent)
 {
+	BOOL bResult;
 	if (*g_szSupportHost && g_nSupportPort)
 	{
-		if (g_eActivityType == BTA_SHOWUI)
+		if (g_bShowUI)
 		{
-			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_TRANSFERPROGRESS_DLG), hwndParent, TransferProgressDlgProc);
+			if ((g_dwFlags & (BTF_DETAILEDMODE | BTF_DESCRIBEERROR)) == (BTF_DETAILEDMODE | BTF_DESCRIBEERROR))
+				bResult = (BOOL)DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DESCRIBE_ERROR_DLG), hwndParent, DescribeErrorDlgProc);
+			else
+				bResult = TRUE;
+			if (bResult)
+				bResult = (BOOL)DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_TRANSFERPROGRESS_DLG), hwndParent, TransferProgressDlgProc);
 			EndDialog(hwndParent, FALSE);
 		}
 		else
 		{
 			CTransferThreadParams TransferThreadParams;
-			HANDLE hTransferThread = StartTransferThread(&TransferThreadParams);
-			CloseTransferThread(hTransferThread);
+			bResult = TransferThreadProc(&TransferThreadParams) == ERROR_SUCCESS;
 		}
 	}
+	else
+		bResult = FALSE;
+	return bResult;
+}
+
+/**
+ * @brief E-mail error report or send it over network protocol.
+ * @param hwndParent - parent window handle (valid if user interface is enabled).
+ * @return true if operation was completed successfully.
+ */
+BOOL SubmitTempReport(HWND hwndParent)
+{
+	if (*g_szSupportHost && g_nSupportPort)
+		return SendTempReport(hwndParent);
+	else if (*g_szSupportEMail)
+		return MailTempReportEx(hwndParent);
+	else
+		return FALSE;
 }
 
 /**
@@ -1144,83 +1212,169 @@ void InitAbout(HWND hwnd)
 }
 
 /**
+ * @brief Generate report file name based on user criteria.
+ * @param pszFileName - user-supplied file name.
+ * @param szFileNameBuffer - file name buffer that is used to store default report name.
+ * @return pointer to generated report name.
+ */
+static PCTSTR GetReportFileName(PCTSTR pszFileName, PTSTR szFileNameBuffer)
+{
+	_ASSERTE(g_pSymEngine != NULL);
+	bool bGenerateFileName = pszFileName == NULL || *pszFileName == _T('\0');
+	if (bGenerateFileName || ! PathIsRoot(pszFileName))
+	{
+		PCTSTR pszReportFolder = BT_GetReportFilePath();
+		if (bGenerateFileName)
+		{
+			TCHAR szDefaultReportName[MAX_PATH];
+			g_pSymEngine->GetReportFileName(szDefaultReportName, countof(szDefaultReportName));
+			PathCombine(szFileNameBuffer, pszReportFolder, szDefaultReportName);
+		}
+		else
+			PathCombine(szFileNameBuffer, pszReportFolder, pszFileName);
+		pszFileName = szFileNameBuffer;
+	}
+	return pszFileName;
+}
+
+/**
+ * @brief Save report to a file.
+ * @param pszFileName - snapshot file name or NULL, if you want to generate file name automatically.
+ * @return true if operation has been completed successfully.
+ */
+BOOL SaveReport(PCTSTR pszFileName)
+{
+	// Generate report file name when necessary.
+	TCHAR szReportFilePath[MAX_PATH];
+	pszFileName = GetReportFileName(pszFileName, szReportFilePath);
+	// Create parent report folder.
+	CreateParentFolder(pszFileName);
+	// Store report files to user supplied location.
+	return g_pSymEngine->WriteReport(pszFileName, g_pEnumProc);
+}
+
+/**
+ * @brief Create temporary report file.
+ * @return true if operation has been completed successfully.
+ */
+static BOOL CreateTempReport(void)
+{
+	BOOL bResult;
+	// Scope of progress dialog.
+	CWaitDialog wait;
+	if (g_bShowUI)
+		wait.BeginWait(NULL);
+
+	TCHAR szReportFileName[MAX_PATH];
+	g_pSymEngine->GetReportFileName(szReportFileName, countof(szReportFileName));
+	// Generate full report file name.
+	GetTempPath(countof(g_szInternalReportFolder), g_szInternalReportFolder);
+	PathCombine(g_szInternalReportFilePath, g_szInternalReportFolder, szReportFileName);
+	if (g_dwFlags & BTF_DETAILEDMODE)
+	{
+		// Generate report files in temporary location.
+		CreateTempFolder(g_szInternalReportFolder, countof(g_szInternalReportFolder));
+		bResult = g_pSymEngine->WriteReportFiles(g_szInternalReportFolder, g_pEnumProc) &&
+		          g_pSymEngine->ArchiveReportFiles(g_szInternalReportFolder, g_szInternalReportFilePath);
+	}
+	else
+	{
+		// Create single log file in system temporary folder.
+		bResult = g_pSymEngine->WriteLog(g_szInternalReportFilePath, g_pEnumProc);
+	}
+	return bResult;
+}
+
+/**
+ * @brief Remove temporarily generated report files.
+ */
+static void DeleteTempReport(void)
+{
+	if (g_dwFlags & BTF_DETAILEDMODE)
+	{
+		DeleteFolder(g_szInternalReportFolder);
+		*g_szInternalReportFolder = _T('\0');
+	}
+	DeleteFile(g_szInternalReportFilePath);
+	*g_szInternalReportFilePath = _T('\0');
+}
+
+/**
+ * @brief Submit bug report over network protocol.
+ * @return true if operation was completed successfully.
+ */
+BOOL SendReport(void)
+{
+	if (*g_szSupportHost == _T('\0') || g_nSupportPort == 0)
+		return FALSE;
+	if (! CreateTempReport())
+		return FALSE;
+	BOOL bResult = SendTempReport(NULL);
+	DeleteTempReport();
+	return bResult;
+}
+
+/**
+ * @brief Send bug report through e-mail either using custom or system dialogs.
+ * @param hwndParent - parent window handle.
+ * @return true if operation was completed successfully.
+ */
+BOOL MailReport(void)
+{
+	if (*g_szSupportEMail == _T('\0'))
+		return FALSE;
+	if (! CreateTempReport())
+		return FALSE;
+	BOOL bResult = MailTempReport(NULL);
+	DeleteTempReport();
+	return bResult;
+}
+
+/**
  * @brief Perform BugTrap action (show dialog, submit report, etc.).
  */
 static void ExecuteHandlerAction(void)
 {
-	TCHAR szReportFileName[MAX_PATH];
-	g_pSymEngine->GetReportFileName(szReportFileName, countof(szReportFileName));
 	if (g_eActivityType == BTA_SAVEREPORT)
 	{
-		// Use user defined report path.
-		_tcscpy_s(g_szInternalReportFilePath, countof(g_szInternalReportFilePath), BT_GetReportFilePath());
-		CreateFolder(g_szInternalReportFilePath);
-		PathAppend(g_szInternalReportFilePath, szReportFileName);
-		// Store report files to user supplied location.
-		g_pSymEngine->WriteReport(g_szInternalReportFilePath, g_pEnumProc);
-		// Clear global variables.
-		*g_szInternalReportFilePath = _T('\0');
+		SaveReport(NULL);
+		return;
 	}
-	else
+	// Create temporary report file.
+	BOOL bResult = CreateTempReport();
+	if (bResult)
 	{
-		BOOL bResult;
+		// Process remaining actions.
+		switch (g_eActivityType)
 		{
-			CWaitDialog wait;
-			if (g_eActivityType == BTA_SHOWUI)
-				wait.BeginWait(NULL);
-			// Generate full report file name.
-			GetTempPath(countof(g_szInternalReportFolder), g_szInternalReportFolder);
-			PathCombine(g_szInternalReportFilePath, g_szInternalReportFolder, szReportFileName);
-			if (g_dwFlags & BTF_DETAILEDMODE)
+		case BTA_MAILREPORT:
+			MailTempReport(NULL);
+			break;
+		case BTA_SENDREPORT:
+			SendTempReport(NULL);
+			break;
+		case BTA_SHOWUI:
+			if (g_pResManager)
 			{
-				// Generate report files in temporary location.
-				CreateTempFolder(g_szInternalReportFolder, countof(g_szInternalReportFolder));
-				bResult = g_pSymEngine->WriteReportFiles(g_szInternalReportFolder, g_pEnumProc) &&
-				          g_pSymEngine->ArchiveReportFiles(g_szInternalReportFolder, g_szInternalReportFilePath);
+				if (g_dwFlags & BTF_SHOWADVANCEDUI)
+					DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_MAIN_DLG), NULL, MainDlgProc);
+				else if (DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_SIMPLE_DLG), GetForegroundWindow(), SimpleDlgProc) == TRUE)
+					DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_MAIN_DLG), NULL, MainDlgProc);
 			}
-			else
-			{
-				// Create single log file in system temporary folder.
-				bResult = g_pSymEngine->WriteLog(g_szInternalReportFilePath, g_pEnumProc);
-			}
+			break;
+		case BTA_CUSTOM:
+#ifdef _MANAGED
+            NetThunks::FireCustomActivityEvent(g_szInternalReportFilePath);
+#else
+            if (g_pfnCustomActivityHandler != NULL)
+                (*g_pfnCustomActivityHandler)(g_szInternalReportFilePath, g_nCustomActivityHandlerParam);
+#endif // _MANAGED
+
+			break;
 		}
-		if (bResult)
-		{
-			// Process remaining actions.
-			switch (g_eActivityType)
-			{
-			case BTA_MAILREPORT:
-				if (*g_szSupportEMail)
-				{
-					TCHAR szSubject[MAX_PATH];
-					GetDefaultMailSubject(szSubject, countof(szSubject));
-					SendEMail(NULL, szSubject, NULL);
-				}
-				break;
-			case BTA_SENDREPORT:
-				if (*g_szSupportHost && g_nSupportPort)
-					SubmitReport(NULL);
-				break;
-			case BTA_SHOWUI:
-				if (g_pResManager)
-				{
-					if (g_dwFlags & BTF_SHOWADVANCEDUI)
-						DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_MAIN_DLG), NULL, MainDlgProc);
-					else if (DialogBox( g_hInstance, MAKEINTRESOURCE(IDD_SIMPLE_DLG), NULL, SimpleDlgProc) == TRUE)
-						DialogBox( g_hInstance, MAKEINTRESOURCE(IDD_MAIN_DLG), NULL, MainDlgProc);
-				}
-				break;
-			}
-		}
-		// Remove temporarily generated report files.
-		if (g_dwFlags & BTF_DETAILEDMODE)
-		{
-			DeleteFolder(g_szInternalReportFolder);
-			*g_szInternalReportFolder = _T('\0');
-		}
-		DeleteFile(g_szInternalReportFilePath);
-		*g_szInternalReportFilePath = _T('\0');
 	}
+	// Remove temporarily generated report files.
+	DeleteTempReport();
 }
 
 /**
@@ -1276,50 +1430,24 @@ static HWND GetAppWindow(void)
  * @brief Hide application window.
  * @param hwndParent - application window handle.
  */
-static bool is_main_thread( HWND hwndParent )
-{
-	DWORD dwProcessID = 0;
-	return ( GetWindowThreadProcessId( hwndParent, &dwProcessID ) == GetCurrentThreadId() );
-}
-
 static void HideAppWindow(HWND hwndParent)
 {
-
-	if (hwndParent != NULL) {
+	if (hwndParent != NULL)
+	{
 		__try {
-			if( is_main_thread( hwndParent ) )
-			{
-				ShowWindow(hwndParent, SW_HIDE );//SW_FORCEMINIMIZE //SW_HIDE
-			}
-			else
-			{
-				// так у нас из второго потока  в полноэкранном режиме вывести диалог и не получилость
-				// закрываем процесс чтобы не зависнуть - в xrDebugNew теперь дамп сохраняется всегда
-				TerminateProcess	(GetCurrentProcess(),1);
-/*
-				HANDLE h = OpenThread( THREAD_ALL_ACCESS, FALSE, GetWindowThreadProcessId( hwndParent, NULL ) );
-				TerminateThread( h, DWORD(-1) );
-				CloseHandle( h );
-				//TerminateThread GetCurrentThread()
-				//THREAD_ALL_ACCESS
-				ShowWindow( hwndParent, SW_FORCEMINIMIZE );
-				// ShowWindow(hwnd, nCmdShow);
-				 //UpdateWindow(hwnd);
-				//_endthreadex //HANDLE GetCurrentThread() //HANDLE GetCurrentThreadId() //AttachThreadInput //GetWindowThreadProcessId
-				//TerminateThread DuplicateHandle
-*/
-			}
+			DWORD_PTR dwResult;
+			// Ping parent window
+			if (SendMessageTimeout(hwndParent, WM_NULL, 0l, 0l, SMTO_ABORTIFHUNG, SEND_MSG_TIMEOUT, &dwResult))
+				ShowWindow(hwndParent, SW_HIDE);
 		} __except (EXCEPTION_EXECUTE_HANDLER) {
 			// ignore any exception in broken app...
 		}
 	}
-
 }
 
 /**
  * @brief Perform BugTrap action (show dialog, submit report, etc.).
  */
-
 void StartHandlerThread(void)
 {
 	_ASSERTE(g_pSymEngine != NULL && g_pEnumProc != NULL);
@@ -1329,15 +1457,16 @@ void StartHandlerThread(void)
 	HWND hwndParent;
 	if (g_eActivityType == BTA_SHOWUI)
 	{
+		g_bShowUI = TRUE;
 		hwndParent = GetAppWindow();
-		//pass NULL to prevent calling SendMessage to main window and resulting hanging secondary threads calls
-		g_pResManager = new CResManager( NULL );
-		//_endthreadex //HANDLE GetCurrentThread() //HANDLE GetCurrentThreadId() //AttachThreadInput //GetWindowThreadProcessId
-		HideAppWindow( hwndParent );
-
+		g_pResManager = new CResManager(hwndParent);
+		HideAppWindow(hwndParent);
 	}
 	else
+	{
+		g_bShowUI = FALSE;
 		hwndParent = NULL;
+	}
 	HANDLE hHandlerThread = (HANDLE)_beginthreadex(NULL, 0, HandlerThreadProc, NULL, 0, NULL);
 	if (hHandlerThread != NULL)
 	{
@@ -1371,7 +1500,7 @@ LONG InternalFilter(PEXCEPTION_POINTERS pExceptionPointers)
 			{
 				TCHAR szDumpFileName[MAX_PATH];
 				GetTempPath(countof(szDumpFileName), szDumpFileName);
-				PathAppend(szDumpFileName, _T("BugTrap-") VERSION_STRING _T(".dmp"));
+				PathAppend(szDumpFileName, _T("BugTrap-") VER_FILE_VERSION_STR _T(".dmp"));
 				HANDLE hFile = CreateFile(szDumpFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 				if (hFile != INVALID_HANDLE_VALUE)
 				{

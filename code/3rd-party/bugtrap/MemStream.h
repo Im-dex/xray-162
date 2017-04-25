@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: In-memory stream.
@@ -23,7 +23,7 @@ public:
 	/// Initialize the object.
 	CMemStream(void);
 	/// Initialize the object.
-	explicit CMemStream(int nSize);
+	explicit CMemStream(size_t nSize);
 	/// Destroy the object.
 	virtual ~CMemStream(void);
 	/// Copy constructor.
@@ -33,52 +33,52 @@ public:
 	/// Get list of supported features.
 	virtual unsigned GetFeatures(void) const;
 	/// Get pointer to the buffer.
-	const unsigned char* GetBuffer(void) const;
+	const BYTE* GetBuffer(void) const;
 	/// Return true if end of stream has been reached.
 	virtual bool IsEndOfStream(void) const;
 	/// Get data length.
-	virtual int GetLength(void) const;
+	virtual size_t GetLength(void) const;
 	/// Set number of bytes in the stream.
-	virtual int SetLength(int nLength);
+	virtual size_t SetLength(size_t nLength);
 	/// Get current position.
-	virtual int GetPosition(void) const;
+	virtual size_t GetPosition(void) const;
 	/// Set current position.
-	virtual int SetPosition(int nOffset, int nMoveMethod);
+	virtual size_t SetPosition(ptrdiff_t nOffset, int nMoveMethod);
 	/// Write data to the buffer.
-	virtual bool WriteByte(unsigned char bValue);
+	virtual bool WriteByte(BYTE bValue);
 	/// Write data to the buffer.
-	virtual int WriteByte(unsigned char bValue, int nCount);
+	virtual size_t WriteByte(BYTE bValue, size_t nCount);
 	/// Write data to the buffer.
-	virtual int WriteBytes(const unsigned char* pBytes, int nCount);
+	virtual size_t WriteBytes(const BYTE* pBytes, size_t nCount);
 	/// Write data to the buffer.
-	int WriteStream(CMemStream* pMemStream);
+	size_t WriteStream(CMemStream* pMemStream);
 	/// Clear data in the buffer.
 	virtual void Close(void);
 	/// Read one byte from the stream.
-	virtual bool ReadByte(unsigned char& bValue);
+	virtual bool ReadByte(BYTE& bValue);
 	/// Read array of bytes from the stream.
-	virtual int ReadBytes(unsigned char* arrBytes, int nNumBytes);
+	virtual size_t ReadBytes(BYTE* arrBytes, size_t nNumBytes);
 
 private:
 	/// Initialize member variables.
 	void InitBuffer(void);
 	/// Initialize member variables.
-	void InitBuffer(int nSize);
+	void InitBuffer(size_t nSize);
 	/// Copy data from one buffer to another.
 	void CopyData(const CMemStream& rMemStream);
 	/// Ensures that the array has enough space.
-	void EnsureSize(int nSize, bool bAdaptiveGrowth);
+	void EnsureSize(size_t nSize, bool bAdaptiveGrowth);
 	/// Set current position.
-	void SetPositionPriv(int nOffset, int nStartFrom);
+	void SetPositionPriv(ptrdiff_t nOffset, size_t nStartFrom);
 
 	/// Data length.
-	int m_nLength;
+	size_t m_nLength;
 	/// Data position.
-	int m_nPosition;
+	size_t m_nPosition;
 	/// Size of allocated buffer.
-	int m_nSize;
+	size_t m_nSize;
 	/// Pointer to the buffer.
-	unsigned char* m_pBuffer;
+	BYTE* m_pBuffer;
 };
 
 inline CMemStream::CMemStream(void)
@@ -102,7 +102,7 @@ inline unsigned CMemStream::GetFeatures(void) const
 /**
  * @return pointer to the buffer.
  */
-inline const unsigned char* CMemStream::GetBuffer(void) const
+inline const BYTE* CMemStream::GetBuffer(void) const
 {
 	return m_pBuffer;
 }
@@ -110,7 +110,7 @@ inline const unsigned char* CMemStream::GetBuffer(void) const
 /**
  * @return length of the data.
  */
-inline int CMemStream::GetLength(void) const
+inline size_t CMemStream::GetLength(void) const
 {
 	return m_nLength;
 }
@@ -126,7 +126,7 @@ inline bool CMemStream::IsEndOfStream(void) const
 /**
  * @return current stream position.
  */
-inline int CMemStream::GetPosition(void) const
+inline size_t CMemStream::GetPosition(void) const
 {
 	return m_nPosition;
 }
@@ -140,7 +140,7 @@ inline void CMemStream::Close(void)
  * @param pMemStream - another binary buffer.
  * @return true if data has been written.
  */
-inline int CMemStream::WriteStream(CMemStream* pMemStream)
+inline size_t CMemStream::WriteStream(CMemStream* pMemStream)
 {
 	return WriteBytes(pMemStream->m_pBuffer + pMemStream->m_nPosition, pMemStream->m_nLength - pMemStream->m_nPosition);
 }
@@ -148,7 +148,7 @@ inline int CMemStream::WriteStream(CMemStream* pMemStream)
 /**
  * @param nSize - initial buffer size.
  */
-inline CMemStream::CMemStream(int nSize)
+inline CMemStream::CMemStream(size_t nSize)
 {
 	InitBuffer(nSize);
 }

@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Common BugTrap UI routines.
@@ -186,15 +186,19 @@ inline void CTransferThreadParams::PostCompletionMessage(void)
 }
 
 HANDLE StartTransferThread(CTransferThreadParams* pTransferThreadParams);
-void CloseTransferThread(HANDLE hTransferThread);
+DWORD CloseTransferThread(HANDLE hTransferThread);
 
 #define IDM_ABOUTBOX 0x0010
 
 void GetDefaultMailSubject(PTSTR pszSubject, DWORD dwSubjectSize);
 void GetDefaultMailURL(PTSTR pszURLString, DWORD dwURLSize);
 BOOL SendEMail(HWND hwndParent, PCTSTR pszSubject, PCTSTR pszMessage);
-void SendReport(HWND hwndParent);
-void SubmitReport(HWND hwndParent);
+BOOL MailTempReportEx(HWND hwndParent);
+BOOL SendTempReport(HWND hwndParent);
+BOOL SubmitTempReport(HWND hwndParent);
+BOOL SendReport(void);
+BOOL MailReport(void);
+BOOL SaveReport(PCTSTR pszFileName);
 void InitIntro(HWND hwnd, CHyperLink& hlURL);
 void InitAbout(HWND hwnd);
 void StartHandlerThread(void);

@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: BugTrap main dialog.
@@ -71,69 +71,20 @@ static HWND g_hwndToolTip = NULL;
 /// URL hyper-link control pointing to support site.
 static CHyperLink g_hlURL;
 
-#include "stdlib.h"
-
-// Vista uses this hook for old-style save dialog
-UINT_PTR CALLBACK OFNHookProcOldStyle(HWND , UINT , WPARAM , LPARAM )
-{
-	// let default hook work on this message
-	return 0;
-}
-
-bool IsVista ()
-{
-
-	return true;
-
-}
-
 /**
  * @brief Save bug report on the disk.
  * @param hwndParent - parent window handle.
  */
 static void SaveReport(HWND hwndParent)
 {
-// Was used for debugging:
-// 	{
-// 		TCHAR szFileName[400] = "";
-// 		OPENFILENAME ofn;
-// 		ZeroMemory(&ofn, sizeof(OPENFILENAME));
-// 		ofn.lStructSize = sizeof(OPENFILENAME);
-// 		ofn.lpfnHook = OFNHookProcOldStyle;
-// 		ofn.hwndOwner = hwndParent;
-// 		ofn.lpstrFile = szFileName;
-// 		ofn.nMaxFile = 400;
-// 		ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_ENABLEHOOK;
-// 
-// 		ofn.lpstrFilter = _T("Zip Archives\0*.zip\0All Files\0*.*\0");
-// 		ofn.lpstrDefExt = _T("zip");
-// 
-// 		GetSaveFileName(&ofn);
-// 
-// 		DWORD error = CommDlgExtendedError();
-// 		char error_buffer[1000];
-// 		_ltoa_s(error, error_buffer, 1000, 10);
-// 		MessageBox(0, error_buffer, TEXT("error id"), 0);
-// 	}
-
-	TCHAR szFileName[MAX_PATH] = _T("");
+	TCHAR szFileName[MAX_PATH];
 	OPENFILENAME ofn;
-	ZeroMemory(&ofn, sizeof(OPENFILENAME));
-	ofn.lStructSize = sizeof(OPENFILENAME);
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hwndParent;
 	ofn.lpstrFile = szFileName;
 	ofn.nMaxFile = countof(szFileName);
 	ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
-
-	OSVERSIONINFOEX	os_version_info;
-	os_version_info.dwOSVersionInfoSize	= sizeof(os_version_info);
-	GetVersionEx	((LPOSVERSIONINFO)&os_version_info);
-	if (os_version_info.dwMajorVersion == 6)// && !os_version_info.wServicePackMajor)
-	{
-		ofn.Flags |= OFN_ENABLEHOOK;
-		ofn.lpfnHook = OFNHookProcOldStyle;
-	}
-
 	if (g_dwFlags & BTF_DETAILEDMODE)
 	{
 		ofn.lpstrFilter = _T("Zip Archives\0*.zip\0All Files\0*.*\0");
@@ -154,8 +105,6 @@ static void SaveReport(HWND hwndParent)
 		_ASSERT(FALSE);
 		return;
 	}
-	ofn.nFilterIndex = 1;
-
 	g_pSymEngine->GetReportFileName(ofn.lpstrDefExt, szFileName, countof(szFileName));
 	if (GetSaveFileName(&ofn))
 	{
@@ -163,12 +112,6 @@ static void SaveReport(HWND hwndParent)
 		CWaitCursor wait(true);
 		CopyFile(g_szInternalReportFilePath, szFileName, FALSE);
 	}
-
-// Was used for debugging:
-// 	DWORD error = CommDlgExtendedError();
-// 	char error_buffer[1000];
-// 	_ltoa_s(error, error_buffer, 1000, 10);
-// 	MessageBox(0, error_buffer, TEXT("error id"), 0);
 }
 
 /**
@@ -181,7 +124,11 @@ static void InitReg(HWND hwnd)
 	_ASSERTE(g_pResManager != NULL);
 	if (g_pResManager->m_hFixedFont)
 		SetWindowFont(hwndReg, g_pResManager->m_hFixedFont, FALSE);
+#if defined _WIN64
+	TCHAR szRegString[512];
+#elif defined _WIN32
 	TCHAR szRegString[256];
+#endif
 	g_pSymEngine->GetRegistersString(szRegString, countof(szRegString));
 	SetWindowText(hwndReg, szRegString);
 }
@@ -332,13 +279,10 @@ static void MainDlg_OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_PREVIEW_DLG), hwnd, PreviewDlgProc);
 		break;
 	case IDC_MAILTO:
-		SendReport(hwnd);
+		MailTempReportEx(hwnd);
 		break;
 	case IDC_SUBMIT_BUG:
-		if (*g_szSupportHost && g_nSupportPort)
-			SubmitReport(hwnd);
-		else if (*g_szSupportEMail)
-			SendReport(hwnd);
+		SubmitTempReport(hwnd);
 		break;
 	case IDC_SAVE_REPORT:
 		SaveReport(hwnd);

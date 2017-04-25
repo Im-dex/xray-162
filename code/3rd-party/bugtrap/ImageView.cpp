@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Image view control class.
@@ -45,9 +45,9 @@ void CImageView::InitVars(void)
 
 /**
  * @param hdc - drawing conImage.
- * @param prcPaint - the rectangle in which the painting is requested.
+ * @param prcPaint - the rectangle where the painting is requested.
  */
-void CImageView::DrawImageView(HDC hdc, RECT* prcPaint)
+void CImageView::DrawImageView(HDC hdc, const RECT* prcPaint)
 {
 	_ASSERTE(g_pResManager != NULL);
 	RECT rcClient;
@@ -240,7 +240,7 @@ LRESULT CALLBACK CImageView::ImageViewWndProc(HWND hwnd, UINT uMsg, WPARAM wPara
 	int zDelta, zTotal, nScrollCode, nScrollBarType;
 	LONG lWindowStyle;
 
-	CImageView* _this  = (CImageView*)GetWindowLongPtr(hwnd, GWL_USERDATA);
+	CImageView* _this  = (CImageView*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	_ASSERTE(_this != NULL);
 	switch(uMsg)
 	{
@@ -373,7 +373,7 @@ void CImageView::Attach(HWND hwnd)
 
 	m_hwnd = hwnd;
 	m_pfnOldImageViewWndProc = SubclassWindow(hwnd, ImageViewWndProc);
-	SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)this);
+	SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	// Preserve original window styles that could be modified by SetScrollInfo().
 	m_lOldStyle = GetWindowLong(hwnd, GWL_STYLE);
 	ResizeImageView(TRUE);
@@ -384,7 +384,7 @@ void CImageView::Detach(void)
 	if (m_pfnOldImageViewWndProc)
 	{
 		SubclassWindow(m_hwnd, m_pfnOldImageViewWndProc);
-		SetWindowLongPtr(m_hwnd, GWL_USERDATA, NULL);
+		SetWindowLongPtr(m_hwnd, GWLP_USERDATA, NULL);
 
 		SCROLLINFO sinfo;
 		ZeroMemory(&sinfo, sizeof(sinfo));

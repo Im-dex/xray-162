@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: .NET symbolic engine.
@@ -39,9 +39,14 @@ namespace IntelleSoft
 			void InitStackTrace(void);
 			StackFrame^ GetFirstStackTraceEntry(void);
 			StackFrame^ GetNextStackTraceEntry(void);
+			property System::Exception^ Exception
+			{
+				System::Exception^ get(void);
+			}
 
 		private:
 			initonly StackTrace^ stackTrace;
+			initonly System::Exception^ exception;
 			int frameIndex;
 		};
 
@@ -51,10 +56,11 @@ namespace IntelleSoft
 			this->frameIndex = int::MaxValue;
 		}
 
-		inline StackFrameEnumerator::StackFrameEnumerator(Exception^ exception)
+		inline StackFrameEnumerator::StackFrameEnumerator(System::Exception^ exception)
 		{
 			this->stackTrace = gcnew StackTrace(exception, true);
 			this->frameIndex = int::MaxValue;
+			this->exception = exception;
 		}
 
 		inline void StackFrameEnumerator::InitStackTrace(void)
@@ -66,6 +72,11 @@ namespace IntelleSoft
 		{
 			this->InitStackTrace();
 			return this->GetNextStackTraceEntry();
+		}
+
+		inline System::Exception^ StackFrameEnumerator::Exception::get(void)
+		{
+			return this->exception;
 		}
 
 		private ref class AssemblyEnumerator

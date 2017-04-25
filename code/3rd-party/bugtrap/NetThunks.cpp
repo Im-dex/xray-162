@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Managed to unmanaged code thunks.
@@ -44,7 +44,7 @@ namespace NetThunks
 				if (threadName != nullptr)
 				{
 					pin_ptr<const wchar_t> wstrThreadName(PtrToStringChars(threadName));
-					wcscpy_s(pszThreadName, dwThreadNameSize, wstrThreadName);
+					wcsncpy_s(pszThreadName, dwThreadNameSize, wstrThreadName, _TRUNCATE);
 				}
 				else
 					*pszThreadName = L'\0';
@@ -74,7 +74,7 @@ namespace NetThunks
 				if (appDomainName != nullptr)
 				{
 					pin_ptr<const wchar_t> wstrAppDomainName(PtrToStringChars(appDomainName));
-					wcscpy_s(pszAppDomainName, dwAppDomainSize, wstrAppDomainName);
+					wcsncpy_s(pszAppDomainName, dwAppDomainSize, wstrAppDomainName, _TRUNCATE);
 				}
 				else
 					*pszAppDomainName = L'\0';
@@ -119,8 +119,12 @@ namespace NetThunks
 			if (index > 0)
 				signature->Append(L", ");
 			signature->Append(parameter->ParameterType);
-			signature->Append(L' ');
-			signature->Append(parameter->Name);
+			String^ paramName = parameter->Name;
+			if (paramName != nullptr)
+			{
+				signature->Append(L' ');
+				signature->Append(paramName);
+			}
 		}
 		signature->Append(L')');
 		return signature->ToString();
@@ -132,14 +136,14 @@ namespace NetThunks
 		Debug::Assert(stackFrame != nullptr);
 #endif
 		MethodBase^ method = stackFrame->GetMethod();
-		Type^ type = method->DeclaringType;
-		Assembly^ assembly = type->Assembly;
-		AssemblyName^ assemblyName = assembly->GetName();
+		Module^ module = method->Module;
+		Assembly^ assembly = module->Assembly;
+		AssemblyName^ assemblyName = assembly != nullptr ? assembly->GetName() : nullptr;
 		String^ assemblyNameString = assemblyName != nullptr ? assemblyName->Name : nullptr;
 		if (assemblyNameString != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrAssembly(PtrToStringChars(assemblyNameString));
-			wcscpy_s(rEntry.m_szAssembly, countof(rEntry.m_szAssembly), wstrAssembly);
+			wcsncpy_s(rEntry.m_szAssembly, countof(rEntry.m_szAssembly), wstrAssembly, _TRUNCATE);
 		}
 		else
 			*rEntry.m_szAssembly = L'\0';
@@ -153,13 +157,19 @@ namespace NetThunks
 			_ui64tow_s(nativeOffset, rEntry.m_szNativeOffset, countof(rEntry.m_szNativeOffset), 10);
 		else
 			*rEntry.m_szNativeOffset = L'\0';
-		pin_ptr<const wchar_t> wstrType(PtrToStringChars(type->ToString()));
-		wcscpy_s(rEntry.m_szType, countof(rEntry.m_szType), wstrType);
+		Type^ type = method->DeclaringType;
+		if (type != nullptr)
+		{
+			pin_ptr<const wchar_t> wstrType(PtrToStringChars(type->ToString()));
+			wcsncpy_s(rEntry.m_szType, countof(rEntry.m_szType), wstrType, _TRUNCATE);
+		}
+		else
+			*rEntry.m_szType = L'\0';
 		String^ shortMethodSignature = GetMethodSignature(method, false);
 		if (shortMethodSignature != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrMethod(PtrToStringChars(shortMethodSignature));
-			wcscpy_s(rEntry.m_szMethod, countof(rEntry.m_szMethod), wstrMethod);
+			wcsncpy_s(rEntry.m_szMethod, countof(rEntry.m_szMethod), wstrMethod, _TRUNCATE);
 		}
 		else
 			*rEntry.m_szMethod = L'\0';
@@ -167,7 +177,7 @@ namespace NetThunks
 		if (fullMethodSignature != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrMethodSignature(PtrToStringChars(fullMethodSignature));
-			wcscpy_s(rEntry.m_szMethodSignature, countof(rEntry.m_szMethodSignature), wstrMethodSignature);
+			wcsncpy_s(rEntry.m_szMethodSignature, countof(rEntry.m_szMethodSignature), wstrMethodSignature, _TRUNCATE);
 		}
 		else
 			*rEntry.m_szMethodSignature = L'\0';
@@ -175,7 +185,7 @@ namespace NetThunks
 		if (fileName != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrSourceFile(PtrToStringChars(fileName));
-			wcscpy_s(rEntry.m_szSourceFile, countof(rEntry.m_szSourceFile), wstrSourceFile);
+			wcsncpy_s(rEntry.m_szSourceFile, countof(rEntry.m_szSourceFile), wstrSourceFile, _TRUNCATE);
 		}
 		else
 			*rEntry.m_szSourceFile = L'\0';
@@ -202,17 +212,22 @@ namespace NetThunks
 
 	gcroot<StackFrameEnumerator^> EnumStackFrames(void)
 	{
+		if (IsNetException())
+			return EnumStackFrames(ExceptionHandler::Exception);
+		else
+			return EnumStackFrames(Thread::CurrentThread);
+	}
+
+	gcroot<StackFrameEnumerator^> EnumStackFrames(gcroot<Exception^> exception)
+	{
 		StackFrameEnumerator^ stackFrameEnumerator = nullptr;
 		try
 		{
-#ifdef _DEBUG
-			Debug::Assert(IsNetException());
-#endif
-			stackFrameEnumerator = gcnew StackFrameEnumerator(ExceptionHandler::Exception);
+			stackFrameEnumerator = gcnew StackFrameEnumerator(exception);
 		}
-		catch (Exception^ exception)
+		catch (Exception^ exception2)
 		{
-			Debug::WriteLine(exception);
+			Debug::WriteLine(exception2);
 		}
 		return gcroot<StackFrameEnumerator^>(stackFrameEnumerator);
 	}
@@ -273,18 +288,21 @@ namespace NetThunks
 		{
 			if (! GetFirstStackTraceEntry(gcStackFrameEnumerator, rErrorInfo))
 				return false;
-			Exception^ exception = ExceptionHandler::Exception;
+			StackFrameEnumerator^ stackFrameEnumerator = gcStackFrameEnumerator;
+			Exception^ exception = stackFrameEnumerator->Exception;
+			if (exception == nullptr)
+				exception = ExceptionHandler::Exception;
 #ifdef _DEBUG
 			Debug::Assert(exception != nullptr);
 #endif
 			Type^ type = exception->GetType();
 			pin_ptr<const wchar_t> wstrException(PtrToStringChars(type->Name));
-			wcscpy_s(rErrorInfo.m_szException, countof(rErrorInfo.m_szException), wstrException);
+			wcsncpy_s(rErrorInfo.m_szException, countof(rErrorInfo.m_szException), wstrException, _TRUNCATE);
 			String^ message = exception->Message;
 			if (message != nullptr)
 			{
 				pin_ptr<const wchar_t> wstrMessage(PtrToStringChars(message));
-				wcscpy_s(rErrorInfo.m_szMessage, countof(rErrorInfo.m_szMessage), wstrMessage);
+				wcsncpy_s(rErrorInfo.m_szMessage, countof(rErrorInfo.m_szMessage), wstrMessage, _TRUNCATE);
 			}
 			else
 				*rErrorInfo.m_szMessage = L'\0';
@@ -298,7 +316,7 @@ namespace NetThunks
 			if (processName != nullptr)
 			{
 				pin_ptr<const wchar_t> wstrProcessName(PtrToStringChars(processName));
-				wcscpy_s(rErrorInfo.m_szProcessName, countof(rErrorInfo.m_szProcessName), wstrProcessName);
+				wcsncpy_s(rErrorInfo.m_szProcessName, countof(rErrorInfo.m_szProcessName), wstrProcessName, _TRUNCATE);
 			}
 			else
 				*rErrorInfo.m_szProcessName = L'\0';
@@ -310,7 +328,7 @@ namespace NetThunks
 			if (appDomainName != nullptr)
 			{
 				pin_ptr<const wchar_t> wstrAppDomainName(PtrToStringChars(appDomainName));
-				wcscpy_s(rErrorInfo.m_szAppDomainName, countof(rErrorInfo.m_szAppDomainName), wstrAppDomainName);
+				wcsncpy_s(rErrorInfo.m_szAppDomainName, countof(rErrorInfo.m_szAppDomainName), wstrAppDomainName, _TRUNCATE);
 			}
 			else
 				*rErrorInfo.m_szAppDomainName = L'\0';
@@ -334,7 +352,7 @@ namespace NetThunks
 				if (version != nullptr)
 				{
 					pin_ptr<const wchar_t> wstrNetVersion(PtrToStringChars(version->ToString()));
-					wcscpy_s(pszNetVersion, dwNetVersionSize, wstrNetVersion);
+					wcsncpy_s(pszNetVersion, dwNetVersionSize, wstrNetVersion, _TRUNCATE);
 				}
 				else
 					*pszNetVersion = L'\0';
@@ -372,7 +390,7 @@ namespace NetThunks
 		if (assemblyNameString != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrAssemblyName(PtrToStringChars(assemblyNameString));
-			wcscpy_s(rAssemblyInfo.m_szName, countof(rAssemblyInfo.m_szName), wstrAssemblyName);
+			wcsncpy_s(rAssemblyInfo.m_szName, countof(rAssemblyInfo.m_szName), wstrAssemblyName, _TRUNCATE);
 		}
 		else
 			*rAssemblyInfo.m_szName = L'\0';
@@ -380,16 +398,25 @@ namespace NetThunks
 		if (version != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrAssemblyVersion(PtrToStringChars(version->ToString()));
-			wcscpy_s(rAssemblyInfo.m_szVersion, countof(rAssemblyInfo.m_szVersion), wstrAssemblyVersion);
+			wcsncpy_s(rAssemblyInfo.m_szVersion, countof(rAssemblyInfo.m_szVersion), wstrAssemblyVersion, _TRUNCATE);
 		}
 		else
 			*rAssemblyInfo.m_szVersion = L'\0';
-		FileVersionInfo^ fileVersion = FileVersionInfo::GetVersionInfo(assembly->Location);
+		String^ location;
+		try
+		{
+			location = assembly->Location;
+		}
+		catch (NotSupportedException^)
+		{
+			location = nullptr;
+		}
+		FileVersionInfo^ fileVersion = String::IsNullOrEmpty(location) ? nullptr : FileVersionInfo::GetVersionInfo(location);
 		String^ fileVersionString = fileVersion != nullptr ? fileVersion->FileVersion : nullptr;
 		if (fileVersionString != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrFileVersion(PtrToStringChars(fileVersionString));
-			wcscpy_s(rAssemblyInfo.m_szFileVersion, countof(rAssemblyInfo.m_szFileVersion), wstrFileVersion);
+			wcsncpy_s(rAssemblyInfo.m_szFileVersion, countof(rAssemblyInfo.m_szFileVersion), wstrFileVersion, _TRUNCATE);
 		}
 		else
 			*rAssemblyInfo.m_szFileVersion = L'\0';
@@ -397,7 +424,7 @@ namespace NetThunks
 		if (codeBase != nullptr)
 		{
 			pin_ptr<const wchar_t> wstrCodeBase(PtrToStringChars(codeBase));
-			wcscpy_s(rAssemblyInfo.m_szCodeBase, countof(rAssemblyInfo.m_szCodeBase), wstrCodeBase);
+			wcsncpy_s(rAssemblyInfo.m_szCodeBase, countof(rAssemblyInfo.m_szCodeBase), wstrCodeBase, _TRUNCATE);
 		}
 		else
 			*rAssemblyInfo.m_szCodeBase = L'\0';
@@ -477,6 +504,18 @@ namespace NetThunks
 		}
 	}
 
+    void FireCustomActivityEvent(LPCTSTR pszReportFilePath)
+    {
+        try
+        {
+            ExceptionHandler::FireCustomActivityEvent(gcnew String(pszReportFilePath));
+        }
+        catch (Exception^ exception)
+        {
+            Debug::WriteLine(exception);
+        }
+    }
+
 	void FlushTraceListeners(void)
 	{
 		try
@@ -493,9 +532,10 @@ namespace NetThunks
 		}
 	}
 
-	gcroot<Thread^> GetCurrentThread(void)
+	bool IsNull(gcroot<Exception^> gcObject)
 	{
-		return gcroot<Thread^>(Thread::CurrentThread);
+		Exception^ object = gcObject;
+		return (object == nullptr);
 	}
 
 }
@@ -588,13 +628,13 @@ bool CNetStackTrace::GetNextStackTraceString(CUTF8EncStream& rEncStream)
 	return true;
 }
 
-void CNetStackTrace::GetErrorString(CStrStream& rStream)
+bool CNetStackTrace::GetErrorString(CStrStream& rStream)
 {
 	CNetErrorInfo ErrorInfo;
 	if (! GetErrorInfo(ErrorInfo))
 	{
 		rStream << L"Error information is not available";
-		return;
+		return false;
 	}
 
 	if (*ErrorInfo.m_szAppDomainName && _wcsicmp(ErrorInfo.m_szAppDomainName, ErrorInfo.m_szProcessName) != 0)
@@ -660,13 +700,16 @@ void CNetStackTrace::GetErrorString(CStrStream& rStream)
 			rStream << ErrorInfo.m_szLineInfo;
 		}
 	}
+
+	return true;
 }
 
-void CNetStackTrace::GetErrorString(CUTF8EncStream& rEncStream)
+bool CNetStackTrace::GetErrorString(CUTF8EncStream& rEncStream)
 {
 	CStrStream Stream(1024);
-	GetErrorString(Stream);
+	bool bResult = GetErrorString(Stream);
 	rEncStream.WriteUTF8Bin(Stream);
+	return bResult;
 }
 
 CNetAssemblies::CAssemblyInfo::CAssemblyInfo(void)

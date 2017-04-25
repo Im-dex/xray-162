@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Doubly-linked list.
@@ -48,7 +48,7 @@ private:
 	/// List of deleted items. These items can be reused in future allocations.
 	CListItem* m_pGarbage;
 	/// Number of items in collection.
-	int m_nCount;
+	size_t m_nCount;
 
 	/// Initialize list variables.
 	void InitList(void);
@@ -72,7 +72,7 @@ public:
 	/// Tests for the empty list condition (no elements).
 	bool IsEmpty(void) const;
 	/// Returns the number of elements in this list.
-	int GetCount(void) const;
+	size_t GetCount(void) const;
 	/// Adds an element to the head of the list (makes a new head).
 	POSITION AddToHead(const DATA_TYPE& rData);
 	/// Adds an element to the tail of the list (makes a new tail).
@@ -112,7 +112,7 @@ public:
 	/// Gets the position of an element specified by pointer value.
 	POSITION Find(const DATA_TYPE& rSearchValue, POSITION startAfter = NULL) const;
 	/// Gets the position of an element specified by a zero-based index.
-	POSITION GetByIndex(int nIndex) const;
+	POSITION GetByIndex(size_t nIndex) const;
 };
 
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
@@ -365,7 +365,7 @@ inline bool CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::IsEmpty(void) con
  * @return an integer value containing the element count.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-inline int CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetCount(void) const
+inline size_t CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetCount(void) const
 {
 	return m_nCount;
 }
@@ -553,10 +553,8 @@ typename CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::POSITION CList<DATA_
  * @return a @a POSITION value that can be used for iteration or object pointer retrieval; NULL if nIndex is negative or too large.
  */
 template <typename DATA_TYPE, class INSTANCE_TRAITS, class COMPARE_TRAITS>
-typename CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::POSITION CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetByIndex(int nIndex) const
+typename CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::POSITION CList<DATA_TYPE, INSTANCE_TRAITS, COMPARE_TRAITS>::GetByIndex(size_t nIndex) const
 {
-	if (nIndex < 0)
-		return NULL;
 	CListItem* pItem = m_pFirst;
 	while (nIndex-- && pItem)
 		pItem = pItem->m_pNext;

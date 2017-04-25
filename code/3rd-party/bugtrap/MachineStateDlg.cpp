@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Machine State dialog.
@@ -237,7 +237,7 @@ static LRESULT MachineStateDlg_OnNotify(HWND hwnd, int idCtrl, LPNMHDR pnmh)
 					ZeroMemory(&lvi, sizeof(lvi));
 					lvi.mask = LVIF_TEXT;
 					CEnumProcess::CModuleEntry module;
-					if (g_pEnumProc->GetModuleFirst(pnmv->lParam, module))
+					if (g_pEnumProc->GetModuleFirst((DWORD)pnmv->lParam, module))
 					{
 						int iItemPos = 0;
 						do
@@ -249,11 +249,15 @@ static LRESULT MachineStateDlg_OnNotify(HWND hwnd, int idCtrl, LPNMHDR pnmh)
 							if (CSymEngine::GetVersionString(module.m_szModuleName, szVersionString, countof(szVersionString)))
 								ListView_SetItemText(hwndModuleList, iItemPos, CID_MODULE_VERSION, szVersionString);
 							TCHAR szTempBuf[32];
-							_stprintf_s(szTempBuf, countof(szTempBuf), _T("%08X"), (DWORD)module.m_pLoadBase);
+#if defined _WIN64
+							_stprintf_s(szTempBuf, countof(szTempBuf), _T("%016X"), (DWORD_PTR)module.m_pLoadBase);
+#elif defined _WIN32
+							_stprintf_s(szTempBuf, countof(szTempBuf), _T("%08X"), (DWORD_PTR)module.m_pLoadBase);
+#endif
 							ListView_SetItemText(hwndModuleList, iItemPos, CID_MODULE_BASE, szTempBuf);
 							++iItemPos;
 						}
-						while (g_pEnumProc->GetModuleNext(pnmv->lParam, module));
+						while (g_pEnumProc->GetModuleNext((DWORD)pnmv->lParam, module));
 					}
 					else
 					{

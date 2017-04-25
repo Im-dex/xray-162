@@ -1,9 +1,9 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
- * Description: Custom log file description.
+ * Description: Base class for custom log file.
  * Author: Maksim Pyatkovskiy.
  *
  * This source code is only intended as a supplement to the
@@ -22,144 +22,13 @@
 /**
  * @param dwInitialLogSizeInBytes - initial log file size.
  */
-CLogFile::CLogFile(DWORD dwInitialLogSizeInBytes) : m_StrStream(1024)
+CLogFile::CLogFile(void) : m_StrStream(1024)
 {
 	*m_szLogFileName = _T('\0');
-	m_dwLogSizeInEntries = MAXDWORD;
-	m_dwLogSizeInBytes = MAXDWORD;
-	m_dwNumEntries = 0;
-	m_dwInitialLogSizeInBytes = dwInitialLogSizeInBytes;
-	m_dwNumBytes = dwInitialLogSizeInBytes;
 	m_dwLogEchoMode = BTLE_NONE;
 	m_dwLogFlags = BTLF_NONE;
 	m_eLogLevel = BTLL_ALL;
-	m_pFirstEntry = NULL;
-	m_pLastEntry = NULL;
-#ifndef _UNICODE
-	m_pchConsoleBufferA = NULL;
-	m_dwConsoleBufferSizeA = 0;
-	m_pchConsoleBufferW = NULL;
-	m_dwConsoleBufferSizeW = 0;
-#endif
-	m_pchFormatBuffer = NULL;
-	m_dwFormatBufferSize = 0;
 	InitializeCriticalSection(&m_csLogFile);
-}
-
-CLogFile::~CLogFile(void)
-{
-#ifndef _UNICODE
-	delete[] m_pchConsoleBufferA;
-	delete[] m_pchConsoleBufferW;
-#endif
-	delete[] m_pchFormatBuffer;
-	FreeEntries();
-	DeleteCriticalSection(&m_csLogFile);
-}
-
-/**
- * @param pLogEntry - new log entry.
- */
-void CLogFile::AddToHead(CLogEntry* pLogEntry)
-{
-	_ASSERTE(pLogEntry != NULL);
-	pLogEntry->m_pPrevEntry = NULL;
-	pLogEntry->m_pNextEntry = m_pFirstEntry;
-	if (m_pFirstEntry)
-		m_pFirstEntry->m_pPrevEntry = pLogEntry;
-	else
-		m_pLastEntry = pLogEntry;
-	m_pFirstEntry = pLogEntry;
-	m_dwNumBytes += pLogEntry->m_dwSize;
-	++m_dwNumEntries;
-	FreeTail();
-}
-
-/**
- * @param pLogEntry - new log entry.
- */
-void CLogFile::AddToTail(CLogEntry* pLogEntry)
-{
-	_ASSERTE(pLogEntry != NULL);
-	pLogEntry->m_pPrevEntry = m_pLastEntry;
-	pLogEntry->m_pNextEntry = NULL;
-	if (m_pLastEntry)
-		m_pLastEntry->m_pNextEntry = pLogEntry;
-	else
-		m_pFirstEntry = pLogEntry;
-	m_pLastEntry = pLogEntry;
-	m_dwNumBytes += pLogEntry->m_dwSize;
-	++m_dwNumEntries;
-	FreeHead();
-}
-
-void CLogFile::DeleteHead(void)
-{
-	_ASSERTE(m_pFirstEntry != NULL);
-	CLogEntry* pLogEntry = m_pFirstEntry;
-	m_pFirstEntry = pLogEntry->m_pNextEntry;
-	if (m_pFirstEntry)
-		m_pFirstEntry->m_pPrevEntry = NULL;
-	else
-		m_pLastEntry = NULL;
-	m_dwNumBytes -= pLogEntry->m_dwSize;
-	--m_dwNumEntries;
-	delete[] (PBYTE)pLogEntry;
-}
-
-void CLogFile::DeleteTail(void)
-{
-	_ASSERTE(m_pLastEntry != NULL);
-	CLogEntry* pLogEntry = m_pLastEntry;
-	m_pLastEntry = pLogEntry->m_pPrevEntry;
-	if (m_pLastEntry)
-		m_pLastEntry->m_pNextEntry = NULL;
-	else
-		m_pFirstEntry = NULL;
-	m_dwNumBytes -= pLogEntry->m_dwSize;
-	--m_dwNumEntries;
-	delete[] (PBYTE)pLogEntry;
-}
-
-void CLogFile::FreeHead(void)
-{
-	if (m_dwLogSizeInEntries != MAXDWORD)
-	{
-		while (m_dwNumEntries > m_dwLogSizeInEntries && m_dwNumEntries > 0)
-			DeleteHead();
-	}
-	if (m_dwLogSizeInBytes != MAXDWORD)
-	{
-		while (m_dwNumBytes > m_dwLogSizeInBytes && m_dwNumEntries > 0)
-			DeleteHead();
-	}
-}
-
-void CLogFile::FreeTail(void)
-{
-	if (m_dwLogSizeInEntries != MAXDWORD)
-	{
-		while (m_dwNumEntries > m_dwLogSizeInEntries && m_dwNumEntries > 0)
-			DeleteTail();
-	}
-	if (m_dwLogSizeInBytes != MAXDWORD)
-	{
-		while (m_dwNumBytes > m_dwLogSizeInBytes && m_dwNumEntries > 0)
-			DeleteTail();
-	}
-}
-
-void CLogFile::FreeEntries(void)
-{
-	while (m_pFirstEntry)
-	{
-		CLogEntry* pNextEntry = m_pFirstEntry->m_pNextEntry;
-		delete[] (PBYTE)m_pFirstEntry;
-		m_pFirstEntry = pNextEntry;
-	}
-	m_pLastEntry = NULL;
-	m_dwNumEntries = 0;
-	m_dwNumBytes = m_dwInitialLogSizeInBytes;
 }
 
 /**
@@ -180,10 +49,12 @@ PCTSTR CLogFile::GetLogLevelPrefix(BUGTRAP_LOGLEVEL eLogLevel)
 {
 	switch (eLogLevel)
 	{
-	case BTLL_ERROR:   return _T("ERROR");
-	case BTLL_WARNING: return _T("WARNING");
-	case BTLL_INFO:    return _T("INFO");
-	default:           return NULL;
+	case BTLL_ERROR:     return _T("ERROR");
+	case BTLL_WARNING:   return _T("WARNING");
+	case BTLL_IMPORTANT: return _T("IMPORTANT");
+	case BTLL_INFO:      return _T("INFO");
+	case BTLL_VERBOSE:   return _T("VERBOSE");
+	default:             return NULL;
 	}
 }
 
@@ -214,42 +85,30 @@ void CLogFile::WriteTextToConsole(HANDLE hConsole)
 	if (uConsoleCP != CP_ACP)
 	{
 		DWORD dwTextSizeW = MultiByteToWideChar(CP_ACP, 0, pszText, -1, NULL, 0);
-		if (m_dwConsoleBufferSizeW < dwTextSizeW)
+		if (m_ConsoleBufferW.GetSize() < dwTextSizeW)
 		{
 			dwTextSizeW *= 2;
-			delete[] m_pchConsoleBufferW;
-			m_pchConsoleBufferW = new WCHAR[dwTextSizeW];
-			if (m_pchConsoleBufferW == NULL)
-			{
-				m_dwConsoleBufferSizeW = 0;
+			if (! m_ConsoleBufferW.SetSize(dwTextSizeW))
 				return;
-			}
-			m_dwConsoleBufferSizeW = dwTextSizeW;
 		}
-		MultiByteToWideChar(CP_ACP, 0, pszText, -1, m_pchConsoleBufferW, dwTextSizeW);
-		DWORD dwTextSizeA = WideCharToMultiByte(uConsoleCP, 0, m_pchConsoleBufferW, -1, NULL, 0, NULL, NULL);
-		if (m_dwConsoleBufferSizeA < dwTextSizeA)
+		MultiByteToWideChar(CP_ACP, 0, pszText, -1, m_ConsoleBufferW.GetData(), dwTextSizeW);
+		DWORD dwTextSizeA = WideCharToMultiByte(uConsoleCP, 0, m_ConsoleBufferW.GetData(), -1, NULL, 0, NULL, NULL);
+		if (m_ConsoleBufferA.GetSize() < dwTextSizeA)
 		{
 			dwTextSizeA *= 2;
-			delete[] m_pchConsoleBufferA;
-			m_pchConsoleBufferA = new CHAR[dwTextSizeA];
-			if (m_pchConsoleBufferA == NULL)
-			{
-				m_dwConsoleBufferSizeA = 0;
+			if (! m_ConsoleBufferA.SetSize(dwTextSizeA))
 				return;
-			}
-			m_dwConsoleBufferSizeA = dwTextSizeA;
 		}
-		dwTextLength = WideCharToMultiByte(uConsoleCP, 0, m_pchConsoleBufferW, -1, m_pchConsoleBufferA, dwTextSizeA, NULL, NULL);
-		WriteConsoleA(hConsole, m_pchConsoleBufferA, dwTextLength - 1, &dwWritten, NULL);
+		dwTextLength = WideCharToMultiByte(uConsoleCP, 0, m_ConsoleBufferW.GetData(), -1, m_ConsoleBufferA.GetData(), dwTextSizeA, NULL, NULL);
+		WriteConsoleA(hConsole, m_ConsoleBufferA.GetData(), dwTextLength - 1, &dwWritten, NULL);
 	}
 	else
 	{
-		dwTextLength = m_StrStream.GetLength();
+		dwTextLength = (DWORD)m_StrStream.GetLength();
 		WriteConsoleA(hConsole, pszText, dwTextLength, &dwWritten, NULL);
 	}
 #else
-	dwTextLength = m_StrStream.GetLength();
+	dwTextLength = (DWORD)m_StrStream.GetLength();
 	WriteConsole(hConsole, pszText, dwTextLength, &dwWritten, NULL);
 #endif
 }
@@ -291,67 +150,43 @@ void CLogFile::FillEntryText(BUGTRAP_LOGLEVEL eLogLevel, const SYSTEMTIME* pSyst
 }
 
 /**
- * @param dwFormatBufferSize - requested size of the buffer.
- * @return format buffer.
- */
-PTCHAR CLogFile::GetFormatBuffer(DWORD dwFormatBufferSize)
-{
-	if (m_dwFormatBufferSize < dwFormatBufferSize)
-	{
-		delete[] m_pchFormatBuffer;
-		m_pchFormatBuffer = new TCHAR[dwFormatBufferSize];
-		m_dwFormatBufferSize = m_pchFormatBuffer != NULL ? dwFormatBufferSize : 0;
-	}
-	return m_pchFormatBuffer;
-}
-
-/**
- * @return format buffer size.
- */
-DWORD CLogFile::GetFormatBufferSize(void)
-{
-	if (m_dwFormatBufferSize == 0)
-	{
-		// Allocate initial buffer.
-		GetFormatBuffer(512);
-	}
-	return m_dwFormatBufferSize;
-}
-
-/**
  * @param pszFormat - format expression.
  * @param argList - variable argument list.
- * @return formatted output.
+ * @return true if string was formatted.
  */
-PTSTR CLogFile::FormatBufferV(PCTSTR pszFormat, va_list argList)
+BOOL CLogFile::FormatBufferV(PCTSTR pszFormat, va_list argList)
 {
-	DWORD dwFormatBufferSize = GetFormatBufferSize();
-	_ASSERTE(dwFormatBufferSize > 0);
+	DWORD dwFormatBufferSize = m_FormatBuffer.GetSize();
+	if (dwFormatBufferSize == 0)
+	{
+		dwFormatBufferSize = 256;
+		if (! m_FormatBuffer.SetSize(dwFormatBufferSize))
+			return FALSE;
+	}
 	for (;;)
 	{
-		PTCHAR pchFormatBuffer = GetFormatBuffer(dwFormatBufferSize);
-		if (pchFormatBuffer == NULL)
-			return NULL;
-		int iResult = _vsntprintf_s(pchFormatBuffer, dwFormatBufferSize, _TRUNCATE, pszFormat, argList);
-		if (iResult < 0)
-			dwFormatBufferSize *= 2;
-		else
-			return pchFormatBuffer;
+		int iResult = _vsntprintf_s(m_FormatBuffer.GetData(), dwFormatBufferSize, _TRUNCATE, pszFormat, argList);
+		if (iResult >= 0)
+			return TRUE;
+		dwFormatBufferSize *= 2;
+		if (! m_FormatBuffer.SetSize(dwFormatBufferSize))
+			return FALSE;
+		_ASSERTE(m_FormatBuffer.GetSize() >= dwFormatBufferSize);
 	}
 }
 
 /**
  * @param pszFormat - format expression.
  * @param argList - variable argument list.
- * @return formatted output.
+ * @return true if string was formatted.
  */
-PTSTR CLogFile::FormatBufferF(PCTSTR pszFormat, ...)
+BOOL CLogFile::FormatBufferF(PCTSTR pszFormat, ...)
 {
 	va_list argList;
 	va_start(argList, pszFormat);
-	PTSTR pszFormatBuffer = FormatBufferV(pszFormat, argList);
+	BOOL bResult = FormatBufferV(pszFormat, argList);
 	va_end(argList);
-	return pszFormatBuffer;
+	return bResult;
 }
 
 /**
@@ -359,13 +194,15 @@ PTSTR CLogFile::FormatBufferF(PCTSTR pszFormat, ...)
  * @param eEntryMode - entry mode.
  * @param rcsConsoleAccess - provides synchronous access to the console.
  * @param pszFormat - format string.
+ * @return true if operation was completed successfully.
  */
-void CLogFile::WriteLogEntryF(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszFormat, ...)
+BOOL CLogFile::WriteLogEntryF(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszFormat, ...)
 {
 	va_list argList;
 	va_start(argList, pszFormat);
-	WriteLogEntryV(eLogLevel, eEntryMode, rcsConsoleAccess, pszFormat, argList);
+	BOOL bResult = WriteLogEntryV(eLogLevel, eEntryMode, rcsConsoleAccess, pszFormat, argList);
 	va_end(argList);
+	return bResult;
 }
 
 /**
@@ -374,11 +211,42 @@ void CLogFile::WriteLogEntryF(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode,
  * @param rcsConsoleAccess - provides synchronous access to the console.
  * @param pszFormat - format string.
  * @param argList - variable argument list.
+ * @return true if operation was completed successfully.
  */
-void CLogFile::WriteLogEntryV(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszFormat, va_list argList)
+BOOL CLogFile::WriteLogEntryV(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszFormat, va_list argList)
 {
-	PTSTR pszFormatBuffer = FormatBufferV(pszFormat, argList);
-	_ASSERTE(pszFormatBuffer != NULL);
-	if (pszFormatBuffer != NULL)
-		WriteLogEntry(eLogLevel, eEntryMode, rcsConsoleAccess, pszFormatBuffer);
+	BUGTRAP_LOGLEVEL eLogFileLevel = GetLogLevel();
+	if (eLogLevel > eLogFileLevel)
+		return TRUE;
+	BOOL bResult = FormatBufferV(pszFormat, argList);
+	if (bResult)
+		bResult = WriteLogEntry(eLogLevel, eEntryMode, rcsConsoleAccess, m_FormatBuffer.GetData());
+	return bResult;
+}
+
+/**
+ * @param eLogLevel - log level number.
+ * @param pSystemTime - system time.
+ * @param rcsConsoleAccess - provides synchronous access to the console.
+ * @param pszEntry - log entry text.
+ * @return true if text was written to console.
+ */
+BOOL CLogFile::WriteLogEntryToConsole(BUGTRAP_LOGLEVEL eLogLevel, const SYSTEMTIME* pSystemTime, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry)
+{
+	DWORD dwLogEchoMode = GetLogEchoMode();
+	HANDLE hConsole = GetConsoleHandle();
+	BOOL bLogEcho = (dwLogEchoMode & BTLE_DBGOUT) != 0;
+	if (hConsole || bLogEcho)
+	{
+		FillEntryText(eLogLevel, pSystemTime, pszEntry);
+		EnterCriticalSection(&rcsConsoleAccess);
+		if (hConsole)
+			WriteTextToConsole(hConsole);
+		if (bLogEcho)
+			WriteTextToDebugConsole();
+		LeaveCriticalSection(&rcsConsoleAccess);
+		return TRUE;
+	}
+	else
+		return FALSE;
 }

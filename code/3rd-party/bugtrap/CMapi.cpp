@@ -231,9 +231,9 @@ void CMapiSession::InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, 
 		(pszBracket2 = _tcschr(pszBracket1 + 1, _T('>'))) != NULL)
 	{
 		// Copy name
-		int nLength = pszBracket1 - pszName;
+		size_t nLength = pszBracket1 - pszName;
 #ifdef _UNICODE
-		int nLengthA = WideCharToMultiByte(CP_ACP, 0, pszName, nLength, NULL, 0, NULL, NULL);
+		int nLengthA = WideCharToMultiByte(CP_ACP, 0, pszName, (int)nLength, NULL, 0, NULL, NULL);
 		rRecipDesc.lpszName = new CHAR[nLengthA + 1];
 #else
 		rRecipDesc.lpszName = new CHAR[nLength + 1];
@@ -241,7 +241,7 @@ void CMapiSession::InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, 
 		if (rRecipDesc.lpszName)
 		{
 #ifdef _UNICODE
-			WideCharToMultiByte(CP_ACP, 0, pszName, nLength, rRecipDesc.lpszName, nLengthA, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, pszName, (int)nLength, rRecipDesc.lpszName, nLengthA, NULL, NULL);
 			rRecipDesc.lpszName[nLengthA] = '\0';
 #else
 			strcpy_s(rRecipDesc.lpszName, nLength + 1, pszName);
@@ -252,7 +252,7 @@ void CMapiSession::InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, 
 		PCTSTR pszAddress = pszBracket1 + 1;
 		nLength = pszBracket2 - pszAddress;
 #ifdef _UNICODE
-		nLengthA = WideCharToMultiByte(CP_ACP, 0, pszAddress, nLength, NULL, 0, NULL, NULL);
+		nLengthA = WideCharToMultiByte(CP_ACP, 0, pszAddress, (int)nLength, NULL, 0, NULL, NULL);
 		rRecipDesc.lpszAddress = new CHAR[nLengthA + 1];
 #else
 		rRecipDesc.lpszAddress = new CHAR[nLength + 1];
@@ -260,7 +260,7 @@ void CMapiSession::InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, 
 		if (rRecipDesc.lpszAddress)
 		{
 #ifdef _UNICODE
-			WideCharToMultiByte(CP_ACP, 0, pszAddress, nLength, rRecipDesc.lpszAddress, nLengthA, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, pszAddress, (int)nLength, rRecipDesc.lpszAddress, nLengthA, NULL, NULL);
 			rRecipDesc.lpszAddress[nLengthA] = '\0';
 #else
 			strcpy_s(rRecipDesc.lpszAddress, nLength + 1, pszAddress);
@@ -270,7 +270,7 @@ void CMapiSession::InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, 
 	}
 	else
 	{
-		int nSize;
+		size_t nSize;
 		// Try to resolve the name
 		lpMapiRecipDesc lpTempRecip = NULL;
 		if (_tcschr(pszName, _T('@')) == NULL &&
@@ -301,13 +301,13 @@ void CMapiSession::InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, 
 #else
 			nSize = strName.GetLength() + 1;
 #endif
-			rRecipDesc.lpszAddress = new CHAR[nSize];
-			if (rRecipDesc.lpszAddress)
+			rRecipDesc.lpszName = new CHAR[nSize];
+			if (rRecipDesc.lpszName)
 			{
 #ifdef _UNICODE
-				WideCharToMultiByte(CP_ACP, 0, pszName, -1, rRecipDesc.lpszAddress, nSize, NULL, NULL);
+				WideCharToMultiByte(CP_ACP, 0, pszName, -1, rRecipDesc.lpszName, (int)nSize, NULL, NULL);
 #else
-				strcpy_s(rRecipDesc.lpszAddress, nSize, pszName);
+				strcpy_s(rRecipDesc.lpszName, nSize, pszName);
 #endif
 			}
 		}
@@ -320,10 +320,10 @@ void CMapiSession::InitRecipient(ULONG ulRecipClass, MapiRecipDesc& rRecipDesc, 
  * @param nRecipIndex - current position of initialized recipient descriptor in the array.
  * @param arrRecipients - recipient names.
  */
-void CMapiSession::InitRecipients(ULONG ulRecipClass, lpMapiRecipDesc lpRecips, int& nRecipIndex, const CArray<CStrHolder>& arrRecipients)
+void CMapiSession::InitRecipients(ULONG ulRecipClass, lpMapiRecipDesc lpRecips, size_t& nRecipIndex, const CArray<CStrHolder>& arrRecipients)
 {
-	int nNumRecipients = arrRecipients.GetCount();
-	for (int i = 0; i < nNumRecipients; ++i, ++nRecipIndex)
+	size_t nNumRecipients = arrRecipients.GetCount();
+	for (size_t i = 0; i < nNumRecipients; ++i, ++nRecipIndex)
 		InitRecipient(ulRecipClass, lpRecips[nRecipIndex + i], arrRecipients[i]);
 }
 
@@ -340,9 +340,9 @@ BOOL CMapiSession::Send(const CMapiMessage& rMessage, BOOL bShowMessageEditor, H
 		return FALSE;
 
 	const CArray<CStrHolder>& arrAttachments = rMessage.GetAttachments();
-	int nNumAttachments = arrAttachments.GetCount();
+	size_t nNumAttachments = arrAttachments.GetCount();
 	const CArray<CStrHolder>& arrAttachmentTitles = rMessage.GetAttachmentTitles();
-	int nNumAttachmentTitles = arrAttachmentTitles.GetCount();
+	size_t nNumAttachmentTitles = arrAttachmentTitles.GetCount();
 	if (nNumAttachments != nNumAttachmentTitles && nNumAttachmentTitles != 0)
 		return FALSE;
 
@@ -352,12 +352,12 @@ BOOL CMapiSession::Send(const CMapiMessage& rMessage, BOOL bShowMessageEditor, H
 	const CArray<CStrHolder>& arrBCC = rMessage.GetBCC();
 	MapiMessage mapiMessage;
 	ZeroMemory(&mapiMessage, sizeof(mapiMessage));
-	int nRecipCount = arrTo.GetCount() + arrCC.GetCount() + arrBCC.GetCount();
+	size_t nRecipCount = arrTo.GetCount() + arrCC.GetCount() + arrBCC.GetCount();
 
-	int nFileIndex, nRecipIndex;
+	size_t nFileIndex, nRecipIndex;
 	if (nRecipCount > 0)
 	{
-		mapiMessage.nRecipCount = nRecipCount;
+		mapiMessage.nRecipCount = (ULONG)nRecipCount;
 		// Allocate the recipients array
 		mapiMessage.lpRecips = new MapiRecipDesc[nRecipCount];
 		if (mapiMessage.lpRecips)
@@ -387,7 +387,7 @@ BOOL CMapiSession::Send(const CMapiMessage& rMessage, BOOL bShowMessageEditor, H
 	// Setup the attachments
 	if (nNumAttachments)
 	{
-		mapiMessage.nFileCount = nNumAttachments;
+		mapiMessage.nFileCount = (ULONG)nNumAttachments;
 		mapiMessage.lpFiles = new MapiFileDesc[nNumAttachments];
 		if (mapiMessage.lpFiles)
 		{
@@ -395,18 +395,18 @@ BOOL CMapiSession::Send(const CMapiMessage& rMessage, BOOL bShowMessageEditor, H
 			for (nFileIndex = 0; nFileIndex < nNumAttachments; ++nFileIndex)
 			{
 				MapiFileDesc& file = mapiMessage.lpFiles[nFileIndex];
-				file.nPosition = (ULONG)-1;
+				file.nPosition = MAXUINT;
 				PCTSTR pszFileName = arrAttachments[nFileIndex];
 #ifdef _UNICODE
-				int nSize = WideCharToMultiByte(CP_ACP, 0, pszFileName, -1, NULL, 0, NULL, NULL);
+				size_t nSize = WideCharToMultiByte(CP_ACP, 0, pszFileName, -1, NULL, 0, NULL, NULL);
 #else
-				int nSize = strlen(pszFileName) + 1;
+				size_t nSize = strlen(pszFileName) + 1;
 #endif
 				file.lpszPathName = new CHAR[nSize];
 				if (file.lpszPathName)
 				{
 #ifdef _UNICODE
-					WideCharToMultiByte(CP_ACP, 0, pszFileName, -1, file.lpszPathName, nSize, NULL, NULL);
+					WideCharToMultiByte(CP_ACP, 0, pszFileName, -1, file.lpszPathName, (int)nSize, NULL, NULL);
 #else
 					strcpy_s(file.lpszPathName, nSize, pszFileName);
 #endif
@@ -423,7 +423,7 @@ BOOL CMapiSession::Send(const CMapiMessage& rMessage, BOOL bShowMessageEditor, H
 					if (file.lpszFileName)
 					{
 #ifdef _UNICODE
-						WideCharToMultiByte(CP_ACP, 0, pszTitle, -1, file.lpszFileName, nSize, NULL, NULL);
+						WideCharToMultiByte(CP_ACP, 0, pszTitle, -1, file.lpszFileName, (int)nSize, NULL, NULL);
 #else
 						strcpy_s(file.lpszFileName, nSize, pszTitle);
 #endif
@@ -443,15 +443,15 @@ BOOL CMapiSession::Send(const CMapiMessage& rMessage, BOOL bShowMessageEditor, H
 	if (pszSubject)
 	{
 #ifdef _UNICODE
-		int nSubjectSize = WideCharToMultiByte(CP_ACP, 0, pszSubject, -1, NULL, 0, NULL, NULL);
+		size_t nSubjectSize = WideCharToMultiByte(CP_ACP, 0, pszSubject, -1, NULL, 0, NULL, NULL);
 #else
-		int nSubjectSize = strSubject.GetLength() + 1;
+		size_t nSubjectSize = strSubject.GetLength() + 1;
 #endif
 		pszSubjectA = new CHAR[nSubjectSize];
 		if (pszSubjectA)
 		{
 			// Perform Unicode to ANSI conversion
-			WideCharToMultiByte(CP_ACP, 0, pszSubject, -1, pszSubjectA, nSubjectSize, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, pszSubject, -1, pszSubjectA, (int)nSubjectSize, NULL, NULL);
 		}
 	}
 	else
@@ -463,15 +463,15 @@ BOOL CMapiSession::Send(const CMapiMessage& rMessage, BOOL bShowMessageEditor, H
 	if (pszBody)
 	{
 #ifdef _UNICODE
-		int nBodySize = WideCharToMultiByte(CP_ACP, 0, pszBody, -1, NULL, 0, NULL, NULL);
+		size_t nBodySize = WideCharToMultiByte(CP_ACP, 0, pszBody, -1, NULL, 0, NULL, NULL);
 #else
-		int nBodySize = strBody.GetLength() + 1;
+		size_t nBodySize = strBody.GetLength() + 1;
 #endif
 		pszBodyA = new CHAR[nBodySize];
 		if (pszBodyA)
 		{
 			// Perform Unicode to ANSI conversion
-			WideCharToMultiByte(CP_ACP, 0, pszBody, -1, pszBodyA, nBodySize, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, pszBody, -1, pszBodyA, (int)nBodySize, NULL, NULL);
 		}
 	}
 	else

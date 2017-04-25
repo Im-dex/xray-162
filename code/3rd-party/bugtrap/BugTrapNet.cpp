@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: .NET interface to BugTrap.
@@ -19,7 +19,6 @@
 
 #pragma managed
 
-using namespace System::IO;
 using namespace System::Text;
 
 namespace IntelleSoft
@@ -82,23 +81,21 @@ namespace IntelleSoft
 				Sender = sender;
 				Arguments = args;
 				BT_CallNetFilter();
-				Exception = nullptr;
-				Sender = nullptr;
-				Arguments = nullptr;
 			}
 			finally
 			{
+				Exception = nullptr;
+				Sender = nullptr;
+				Arguments = nullptr;
 				Monitor::Exit(syncObj);
 			}
 		}
 
-#ifdef _DEBUG
 		void ExceptionHandler::HandleException(System::Exception^ exception)
 		{
 			UnhandledExceptionEventArgs^ args = gcnew UnhandledExceptionEventArgs(exception, ExceptionType::DomainException);
 			HandleException(exception, nullptr, args);
 		}
-#endif
 
 		void ExceptionHandler::ReadVersionInfo(AssemblyName^ assemblyName)
 		{
@@ -121,6 +118,45 @@ namespace IntelleSoft
 			BT_UninstallSehFilter();
 		}
 
+		void ExceptionHandler::SaveSnapshot(System::Exception^ exception, String^ fileName)
+		{
+			try
+			{
+				Exception = exception;
+				SaveSnapshot(fileName);
+			}
+			finally
+			{
+				Exception = nullptr;
+			}
+		}
+
+		void ExceptionHandler::SendSnapshot(System::Exception^ exception)
+		{
+			try
+			{
+				Exception = exception;
+				SendSnapshot();
+			}
+			finally
+			{
+				Exception = nullptr;
+			}
+		}
+
+		void ExceptionHandler::MailSnapshot(System::Exception^ exception)
+		{
+			try
+			{
+				Exception = exception;
+				MailSnapshot();
+			}
+			finally
+			{
+				Exception = nullptr;
+			}
+		}
+
 		void LogFile::PrvOpen(String^ fileName, LogFormatType logFormat)
 		{
 			pin_ptr<const wchar_t> wstrFileName(PtrToStringChars(fileName));
@@ -133,143 +169,125 @@ namespace IntelleSoft
 		{
 			if (this->handle != IntPtr::Zero)
 			{
-				BT_CloseLogFile((INT_PTR)this->handle);
+				ValidateIoResult(BT_CloseLogFile((INT_PTR)this->handle));
 				Detach();
 			}
 		}
 
 		void LogFile::Attach(IntPtr handle)
 		{
-			if (this->handle != IntPtr::Zero || handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			this->handle = handle;
 		}
 
 		void LogFile::Flush(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
-			BT_FlushLogFile((INT_PTR)this->handle);
+			ValidateHandle();
+			ValidateIoResult(BT_FlushLogFile((INT_PTR)this->handle));
 		}
 
 		String^ LogFile::FileName::get(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			return gcnew String(BT_GetLogFileName((INT_PTR)this->handle));
 		}
 
 		int LogFile::LogSizeInEntries::get(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			return BT_GetLogSizeInEntries((INT_PTR)this->handle);
 		}
 
 		void LogFile::LogSizeInEntries::set(int value)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
-			BT_SetLogSizeInEntries((INT_PTR)this->handle, value);
+			ValidateHandle();
+			ValidateIoResult(BT_SetLogSizeInEntries((INT_PTR)this->handle, value));
 		}
 
 		int LogFile::LogSizeInBytes::get(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			return BT_GetLogSizeInBytes((INT_PTR)this->handle);
 		}
 
 		void LogFile::LogSizeInBytes::set(int value)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
-			BT_SetLogSizeInBytes((INT_PTR)this->handle, value);
+			ValidateHandle();
+			ValidateIoResult(BT_SetLogSizeInBytes((INT_PTR)this->handle, value));
 		}
 
 		LogFlagsType LogFile::LogFlags::get(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			return (LogFlagsType)BT_GetLogFlags((INT_PTR)this->handle);
 		}
 
 		void LogFile::LogFlags::set(LogFlagsType value)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
-			return BT_SetLogFlags((INT_PTR)this->handle, (DWORD)value);
+			ValidateHandle();
+			ValidateIoResult(BT_SetLogFlags((INT_PTR)this->handle, (DWORD)value));
 		}
 
 		LogLevelType LogFile::LogLevel::get(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			return (LogLevelType)BT_GetLogLevel((INT_PTR)this->handle);
 		}
 
 		void LogFile::LogLevel::set(LogLevelType value)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
-			BT_SetLogLevel((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)value);
+			ValidateHandle();
+			ValidateIoResult(BT_SetLogLevel((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)value));
 		}
 
 		LogEchoType LogFile::LogEchoMode::get(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			return (LogEchoType)BT_GetLogEchoMode((INT_PTR)this->handle);
 		}
 
 		void LogFile::LogEchoMode::set(LogEchoType value)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
-			BT_SetLogEchoMode((INT_PTR)this->handle, (DWORD)value);
+			ValidateHandle();
+			ValidateIoResult(BT_SetLogEchoMode((INT_PTR)this->handle, (DWORD)value));
 		}
 
 		void LogFile::Clear(void)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
-			BT_ClearLog((INT_PTR)this->handle);
+			ValidateHandle();
+			ValidateIoResult(BT_ClearLog((INT_PTR)this->handle));
 		}
 
 		void LogFile::Insert(LogLevelType logLevel, String^ entry)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			pin_ptr<const wchar_t> wstrEntry(PtrToStringChars(entry));
-			BT_InsLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry);
+			ValidateIoResult(BT_InsLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry));
 		}
 
 		void LogFile::Insert(LogLevelType logLevel, String^ format, ... array<Object^>^ args)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			StringBuilder^ entry = gcnew StringBuilder();
 			entry->AppendFormat(format, args);
 			pin_ptr<const wchar_t> wstrEntry(PtrToStringChars(entry->ToString()));
-			BT_InsLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry);
+			ValidateIoResult(BT_InsLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry));
 		}
 
 		void LogFile::Append(LogLevelType logLevel, String^ entry)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			pin_ptr<const wchar_t> wstrEntry(PtrToStringChars(entry));
-			BT_AppLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry);
+			ValidateIoResult(BT_AppLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry));
 		}
 
 		void LogFile::Append(LogLevelType logLevel, String^ format, ... array<Object^>^ args)
 		{
-			if (this->handle == IntPtr::Zero)
-				throw gcnew InvalidOperationException();
+			ValidateHandle();
 			StringBuilder^ entry = gcnew StringBuilder();
 			entry->AppendFormat(format, args);
 			pin_ptr<const wchar_t> wstrEntry(PtrToStringChars(entry->ToString()));
-			BT_AppLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry);
+			ValidateIoResult(BT_AppLogEntry((INT_PTR)this->handle, (BUGTRAP_LOGLEVEL)logLevel, wstrEntry));
 		}
 	}
 }

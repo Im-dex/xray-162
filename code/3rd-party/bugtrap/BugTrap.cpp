@@ -1,9 +1,9 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
- * Description: External routines and entry point.
+ * Description: External routines and the entry point.
  * Author: Maksim Pyatkovskiy.
  *
  * This source code is only intended as a supplement to the
@@ -21,8 +21,9 @@
 #include "XmlReader.h"
 #include "TextLogFile.h"
 #include "XmlLogFile.h"
+#include "LogStream.h"
+#include "ModuleImportTable.h"
 #include "Globals.h"
-#include "VersionInfo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,6 +35,8 @@ static CRITICAL_SECTION g_csMutualLogAccess;
 static CRITICAL_SECTION g_csConsoleAccess;
 /// Critical section used for synchronous error handler execution.
 static CRITICAL_SECTION g_csHandlerSync;
+/// True when code is invoked from DllMain().
+static BOOL g_bInDllMain = FALSE;
 /// Event fired when pending log request is finished.
 static HANDLE g_hLogRequestComplete = NULL;
 /// True when logging activity is enabled.
@@ -42,11 +45,10 @@ static BOOL g_bLoggingEnabled = FALSE;
 static DWORD g_dwNumLogRequests = 0;
 /// Array of pointers to log descriptors.
 static CArray<CLogFile*, CDynamicTraits<CLogFile*> > g_arrLogFiles;
-
-#ifndef _MANAGED
 /// Old filter of unhandled exception.
 static PTOP_LEVEL_EXCEPTION_FILTER g_pfnOldExceptionFilter = NULL;
-#endif
+/// Table of modules that import SetUnhandledExceptionFilter() function.
+static CModuleImportTable g_ModuleImportTable;
 
 #if defined _CRTDBG_MAP_ALLOC && defined _DEBUG
 /// Global memory state object. Tracks memory leaks.
@@ -59,8 +61,6 @@ static _CrtMemState g_MemState;
  */
 static BOOL RequestMorePrivileges(void)
 {
-	if (! g_bWinNT)
-		return TRUE; // simulation for Win9x
 	BOOL bResult = FALSE;
 	HANDLE hCurrentProcess = GetCurrentProcess();
 	HANDLE hToken;
@@ -110,8 +110,8 @@ static void StopLogging(void)
  */
 static void SaveLogLinkEntries(bool bCrash)
 {
-	int iNumLogLinks = g_arrLogLinks.GetCount();
-	for (int iLogLinkPos = 0; iLogLinkPos < iNumLogLinks; ++iLogLinkPos)
+	size_t iNumLogLinks = g_arrLogLinks.GetCount();
+	for (size_t iLogLinkPos = 0; iLogLinkPos < iNumLogLinks; ++iLogLinkPos)
 	{
 		CLogLink* pLogLink = g_arrLogLinks[iLogLinkPos];
 		_ASSERTE(pLogLink != NULL);
@@ -126,14 +126,16 @@ static void SaveLogLinkEntries(bool bCrash)
 static void SaveLogFiles(bool bCrash)
 {
 	_ASSERTE(! g_bLoggingEnabled && ! g_dwNumLogRequests);
-	int iNumLogFiles = g_arrLogFiles.GetCount();
-	for (int iLogFilePos = 0; iLogFilePos < iNumLogFiles; ++iLogFilePos)
+	size_t iNumLogFiles = g_arrLogFiles.GetCount();
+	for (size_t iLogFilePos = 0; iLogFilePos < iNumLogFiles; ++iLogFilePos)
 	{
 		CLogFile* pLogFile = g_arrLogFiles[iLogFilePos];
 		_ASSERTE(pLogFile != NULL);
 		pLogFile->SaveEntries(bCrash);
+		pLogFile->Close();
 	}
 }
+
 /**
  * Flush contents of all open log files.
  * @param bCrash - true if crash has occurred.
@@ -174,19 +176,37 @@ static void LeaveLogFunction(void)
 /**
  * Log function prologue.
  * @param pLogFile - log file object.
- * @return false if function can't be performed.
+ * @return true if log file can be locked.
  */
-static inline BOOL EnterLogFunction(CLogFile* pLogFile)
+static inline CLogFile* EnterLogFunction(CLogFile* pLogFile)
 {
 	if (! pLogFile || ! EnterLogFunction())
-		return FALSE;
-	if (g_arrLogFiles.LSearch(pLogFile) < 0)
-	{
-		LeaveLogFunction();
-		return FALSE;
-	}
+		return NULL;
 	pLogFile->CaptureObject();
-	return TRUE;
+	return pLogFile;
+}
+
+/**
+ * @param iHandle - log file handle.
+ * @return log file object.
+ */
+static inline CLogFile* GetLogFileObject(INT_PTR iHandle)
+{
+	if (iHandle >= 1 && iHandle <= (INT_PTR)g_arrLogFiles.GetCount())
+		return g_arrLogFiles[(size_t)(iHandle - 1)];
+	else
+		return NULL;
+}
+
+/**
+ * Log function prologue.
+ * @param iHandle - log file handle.
+ * @return log file object.
+ */
+static inline CLogFile* EnterLogFunction(INT_PTR iHandle)
+{
+	CLogFile* pLogFile = GetLogFileObject(iHandle);
+	return EnterLogFunction(pLogFile);
 }
 
 /**
@@ -212,6 +232,8 @@ static void FreeGlobalData(void)
 	g_strUserMessage.Free();
 	g_strFirstIntroMesage.Free();
 	g_strSecondIntroMesage.Free();
+	// Free module import table.
+	g_ModuleImportTable.Clear();
 }
 
 /**
@@ -257,22 +279,10 @@ static void FreeSymEngine(void)
 }
 
 /**
- * Generic unhandled exception handler.
- * @param eExceptionType - type of exception.
+ * Read version info if application name is not specified.
  */
-static void HandleException(CSymEngine::EXCEPTION_TYPE eExceptionType)
+static inline void ReadVersionInfo(void)
 {
-	// Initialize symbolic engine parameters.
-	CSymEngine::CEngineParams params(g_pExceptionPointers, eExceptionType);
-	// Flush log files and allocate symbolic engine.
-	InitSymEngine(params);
-	// Call user error handler before BugTrap user interface.
-	if (g_pfnPreErrHandler != NULL)
-		(*g_pfnPreErrHandler)(g_nPreErrHandlerParam);
-#ifdef _MANAGED
-	NetThunks::FireBeforeUnhandledExceptionEvent();
-#endif
-	// Read version info if application name is not specified.
 	if (*g_szAppName == _T('\0'))
 	{
 #ifdef _MANAGED
@@ -281,16 +291,84 @@ static void HandleException(CSymEngine::EXCEPTION_TYPE eExceptionType)
 		BT_ReadVersionInfo(NULL);
 #endif
 	}
-	// Execute BugTrap action.
-	StartHandlerThread();
-	// Call user error handler after BugTrap user interface.
+}
+
+/**
+ * Generic unhandled exception handler.
+ * @param rParams - symbolic engine parameters.
+ */
+static BOOL HandleException(CSymEngine::CEngineParams& rParams)
+{
+	// Block other threads.
+	EnterCriticalSection(&g_csHandlerSync);
+	// Save pointer to exception context.
+	g_pExceptionPointers = rParams.m_pExceptionPointers;
+	__try
+	{
+		// Flush log files and allocate symbolic engine.
+		InitSymEngine(rParams);
+		// Do other things only if stack trace contains module of interest
+		if (!g_pSymEngine->CheckStackTrace(g_hModule))
+		{
+			g_pExceptionPointers = NULL;
+			// Unlock other threads.
+			LeaveCriticalSection(&g_csHandlerSync);
+			return FALSE;
+		}
+		// Call user error handler before BugTrap user interface.
+		if (g_pfnPreErrHandler != NULL)
+			(*g_pfnPreErrHandler)(g_nPreErrHandlerParam);
 #ifdef _MANAGED
-	NetThunks::FireAfterUnhandledExceptionEvent();
+		NetThunks::FireBeforeUnhandledExceptionEvent();
 #endif
-	if (g_pfnPostErrHandler != NULL)
-		(*g_pfnPostErrHandler)(g_nPostErrHandlerParam);
-	// Deallocate system engine object.
-	FreeSymEngine();
+		// Read version info if application name is not specified.
+		ReadVersionInfo();
+		// Execute BugTrap action.
+		StartHandlerThread();
+		// Call user error handler after BugTrap user interface.
+#ifdef _MANAGED
+		NetThunks::FireAfterUnhandledExceptionEvent();
+#endif
+		if (g_pfnPostErrHandler != NULL)
+			(*g_pfnPostErrHandler)(g_nPostErrHandlerParam);
+		// Deallocate system engine object.
+		FreeSymEngine();
+		// Free global data (to avoid false messages about memory leaks).
+		FreeGlobalData();
+	}
+	// Catch any internal problems.
+	__except (InternalFilter(GetExceptionInformation()))
+	{
+	}
+	g_pExceptionPointers = NULL;
+	// Unlock other threads.
+	LeaveCriticalSection(&g_csHandlerSync);
+  return TRUE;
+}
+
+/**
+ * Restart current process with default settings, the same
+ * command line, working directory and environment.
+ * @return true if process has been successfully restarted.
+ */
+static inline BOOL RestartApplication(void)
+{
+	PTSTR pszCommandLine = GetCommandLine();
+	_ASSERTE(pszCommandLine != NULL);
+	STARTUPINFO StartupInfo;
+	ZeroMemory(&StartupInfo, sizeof(StartupInfo));
+	StartupInfo.cb = sizeof(StartupInfo);
+	PROCESS_INFORMATION ProcessInfo;
+	ZeroMemory(&ProcessInfo, sizeof(ProcessInfo));
+	if (! CreateProcess(NULL, pszCommandLine,
+						NULL, NULL, FALSE, 0, NULL, NULL,
+						&StartupInfo, &ProcessInfo))
+	{
+		return FALSE;
+	}
+	CloseHandle(ProcessInfo.hThread);
+	CloseHandle(ProcessInfo.hProcess);
+	return TRUE;
 }
 
 /**
@@ -304,20 +382,13 @@ static LONG GenericFilter(PEXCEPTION_POINTERS pExceptionPointers, CSymEngine::EX
 	// Stack overflow is not handled by BugTrap.
 	if (pExceptionPointers->ExceptionRecord->ExceptionCode == EXCEPTION_STACK_OVERFLOW)
 		return EXCEPTION_CONTINUE_SEARCH;
-	// Block other threads.
-	EnterCriticalSection(&g_csHandlerSync);
-	g_pExceptionPointers = pExceptionPointers;
-	g_dwExceptionThreadID = GetCurrentThreadId();
-	__try
 	{
-		// Handle the exception.
-		HandleException(eExceptionType);
-		// Free global data (to avoid false messages about memory leaks).
-		FreeGlobalData();
-	}
-	// Catch any internal problems.
-	__except (InternalFilter(GetExceptionInformation()))
-	{
+		// Initialize symbolic engine parameters.
+		CSymEngine::CEngineParams params(pExceptionPointers, eExceptionType);
+		// Call exception handler.
+		if (!HandleException(params))
+			return EXCEPTION_CONTINUE_SEARCH;
+		// ~CSymEngine() will be called at this point.
 	}
 #if defined _CRTDBG_MAP_ALLOC && defined _DEBUG
 	// 1. Use DebugView of Mark Russinovich to check CRT output.
@@ -325,45 +396,62 @@ static LONG GenericFilter(PEXCEPTION_POINTERS pExceptionPointers, CSymEngine::EX
 	// memory allocated from static hash table used by CXmlReader.
 	_CrtMemDumpAllObjectsSince(&g_MemState);
 #endif
-	// Force application to quit.
-	HANDLE hCurrentProcess = GetCurrentProcess();
-	TerminateProcess(hCurrentProcess, ~0u);
-	// Unlock other threads
-	// (this code won't be executed, but I have added it for clarity).
-	LeaveCriticalSection(&g_csHandlerSync);
-	// Exit from the exception filter.
-	return EXCEPTION_EXECUTE_HANDLER;
+	if (g_dwFlags & BTF_RESTARTAPP)
+		RestartApplication();
+	HANDLE hCurrentProcess;
+	switch (g_eExitMode)
+	{
+	case BTEM_EXECUTEHANDLER:
+		return EXCEPTION_EXECUTE_HANDLER;
+	default: // BTEM_TERMINATEAPP
+		// Force application to quit.
+		hCurrentProcess = GetCurrentProcess();
+		TerminateProcess(hCurrentProcess, ~0u);
+		// Exit from the exception filter (this code will not be executed).
+	case BTEM_CONTINUESEARCH:
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
 }
 
 /**
  * Write log entry to the file.
- * @param pLogFile - pointer to the log file info.
+ * @param iHandle - log file handle.
  * @param eLogLevel - log level number.
  * @param eEntryMode - entry mode.
  * @param pszEntry - log entry text.
+ * @return true if operation was completed successfully.
  */
-static void WriteLogEntry(CLogFile* pLogFile, BUGTRAP_LOGLEVEL eLogLevel, CLogFile::ENTRY_MODE eEntryMode, PCTSTR pszEntry)
+static BOOL WriteLogEntry(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, CLogFile::ENTRY_MODE eEntryMode, PCTSTR pszEntry)
 {
-	if (pszEntry == NULL || ! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->WriteLogEntry(eLogLevel, eEntryMode, g_csConsoleAccess, pszEntry);
+	if (pszEntry == NULL)
+		return FALSE;
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->WriteLogEntry(eLogLevel, eEntryMode, g_csConsoleAccess, pszEntry);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
  * Write log entry to the file.
- * @param pLogFile - pointer to the log file info.
+ * @param iHandle - log file handle.
  * @param eLogLevel - log level number.
  * @param eEntryMode - entry mode.
  * @param pszFormat - format string.
  * @param argList - variable argument list.
+ * @return true if operation was completed successfully.
  */
-static void WriteLogEntry(CLogFile* pLogFile, BUGTRAP_LOGLEVEL eLogLevel, CLogFile::ENTRY_MODE eEntryMode, PCTSTR pszFormat, va_list argList)
+static BOOL WriteLogEntry(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, CLogFile::ENTRY_MODE eEntryMode, PCTSTR pszFormat, va_list argList)
 {
-	if (pszFormat == NULL || ! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->WriteLogEntryV(eLogLevel, eEntryMode, g_csConsoleAccess, pszFormat, argList);
+	if (pszFormat == NULL)
+		return FALSE;
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->WriteLogEntryV(eLogLevel, eEntryMode, g_csConsoleAccess, pszFormat, argList);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
@@ -438,6 +526,7 @@ static void DetachProcess(void)
 BOOL WINAPI DllMain(HINSTANCE hModule, DWORD fdwReason, PVOID pvReserved)
 {
 	pvReserved;
+	g_bInDllMain = TRUE;
 	switch (fdwReason)
 	{
 	case DLL_PROCESS_ATTACH:
@@ -466,6 +555,7 @@ BOOL WINAPI DllMain(HINSTANCE hModule, DWORD fdwReason, PVOID pvReserved)
 #endif
 		break;
 	}
+	g_bInDllMain = FALSE;
 	return TRUE;
 }
 
@@ -667,20 +757,20 @@ extern "C" BUGTRAP_API void APIENTRY BT_ClearLogFiles(void)
  */
 extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogFilesCount(void)
 {
-	return g_arrLogLinks.GetCount();
+	return (DWORD)g_arrLogLinks.GetCount();
 }
 
 /**
  * @param pszLogFile - custom log file name.
  * @return index of matching long file name if present.
  */
-static int FindLogLink(PCTSTR pszLogFile)
+static size_t FindLogLink(PCTSTR pszLogFile)
 {
 	TCHAR szLogFileName[MAX_PATH];
 	if (GetCompleteLogFileName(szLogFileName, pszLogFile, NULL))
 	{
-		int nItemCount = g_arrLogLinks.GetCount();
-		for (int nItemPos = 0; nItemPos < nItemCount; ++nItemPos)
+		size_t nItemCount = g_arrLogLinks.GetCount();
+		for (size_t nItemPos = 0; nItemPos < nItemCount; ++nItemPos)
 		{
 			CLogLink* pLogLink = g_arrLogLinks[nItemPos];
 			_ASSERTE(pLogLink != NULL);
@@ -688,7 +778,7 @@ static int FindLogLink(PCTSTR pszLogFile)
 				return nItemPos;
 		}
 	}
-	return -1;
+	return MAXSIZE_T;
 }
 
 /**
@@ -703,7 +793,7 @@ extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogFileEntry(INT_PTR nLogFileIndexOr
 {
 	if (bGetByIndex)
 	{
-		if (nLogFileIndexOrName < 0 || nLogFileIndexOrName >= g_arrLogLinks.GetCount())
+		if (nLogFileIndexOrName < 0 || nLogFileIndexOrName >= (INT_PTR)g_arrLogLinks.GetCount())
 			return ERROR_NO_MORE_ITEMS;
 	}
 	else
@@ -715,7 +805,7 @@ extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogFileEntry(INT_PTR nLogFileIndexOr
 		if (nLogFileIndexOrName < 0)
 			return ERROR_NOT_FOUND;
 	}
-	CLogLink* pLogLink = g_arrLogLinks[nLogFileIndexOrName];
+	CLogLink* pLogLink = g_arrLogLinks[(size_t)nLogFileIndexOrName];
 	_ASSERTE(pLogLink != NULL);
 	BUGTRAP_LOGTYPE eLogType = pLogLink->GetLogType();
 	if (pLogEntry != NULL)
@@ -781,7 +871,7 @@ extern "C" BUGTRAP_API void APIENTRY BT_AddLogFile(PCTSTR pszLogFile)
 {
 	if (pszLogFile && *pszLogFile)
 	{
-		if (FindLogLink(pszLogFile) < 0)
+		if (FindLogLink(pszLogFile) == MAXSIZE_T)
 		{
 			CLogLink* pLogLink = new CLogLink(pszLogFile);
 			if (pLogLink != NULL)
@@ -798,7 +888,7 @@ extern "C" BUGTRAP_API void APIENTRY BT_AddRegFile(LPCTSTR pszRegFile, PCTSTR ps
 {
 	if (pszRegFile && *pszRegFile)
 	{
-		if (FindLogLink(pszRegFile) < 0)
+		if (FindLogLink(pszRegFile) == MAXSIZE_T)
 		{
 			CRegLink* pRegLink = new CRegLink(pszRegFile, pszRegKey);
 			if (pRegLink != NULL)
@@ -814,8 +904,8 @@ extern "C" BUGTRAP_API void APIENTRY BT_DeleteLogFile(PCTSTR pszLogFile)
 {
 	if (pszLogFile && *pszLogFile)
 	{
-		int nItemPos = FindLogLink(pszLogFile);
-		if (nItemPos >= 0)
+		size_t nItemPos = FindLogLink(pszLogFile);
+		if (nItemPos != MAXSIZE_T)
 			g_arrLogLinks.DeleteItem(nItemPos);
 	}
 }
@@ -847,6 +937,24 @@ extern "C" BUGTRAP_API BT_ErrHandler APIENTRY BT_GetPostErrHandler(void)
 }
 
 /**
+* @return address of custom activity handler called at processing BugTrap action.
+*/
+extern "C" BUGTRAP_API BT_CustomActivityHandler APIENTRY BT_GetCustomActivityHandler(void)
+{
+	return g_pfnCustomActivityHandler;
+}
+
+/**
+* @param pfnCustomActivityHandler - address of custom activity handler called at processing BugTrap action.
+* @param nCustomActivityHandlerParam - user-defined parameter of custom activity handler called at processing BugTrap action.
+*/
+extern "C" BUGTRAP_API void APIENTRY BT_SetCustomActivityHandler(BT_CustomActivityHandler pfnCustomActivityHandler, INT_PTR nCustomActivityHandlerParam)
+{
+	g_pfnCustomActivityHandler = pfnCustomActivityHandler;
+	g_nCustomActivityHandlerParam = nCustomActivityHandlerParam;
+}
+
+/**
  * @param pfnPostErrHandler - address of error handler called after BugTrap dialog.
  * @param nPostErrHandlerParam - user-defined parameter of error handler called after BugTrap dialog.
  */
@@ -862,8 +970,8 @@ extern "C" BUGTRAP_API void APIENTRY BT_SetPostErrHandler(BT_ErrHandler pfnPostE
  */
 extern "C" BUGTRAP_API PCTSTR APIENTRY BT_GetLogFileName(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
 		return NULL;
 	PCTSTR pszLogFileName = pLogFile->GetLogFileName();
 	LeaveLogFunction(pLogFile);
@@ -876,8 +984,8 @@ extern "C" BUGTRAP_API PCTSTR APIENTRY BT_GetLogFileName(INT_PTR iHandle)
  */
 extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogSizeInEntries(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
 		return 0;
 	DWORD dwLogSizeInEntries = pLogFile->GetLogSizeInEntries();
 	LeaveLogFunction(pLogFile);
@@ -887,14 +995,16 @@ extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogSizeInEntries(INT_PTR iHandle)
 /**
  * @param iHandle - log file handle.
  * @param dwLogSizeInEntries - maximum size of log file in records; pass MAXDWORD for unlimited log.
+ * @return true if operation was accepted.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_SetLogSizeInEntries(INT_PTR iHandle, DWORD dwLogSizeInEntries)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SetLogSizeInEntries(INT_PTR iHandle, DWORD dwLogSizeInEntries)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->SetLogSizeInEntries(dwLogSizeInEntries);
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->SetLogSizeInEntries(dwLogSizeInEntries);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
@@ -903,8 +1013,8 @@ extern "C" BUGTRAP_API void APIENTRY BT_SetLogSizeInEntries(INT_PTR iHandle, DWO
  */
 extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogSizeInBytes(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
 		return 0;
 	DWORD dwLogSizeInBytes = pLogFile->GetLogSizeInBytes();
 	LeaveLogFunction(pLogFile);
@@ -914,14 +1024,16 @@ extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogSizeInBytes(INT_PTR iHandle)
 /**
  * @param iHandle - log file handle.
  * @param dwLogSizeInBytes - maximum size of log file in records; pass MAXDWORD for unlimited log.
+ * @return true if operation was accepted.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_SetLogSizeInBytes(INT_PTR iHandle, DWORD dwLogSizeInBytes)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SetLogSizeInBytes(INT_PTR iHandle, DWORD dwLogSizeInBytes)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->SetLogSizeInBytes(dwLogSizeInBytes);
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->SetLogSizeInBytes(dwLogSizeInBytes);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
@@ -930,8 +1042,8 @@ extern "C" BUGTRAP_API void APIENTRY BT_SetLogSizeInBytes(INT_PTR iHandle, DWORD
  */
 extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogFlags(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
 		return BTLF_NONE;
 	DWORD dwLogFlags = pLogFile->GetLogFlags();
 	LeaveLogFunction(pLogFile);
@@ -941,14 +1053,16 @@ extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogFlags(INT_PTR iHandle)
 /**
  * @param iHandle - log file handle.
  * @param dwLogFlags - set of log flags.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_SetLogFlags(INT_PTR iHandle, DWORD dwLogFlags)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SetLogFlags(INT_PTR iHandle, DWORD dwLogFlags)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->SetLogFlags(dwLogFlags);
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->SetLogFlags(dwLogFlags);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
@@ -957,8 +1071,8 @@ extern "C" BUGTRAP_API void APIENTRY BT_SetLogFlags(INT_PTR iHandle, DWORD dwLog
  */
 extern "C" BUGTRAP_API BUGTRAP_LOGLEVEL APIENTRY BT_GetLogLevel(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
 		return BTLL_NONE;
 	BUGTRAP_LOGLEVEL eLogLevel = pLogFile->GetLogLevel();
 	LeaveLogFunction(pLogFile);
@@ -968,14 +1082,16 @@ extern "C" BUGTRAP_API BUGTRAP_LOGLEVEL APIENTRY BT_GetLogLevel(INT_PTR iHandle)
 /**
  * @param iHandle - log file handle.
  * @param eLogLevel - minimal logl level accepted by tracing functions.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_SetLogLevel(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SetLogLevel(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->SetLogLevel(eLogLevel);
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->SetLogLevel(eLogLevel);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
@@ -984,8 +1100,8 @@ extern "C" BUGTRAP_API void APIENTRY BT_SetLogLevel(INT_PTR iHandle, BUGTRAP_LOG
  */
 extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogEchoMode(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
 		return BTLE_NONE;
 	DWORD dwLogEchoMode = pLogFile->GetLogEchoMode();
 	LeaveLogFunction(pLogFile);
@@ -995,14 +1111,16 @@ extern "C" BUGTRAP_API DWORD APIENTRY BT_GetLogEchoMode(INT_PTR iHandle)
 /**
  * @param iHandle - log file handle.
  * @param dwLogEchoMode - new echo mode.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_SetLogEchoMode(INT_PTR iHandle, DWORD dwLogEchoMode)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SetLogEchoMode(INT_PTR iHandle, DWORD dwLogEchoMode)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->SetLogEchoMode(dwLogEchoMode);
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->SetLogEchoMode(dwLogEchoMode);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 extern "C" BUGTRAP_API void CDECL BT_CallSehFilter(void)
@@ -1035,36 +1153,37 @@ extern "C" BUGTRAP_API void CDECL BT_CallNetFilter(void)
  * @param iHandle - log file handle.
  * @param eLogLevel - log level number.
  * @param pszEntry - text of message.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_InsLogEntry(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszEntry)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_InsLogEntry(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszEntry)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	WriteLogEntry(pLogFile, eLogLevel, CLogFile::EM_INSERT, pszEntry);
+	return WriteLogEntry(iHandle, eLogLevel, CLogFile::EM_INSERT, pszEntry);
 }
 
 /**
  * @param iHandle - log file handle.
  * @param eLogLevel - log level number.
  * @param pszEntry - text of message.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_AppLogEntry(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszEntry)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_AppLogEntry(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszEntry)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	WriteLogEntry(pLogFile, eLogLevel, CLogFile::EM_APPEND, pszEntry);
+	return WriteLogEntry(iHandle, eLogLevel, CLogFile::EM_APPEND, pszEntry);
 }
 
 /**
  * @param iHandle - log file handle.
  * @param eLogLevel - log level number.
  * @param pszFormat - printf-like message format.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void CDECL BT_AppLogEntryF(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, ...)
+extern "C" BUGTRAP_API BOOL CDECL BT_AppLogEntryF(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, ...)
 {
 	va_list argList;
 	va_start(argList, pszFormat);
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	WriteLogEntry(pLogFile, eLogLevel, CLogFile::EM_APPEND, pszFormat, argList);
+	BOOL bResult = WriteLogEntry(iHandle, eLogLevel, CLogFile::EM_APPEND, pszFormat, argList);
 	va_end(argList);
+	return bResult;
 }
 
 /**
@@ -1072,25 +1191,26 @@ extern "C" BUGTRAP_API void CDECL BT_AppLogEntryF(INT_PTR iHandle, BUGTRAP_LOGLE
  * @param eLogLevel - log level number.
  * @param pszFormat - printf-like message format.
  * @param argList - variable length argument list.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_AppLogEntryV(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, va_list argList)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_AppLogEntryV(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, va_list argList)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	WriteLogEntry(pLogFile, eLogLevel, CLogFile::EM_APPEND, pszFormat, argList);
+	return WriteLogEntry(iHandle, eLogLevel, CLogFile::EM_APPEND, pszFormat, argList);
 }
 
 /**
  * @param iHandle - log file handle.
  * @param eLogLevel - log level number.
  * @param pszFormat - printf-like message format.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void CDECL BT_InsLogEntryF(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, ...)
+extern "C" BUGTRAP_API BOOL CDECL BT_InsLogEntryF(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, ...)
 {
 	va_list argList;
 	va_start(argList, pszFormat);
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	WriteLogEntry(pLogFile, eLogLevel, CLogFile::EM_INSERT, pszFormat, argList);
+	BOOL bResult = WriteLogEntry(iHandle, eLogLevel, CLogFile::EM_INSERT, pszFormat, argList);
 	va_end(argList);
+	return bResult;
 }
 
 /**
@@ -1098,24 +1218,26 @@ extern "C" BUGTRAP_API void CDECL BT_InsLogEntryF(INT_PTR iHandle, BUGTRAP_LOGLE
  * @param eLogLevel - log level number.
  * @param pszFormat - printf-like message format.
  * @param argList - variable length argument list.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_InsLogEntryV(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, va_list argList)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_InsLogEntryV(INT_PTR iHandle, BUGTRAP_LOGLEVEL eLogLevel, PCTSTR pszFormat, va_list argList)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	WriteLogEntry(pLogFile, eLogLevel, CLogFile::EM_INSERT, pszFormat, argList);
+	return WriteLogEntry(iHandle, eLogLevel, CLogFile::EM_INSERT, pszFormat, argList);
 }
 
 /**
  * @param iHandle - log file handle.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_ClearLog(INT_PTR iHandle)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_ClearLog(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
-		return;
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
 	// remove entries from the memory
-	pLogFile->FreeEntries();
+	BOOL bResult = pLogFile->ClearEntries();
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
@@ -1143,6 +1265,15 @@ extern "C" BUGTRAP_API BUGTRAP_ACTIVITY APIENTRY BT_GetActivityType(void)
 }
 
 /**
+ * @brief Get application termination mode.
+ * @return current application termination mode.
+ */
+extern "C" BUGTRAP_API BUGTRAP_EXITMODE APIENTRY BT_GetExitMode(void)
+{
+	return g_eExitMode;
+}
+
+/**
  * @return format of error report.
  */
 extern "C" BUGTRAP_API BUGTRAP_REPORTFORMAT APIENTRY BT_GetReportFormat(void)
@@ -1164,6 +1295,15 @@ extern "C" BUGTRAP_API void APIENTRY BT_SetReportFormat(BUGTRAP_REPORTFORMAT eRe
 extern "C" BUGTRAP_API void APIENTRY BT_SetActivityType(BUGTRAP_ACTIVITY eActivityType)
 {
 	g_eActivityType = eActivityType;
+}
+
+/**
+ * @brief Set application termination mode.
+ * @param eExitMode - new application termination mode.
+ */
+extern "C" BUGTRAP_API void APIENTRY BT_SetExitMode(BUGTRAP_EXITMODE eExitMode)
+{
+	g_eExitMode = eExitMode;
 }
 
 /**
@@ -1227,11 +1367,14 @@ extern "C" BUGTRAP_API INT_PTR APIENTRY BT_OpenLogFile(PCTSTR pszLogFileName, BU
 	case BTLF_XML:
 		pLogFile = new CXmlLogFile();
 		break;
+	case BTLF_STREAM:
+		pLogFile = new CLogStream();
+		break;
 	default:
 		_ASSERT(FALSE);
 		return NULL;
 	}
-	BOOL bResult = FALSE;
+	size_t nCount = 0;
 	if (pLogFile != NULL)
 	{
 		EnterLogFunction();
@@ -1242,43 +1385,46 @@ extern "C" BUGTRAP_API INT_PTR APIENTRY BT_OpenLogFile(PCTSTR pszLogFileName, BU
 		{
 			EnterCriticalSection(&g_csMutualLogAccess);
 			g_arrLogFiles.AddItem(pLogFile);
+			nCount = g_arrLogFiles.GetCount();
 			LeaveCriticalSection(&g_csMutualLogAccess);
-			bResult = TRUE;
 		}
 		LeaveLogFunction();
 	}
-	if (! bResult)
+	if (nCount == 0)
 	{
 		delete pLogFile;
 		pLogFile = NULL;
 	}
-	return (INT_PTR)pLogFile;
+	return nCount;
 }
 
 /**
  * @param iHandle - log file handle.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_CloseLogFile(INT_PTR iHandle)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_CloseLogFile(INT_PTR iHandle)
 {
 	BT_FlushLogFile(iHandle);
 	// remove file entry from the list
 	EnterCriticalSection(&g_csMutualLogAccess);
-	int iLogFilePos = g_arrLogFiles.LSearch((CLogFile*)iHandle);
-	if (iLogFilePos >= 0)
-		g_arrLogFiles.DeleteItem(iLogFilePos);
+	if (iHandle >= 1 && iHandle <= (INT_PTR)g_arrLogFiles.GetCount())
+		g_arrLogFiles.DeleteItem(iHandle-1);
 	LeaveCriticalSection(&g_csMutualLogAccess);
+	return TRUE;
 }
 
 /**
  * @param iHandle - log file handle.
+ * @return true if operation was completed successfully.
  */
-extern "C" BUGTRAP_API void APIENTRY BT_FlushLogFile(INT_PTR iHandle)
+extern "C" BUGTRAP_API BOOL APIENTRY BT_FlushLogFile(INT_PTR iHandle)
 {
-	CLogFile* pLogFile = (CLogFile*)iHandle;
-	if (! EnterLogFunction(pLogFile))
-		return;
-	pLogFile->SaveEntries(false);
+	CLogFile* pLogFile = EnterLogFunction(iHandle);
+	if (! pLogFile)
+		return FALSE;
+	BOOL bResult = pLogFile->SaveEntries(false);
 	LeaveLogFunction(pLogFile);
+	return bResult;
 }
 
 /**
@@ -1353,8 +1499,8 @@ extern "C" BUGTRAP_API BOOL APIENTRY BT_ReadVersionInfo(HMODULE hModule)
 		VerQueryValue(pVersionInfo, _T("\\VarFileInfo\\Translation"), (void**)&pTranslation, &uTranslationLength))
 	{
 		LANGID lidDefault = GetUserDefaultLangID();
-		int iNumItems = uTranslationLength / sizeof(LANGANDCODEPAGE);
-		int iItemPos = 0, iDefaultItem = -1, iNeutralItem = -1;
+		size_t iNumItems = uTranslationLength / sizeof(LANGANDCODEPAGE);
+		size_t iItemPos = 0, iDefaultItem = MAXSIZE_T, iNeutralItem = MAXSIZE_T;
 		while (iItemPos < iNumItems)
 		{
 			if (pTranslation[iItemPos].wLanguage == lidDefault)
@@ -1363,25 +1509,25 @@ extern "C" BUGTRAP_API BOOL APIENTRY BT_ReadVersionInfo(HMODULE hModule)
 				iNeutralItem = iItemPos;
 			++iItemPos;
 		}
-		if (iDefaultItem >= 0)
+		if (iDefaultItem != MAXSIZE_T)
 			iItemPos = iDefaultItem;
-		else if (iNeutralItem >= 0)
+		else if (iNeutralItem != MAXSIZE_T)
 			iItemPos = iNeutralItem;
 		else if (iNumItems > 0)
 			iItemPos = 0;
 		else
-			iItemPos = -1;
-		if (iItemPos >= 0)
+			iItemPos = MAXSIZE_T;
+		if (iItemPos != MAXSIZE_T)
 		{
 			PTSTR pszValue;
 			UINT uValueLength;
 			TCHAR szSubBlock[128];
-			_stprintf_s(szSubBlock, countof(szSubBlock), _T("\\StringFileInfo\\%04x%04x\\AppName"), pTranslation[iItemPos].wLanguage, pTranslation[iItemPos].wCodePage);
+			_stprintf_s(szSubBlock, countof(szSubBlock), _T("\\StringFileInfo\\%04x%04x\\ProductName"), pTranslation[iItemPos].wLanguage, pTranslation[iItemPos].wCodePage);
 			if (VerQueryValue(pVersionInfo, szSubBlock, (void**)&pszValue, &uValueLength))
 			{
 				bResult = TRUE;
 				BT_SetAppName(pszValue);
-				_stprintf_s(szSubBlock, countof(szSubBlock), _T("\\StringFileInfo\\%04x%04x\\AppVersion"), pTranslation[iItemPos].wLanguage, pTranslation[iItemPos].wCodePage);
+				_stprintf_s(szSubBlock, countof(szSubBlock), _T("\\StringFileInfo\\%04x%04x\\ProductVersion"), pTranslation[iItemPos].wLanguage, pTranslation[iItemPos].wCodePage);
 				if (VerQueryValue(pVersionInfo, szSubBlock, (void**)&pszValue, &uValueLength))
 					BT_SetAppVersion(pszValue);
 				else
@@ -1394,27 +1540,94 @@ extern "C" BUGTRAP_API BOOL APIENTRY BT_ReadVersionInfo(HMODULE hModule)
 }
 
 /**
+ * @brief Return a pointer to the original (unmodified) SetUnhandledExceptionFilter().
+ * @return a pointer to the original (unmodified) SetUnhandledExceptionFilter().
+ */
+static inline PFSetUnhandledExceptionFilter GetOriginalSUEF(void)
+{
+#ifdef _MANAGED
+	if (! g_bInDllMain)
+		return g_ModuleImportTable.GetOriginalProcAddress();
+	else
+		return &SetUnhandledExceptionFilter;
+#else
+	return g_ModuleImportTable.GetOriginalProcAddress();
+#endif
+}
+
+/**
+ * @brief Override SetUnhandledExceptionFilter().
+ * @param hModule - module handle.
+ */
+static inline void OverrideSUEF(HMODULE hModule)
+{
+#ifdef _MANAGED
+	if (! g_bInDllMain && (g_dwFlags & BTF_INTERCEPTSUEF))
+		g_ModuleImportTable.Override(hModule);
+#else
+	if (g_dwFlags & BTF_INTERCEPTSUEF)
+		g_ModuleImportTable.Override(hModule);
+#endif
+}
+
+/**
+ * @brief Restore SetUnhandledExceptionFilter().
+ * @param hModule - module handle.
+ */
+static inline void RestoreSUEF(HMODULE hModule)
+{
+#ifdef _MANAGED
+	if (! g_bInDllMain)
+		g_ModuleImportTable.Restore(hModule);
+#else
+	g_ModuleImportTable.Restore(hModule);
+#endif
+}
+
+/**
+ * @brief Override/restore SetUnhandledExceptionFilter().
+ * @param hModule - module handle.
+ * @param bOverride - true if SetUnhandledExceptionFilter() must be overridden.
+ */
+static void inline InterceptSUEF(HMODULE hModule, BOOL bOverride)
+{
+	g_ModuleImportTable.Intercept(hModule, bOverride);
+}
+
+/**
  * @return the address of the previous exception filter established with the function.
  */
 extern "C" BUGTRAP_API LPTOP_LEVEL_EXCEPTION_FILTER APIENTRY BT_InstallSehFilter(void)
 {
-#ifndef _MANAGED
 	// Setup unhandled exception handler.
-	LPTOP_LEVEL_EXCEPTION_FILTER pfnOldExceptionFilter = SetUnhandledExceptionFilter(BT_SehFilter);
+	PFSetUnhandledExceptionFilter pfnSetUnhandledExceptionFilter = GetOriginalSUEF();
+	_ASSERTE(pfnSetUnhandledExceptionFilter != NULL);
+	LPTOP_LEVEL_EXCEPTION_FILTER pfnOldExceptionFilter = (*pfnSetUnhandledExceptionFilter)(BT_SehFilter);
 	if (pfnOldExceptionFilter != BT_SehFilter)
 		g_pfnOldExceptionFilter = pfnOldExceptionFilter;
+	// Override SetUnhandledExceptionFilter().
+	OverrideSUEF(NULL);
 	return g_pfnOldExceptionFilter;
-#else
-	return NULL;
-#endif
 }
 
 extern "C" BUGTRAP_API void APIENTRY BT_UninstallSehFilter(void)
 {
-#ifndef _MANAGED
-	SetUnhandledExceptionFilter(g_pfnOldExceptionFilter);
+	// Restore SetUnhandledExceptionFilter().
+	RestoreSUEF(NULL);
+	// Restore unhandled exception handler.
+	PFSetUnhandledExceptionFilter pfnSetUnhandledExceptionFilter = GetOriginalSUEF();
+	_ASSERTE(pfnSetUnhandledExceptionFilter != NULL);
+	(*pfnSetUnhandledExceptionFilter)(g_pfnOldExceptionFilter);
 	g_pfnOldExceptionFilter = NULL;
-#endif
+}
+
+/**
+ * @param hModule - module handle (could be set to NULL for main executable).
+ * @param bOverride - true if SetUnhandledExceptionFilter() must be overridden.
+ */
+extern "C" BUGTRAP_API void BT_InterceptSUEF(HMODULE hModule, BOOL bOverride)
+{
+	InterceptSUEF(hModule, bOverride);
 }
 
 /**
@@ -1495,17 +1708,17 @@ static BOOL GetRootKey(PCTSTR pszRegKey, HKEY& hRootKey, PCTSTR& pszRootName, PC
 		{ HKEY_CURRENT_CONFIG, _T("HKEY_CURRENT_CONFIG"), _T("HKEY_CURRENT_CONFIG") },
 		{ HKEY_CURRENT_CONFIG, _T("HKCC"),                _T("HKEY_CURRENT_CONFIG") }
 	};
-	for (int iItemNum = 0; iItemNum < countof(arrRegKeySynonyms); ++iItemNum)
+	for (size_t iItemNum = 0; iItemNum < countof(arrRegKeySynonyms); ++iItemNum)
 	{
 		const REGKEY_SYNONYM* pRegKeySynonym = arrRegKeySynonyms + iItemNum;
 		PCTSTR pszName = pRegKeySynonym->pszName;
-		DWORD dwNameLength = (DWORD)_tcslen(pszName);
-		if (_tcsnicmp(pszRegKey, pszName, dwNameLength) == 0)
+		size_t nNameLength = _tcslen(pszName);
+		if (_tcsnicmp(pszRegKey, pszName, nNameLength) == 0)
 		{
-			if (pszRegKey[dwNameLength] == _T('\\'))
-				pszRegPath = pszRegKey + dwNameLength + 1;
-			else if (pszRegKey[dwNameLength] == _T('\0'))
-				pszRegPath = pszRegKey + dwNameLength;
+			if (pszRegKey[nNameLength] == _T('\\'))
+				pszRegPath = pszRegKey + nNameLength + 1;
+			else if (pszRegKey[nNameLength] == _T('\0'))
+				pszRegPath = pszRegKey + nNameLength;
 			else
 				continue;
 			hRootKey = pRegKeySynonym->hKey;
@@ -1677,23 +1890,23 @@ static inline DWORD WriteRegData(REGEXPORT_DATA& rRegData, DWORD dwValueType, DW
  */
 static BOOL ConvertRegBuffer(REGEXPORT_DATA& rRegData)
 {
-	int nNewDataSize = MultiByteToWideChar(CP_ACP, 0, (PCSTR)rRegData.pbValueBuffer, rRegData.dwValueSize, NULL, 0);
-	int nNewDataSize2 = nNewDataSize * sizeof(WCHAR);
-	if (nNewDataSize2 > (int)rRegData.dwAuxiliaryBufferSize)
+	DWORD dwNewDataSize = MultiByteToWideChar(CP_ACP, 0, (PCSTR)rRegData.pbValueBuffer, rRegData.dwValueSize, NULL, 0);
+	DWORD dwNewDataSize2 = dwNewDataSize * sizeof(WCHAR);
+	if (dwNewDataSize2 > rRegData.dwAuxiliaryBufferSize)
 	{
-		PBYTE pbNewData = (PBYTE)malloc(nNewDataSize2);
+		PBYTE pbNewData = (PBYTE)malloc(dwNewDataSize2);
 		if (pbNewData != NULL)
 		{
 			if (rRegData.pbAuxiliaryBuffer != NULL)
 				free(rRegData.pbAuxiliaryBuffer);
 			rRegData.pbAuxiliaryBuffer = pbNewData;
-			rRegData.dwAuxiliaryBufferSize = nNewDataSize2;
+			rRegData.dwAuxiliaryBufferSize = dwNewDataSize2;
 		}
 		else
 			return FALSE;
 	}
-	MultiByteToWideChar(CP_ACP, 0, (PCSTR)rRegData.pbValueBuffer, rRegData.dwValueSize, (PWSTR)rRegData.pbAuxiliaryBuffer, nNewDataSize);
-	rRegData.dwAuxiliarySize = nNewDataSize2;
+	MultiByteToWideChar(CP_ACP, 0, (PCSTR)rRegData.pbValueBuffer, rRegData.dwValueSize, (PWSTR)rRegData.pbAuxiliaryBuffer, dwNewDataSize);
+	rRegData.dwAuxiliarySize = dwNewDataSize2;
 	return TRUE;
 }
 
@@ -1892,7 +2105,7 @@ extern "C" BUGTRAP_API int APIENTRY BT_ExportRegistryKey(LPCTSTR pszRegFile, LPC
 					LONG lResult = RegOpenKeyEx(hRootKey, RegData.szRegPathBuffer, 0l, KEY_READ, &hKey);
 					if (lResult == ERROR_SUCCESS)
 					{
-						ExportRegKey(RegData, hKey, _tcslen(RegData.szRegPathBuffer));
+						ExportRegKey(RegData, hKey, (DWORD)_tcslen(RegData.szRegPathBuffer));
 						RegCloseKey(hKey);
 						nResult = +1;
 					}
@@ -1916,60 +2129,153 @@ extern "C" BUGTRAP_API int APIENTRY BT_ExportRegistryKey(LPCTSTR pszRegFile, LPC
 }
 
 /**
- * Generate report file name based on user criteria.
- * @param pszFileName - user-supplied file name.
- * @param szFileNameBuffer - file name buffer that is used to store default report name.
- * @return pointer to generated report name.
+ * Initialize snapshot.
+ * @return flag indicating whatever system resources should be released.
  */
-static PCTSTR GetReportFileName(PCTSTR pszFileName, PTSTR szFileNameBuffer)
+static BOOL InitSnapshot(void)
 {
-	_ASSERTE(g_pSymEngine != NULL);
-	bool bGenerateFileName = pszFileName == NULL || *pszFileName == _T('\0');
-	if (bGenerateFileName || ! PathIsRoot(pszFileName))
-	{
-		PCTSTR pszReportFolder = BT_GetReportFilePath();
-		if (bGenerateFileName)
-		{
-			TCHAR szDefaultReportName[MAX_PATH];
-			g_pSymEngine->GetReportFileName(szDefaultReportName, countof(szDefaultReportName));
-			PathCombine(szFileNameBuffer, pszReportFolder, szDefaultReportName);
-		}
-		else
-			PathCombine(szFileNameBuffer, pszReportFolder, pszFileName);
-		pszFileName = szFileNameBuffer;
-	}
-	return pszFileName;
-}
-
-/**
- * @param pszFileName - snapshot file name or NULL, if you want to generate file name automatically.
- * @param true if operation has been completed successfully.
- */
-extern "C" BUGTRAP_API BOOL APIENTRY BT_MakeSnapshot(PCTSTR pszFileName)
-{
-	BOOL bFreeSymEngine;
 	if (g_pExceptionPointers == NULL)
 	{
 		CSymEngine::CEngineParams params;
 		// Initialize symbolic engine.
 		InitSymEngine(params);
-		bFreeSymEngine = TRUE;
+		// Read version info if application name is not specified.
+		ReadVersionInfo();
+		return TRUE;
 	}
 	else
-		bFreeSymEngine = FALSE;
-	BOOL bResult = g_pSymEngine != NULL && g_pEnumProc != NULL;
-	if (bResult)
-	{
-		// Generate report file name when necessary.
-		TCHAR szReportFilePath[MAX_PATH];
-		pszFileName = GetReportFileName(pszFileName, szReportFilePath);
-		// Create parent report folder.
-		CreateParentFolder(pszFileName);
-		// Store report files to user supplied location.
-		bResult = g_pSymEngine->WriteReport(pszFileName, g_pEnumProc);
-	}
+		return FALSE;
+}
+
+/**
+ * Initialize snapshot.
+ * @param pExceptionPointers - pointer to the exception information.
+ * @return true if snapshot has been initialized.
+ */
+static BOOL InitSnapshot(PEXCEPTION_POINTERS pExceptionPointers)
+{
+	_ASSERTE(g_pExceptionPointers == NULL);
+	if (g_pExceptionPointers != NULL)
+		return FALSE;
+	g_pExceptionPointers = pExceptionPointers;
+	CSymEngine::CEngineParams params(pExceptionPointers, CSymEngine::WIN32_EXCEPTION);
+	// Initialize symbolic engine.
+	InitSymEngine(params);
+	// Read version info if application name is not specified.
+	ReadVersionInfo();
+	return TRUE;
+}
+
+/**
+ * @param pszFileName - snapshot file name or NULL, if you want to generate file name automatically.
+ * @return true if operation has been completed successfully.
+ */
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SaveSnapshot(PCTSTR pszFileName)
+{
+	// Initialize snapshot.
+	BOOL bFreeSymEngine = InitSnapshot();
+	// Save snapshot.
+	BOOL bResult = g_pSymEngine != NULL && g_pEnumProc != NULL ? SaveReport(pszFileName) : FALSE;
 	// Deallocate system engine object.
 	if (bFreeSymEngine)
 		FreeSymEngine();
 	return bResult;
+}
+
+/**
+ * @param pExceptionPointers - pointer to the exception information.
+ * @param pszFileName - snapshot file name or NULL, if you want to generate file name automatically.
+ * @return true if operation has been completed successfully.
+ */
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SaveSnapshotEx(PEXCEPTION_POINTERS pExceptionPointers, PCTSTR pszFileName)
+{
+	// Initialize snapshot.
+	if (! InitSnapshot(pExceptionPointers))
+		return FALSE;
+	// Save snapshot.
+	BOOL bResult = g_pSymEngine != NULL && g_pEnumProc != NULL ? SaveReport(pszFileName) : FALSE;
+	// Deallocate system engine object.
+	FreeSymEngine();
+	g_pExceptionPointers = NULL;
+	return bResult;
+}
+
+/**
+ * @return true if operation has been completed successfully.
+ */
+extern "C" BUGTRAP_API BOOL APIENTRY BT_MailSnapshot(void)
+{
+	// Initialize snapshot.
+	BOOL bFreeSymEngine = InitSnapshot();
+	// Save snapshot.
+	BOOL bResult = g_pSymEngine != NULL && g_pEnumProc != NULL ? MailReport() : FALSE;
+	// Deallocate system engine object.
+	if (bFreeSymEngine)
+		FreeSymEngine();
+	return bResult;
+}
+
+/**
+ * @param pExceptionPointers - pointer to the exception information.
+ * @return true if operation has been completed successfully.
+ */
+extern "C" BUGTRAP_API BOOL APIENTRY BT_MailSnapshotEx(PEXCEPTION_POINTERS pExceptionPointers)
+{
+	// Initialize snapshot.
+	if (! InitSnapshot(pExceptionPointers))
+		return FALSE;
+	// Save snapshot.
+	BOOL bResult = g_pSymEngine != NULL && g_pEnumProc != NULL ? MailReport() : FALSE;
+	// Deallocate system engine object.
+	FreeSymEngine();
+	g_pExceptionPointers = NULL;
+	return bResult;
+}
+
+/**
+ * @return true if operation has been completed successfully.
+ */
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SendSnapshot(void)
+{
+	// Initialize snapshot.
+	BOOL bFreeSymEngine = InitSnapshot();
+	// Save snapshot.
+	BOOL bResult = g_pSymEngine != NULL && g_pEnumProc != NULL ? SendReport() : FALSE;
+	// Deallocate system engine object.
+	if (bFreeSymEngine)
+		FreeSymEngine();
+	return bResult;
+}
+
+/**
+ * @param pExceptionPointers - pointer to the exception information.
+ * @return true if operation has been completed successfully.
+ */
+extern "C" BUGTRAP_API BOOL APIENTRY BT_SendSnapshotEx(PEXCEPTION_POINTERS pExceptionPointers)
+{
+	// Initialize snapshot.
+	if (! InitSnapshot(pExceptionPointers))
+		return FALSE;
+	// Save snapshot.
+	BOOL bResult = g_pSymEngine != NULL && g_pEnumProc != NULL ? SendReport() : FALSE;
+	// Deallocate system engine object.
+	FreeSymEngine();
+	g_pExceptionPointers = NULL;
+	return bResult;
+}
+
+/**
+ * @return Module of interest handle.
+ */
+extern "C" BUGTRAP_API HMODULE APIENTRY BT_GetModule()
+{
+  return g_hModule;
+}
+
+/**
+ * @param nModule - module of interest handle.
+ */
+extern "C" BUGTRAP_API void APIENTRY BT_SetModule(HMODULE hModule)
+{
+  g_hModule = hModule;
 }

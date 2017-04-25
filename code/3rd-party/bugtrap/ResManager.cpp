@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Custom resources manager.
@@ -47,7 +47,7 @@ CResManager::CResManager(HWND hwndParent)
 	lf.lfWeight = FW_NORMAL;
 	lf.lfCharSet = ANSI_CHARSET;
 	lf.lfPitchAndFamily = FIXED_PITCH | FF_MODERN;
-	_tcscpy_s(lf.lfFaceName, countof(lf.lfFaceName), _T("Courier"));
+	_tcscpy_s(lf.lfFaceName, countof(lf.lfFaceName), _T("Courier New"));
 	m_hFixedFont = CreateFontIndirect(&lf);
 
 	ZeroMemory(&lf, sizeof(lf));
@@ -95,16 +95,24 @@ CResManager::CResManager(HWND hwndParent)
 	m_hbrControlLight = GetSysColorBrush(COLOR_BTNHIGHLIGHT);
 	m_hbrAppWorkspace = GetSysColorBrush(COLOR_APPWORKSPACE);
 
+	m_bDestroyBigAppIcon = false;
+	m_bDestroySmallAppIcon = false;
 	if (hwndParent != NULL)
-	{ 
-		//SendMessage was commented out to prevent hanging secondary threads calls
+	{
 		__try {
-			//m_hBigAppIcon = (HICON)SendMessage(hwndParent, WM_GETICON, ICON_BIG, 0l);
-			//if (m_hBigAppIcon == NULL)
-				m_hBigAppIcon = (HICON)GetClassLong(hwndParent, GCL_HICON);
-			//m_hSmallAppIcon = (HICON)SendMessage(hwndParent, WM_GETICON, ICON_SMALL, 0l);
-			//if (m_hSmallAppIcon == NULL)
-				m_hSmallAppIcon = (HICON)GetClassLong(hwndParent, GCL_HICONSM);
+			DWORD_PTR dwResult;
+			if (SendMessageTimeout(hwndParent, WM_GETICON, ICON_BIG, 0l, SMTO_ABORTIFHUNG, SEND_MSG_TIMEOUT, &dwResult))
+				m_hBigAppIcon = (HICON)dwResult;
+			else
+				m_hBigAppIcon = NULL;
+			if (m_hBigAppIcon == NULL)
+				m_hBigAppIcon = (HICON)GetClassLongPtr(hwndParent, GCLP_HICON);
+			if (SendMessageTimeout(hwndParent, WM_GETICON, ICON_SMALL, 0l, SMTO_ABORTIFHUNG, SEND_MSG_TIMEOUT, &dwResult))
+				m_hSmallAppIcon = (HICON)dwResult;
+			else
+				m_hSmallAppIcon = NULL;
+			if (m_hSmallAppIcon == NULL)
+				m_hSmallAppIcon = (HICON)GetClassLongPtr(hwndParent, GCLP_HICONSM);
 		} __except (EXCEPTION_EXECUTE_HANDLER) {
 			// ignore any exception in broken app...
 			m_hBigAppIcon = NULL;
@@ -114,11 +122,33 @@ CResManager::CResManager(HWND hwndParent)
 	int nCXSmallIcon = GetSystemMetrics(SM_CXSMICON);
 	int nCYSmallIcon = GetSystemMetrics(SM_CYSMICON);
 	if (m_hSmallAppIcon == NULL)
-		m_hSmallAppIcon = (HICON)LoadImage(g_hInstance, MAKEINTRESOURCE(IDI_BUG), IMAGE_ICON, nCXSmallIcon, nCYSmallIcon, LR_DEFAULTCOLOR);
+	{
+		m_bDestroySmallAppIcon = true;;
+		TCHAR szModuleFileName[MAX_PATH];
+		if (GetModuleFileName(NULL, szModuleFileName, countof(szModuleFileName)))
+		{
+			ExtractIconEx(szModuleFileName, 0, NULL, &m_hSmallAppIcon, 1);
+		}
+		if (m_hSmallAppIcon == NULL)
+		{
+			m_hSmallAppIcon = (HICON)LoadImage(g_hInstance, MAKEINTRESOURCE(IDI_BUG), IMAGE_ICON, nCXSmallIcon, nCYSmallIcon, LR_DEFAULTCOLOR);
+		}
+	}
 	int nCXIcon = GetSystemMetrics(SM_CXICON);
 	int nCYIcon = GetSystemMetrics(SM_CYICON);
 	if (m_hBigAppIcon == NULL)
-		m_hBigAppIcon = (HICON)LoadImage(g_hInstance, MAKEINTRESOURCE(IDI_BUG), IMAGE_ICON, nCXIcon, nCYIcon, LR_DEFAULTCOLOR);
+	{
+		m_bDestroyBigAppIcon = true;
+		TCHAR szModuleFileName[MAX_PATH];
+		if (GetModuleFileName(NULL, szModuleFileName, countof(szModuleFileName)))
+		{
+			ExtractIconEx(szModuleFileName, 0, &m_hBigAppIcon, NULL, 1);
+		}
+		if (m_hBigAppIcon == NULL)
+		{
+			m_hBigAppIcon = (HICON)LoadImage(g_hInstance, MAKEINTRESOURCE(IDI_BUG), IMAGE_ICON, nCXIcon, nCYIcon, LR_DEFAULTCOLOR);
+		}
+	}
 	if (m_hBigAppIcon != NULL)
 	{
 		m_hDialogIcon = CreateCompatibleBitmap(hDisplayDC, nCXIcon, nCYIcon);
@@ -160,9 +190,9 @@ CResManager::~CResManager(void)
 	if (m_hbrControlLight)
 		DeleteBrush(m_hbrControlLight);
 */
-	if (m_hBigAppIcon)
+	if (m_hBigAppIcon && m_bDestroyBigAppIcon)
 		DestroyIcon(m_hBigAppIcon);
-	if (m_hSmallAppIcon)
+	if (m_hSmallAppIcon && m_bDestroySmallAppIcon)
 		DestroyIcon(m_hSmallAppIcon);
 	if (m_hDialogIcon)
 		DeleteBitmap(m_hDialogIcon);

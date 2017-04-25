@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Image view control class.
@@ -59,7 +59,7 @@ private:
 	/// Window procedure of image view window.
 	static LRESULT CALLBACK ImageViewWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	/// Draw window client area.
-	void DrawImageView(HDC hdc, RECT* prcPaint);
+	void DrawImageView(HDC hdc, const RECT* prcPaint);
 	/// Resize image view client area.
 	void ResizeImageView(BOOL bIgnoreScrollPos);
 	/// Scroll image view client area.

@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: This class provides better error handling for MFC windows.
@@ -62,23 +62,50 @@ protected:
 
 private:
 	/// This window procedure intercepts MFC exceptions.
-	LRESULT PrivWindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT CppExceptionHandler(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	/// Exception filter.
 	LONG (CALLBACK * m_pfnFilter)(PEXCEPTION_POINTERS pExceptionPointers);
+#ifdef _M_X64
+	/// This window procedure saves exception context.
+	LRESULT SaveExceptionContext(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	/// Exception context.
+	EXCEPTION_POINTERS m_ExceptionPointers;
+#endif // _M_X64
 };
 
 #undef _BTWND_INITIALIZER_
 
+#ifdef _M_X64
 /**
  * @param uMsg - specifies the Windows message to be processed.
- * @param wParam - provides additional information used in processing the message.
- * @param lParam - provides additional information used in processing the message.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
  * @return the return value depends on the message.
  */
 template <class BASE_CLASS>
-LRESULT BTWindow<BASE_CLASS>::PrivWindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-	try {
+LRESULT BTWindow<BASE_CLASS>::SaveExceptionContext(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	__try {
 		return BASE_CLASS::WindowProc(uMsg, wParam, lParam);
+	} __except (CopyMemory(&m_ExceptionPointers, GetExceptionInformation(), sizeof(m_ExceptionPointers)), EXCEPTION_CONTINUE_SEARCH) {
+		return 0;
+	}
+}
+#endif // _M_X64
+
+/**
+ * @param uMsg - specifies the Windows message to be processed.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
+ * @return the return value depends on the message.
+ */
+template <class BASE_CLASS>
+LRESULT BTWindow<BASE_CLASS>::CppExceptionHandler(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	try {
+#ifdef _M_X64
+		return SaveExceptionContext(uMsg, wParam, lParam);
+#else
+		return BASE_CLASS::WindowProc(uMsg, wParam, lParam);
+#endif// ! _M_X64
 	} catch (CException* pException) {
 		ASSERT(pException->IsKindOf(RUNTIME_CLASS(CException)));
 		// extract error message
@@ -91,7 +118,7 @@ LRESULT BTWindow<BASE_CLASS>::PrivWindowProc(UINT uMsg, WPARAM wParam, LPARAM lP
 		throw;
 	}
 #ifdef _EXCEPTION_
-	catch (exception& rException) {
+	catch (std::exception& rException) {
 		// extract error message
 		const CHAR* pszErrorMessageA = rException.what();
 		if (pszErrorMessageA != NULL && *pszErrorMessageA != '\0') {
@@ -117,15 +144,19 @@ LRESULT BTWindow<BASE_CLASS>::PrivWindowProc(UINT uMsg, WPARAM wParam, LPARAM lP
 
 /**
  * @param uMsg - specifies the Windows message to be processed.
- * @param wParam - provides additional information used in processing the message.
- * @param lParam - provides additional information used in processing the message.
+ * @param wParam - provides additional information used in message processing.
+ * @param lParam - provides additional information used in message processing.
  * @return the return value depends on the message.
  */
 template <class BASE_CLASS>
 LRESULT BTWindow<BASE_CLASS>::WindowProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	__try {
-		return PrivWindowProc(uMsg, wParam, lParam);
+		return CppExceptionHandler(uMsg, wParam, lParam);
+#ifdef _M_X64
+	} __except ((*m_pfnFilter)(&m_ExceptionPointers)) {
+#else
 	} __except ((*m_pfnFilter)(GetExceptionInformation())) {
+#endif// ! _M_X64
 		m_pfnFilter = &BT_SehFilter;
 		return 0;
 	}

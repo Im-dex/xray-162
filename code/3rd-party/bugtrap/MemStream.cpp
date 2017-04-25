@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: In-memory output stream.
@@ -53,12 +53,12 @@ void CMemStream::InitBuffer(void)
 /**
  * @param nSize - initial buffer size.
  */
-void CMemStream::InitBuffer(int nSize)
+void CMemStream::InitBuffer(size_t nSize)
 {
 	if (nSize)
 	{
 		m_nLength = m_nPosition = 0;
-		m_pBuffer = new unsigned char[nSize];
+		m_pBuffer = new BYTE[nSize];
 		if (m_pBuffer)
 		{
 			m_nSize = nSize;
@@ -87,13 +87,13 @@ void CMemStream::CopyData(const CMemStream& rMemStream)
  * @param nSize - requested buffer size.
  * @param bAdaptiveGrowth - true for adaptive growth.
  */
-void CMemStream::EnsureSize(int nSize, bool bAdaptiveGrowth)
+void CMemStream::EnsureSize(size_t nSize, bool bAdaptiveGrowth)
 {
 	if (m_nSize < nSize)
 	{
 		if (bAdaptiveGrowth)
 			nSize *= 2;
-		unsigned char* pBuffer = new unsigned char[nSize];
+		PBYTE pBuffer = new BYTE[nSize];
 		if (! pBuffer)
 			RaiseException(STATUS_NO_MEMORY, 0, 0, NULL);
 		if (m_pBuffer)
@@ -111,7 +111,7 @@ void CMemStream::EnsureSize(int nSize, bool bAdaptiveGrowth)
  * @param nCount - number of characters to add.
  * @return number of successfully written bytes.
  */
-int CMemStream::WriteBytes(const unsigned char* pBytes, int nCount)
+size_t CMemStream::WriteBytes(const BYTE* pBytes, size_t nCount)
 {
 	EnsureSize(m_nPosition + nCount, true);
 	CopyMemory(m_pBuffer + m_nPosition, pBytes, nCount);
@@ -126,7 +126,7 @@ int CMemStream::WriteBytes(const unsigned char* pBytes, int nCount)
  * @param nCount - number of characters to add.
  * @return number of written bytes.
  */
-int CMemStream::WriteByte(unsigned char bValue, int nCount)
+size_t CMemStream::WriteByte(BYTE bValue, size_t nCount)
 {
 	EnsureSize(m_nPosition + nCount, true);
 	FillMemory(m_pBuffer + m_nPosition, nCount, bValue);
@@ -140,7 +140,7 @@ int CMemStream::WriteByte(unsigned char bValue, int nCount)
  * @param bValue - byte value to be written.
  * @return true if data has been written.
  */
-bool CMemStream::WriteByte(unsigned char bValue)
+bool CMemStream::WriteByte(BYTE bValue)
 {
 	EnsureSize(m_nPosition + 1, true);
 	m_pBuffer[m_nPosition++] = bValue;
@@ -153,7 +153,7 @@ bool CMemStream::WriteByte(unsigned char bValue)
  * @param nLength - new stream length.
  * @return new file length.
  */
-int CMemStream::SetLength(int nLength)
+size_t CMemStream::SetLength(size_t nLength)
 {
 	EnsureSize(nLength, false);
 	if (m_nLength < nLength)
@@ -168,11 +168,11 @@ int CMemStream::SetLength(int nLength)
  * @param nOffset - offset from start point.
  * @param nStartFrom - start point.
  */
-void CMemStream::SetPositionPriv(int nOffset, int nStartFrom)
+void CMemStream::SetPositionPriv(ptrdiff_t nOffset, size_t nStartFrom)
 {
 	if (nOffset < 0)
 	{
-		int nNewPosition = nStartFrom + nOffset;
+		ptrdiff_t nNewPosition = nStartFrom + nOffset;
 		if (nNewPosition < 0)
 			m_nPosition = 0;
 		else
@@ -180,7 +180,7 @@ void CMemStream::SetPositionPriv(int nOffset, int nStartFrom)
 	}
 	else if (nOffset > 0)
 	{
-		int nNewPosition = nStartFrom + nOffset;
+		size_t nNewPosition = nStartFrom + nOffset;
 		if (nNewPosition > m_nLength)
 			m_nPosition = m_nLength;
 		else
@@ -195,7 +195,7 @@ void CMemStream::SetPositionPriv(int nOffset, int nStartFrom)
  * @param nMoveMethod - start point.
  * @return new position value.
  */
-int CMemStream::SetPosition(int nOffset, int nMoveMethod)
+size_t CMemStream::SetPosition(ptrdiff_t nOffset, int nMoveMethod)
 {
 	switch (nMoveMethod)
 	{
@@ -209,7 +209,7 @@ int CMemStream::SetPosition(int nOffset, int nMoveMethod)
 		SetPositionPriv(nOffset, m_nLength);
 		break;
 	default:
-		return -1;
+		return MAXSIZE_T;
 	}
 	return m_nPosition;
 }
@@ -218,7 +218,7 @@ int CMemStream::SetPosition(int nOffset, int nMoveMethod)
  * @param bValue - output value.
  * @return true if byte has been retrieved from the stream.
  */
-bool CMemStream::ReadByte(unsigned char& bValue)
+bool CMemStream::ReadByte(BYTE& bValue)
 {
 	if (m_nPosition < m_nLength)
 	{
@@ -233,9 +233,9 @@ bool CMemStream::ReadByte(unsigned char& bValue)
  * @param nCount - number of bytes in the array.
  * @return number of retrieved bytes.
  */
-int CMemStream::ReadBytes(unsigned char* arrBytes, int nCount)
+size_t CMemStream::ReadBytes(BYTE* arrBytes, size_t nCount)
 {
-	int nMaxBytes = m_nLength - m_nPosition;
+	size_t nMaxBytes = m_nLength - m_nPosition;
 	if (nMaxBytes < nCount)
 		nCount = nMaxBytes;
 	CopyMemory(arrBytes, m_pBuffer + m_nPosition, nCount);

@@ -1,6 +1,6 @@
 /*
  * This is a part of the BugTrap package.
- * Copyright (c) 2005-2007 IntelleSoft.
+ * Copyright (c) 2005-2009 IntelleSoft.
  * All rights reserved.
  *
  * Description: Text log file.
@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "LogFile.h"
+#include "InMemLogFile.h"
 #include "Encoding.h"
 #include "MemStream.h"
 #include "TextFormat.h"
@@ -22,7 +22,7 @@
 /**
  * @brief Text log file.
  */
-class CTextLogFile : public CLogFile
+class CTextLogFile : public CInMemLogFile
 {
 public:
 	/// Initialize the object.
@@ -30,13 +30,18 @@ public:
 	/// Load entries into memory.
 	virtual BOOL LoadEntries(void);
 	/// Save entries into disk.
-	virtual BOOL SaveEntries(bool bCrash);
+	virtual BOOL SaveEntries(BOOL bCrash);
 	/// Add new log entry.
-	virtual void WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry);
+	virtual BOOL WriteLogEntry(BUGTRAP_LOGLEVEL eLogLevel, ENTRY_MODE eEntryMode, CRITICAL_SECTION& rcsConsoleAccess, PCTSTR pszEntry);
 
 private:
+	/// Protects the class from being accidentally copied.
+	CTextLogFile(const CTextLogFile& rLogFile);
+	/// Protects the class from being accidentally copied.
+	CTextLogFile& operator=(const CTextLogFile& rLogFile);
+
 	/// Log entry data.
-	struct CTextLogEntry : public CLogFile::CLogEntry
+	struct CTextLogEntry : public CInMemLogFile::CLogEntry
 	{
 #pragma warning(push)
 #pragma warning(disable : 4200) // nonstandard extension used : zero-sized array in struct/union
@@ -45,22 +50,18 @@ private:
 #pragma warning(pop)
 	};
 
-	/// Protects the class from being accidentally copied.
-	CTextLogFile(const CTextLogFile& rLogFile);
-	/// Protects the class from being accidentally copied.
-	CTextLogFile& operator=(const CTextLogFile& rLogFile);
 	/// Get default log file extension.
 	virtual PCTSTR GetLogFileExtension(void) const;
 	/// Allocate log entry.
-	CTextLogEntry* AllocLogEntry(const BYTE* pbData, DWORD dwSize, bool bAddCrLf);
+	CTextLogEntry* AllocLogEntry(const BYTE* pbData, DWORD dwSize, BOOL bAddCrLf);
 	/// Add log entry to the head.
-	BOOL AddToHead(bool bAddCrLf);
+	BOOL AddToHead(BOOL bAddCrLf);
 	/// Add log entry to the tail.
-	BOOL AddToTail(bool bAddCrLf);
+	BOOL AddToTail(BOOL bAddCrLf);
 	/// Add log entry to the head.
-	BOOL AddToHead(const BYTE* pbData, DWORD dwSize, bool bAddCrLf);
+	BOOL AddToHead(const BYTE* pbData, DWORD dwSize, BOOL bAddCrLf);
 	/// Add log entry to the tail.
-	BOOL AddToTail(const BYTE* pbData, DWORD dwSize, bool bAddCrLf);
+	BOOL AddToTail(const BYTE* pbData, DWORD dwSize, BOOL bAddCrLf);
 	/// Encode entry text.
 	void EncodeEntryText(void);
 
@@ -70,7 +71,7 @@ private:
 	CMemStream m_MemStream;
 };
 
-inline CTextLogFile::CTextLogFile(void) : CLogFile(sizeof(g_arrUTF8Preamble)), m_MemStream(1024), m_EncStream(&m_MemStream)
+inline CTextLogFile::CTextLogFile(void) : CInMemLogFile(sizeof(g_arrUTF8Preamble)), m_MemStream(1024), m_EncStream(&m_MemStream)
 {
 }
 
