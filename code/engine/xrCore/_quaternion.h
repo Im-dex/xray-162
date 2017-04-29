@@ -366,7 +366,7 @@ public:
     // returns TRUE if there is an axis.
     // returns FALSE if there is no axis (and Axis is set to 0,0,0, and Theta is 0)
 
-    bool get_axis_angle(Fvector& axis, T& angle) const 
+    bool get_axis_angle(_vector3<T>& axis, T& angle) const 
     {
         T s = _sqrt(x * x + y * y + z * z);
         if (s > EPS_S) {
@@ -374,7 +374,7 @@ public:
             axis.x = OneOverSinTheta * x;
             axis.y = OneOverSinTheta * y;
             axis.z = OneOverSinTheta * z;
-            angle = 2.0f * atan2(s, w);
+            angle = 2.0f * std::atan2(s, w);
             return true;
         } else {
             axis.x = axis.y = axis.z = 0.0f;
@@ -449,7 +449,7 @@ public:
     {
         T n = Q.x * Q.x + Q.y * Q.y + Q.z * Q.z;
         T r = _sqrt(n);
-        T t = (r > EPS_S) ? atan2f(r, Q.w) / r : 0.f;
+        T t = (r > EPS_S) ? std::atan2(r, Q.w) / r : T(0);
         x = t * Q.x;
         y = t * Q.y;
         z = t * Q.z;
@@ -460,7 +460,7 @@ public:
     SelfRef exp(SelfCRef Q)
     {
         T r = _sqrt(Q.x * Q.x + Q.y * Q.y + Q.z * Q.z);
-        T et = expf(Q.w);
+        T et = std::exp(Q.w);
         T s = (r >= EPS_S) ? et * _sin(r) / r : 0.f;
         x = s * Q.x;
         y = s * Q.y;

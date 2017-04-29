@@ -300,9 +300,9 @@ IC _matrix<T>& _matrix<T>::mk_xform	(const _quaternion<T> &Q, const Tvector &V)
 template <class T>
 IC _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M)
 {
-	float trace,s;
+	auto s = T(0);
 
-	trace = M._11 + M._22 + M._33;
+	auto trace = M._11 + M._22 + M._33;
 	if (trace > 0.0f){
 		s = _sqrt(trace + 1.0f);
 		w = s * 0.5f;
@@ -429,8 +429,7 @@ IC _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M)
 //----------------------------------------------------------------------------------------------
 // Deprecate some features
 #ifndef XRCORE_EXPORTS
-//. #pragma deprecated("MIN","MAX","ABS",fabs,fabsf,sqrt,sqrtf,malloc,free,calloc,realloc,memcpy,memmove,memset,strdup,strlen,strcmp,sin,cos,sinf,cosf)
-#pragma deprecated("MIN","MAX","ABS",fabs,fabsf,sqrt,sqrtf,malloc,free,calloc,realloc,memmove,memset,strdup,strlen,strcmp,sin,cos,sinf,cosf)
+#pragma deprecated("MIN","MAX","ABS")
 #endif
 
 #endif

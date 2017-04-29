@@ -50,10 +50,10 @@ inline void SplitBlock(void* pv,UINT OldIndx,UINT NewIndx)
     }
     BList[Units2Indx[UDiff-1]].insert(p,UDiff);
 }
-DWORD _STDCALL GetUsedMemory()
+size_t _STDCALL GetUsedMemory()
 {
-    DWORD i, RetVal=SubAllocatorSize-(HiUnit-LoUnit)-(UnitsStart-pText);
-    for (i=0;i < N_INDEXES;i++)
+    size_t RetVal=SubAllocatorSize-(HiUnit-LoUnit)-(UnitsStart-pText);
+    for (size_t i=0;i < N_INDEXES;i++)
             RetVal -= UNIT_SIZE*Indx2Units[i]*BList[i].Stamp;
     return RetVal;
 }

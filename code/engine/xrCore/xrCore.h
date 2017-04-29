@@ -43,7 +43,10 @@
 	#if defined(_CPPUNWIND) && !defined __BORLANDC__
 		#error Please disable exceptions...
 	#endif
-	#define _HAS_EXCEPTIONS		1	// STL
+    #ifdef _HAS_EXCEPTIONS
+    #   undef _HAS_EXCEPTIONS
+    #endif
+	#define _HAS_EXCEPTIONS		0	// STL
 	#define XRAY_EXCEPTIONS		0	// XRAY
 	#define LUABIND_NO_EXCEPTIONS
 	#pragma warning(disable:4530)
