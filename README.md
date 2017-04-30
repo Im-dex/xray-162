@@ -20,3 +20,5 @@ If you want to build utils projects add -DBUILD_UTILS=ON parameter to cmake comm
 Open generated solution and build the engine.
 
 > %BIN_PATH% - path to your stalker bin folder.
+
+If you have issues with openal when the game is starting, install code\SDK\oalinst.exe.
