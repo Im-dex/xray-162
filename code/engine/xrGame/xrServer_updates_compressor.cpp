@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "level.h"
 #include "xrServer_updates_compressor.h"
-#include "../xrCore/ppmd_compressor.h"
 #include "../xrServerEntities/object_broker.h"
 #include "xrMessages.h"
 
@@ -100,7 +99,6 @@ server_updates_compressor::server_updates_compressor()
 		m_ready_for_send.push_back(xr_new<NET_Packet>());
 	}
 
-	m_trained_stream		= NULL;
 	m_lzo_working_memory	= NULL;
 	m_lzo_working_buffer	= NULL;
 
@@ -123,7 +121,6 @@ server_updates_compressor::~server_updates_compressor()
 
 void server_updates_compressor::init_compression()
 {
-	compression::init_ppmd_trained_stream	(m_trained_stream);
 	compression::init_lzo(
 		m_lzo_working_memory,
 		m_lzo_working_buffer,
@@ -133,10 +130,6 @@ void server_updates_compressor::init_compression()
 
 void server_updates_compressor::deinit_compression()
 {
-	if (m_trained_stream)
-	{
-		compression::deinit_ppmd_trained_stream(m_trained_stream);		
-	}
 	if (m_lzo_working_buffer)
 	{
 		VERIFY(m_lzo_dictionary.data);
@@ -147,8 +140,7 @@ void server_updates_compressor::deinit_compression()
 void server_updates_compressor::begin_updates()
 {
 	m_current_update = 0;
-	if ((g_sv_traffic_optimization_level & eto_ppmd_compression) ||
-		(g_sv_traffic_optimization_level & eto_lzo_compression))
+	if (g_sv_traffic_optimization_level & eto_lzo_compression)
 	{
 		m_ready_for_send.front()->w_begin(M_COMPRESSED_UPDATE_OBJECTS);
 		m_ready_for_send.front()->w_u8(static_cast<u8>(g_sv_traffic_optimization_level));
@@ -179,48 +171,27 @@ NET_Packet*	server_updates_compressor::goto_next_dest()
 	{
 		new_dest = m_ready_for_send[m_current_update];
 	}
-
-	if (g_sv_traffic_optimization_level & eto_ppmd_compression)
-	{
-		new_dest->w_begin(M_COMPRESSED_UPDATE_OBJECTS);
-		m_ready_for_send.front()->w_u8(static_cast<u8>(g_sv_traffic_optimization_level));
-	} else
-	{
-		new_dest->write_start();
-	}
 	
+    new_dest->write_start();
+
 	return new_dest;
 }
 
 void server_updates_compressor::flush_accumulative_buffer()
 {
 	NET_Packet*	dst_packet = get_current_dest();
-	if ((g_sv_traffic_optimization_level & eto_ppmd_compression) ||
-		(g_sv_traffic_optimization_level & eto_lzo_compression))
+	if (g_sv_traffic_optimization_level & eto_lzo_compression)
 	{
 		Device.Statistic->netServerCompressor.Begin();
-		R_ASSERT(m_trained_stream);
-		if (g_sv_traffic_optimization_level & eto_ppmd_compression)
-		{
-			m_compress_buf.B.count = ppmd_trained_compress(
-				m_compress_buf.B.data,
-				sizeof(m_compress_buf.B.data),
-				m_acc_buff.B.data,
-				m_acc_buff.B.count,
-				m_trained_stream
-			);
-		} else
-		{
-			m_compress_buf.B.count = sizeof(m_compress_buf.B.data);
-			lzo_compress_dict(
-				m_acc_buff.B.data,
-				m_acc_buff.B.count,
-				m_compress_buf.B.data,
-				(lzo_uint*)&m_compress_buf.B.count,
-				m_lzo_working_memory,
-				m_lzo_dictionary.data, m_lzo_dictionary.size
-			);
-		}
+		m_compress_buf.B.count = sizeof(m_compress_buf.B.data);
+		lzo_compress_dict(
+			m_acc_buff.B.data,
+			m_acc_buff.B.count,
+			m_compress_buf.B.data,
+			(lzo_uint*)&m_compress_buf.B.count,
+			m_lzo_working_memory,
+			m_lzo_dictionary.data, m_lzo_dictionary.size
+		);
 		Device.Statistic->netServerCompressor.End();
 		//(sizeof(u16)*2 + 1) ::= w_begin(2) + compress_type(1) + zero_end(2)
 		if (dst_packet->w_tell() + m_compress_buf.B.count + (sizeof(u16)*2 + 1) < sizeof(dst_packet->B.data))
@@ -266,8 +237,7 @@ void server_updates_compressor::end_updates(send_ready_updates_t::const_iterator
 	if (m_acc_buff.w_tell() > 2)
 		flush_accumulative_buffer();
 	
-	if ((g_sv_traffic_optimization_level & eto_ppmd_compression) ||
-		(g_sv_traffic_optimization_level & eto_lzo_compression))
+	if (g_sv_traffic_optimization_level & eto_lzo_compression)
 	{
 		get_current_dest()->w_u16(0);
 	}

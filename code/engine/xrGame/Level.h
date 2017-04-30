@@ -377,7 +377,6 @@ public:
 			
 			file_transfer::client_site*					m_file_transfer;
 			
-	compression::ppmd_trained_stream*			m_trained_stream;
 	compression::lzo_dictionary_buffer			m_lzo_dictionary;
 	//alligned to 16 bytes m_lzo_working_buffer
 	u8*											m_lzo_working_memory;

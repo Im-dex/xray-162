@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Level.h"
-#include "../xrCore/ppmd_compressor.h"
 #include "../xrphysics/iphworld.h"
 #include "xrServer_updates_compressor.h"
 
@@ -12,17 +11,7 @@ void CLevel::ProcessCompressedUpdate(NET_Packet& P, u8 const compress_type)
 	Device.Statistic->netClientCompressor.Begin();
 	while (next_size)
 	{
-		if (compress_type & eto_ppmd_compression)
-		{
-			R_ASSERT(m_trained_stream);			
-			uncompressed_packet.B.count = ppmd_trained_decompress(
-				uncompressed_packet.B.data,
-				sizeof(uncompressed_packet.B.data),
-				P.B.data + P.r_tell(),
-				next_size,
-				m_trained_stream
-			);
-		} else if (compress_type & eto_lzo_compression)
+		if (compress_type & eto_lzo_compression)
 		{
 			R_ASSERT(m_lzo_dictionary.data);
 			uncompressed_packet.B.count = sizeof(uncompressed_packet.B.data);
@@ -68,7 +57,6 @@ void CLevel::ProcessCompressedUpdate(NET_Packet& P, u8 const compress_type)
 
 void CLevel::init_compression()
 {
-	compression::init_ppmd_trained_stream(m_trained_stream);
 	compression::init_lzo(
 		m_lzo_working_memory,
 		m_lzo_working_buffer,
@@ -78,10 +66,6 @@ void CLevel::init_compression()
 
 void CLevel::deinit_compression()
 {
-	if (m_trained_stream)
-	{
-		compression::deinit_ppmd_trained_stream(m_trained_stream);		
-	}
 	if (m_lzo_working_buffer)
 	{
 		VERIFY(m_lzo_dictionary.data);

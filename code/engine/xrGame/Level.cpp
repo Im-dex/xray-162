@@ -218,7 +218,6 @@ CLevel::CLevel():IPureClient	(Device.GetTimerGlobal())
 	*/
 	//---------------------------------------------------------	
 	m_file_transfer					= NULL;
-	m_trained_stream				= NULL;
 	m_lzo_working_memory			= NULL;
 	m_lzo_working_buffer			= NULL;
 }

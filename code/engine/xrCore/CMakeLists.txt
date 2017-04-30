@@ -8,12 +8,6 @@ set(COMPRESSOR_LZO lzo_compressor.h lzo_compressor.cpp rt_config1x.h
                    rt_lzo_ptr.h rt_lzo1x.h rt_lzo1x_1.cpp rt_lzo1x_9x.cpp
                    rt_lzo1x_d1.cpp rt_lzo1x_d2.cpp rt_lzo1x_d3.cpp rt_lzoconf.h
                    rt_lzodefs.h rt_miniacc.h)
-set(COMPRESSOR_PPMD ppmd_compressor.h ppmd_compressor.cpp)
-set(COMPRESSOR_PPMD_COMMON PPMd.h PPMdType.h)
-set(COMPRESSOR_PPMD_CORE Coder.hpp Model.cpp)
-set_source_files_properties(Model.cpp PROPERTIES COMPILE_FLAGS /Y-)
-set(COMPRESSOR_PPMD_CORE_ALLOCATOR SubAlloc.hpp)
-set(COMPRESSOR_PPMD_STREAM compression_ppmd_stream.h compression_ppmd_stream_inline.h)
 set(COMPRESSOR_RT rt_compressor.cpp rt_compressor.h rt_compressor9.cpp)
 
 set(DEBUG_CORE xrDebug.h xrDebug_macros.h xrDebugNew.cpp)
@@ -63,11 +57,6 @@ set(SMEM_STR_LIB crc32.cpp xr_resource.h xr_shared.h xr_shared.cpp xrsharedmem.h
 
 source_group("Compression\\lz" FILES ${COMPRESSOR_LZ})
 source_group("Compression\\lzo" FILES ${COMPRESSOR_LZO})
-source_group("Compression\\ppmd" FILES ${COMPRESSOR_PPMD})
-source_group("Compression\\ppmd\\common" FILES ${COMPRESSOR_PPMD_COMMON})
-source_group("Compression\\ppmd\\core" FILES ${COMPRESSOR_PPMD_CORE})
-source_group("Compression\\ppmd\\core\\allocator" FILES ${COMPRESSOR_PPMD_CORE_ALLOCATOR})
-source_group("Compression\\ppmd\\stream" FILES ${COMPRESSOR_PPMD_STREAM})
 source_group("Compression\\rt" FILES ${COMPRESSOR_RT})
 
 source_group("Debug core" FILES ${DEBUG_CORE})
@@ -103,10 +92,7 @@ add_definitions(-DXRCORE_EXPORTS -D_SECURE_SCL=0)
 add_compile_options(/fp:fast "/Yustdafx.h")
 set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 
-add_library(xrCore SHARED ${COMPRESSOR_LZ} ${COMPRESSOR_LZO} ${COMPRESSOR_PPMD}
-                          ${COMPRESSOR_PPMD_COMMON} ${COMPRESSOR_PPMD_CORE}
-                          ${COMPRESSOR_PPMD_CORE_ALLOCATOR} ${COMPRESSOR_PPMD_STREAM}
-                          ${COMPRESSOR_RT}
+add_library(xrCore SHARED ${COMPRESSOR_LZ} ${COMPRESSOR_LZO} ${COMPRESSOR_RT}
                           
                           ${DEBUG_CORE} ${DEBUG_CORE_BLACKBOX}
                           

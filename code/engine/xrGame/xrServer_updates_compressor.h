@@ -59,7 +59,6 @@ private:
 	send_ready_updates_t			m_ready_for_send;
 	send_ready_updates_t::size_type m_current_update;
 
-	compression::ppmd_trained_stream*			m_trained_stream;
 	compression::lzo_dictionary_buffer			m_lzo_dictionary;
 	//alligned to 16 bytes m_lzo_working_buffer
 	u8*											m_lzo_working_memory;
