@@ -6,12 +6,12 @@
 namespace imdexlib {
 
 template <typename T>
-struct is_reference_wrapper : public std::false_type
+struct is_reference_wrapper : std::false_type
 {
 };
 
 template <typename T>
-struct is_reference_wrapper<std::reference_wrapper<T>> : public std::true_type
+struct is_reference_wrapper<std::reference_wrapper<T>> : std::true_type
 {
 };
 

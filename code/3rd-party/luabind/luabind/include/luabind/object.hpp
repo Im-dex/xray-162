@@ -129,7 +129,7 @@ namespace luabind
                 rhs.m_called = true;
             }
 
-            ~proxy_caller() noexcept(false); // TODO: noexcept depends on configuration
+            ~proxy_caller() LUABIND_DTOR_NOEXCEPT;
 			operator object();
 
 			template<typename... Policies>
@@ -1238,7 +1238,7 @@ private:
 
 
 		template<typename... Ts>
-		proxy_caller<Ts...>::~proxy_caller() noexcept(false) // TODO: noexcept depends on configuration
+		proxy_caller<Ts...>::~proxy_caller() LUABIND_DTOR_NOEXCEPT
 		{
 			if (m_called) return;
 

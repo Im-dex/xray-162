@@ -71,7 +71,7 @@ namespace luabind
                     rhs.m_called = true;
                 }
 
-				~proxy_functor_caller()
+				~proxy_functor_caller() LUABIND_DTOR_NOEXCEPT
 				{
 					if (m_called) return;
 
@@ -265,7 +265,7 @@ namespace luabind
                     rhs.m_called = true;
                 }
 
-				~proxy_functor_void_caller() noexcept(false)
+				~proxy_functor_void_caller() LUABIND_DTOR_NOEXCEPT
 				{
 					if (m_called) return;
 

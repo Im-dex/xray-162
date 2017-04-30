@@ -476,7 +476,7 @@ namespace luabind { namespace detail
 			return implicit_cast(obj->crep(), LUABIND_TYPEID(T), d);
 		}
 
-		~pointer_converter()
+		~pointer_converter() noexcept(false)
 		{
 			if (destructor) destructor(target);
 		}
@@ -543,7 +543,7 @@ namespace luabind { namespace detail
 		bool dismiss;
 		destruct_guard(T* p): ptr(p), dismiss(false) {}
 
-		~destruct_guard()
+		~destruct_guard() noexcept(std::is_nothrow_destructible_v<T>)
 		{
 			if (!dismiss)
 				ptr->~T();
@@ -843,7 +843,7 @@ namespace luabind { namespace detail
 			return implicit_cast(obj->crep(), LUABIND_TYPEID(T), d) + !const_;
 		}
 
-		~const_ref_converter()
+		~const_ref_converter() noexcept(false)
 		{
 			if (destructor) destructor(target);
 		}

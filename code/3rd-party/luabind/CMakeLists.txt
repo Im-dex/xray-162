@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.8)
 
 project(luabind)
 
-file(GLOB HEADERS luabind/include/luabind)
-file(GLOB HEADERS_DETAIL luabind/include/luabind/detail)
+file(GLOB HEADERS luabind/include/luabind/*.h luabind/include/luabind/*.hpp)
+file(GLOB HEADERS_DETAIL luabind/include/luabind/detail/*.hpp)
 file(GLOB SRC luabind/src/*.cpp)
 file(GLOB ROOT_SRC *.h *.cpp)
 

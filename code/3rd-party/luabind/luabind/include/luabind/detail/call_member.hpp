@@ -70,7 +70,7 @@ namespace luabind
                     rhs.m_called = true;
                 }
 
-				~proxy_member_caller()
+				~proxy_member_caller() LUABIND_DTOR_NOEXCEPT
 				{
 					if (m_called) return;
 
@@ -252,7 +252,7 @@ namespace luabind
                     rhs.m_called = true;
                 }
 
-				~proxy_member_void_caller()
+				~proxy_member_void_caller() LUABIND_DTOR_NOEXCEPT
 				{
 					if (m_called) return;
 

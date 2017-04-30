@@ -30,8 +30,10 @@
 #		define LUABIND_NO_ERROR_CHECKING
 #	endif // LUABIND_NO_ERROR_CHECKING
 
-#	define LUABIND_NO_EXCEPTIONS
-
+#   define LUABIND_NO_EXCEPTIONS
+#   define LUABIND_DTOR_NOEXCEPT noexcept
+#else
+#   define LUABIND_DTOR_NOEXCEPT
 #endif // NDEBUG
 // LUABIND_NO_ERROR_CHECKING
 // define this to remove all error checks
