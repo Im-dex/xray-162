@@ -15,7 +15,6 @@
 
 #include "Level_network_map_sync.h"
 #include "secure_messaging.h"
-#include "traffic_optimization.h"
 
 
 class	CHUDManager;
@@ -377,7 +376,6 @@ public:
 			
 			file_transfer::client_site*					m_file_transfer;
 			
-	compression::lzo_dictionary_buffer			m_lzo_dictionary;
 	//alligned to 16 bytes m_lzo_working_buffer
 	u8*											m_lzo_working_memory;
 	u8*											m_lzo_working_buffer;

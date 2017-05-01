@@ -19,15 +19,12 @@
 #include "file_transfer.h"
 #include "screenshot_server.h"
 #include "xrServer_info.h"
-//#include "stl/_function.h"
 
 #pragma warning(push)
 #pragma warning(disable:4995)
 #include <malloc.h>
 #include <functional>
 #pragma warning(pop)
-
-u32 g_sv_traffic_optimization_level = eto_none;
 
 xrClientData::xrClientData	() :
 	IClient(Device.GetTimerGlobal())

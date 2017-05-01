@@ -11,23 +11,7 @@ void CLevel::ProcessCompressedUpdate(NET_Packet& P, u8 const compress_type)
 	Device.Statistic->netClientCompressor.Begin();
 	while (next_size)
 	{
-		if (compress_type & eto_lzo_compression)
-		{
-			R_ASSERT(m_lzo_dictionary.data);
-			uncompressed_packet.B.count = sizeof(uncompressed_packet.B.data);
-			lzo_decompress_dict(
-				P.B.data + P.r_tell(),
-				next_size,
-				uncompressed_packet.B.data,
-				(lzo_uint*)&uncompressed_packet.B.count,
-				m_lzo_working_memory,
-				m_lzo_dictionary.data,
-				m_lzo_dictionary.size
-			);
-		} else
-		{
-			NODEFAULT;
-		}
+		NODEFAULT;
 		
 		VERIFY2(uncompressed_packet.B.count <= sizeof(uncompressed_packet.B.data),
 			"stack owerflow after decompressing");
@@ -57,11 +41,6 @@ void CLevel::ProcessCompressedUpdate(NET_Packet& P, u8 const compress_type)
 
 void CLevel::init_compression()
 {
-	compression::init_lzo(
-		m_lzo_working_memory,
-		m_lzo_working_buffer,
-		m_lzo_dictionary
-	);
 }
 
 void CLevel::deinit_compression()
@@ -69,6 +48,5 @@ void CLevel::deinit_compression()
 	if (m_lzo_working_buffer)
 	{
 		VERIFY(m_lzo_dictionary.data);
-		compression::deinit_lzo(m_lzo_working_buffer, m_lzo_dictionary);
 	}
 }

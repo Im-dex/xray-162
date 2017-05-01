@@ -121,11 +121,6 @@ server_updates_compressor::~server_updates_compressor()
 
 void server_updates_compressor::init_compression()
 {
-	compression::init_lzo(
-		m_lzo_working_memory,
-		m_lzo_working_buffer,
-		m_lzo_dictionary
-	);
 }
 
 void server_updates_compressor::deinit_compression()
@@ -133,23 +128,14 @@ void server_updates_compressor::deinit_compression()
 	if (m_lzo_working_buffer)
 	{
 		VERIFY(m_lzo_dictionary.data);
-		compression::deinit_lzo(m_lzo_working_buffer, m_lzo_dictionary);
 	}
 }
 
 void server_updates_compressor::begin_updates()
 {
 	m_current_update = 0;
-	if (g_sv_traffic_optimization_level & eto_lzo_compression)
-	{
-		m_ready_for_send.front()->w_begin(M_COMPRESSED_UPDATE_OBJECTS);
-		m_ready_for_send.front()->w_u8(static_cast<u8>(g_sv_traffic_optimization_level));
-		m_acc_buff.write_start();
-	} else
-	{
-		m_ready_for_send.front()->write_start();
-		m_acc_buff.w_begin(M_UPDATE_OBJECTS);
-	}	
+    m_ready_for_send.front()->write_start();
+    m_acc_buff.w_begin(M_UPDATE_OBJECTS);
 }
 
 NET_Packet*	server_updates_compressor::get_current_dest()
@@ -179,35 +165,7 @@ NET_Packet*	server_updates_compressor::goto_next_dest()
 
 void server_updates_compressor::flush_accumulative_buffer()
 {
-	NET_Packet*	dst_packet = get_current_dest();
-	if (g_sv_traffic_optimization_level & eto_lzo_compression)
-	{
-		Device.Statistic->netServerCompressor.Begin();
-		m_compress_buf.B.count = sizeof(m_compress_buf.B.data);
-		lzo_compress_dict(
-			m_acc_buff.B.data,
-			m_acc_buff.B.count,
-			m_compress_buf.B.data,
-			(lzo_uint*)&m_compress_buf.B.count,
-			m_lzo_working_memory,
-			m_lzo_dictionary.data, m_lzo_dictionary.size
-		);
-		Device.Statistic->netServerCompressor.End();
-		//(sizeof(u16)*2 + 1) ::= w_begin(2) + compress_type(1) + zero_end(2)
-		if (dst_packet->w_tell() + m_compress_buf.B.count + (sizeof(u16)*2 + 1) < sizeof(dst_packet->B.data))
-		{
-			dst_packet->w_u16(static_cast<u16>(m_compress_buf.B.count));
-			dst_packet->w(m_compress_buf.B.data, m_compress_buf.B.count);
-			m_acc_buff.write_start();
-			return;
-		}
-		dst_packet->w_u16(0);
-		dst_packet = goto_next_dest();
-		dst_packet->w_u16(static_cast<u16>(m_compress_buf.B.count));
-		dst_packet->w(m_compress_buf.B.data, m_compress_buf.B.count);
-		m_acc_buff.write_start();
-		return;
-	} 
+	NET_Packet*	dst_packet = get_current_dest(); 
 	dst_packet->w(m_acc_buff.B.data, m_acc_buff.B.count);
 	goto_next_dest();
 	m_acc_buff.w_begin(M_UPDATE_OBJECTS);
@@ -215,14 +173,6 @@ void server_updates_compressor::flush_accumulative_buffer()
 
 void server_updates_compressor::write_update_for(u16 const enity, NET_Packet & update)
 {
-	if (g_sv_traffic_optimization_level & eto_last_change)
-	{
-		//if (m_updates_cache.get_last_equpdates(enity, update) >= max_eq_packets)
-		if (m_updates_cache.add_update(enity, update) >= max_eq_packets)
-		{
-			return;
-		}
-	}
 	//(sizeof(u16)*2 + 1) ::= w_begin(2) + compress_type(1) + zero_end(2)
 	if (m_acc_buff.w_tell() + update.w_tell() + (sizeof(u16)*2 + 1) >= sizeof(m_acc_buff.B.data))
 	{
@@ -236,11 +186,6 @@ void server_updates_compressor::end_updates(send_ready_updates_t::const_iterator
 {
 	if (m_acc_buff.w_tell() > 2)
 		flush_accumulative_buffer();
-	
-	if (g_sv_traffic_optimization_level & eto_lzo_compression)
-	{
-		get_current_dest()->w_u16(0);
-	}
 
 	b = m_ready_for_send.begin();
 	e = m_ready_for_send.begin() + m_current_update + 1;

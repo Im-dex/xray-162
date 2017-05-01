@@ -564,9 +564,7 @@ set(AI_AMONSTERS_HUMANS_STALKER_ANIMATIONMANAGER stalker_animation_manager.h
                                                  stalker_animation_torso.cpp)
 
 set(CORE_COMMON_NET_SHARED NET_Queue.h
-                           traffic_optimization.h
-                           ../xrServerEntities/xrMessages.h
-                           traffic_optimization.cpp)
+                           ../xrServerEntities/xrMessages.h)
 
 set(CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_DOCUMENTS InfoDocument.h
                                                       InfoDocument.cpp)
