@@ -125,10 +125,6 @@ void server_updates_compressor::init_compression()
 
 void server_updates_compressor::deinit_compression()
 {
-	if (m_lzo_working_buffer)
-	{
-		VERIFY(m_lzo_dictionary.data);
-	}
 }
 
 void server_updates_compressor::begin_updates()

@@ -45,8 +45,4 @@ void CLevel::init_compression()
 
 void CLevel::deinit_compression()
 {
-	if (m_lzo_working_buffer)
-	{
-		VERIFY(m_lzo_dictionary.data);
-	}
 }
