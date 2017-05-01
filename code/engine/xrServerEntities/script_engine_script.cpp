@@ -78,6 +78,26 @@ CRenderDevice *get_device()
 }
 #endif
 
+int bit_and(int i, int j)
+{
+	return			(i & j);
+}
+
+int bit_or(int i, int j)
+{
+	return			(i | j);
+}
+
+int bit_xor(int i, int j)
+{
+	return			(i ^ j);
+}
+
+int bit_not(int i)
+{
+	return			(~i);
+}
+
 LPCSTR user_name()
 {
 	return			(Core.UserName);
@@ -200,6 +220,10 @@ void CScriptEngine::script_register(lua_State *L)
 	function	(L,	"prefetch",							prefetch_module);
 	function	(L,	"verify_if_thread_is_running",		verify_if_thread_is_running);
 	function	(L,	"editor",							is_editor);
+	function	(L,	"bit_and",							bit_and);
+	function	(L,	"bit_or",							bit_or);
+	function	(L,	"bit_xor",							bit_xor);
+	function	(L,	"bit_not",							bit_not);
 	function	(L, "user_name",						user_name);
 	function	(L, "time_global",						script_time_global);
 	function	(L, "time_global_async",				script_time_global_async);
