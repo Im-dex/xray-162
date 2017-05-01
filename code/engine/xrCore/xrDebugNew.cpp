@@ -15,19 +15,10 @@
 
 extern bool shared_str_initialized;
 
-#ifdef __BORLANDC__
-    #	include "d3d9.h"
-    #	include "d3dx9.h"
-    #	include "D3DX_Wrapper.h"
-    #	pragma comment(lib,"EToolsB.lib")
-    #	define DEBUG_INVOKE	DebugBreak()
-        static BOOL			bException	= TRUE;
-    #   define USE_BUG_TRAP
-#else
-    #   define USE_BUG_TRAP
-    #	define DEBUG_INVOKE	__debugbreak()
-        static BOOL			bException	= FALSE;
-#endif
+
+#define USE_BUG_TRAP
+#define DEBUG_INVOKE __debugbreak()
+static BOOL bException = FALSE;
 
 #ifndef USE_BUG_TRAP
 #	include <exception>
@@ -37,9 +28,6 @@ extern bool shared_str_initialized;
 
 #ifdef USE_BUG_TRAP
 #	include "bugtrap/bugtrap.h"						// for BugTrap functionality
-    #ifdef __BORLANDC__
-        #	pragma comment(lib,"BugTrapB.lib")		// Link to ANSI DLL
-    #endif
 #endif // USE_BUG_TRAP
 
 #include <new.h>							// for _set_new_mode
@@ -351,7 +339,7 @@ void CALLBACK PreErrorHandler	(INT_PTR)
 	if (*g_bug_report_file)
 		BT_AddLogFile		(g_bug_report_file);
 
-	BT_MakeSnapshot			( 0 );
+    BT_SaveSnapshot(nullptr);
 #endif // USE_BUG_TRAP
 }
 
