@@ -51,11 +51,6 @@ class CFogOfWarMngr;
 class CBulletManager;
 class CMapManager;
 
-namespace file_transfer
-{
-	class client_site;
-}; //namespace file_transfer
-
 class CLevel					: public IGame_Level, public IPureClient
 {
 	#include "Level_network_Demo.h"
@@ -373,8 +368,6 @@ public:
 public:
 			void			remove_objects				();
 			virtual void	OnSessionTerminate		(LPCSTR reason);
-			
-			file_transfer::client_site*					m_file_transfer;
 			
 	//alligned to 16 bytes m_lzo_working_buffer
 	u8*											m_lzo_working_memory;

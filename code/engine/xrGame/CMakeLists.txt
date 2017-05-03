@@ -1061,14 +1061,11 @@ set(AI_AMONSTERS_HUMANS_STALKER_DECISIONMAKER_ACTIONS_COMBAT_SEARCH_PLANNER stal
 set(CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_VARIOUS_WEAPONS_FN2000 WeaponFN2000.h
                                                                            WeaponFN2000.cpp)
 
-set(CORE_SERVER screenshot_server.h
-                xrClientsPool.h
+set(CORE_SERVER xrClientsPool.h
                 xrServer.h
-                xrServer_info.h
                 ../xrServerEntities/xrServer_Space.h
                 xrServer_updates_compressor.h
                 xrServerMapSync.h
-                screenshot_server.cpp
                 xrClientsPool.cpp
                 xrGame.cpp
                 xrServer.cpp
@@ -2342,14 +2339,6 @@ set(AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_BASE steering_behaviour_base.h
 
 set(AI_AMONSTERS_COMMON_COMPONENTS_CONTROL_MANAGER_CUSTOM_TRIPLE_ANIMATION ai/Monsters/anim_triple.h
                                                                            ai/Monsters/anim_triple.cpp)
-
-set(CORE_SERVER_FILETRANSFER file_transfer.h
-                             filereceiver_node.h
-                             filetransfer_common.h
-                             filetransfer_node.h
-                             file_transfer.cpp
-                             filereceiver_node.cpp
-                             filetransfer_node.cpp)
 
 set(AI_ALIFE_INVENTORY_UPGRADE_UPGRADE_ROOT inventory_upgrade_root.h
                                             inventory_upgrade_root_inline.h
@@ -3709,7 +3698,6 @@ source_group("Core\\Client\\Objects\\actor\\base\\memory" FILES ${CORE_CLIENT_OB
 source_group("Core\\Client\\Objects\\items &amp; weapons\\Weapons\\Various weapons\\Knife" FILES ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_VARIOUS_WEAPONS_KNIFE})
 source_group("AI\\AMonsters\\common\\steering behaviours\\base" FILES ${AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_BASE})
 source_group("AI\\AMonsters\\common\\components\\Control Manager\\Custom\\Triple Animation" FILES ${AI_AMONSTERS_COMMON_COMPONENTS_CONTROL_MANAGER_CUSTOM_TRIPLE_ANIMATION})
-source_group("Core\\Server\\filetransfer" FILES ${CORE_SERVER_FILETRANSFER})
 source_group("AI\\ALife\\inventory_upgrade\\upgrade_root" FILES ${AI_ALIFE_INVENTORY_UPGRADE_UPGRADE_ROOT})
 source_group("AI\\AMonsters\\monsters\\DogPsy\\Psy Attack Hide" FILES ${AI_AMONSTERS_MONSTERS_DOGPSY_PSY_ATTACK_HIDE})
 source_group("AI\\AScript\\ScriptClasses\\UI\\Common\\PDA\\logs\\News" FILES ${AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_PDA_LOGS_NEWS})
@@ -4447,7 +4435,6 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${AI_AMONSTERS_COMMON_COMPONENTS_MEMORY}
                           ${AI_ACOMPONENTS_STEP_MANAGER}
                           ${AI_AMONSTERS_HUMANS_STALKER_DECISIONMAKER_ACTIONS_DEATH}
-                          ${CORE_SERVER_FILETRANSFER}
                           ${AI_ASCRIPT_SCRIPTCLASSES_BASECLIENTCLASSES}
                           ${CORE_CLIENT_OBJECTS_PHYSICS_CHARACTERSUPPORT_DEATH_ANIMS}
                           ${CORE_CLIENT_OBJECTS_INVENTORY_ATTACHABLEITEM}

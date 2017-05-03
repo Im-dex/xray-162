@@ -44,7 +44,6 @@
 #include "actor.h"
 #include "player_hud.h"
 #include "UI/UIGameTutorial.h"
-#include "file_transfer.h"
 #include "message_filter.h"
 #include "demoplay_control.h"
 #include "demoinfo.h"
@@ -186,38 +185,9 @@ CLevel::CLevel():IPureClient	(Device.GetTimerGlobal())
 	
 	hud_zones_list = NULL;
 
-//	if ( !strstr( Core.Params, "-tdemo " ) && !strstr(Core.Params,"-tdemof "))
-//	{
-//		Demo_PrepareToStore();
-//	};
-	//---------------------------------------------------------
-//	m_bDemoPlayMode = FALSE;
-//	m_aDemoData.clear();
-//	m_bDemoStarted	= FALSE;
-
 	Msg("%s", Core.Params);
-	/*
-	if (strstr(Core.Params,"-tdemo ") || strstr(Core.Params,"-tdemof ")) {		
-		string1024				f_name;
-		if (strstr(Core.Params,"-tdemo "))
-		{
-			sscanf					(strstr(Core.Params,"-tdemo ")+7,"%[^ ] ",f_name);
-			m_bDemoPlayByFrame = FALSE;
 
-			Demo_Load	(f_name);	
-		}
-		else
-		{
-			sscanf					(strstr(Core.Params,"-tdemof ")+8,"%[^ ] ",f_name);
-			m_bDemoPlayByFrame = TRUE;
-
-			m_lDemoOfs = 0;
-			Demo_Load_toFrame(f_name, 100, m_lDemoOfs);
-		};		
-	}
-	*/
 	//---------------------------------------------------------	
-	m_file_transfer					= NULL;
 	m_lzo_working_memory			= NULL;
 	m_lzo_working_buffer			= NULL;
 }
@@ -510,10 +480,7 @@ void CLevel::ProcessGameEvents		()
 						Game().m_WeaponUsageStatistic->OnUpdateRequest(&P);
 				}break;
 			case M_FILE_TRANSFER:
-				{
-					if (m_file_transfer)			//in case of net_Stop
-						m_file_transfer->on_message(&P);
-				}break;
+				break;
 			case M_GAMEMESSAGE:
 				{
 					Game().OnGameMessage(P);

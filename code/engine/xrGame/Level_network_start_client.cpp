@@ -8,7 +8,6 @@
 #include "ai_space.h"
 #include "game_cl_base.h"
 #include "NET_Queue.h"
-#include "file_transfer.h"
 #include "hudmanager.h"
 
 #include "../xrphysics/iphworld.h"
@@ -248,10 +247,6 @@ bool	CLevel::net_start_client6				()
 		if (game)
 		{
 			game->OnConnected				();
-			if (game->Type() != eGameIDSingle)
-			{
-				m_file_transfer = xr_new<file_transfer::client_site>();
-			}
 		}
 
 //		g_pGamePersistent->LoadTitle		("st_client_synchronising");

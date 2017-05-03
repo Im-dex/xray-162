@@ -65,33 +65,11 @@ struct	svs_respawn
 };
 IC bool operator < (const svs_respawn& A, const svs_respawn& B)	{ return A.timestamp<B.timestamp; }
 
-struct CheaterToKick
-{
-	shared_str	reason;
-	ClientID	cheater_id;
-};
-typedef xr_vector<CheaterToKick> cheaters_t;
-
-namespace file_transfer
-{
-	class server_site;
-};//namespace file_transfer
-
-class clientdata_proxy;
-class server_info_uploader;
-
 class xrServer	: public IPureServer  
 {
-private:
 	xrS_entities				entities;
 	xr_multiset<svs_respawn>	q_respawn;
 	xr_vector<u16>				conn_spawned_ids;
-	cheaters_t					m_cheaters;
-	
-	file_transfer::server_site*	m_file_transfers;
-	clientdata_proxy*			m_screenshot_proxies[MAX_PLAYERS_COUNT*2];
-	void	initialize_screenshot_proxies();
-	void	deinitialize_screenshot_proxies();
 	
 	typedef server_updates_compressor::send_ready_updates_t::const_iterator update_iterator_t;
 	update_iterator_t			m_update_begin;
@@ -105,13 +83,9 @@ private:
 	
 	
 	void						SendServerInfoToClient		(ClientID const & new_client);
-	server_info_uploader&		GetServerInfoUploader		();
 
 	void						LoadServerInfo				();
-	
-	typedef xr_vector<server_info_uploader*>	info_uploaders_t;
 
-	info_uploaders_t			m_info_uploaders;
 	IReader*					m_server_logo;
 	IReader*					m_server_rules;
 
@@ -206,7 +180,6 @@ protected:
 	virtual void			Check_GameSpy_CDKey_Success			(IClient* CL);
 			void			RequestClientDigest					(IClient* CL);
 			void			ProcessClientDigest					(xrClientData* xrCL, NET_Packet* P);
-			void			KickCheaters						();
 	
 	virtual bool			NeedToCheckClient_BuildVersion		(IClient* CL);
 	virtual void			Check_BuildVersion_Success			(IClient* CL);
@@ -271,9 +244,6 @@ public:
 	virtual void			Assign_ServerType	( string512& res ) {};
 	virtual bool			HasPassword			()	{ return false; }
 	virtual bool			HasProtected		()	{ return false; }
-			void			AddCheater			(shared_str const & reason, ClientID const & cheaterID);
-			void			MakeScreenshot		(ClientID const & admin_id, ClientID const & cheater_id);
-			void			MakeConfigDump		(ClientID const & admin_id, ClientID const & cheater_id);
 
 	virtual void			GetServerInfo		( CServerInfo* si );
 			void			SendPlayersInfo		(ClientID const & to_client);

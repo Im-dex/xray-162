@@ -5,8 +5,6 @@
 #include "game_cl_single.h"
 #include "MainMenu.h"
 #include "../xrEngine/x_ray.h"
-#include "file_transfer.h"
-#include "screenshot_server.h"
 #include "../xrNetServer/NET_AuthCheck.h"
 #pragma warning(push)
 #pragma warning(disable:4995)
@@ -63,8 +61,6 @@ xrServer::EConnect xrServer::Connect(shared_str &session_name, GameDescriptionDa
 //	game->type				= type_id;
 	if (game->Type() != eGameIDSingle)
 	{
-		m_file_transfers	= xr_new<file_transfer::server_site>();
-		initialize_screenshot_proxies();
 		LoadServerInfo();
 		xr_auth_strings_t	tmp_ignore;
 		xr_auth_strings_t	tmp_check;

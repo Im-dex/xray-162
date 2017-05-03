@@ -13,7 +13,6 @@
 #include "ai_space.h"
 #include "saved_game_wrapper.h"
 #include "level_graph.h"
-#include "file_transfer.h"
 #include "message_filter.h"
 #include "../xrphysics/iphworld.h"
 
