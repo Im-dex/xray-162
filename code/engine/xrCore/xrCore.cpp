@@ -25,7 +25,7 @@ extern char g_application_path[256];
 
 //. extern xr_vector<shared_str>*	LogFile;
 
-void xrCore::_initialize	(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs, LPCSTR fs_fname)
+void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init_fs, const char* fs_fname)
 {
 	xr_strcpy					(ApplicationName,_ApplicationName);
 	if (0==init_counter) {
@@ -39,7 +39,7 @@ void xrCore::_initialize	(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs,
 		// Init COM so we can use CoCreateInstance
 //		HRESULT co_res = 
 		if (!strstr(GetCommandLine(),"-editor"))
-			CoInitializeEx	(NULL, COINIT_MULTITHREADED);
+			CoInitializeEx	(nullptr, COINIT_MULTITHREADED);
 
 		xr_strcpy			(Params,sizeof(Params),GetCommandLine());
 		_strlwr_s			(Params,sizeof(Params));
@@ -48,7 +48,7 @@ void xrCore::_initialize	(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs,
 
 		// application path
         GetModuleFileName(GetModuleHandle(MODULE_NAME),fn,sizeof(fn));
-        _splitpath		(fn,dr,di,0,0);
+        _splitpath		(fn,dr,di,nullptr,nullptr);
         strconcat		(sizeof(ApplicationPath),ApplicationPath,dr,di);
 #ifndef _EDITOR
 		xr_strcpy		(g_application_path,sizeof(g_application_path),ApplicationPath);
@@ -67,14 +67,14 @@ void xrCore::_initialize	(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs,
 		GetCurrentDirectory(sizeof(WorkingPath),WorkingPath);
 
 		// User/Comp Name
-		DWORD	sz_user		= sizeof(UserName);
-		GetUserName			(UserName,&sz_user);
+		DWORD sz_user		= sizeof(UserName);
+		GetUserName(UserName, &sz_user);
 
 		DWORD	sz_comp		= sizeof(CompName);
 		GetComputerName		(CompName,&sz_comp);
 
 		// Mathematics & PSI detection
-		CPU::Detect			();
+		CPU::Detect();
 		
 		Memory._initialize	(strstr(Params,"-mem_debug") ? TRUE : FALSE);
 
@@ -93,9 +93,9 @@ void xrCore::_initialize	(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs,
 //.		R_ASSERT			(co_res==S_OK);
 	}
 	if (init_fs){
-		u32 flags			= 0;
-		if (0!=strstr(Params,"-build"))	 flags |= CLocatorAPI::flBuildCopy;
-		if (0!=strstr(Params,"-ebuild")) flags |= CLocatorAPI::flBuildCopy|CLocatorAPI::flEBuildCopy;
+		u32 flags = 0u;
+		if (nullptr!=strstr(Params,"-build"))  flags |= CLocatorAPI::flBuildCopy;
+		if (nullptr!=strstr(Params,"-ebuild")) flags |= CLocatorAPI::flBuildCopy|CLocatorAPI::flEBuildCopy;
 #ifdef DEBUG
 		if (strstr(Params,"-cache"))  flags |= CLocatorAPI::flCacheFiles;
 		else flags &= ~CLocatorAPI::flCacheFiles;
@@ -107,10 +107,10 @@ void xrCore::_initialize	(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs,
 
 #ifndef	_EDITOR
 	#ifndef ELocatorAPIH
-		if (0!=strstr(Params,"-file_activity"))	 flags |= CLocatorAPI::flDumpFileActivity;
+		if (nullptr!=strstr(Params,"-file_activity"))	 flags |= CLocatorAPI::flDumpFileActivity;
 	#endif
 #endif
-		FS._initialize		(flags,0,fs_fname);
+		FS._initialize		(flags,nullptr,fs_fname);
 		Msg					("'%s' build %d, %s\n","xrCore",build_id, build_date);
 		EFS._initialize		();
 #ifdef DEBUG

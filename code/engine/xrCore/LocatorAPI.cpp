@@ -690,9 +690,9 @@ void CLocatorAPI::_initialize	(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
 	CTimer t;
 	t.Start();
 	Log				("Initializing File System...");
-	u32	M1			= Memory.mem_usage();
+	auto M1			= Memory.mem_usage();
 
-	m_Flags.set		(flags,TRUE);
+	m_Flags.set		(flags,true);
 
 	// scan root directory
 	bNoRecurse		= TRUE;

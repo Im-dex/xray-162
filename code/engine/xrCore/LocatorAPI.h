@@ -75,7 +75,7 @@ private:
 
 	files_it					file_find_it	(LPCSTR n);
 public:
-	enum{
+	enum : u32 {
 		flNeedRescan			= (1<<0),
 		flBuildCopy				= (1<<1),
 		flReady					= (1<<2),

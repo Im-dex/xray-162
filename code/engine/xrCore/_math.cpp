@@ -221,19 +221,6 @@ void _initialize_cpu	(void)
         u32(CPU::clk_overhead)
     );
 
-//	DUMP_PHASE;
-
-	if (strstr(Core.Params,"-x86"))		{
-        CPU::ID.hasFeature(CpuFeature::Mmx);
-		CPU::ID.hasFeature(CpuFeature::_3dNow);
-		CPU::ID.hasFeature(CpuFeature::Sse);
-		CPU::ID.hasFeature(CpuFeature::Sse2);
-		CPU::ID.hasFeature(CpuFeature::Sse3);
-		CPU::ID.hasFeature(CpuFeature::Ssse3);
-		CPU::ID.hasFeature(CpuFeature::Sse41);
-		CPU::ID.hasFeature(CpuFeature::Sse42);
-	};
-
 	string256	features;	xr_strcpy(features,sizeof(features),"RDTSC");
     if (CPU::ID.hasFeature(CpuFeature::Mmx))    xr_strcat(features,", MMX");
     if (CPU::ID.hasFeature(CpuFeature::_3dNow)) xr_strcat(features,", 3DNow!");

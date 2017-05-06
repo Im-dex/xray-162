@@ -60,21 +60,7 @@
 	#error Please enable multi-threaded library...
 #endif
 
-#	include "xrCore_platform.h"
-
-// *** try to minimize code bloat of STLport
-#ifdef __BORLANDC__
-#else
-	#ifdef XRCORE_EXPORTS				// no exceptions, export allocator and common stuff
-	#define _STLP_DESIGNATED_DLL	1
-	#define _STLP_USE_DECLSPEC		1
-	#else
-	#define _STLP_USE_DECLSPEC		1	// no exceptions, import allocator and common stuff
-	#endif
-#endif
-
-// #include <exception>
-// using std::exception;
+#include "xrCore_platform.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,7 +68,6 @@
 #include <math.h>
 #include <string.h>
 #include <typeinfo.h>
-//#include <process.h>
 
 #ifndef DEBUG
 	#ifdef _DEBUG
@@ -118,48 +103,14 @@
 #endif
 
 #ifndef DEBUG
-	#pragma inline_depth	( 254 )
-	#pragma inline_recursion( on )
-	#ifndef __BORLANDC__
-		#pragma intrinsic	(abs, fabs, fmod, sin, cos, tan, asin, acos, atan, sqrt, exp, log, log10, strcat)
-	#endif
+    #pragma inline_depth	( 254 )
+    #pragma inline_recursion( on )
+    #pragma intrinsic	(abs, fabs, fmod, sin, cos, tan, asin, acos, atan, sqrt, exp, log, log10, strcat)
 #endif
 
 #include <time.h>
-// work-around dumb borland compiler
-#ifdef __BORLANDC__
-	#define ALIGN(a)
-
-	#include <assert.h>
-	#include <utime.h>
-	#define _utimbuf utimbuf
-	#define MODULE_NAME 		"xrCoreB.dll"
-
-	// function redefinition
-    #define fabsf(a) fabs(a)
-    #define sinf(a) sin(a)
-    #define asinf(a) asin(a)
-    #define cosf(a) cos(a)
-    #define acosf(a) acos(a)
-    #define tanf(a) tan(a)
-    #define atanf(a) atan(a)
-    #define sqrtf(a) sqrt(a)
-    #define expf(a) ::exp(a)
-    #define floorf floor
-    #define atan2f atan2
-    #define logf log
-	// float redefine
-	#define _PC_24 PC_24
-	#define _PC_53 PC_53
-	#define _PC_64 PC_64
-	#define _RC_CHOP RC_CHOP
-	#define _RC_NEAR RC_NEAR
-    #define _MCW_EM MCW_EM
-#else
-	#define ALIGN(a)		__declspec(align(a))
-	#include <sys\utime.h>
-	#define MODULE_NAME 	"xrCore.dll"
-#endif
+#include <sys\utime.h>
+#define MODULE_NAME "xrCore.dll"
 
 
 // Warnings
@@ -230,10 +181,10 @@
 struct XRCORE_API xr_rtoken{
     shared_str	name;
     int	   	id;
-           	xr_rtoken	(LPCSTR _nm, int _id){name=_nm;id=_id;}
+           	xr_rtoken	(const char* _nm, int _id){name=_nm;id=_id;}
 public:
-    void	rename		(LPCSTR _nm)		{name=_nm;}
-    bool	equal		(LPCSTR _nm)		{return (0==xr_strcmp(*name,_nm));}
+    void	rename		(const char* _nm)		{name=_nm;}
+    bool	equal		(const char* _nm)		{return (0==xr_strcmp(*name,_nm));}
 };
 
 #pragma pack (push,1)
@@ -250,7 +201,7 @@ struct XRCORE_API xr_shortcut{
         };
         u16		hotkey;
     };
-                xr_shortcut		(u8 k, BOOL a, BOOL c, BOOL s):key(k){ext.assign(u8((a?flAlt:0)|(c?flCtrl:0)|(s?flShift:0)));}
+                xr_shortcut		(u8 k, bool a, bool c, bool s):key(k){ext.assign(u8((a?flAlt:0)|(c?flCtrl:0)|(s?flShift:0)));}
                 xr_shortcut		(){ext.zero();key=0;}
     bool		similar			(const xr_shortcut& v)const{return ext.equal(v.ext)&&(key==v.key);}
 };
@@ -260,7 +211,7 @@ using RStringVec = xr_vector<shared_str>;
 using RStringSet = xr_set<shared_str>;
 using RTokenVec = xr_vector<xr_rtoken>;
 
-#define			xr_pure_interface	__interface
+#define xr_pure_interface	__interface
 
 #include "FS.h"
 #include "log.h"
@@ -303,7 +254,7 @@ public:
 	DWORD		dwFrame;
 
 public:
-	void		_initialize	(LPCSTR ApplicationName, LogCallback cb=0, BOOL init_fs=TRUE, LPCSTR fs_fname=0);
+	void		_initialize	(const char* ApplicationName, LogCallback cb= nullptr, bool init_fs=true, const char* fs_fname=nullptr);
 	void		_destroy	();
 };
 
