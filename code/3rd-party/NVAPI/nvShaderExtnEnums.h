@@ -37,8 +37,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // This file can be included both from HLSL shader code as well as C++ code.
-// The app should call NvAPI_D3D_IsNvShaderExtnOpCodeSupported() to 
-// check for support for every nv shader extension opcode it plans to use
+// The app should call NvAPI_D3D11_IsNvShaderExtnOpCodeSupported() / NvAPI_D3D12_IsNvShaderExtnOpCodeSupported()
+// to check for support for every nv shader extension opcode it plans to use
 
 
 
@@ -70,3 +70,5 @@
 #define NV_EXTN_OP_GET_LANE_ID                              8
 #define NV_EXTN_OP_FP16_ATOMIC                             12
 #define NV_EXTN_OP_FP32_ATOMIC                             13
+
+#define NV_EXTN_OP_TYPED_UAV_LOAD                          14

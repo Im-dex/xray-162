@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.8)
 
 project(xray-1.7.0)
 
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(ARCH_X86 TRUE)
+else()
+    set(ARCH_X86 FALSE)
+endif()
+
 set(BIN_PATH "" CACHE STRING "engine bin output directory path")
 option(BUILD_UTILS "enable utils projects build" OFF)
 
@@ -15,7 +21,11 @@ endif()
 
 set(DXSDK_DIR $ENV{DXSDK_DIR})
 set(DXSDK_INCLUDE_DIR ${DXSDK_DIR}/include)
-set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x86)
+if (ARCH_X86)
+    set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x86)
+else()
+    set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x64)
+endif()
 
 if (MSVC)
     if (MSVC_VERSION EQUAL 1900)
@@ -34,13 +44,18 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 add_compile_options(/MP "$<$<CONFIG:RELWITHDEBINFO>:/GL>" "$<$<CONFIG:RELWITHDEBINFO>:/Ob2>"
                     "$<$<CONFIG:DEBUG>:/EHsc>" "$<$<CONFIG:RELWITHDEBINFO>:/Ot>"
-                    "$<$<CONFIG:RELWITHDEBINFO>:/arch:SSE2>" "$<$<CONFIG:RELWITHDEBINFO>:/wd4577>")
+                    "$<$<CONFIG:RELWITHDEBINFO>:/wd4577>")
+if (ARCH_X86)
+    add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/arch:SSE2>")
+endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -D_HAS_EXCEPTIONS=0")
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /LARGEADDRESSAWARE")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
+if (ARCH_X86)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /LARGEADDRESSAWARE")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
+endif()
 
 set(SHARED_RELEASE_LINKER_FLAGS "/LTCG /OPT:REF /INCREMENTAL:NO")
 set(STATIC_RELEASE_LINKER_FLAGS "/LTCG")
@@ -50,13 +65,22 @@ set(CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_STATIC_LINKER_FLAGS_RELWIT
 unset(SHARED_RELEASE_LINKER_FLAGS)
 unset(STATIC_RELEASE_LINKER_FLAGS)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_PATH})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_PATH})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/code/lib)
-set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/code/pdb)
+if (ARCH_X86)
+    set(BIN_OUT_PATH ${BIN_PATH}/x86)
+    set(LIB_OUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/code/lib/x86)
+    set(PDB_OUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/code/pdb/x86)
+else()
+    set(BIN_OUT_PATH ${BIN_PATH}/x64)
+    set(LIB_OUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/code/lib/x64)
+    set(PDB_OUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/code/pdb/x64)
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUT_PATH})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_OUT_PATH})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_OUT_PATH})
+set(CMAKE_PDB_OUTPUT_DIRECTORY ${PDB_OUT_PATH})
 
 include_directories(code/3rd-party code/engine code/utils)
-link_directories(code/3rd-party/lib)
 
 # 3d-party
 add_subdirectory(code/3rd-party/zlib)
@@ -87,7 +111,7 @@ set_target_properties(dxerr2015 PROPERTIES FOLDER 3rd-party)
 set_target_properties(oalib PROPERTIES FOLDER 3rd-party)
 set_target_properties(ode PROPERTIES FOLDER 3rd-party)
 set_target_properties(openal32 PROPERTIES FOLDER 3rd-party)
-set_target_properties(luajit PROPERTIES FOLDER 3rd-party)
+set_target_properties(luajit-build PROPERTIES FOLDER 3rd-party)
 set_target_properties(luabind PROPERTIES FOLDER 3rd-party)
 set_target_properties(imdexlib-src PROPERTIES FOLDER 3rd-party)
 set_target_properties(libogg PROPERTIES FOLDER 3rd-party)

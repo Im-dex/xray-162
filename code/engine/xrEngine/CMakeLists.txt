@@ -386,8 +386,8 @@ source_group("editor\\environment\\sound_channels_manager\\channel" FILES ${EDIT
 source_group("editor\\environment\\weathers" FILES ${EDITOR_ENVIRONMENT_WEATHERS})
 source_group("Game API" FILES ${GAME_API})
 
-include_directories(${DXSDK_INCLUDE_DIR} ../../3rd-party/luajit/include)
-link_directories(${DXSDK_LIB_DIR} ../../lib)
+include_directories(${DXSDK_INCLUDE_DIR})
+link_directories(${DXSDK_LIB_DIR})
 add_definitions(-DENGINE_BUILD -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h")
@@ -468,6 +468,5 @@ add_executable(xrEngine xrEngine.manifest
                         ${INTERFACES_RENDER_VISUALS_SKELETON})
 set_target_properties(xrEngine PROPERTIES ENABLE_EXPORTS YES)
 set_target_properties(xrEngine PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-add_dependencies(xrEngine luajit)
 target_link_libraries(xrEngine vfw32 libogg libtheora oalib d3dx9 d3d9 dinput8 dxguid
                                shlwapi xrCore xrCDB xrSound xrAPI xrNetServer winmm luabind)

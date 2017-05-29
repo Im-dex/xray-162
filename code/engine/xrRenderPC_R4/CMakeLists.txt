@@ -490,8 +490,8 @@ source_group("Refactored\\Execution &amp; 3D\\Shaders\\Resources\\dx10_R_shader"
 source_group("Shading templates" FILES ${SHADING_TEMPLATES})
 source_group("Refactored\\Execution &amp; 3D\\Gamma" FILES ${REFACTORED_EXECUTION__AND__3D_GAMMA})
 
-include_directories(${DXSDK_INCLUDE_DIR} ../../3rd-party/luajit/include)
-link_directories(${DXSDK_LIB_DIR} ../../lib)
+include_directories(${DXSDK_INCLUDE_DIR})
+link_directories(${DXSDK_LIB_DIR})
 add_definitions(-DATIMGPUD_DLL -DXRRENDER_R4_EXPORTS -DUSE_DX11 -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h")

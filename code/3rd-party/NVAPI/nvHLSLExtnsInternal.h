@@ -76,6 +76,7 @@ RWStructuredBuffer<NvShaderExtnStruct> g_NvidiaExt : register( NV_SHADER_EXTN_SL
 RWStructuredBuffer<NvShaderExtnStruct> g_NvidiaExt : register( NV_SHADER_EXTN_SLOT );
 #endif
 
+
 //----------------------------------------------------------------------------//
 // the exposed SHFL instructions accept a mask parameter in src2
 // To compute lane mask from width of segment:

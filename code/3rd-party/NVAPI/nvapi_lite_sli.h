@@ -100,6 +100,7 @@ typedef struct
 NVAPI_INTERFACE NvAPI_D3D_GetCurrentSLIState(IUnknown *pDevice, NV_GET_CURRENT_SLI_STATE *pSliState);
 #endif //if defined(_D3D9_H_) || defined(__d3d10_h__) || defined(__d3d11_h__)
 #if defined(_D3D9_H_) || defined(__d3d10_h__) || defined(__d3d11_h__)
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // FUNCTION NAME: NvAPI_D3D_SetResourceHint
@@ -111,18 +112,21 @@ NVAPI_INTERFACE NvAPI_D3D_GetCurrentSLIState(IUnknown *pDevice, NV_GET_CURRENT_S
 //!
 //!   DESCRIPTION: This is a general purpose function for passing down various resource
 //!                related hints to the driver. Hints are divided into categories
-//!                and types within each category.
+//!                and types within each category. For DX11 devices this function is free-threaded.
+//!                An application is responsible to complete this call before making use of the resource 
+//!                in a rendering context (therefore applying inter-thread synchronization as appropriate).
+//!                As a debug help to an application the driver enforces that a resource in this call was never bound.
 //!
 //! SUPPORTED OS:  Windows XP and higher
 //!
 //!
 //! \since Release: 185
 //!
-//! \param [in] pDev            The ID3D10Device or IDirect3DDevice9 that is a using the resource
-//! \param [in] obj             Previously obtained HV resource handle
-//! \param [in] dwHintCategory  Category of the hints
-//! \param [in] dwHintName      A hint within this category
-//! \param [in] *pdwHintValue   Pointer to location containing hint value
+//! \param [in]      pDev            The ID3D10Device or IDirect3DDevice9 that is a using the resource
+//! \param [in]      obj             Previously obtained HV resource handle
+//! \param [in]      dwHintCategory  Category of the hints
+//! \param [in]      dwHintName      A hint within this category
+//! \param [in/out]  *pdwHintValue   Pointer to location containing hint value, function returns previous hint value in this slot
 //!
 //! \return an int which could be an NvAPI status or DX HRESULT code
 //!
@@ -169,6 +173,7 @@ NVAPI_INTERFACE NvAPI_D3D_SetResourceHint(IUnknown *pDev, NVDX_ObjectHandle obj,
                                           NvU32 dwHintName, 
                                           NvU32 *pdwHintValue);
 #endif //defined(_D3D9_H_) || defined(__d3d10_h__) || defined(__d3d11_h__)
+
 #if defined(_D3D9_H_) || defined(__d3d10_h__) || defined(__d3d11_h__)
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -207,6 +212,7 @@ typedef enum  _NVAPI_D3D_RESOURCERENDERING_FLAG
 NVAPI_INTERFACE NvAPI_D3D_BeginResourceRendering(IUnknown *pDev, NVDX_ObjectHandle obj, NvU32 Flags);
 
 #endif //defined(_D3D9_H_) || defined(__d3d10_h__) || defined(__d3d11_h__)
+
 #if defined(_D3D9_H_) || defined(__d3d10_h__) || defined(__d3d11_h__)
 ///////////////////////////////////////////////////////////////////////////////
 //

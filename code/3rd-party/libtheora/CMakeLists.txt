@@ -13,7 +13,10 @@ source_group("src" FILES ${SRC} ${X86_SRC})
 include_directories(include ../libogg/include)
 
 add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -D_BIND_TO_CURRENT_CRT_VERSION
-                -DLIBTHEORA_EXPORTS -DOC_X86_ASM) #TODO: remove OC_X86_ASM for x64 build
+                -DLIBTHEORA_EXPORTS)
+if (ARCH_X86)
+    add_definitions(-DOC_X86_ASM)
+endif()
 
 add_compile_options(/wd4244 /wd4267 /wd4057 /wd4100 /wd4245)
 

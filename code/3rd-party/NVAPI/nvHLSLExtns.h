@@ -434,3 +434,335 @@ float NvInterlockedAddFp32(RWTexture3D<float> uav, uint3 address, float val)
     return __NvAtomicAddFP32(uav, address, val);
 }
 
+
+//----------------------------------------------------------------------------//
+//---------------------- Typed UAV Load functions ----------------------------//
+//----------------------------------------------------------------------------//
+
+// loads value from a UAV of a 4-component resource of any unorm, snorm or float format 
+// (e.g, DXGI_FORMAT_R8G8B8A8_UNORM, R16G16B16A16_FLOAT or  DXGI_FORMAT_R32G32B32A32_FLOAT)
+// the loaded value is automatically converted to fp32 and returned
+float4 NvLoadUavTyped(RWTexture1D<float4> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x    = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u);
+}
+
+float4 NvLoadUavTyped(RWTexture2D<float4> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u);
+}
+
+float4 NvLoadUavTyped(RWTexture3D<float4> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz  = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u);
+}
+
+
+
+// loads value from a UAV of a 2-component resource of any unorm, snorm or float format 
+// the loaded value is automatically converted to fp32 and returned
+float2 NvLoadUavTyped(RWTexture1D<float2> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x   = address;
+    g_NvidiaExt[index].opcode    = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u.xy);
+}
+
+float2 NvLoadUavTyped(RWTexture2D<float2> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u.xy);
+}
+
+float2 NvLoadUavTyped(RWTexture3D<float2> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz   = address;
+    g_NvidiaExt[index].opcode      = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u.xy);
+}
+
+
+// loads value from a UAV of a single component resource of any unorm, snorm or float format 
+// the loaded value is automatically converted to fp32 and returned
+float NvLoadUavTyped(RWTexture1D<float> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x    = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u.x);
+}
+
+float NvLoadUavTyped(RWTexture2D<float> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u.x);
+}
+
+float NvLoadUavTyped(RWTexture3D<float> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz   = address;
+    g_NvidiaExt[index].opcode      = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asfloat(g_NvidiaExt[index].dst0u.x);
+}
+
+
+// loads value from a UAV of a 4-component resource of any uint format 
+// (e.g, DXGI_FORMAT_R8G8B8A8_UINT, DXGI_FORMAT_R32G32B32A32_UINT)
+// the loaded value is automatically converted to uint32 and returned
+uint4 NvLoadUavTyped(RWTexture1D<uint4> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x    = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u);
+}
+
+uint4 NvLoadUavTyped(RWTexture2D<uint4> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u);
+}
+
+uint4 NvLoadUavTyped(RWTexture3D<uint4> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz  = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u);
+}
+
+
+
+// loads value from a UAV of a 2-component resource of any uint format
+// the loaded value is automatically converted to uint32 and returned
+uint2 NvLoadUavTyped(RWTexture1D<uint2> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x   = address;
+    g_NvidiaExt[index].opcode    = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u.xy);
+}
+
+uint2 NvLoadUavTyped(RWTexture2D<uint2> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u.xy);
+}
+
+uint2 NvLoadUavTyped(RWTexture3D<uint2> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz   = address;
+    g_NvidiaExt[index].opcode      = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u.xy);
+}
+
+
+// loads value from a UAV of a single component resource of any uint format
+// the loaded value is automatically converted to uint32 and returned
+uint NvLoadUavTyped(RWTexture1D<uint> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x    = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u.x);
+}
+
+uint NvLoadUavTyped(RWTexture2D<uint> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u.x);
+}
+
+uint NvLoadUavTyped(RWTexture3D<uint> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz   = address;
+    g_NvidiaExt[index].opcode      = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return (g_NvidiaExt[index].dst0u.x);
+}
+
+
+// loads value from a UAV of a 4-component resource of any signed integer format 
+// (e.g, DXGI_FORMAT_R8G8B8A8_SINT, DXGI_FORMAT_R32G32B32A32_SINT)
+// the loaded value is automatically converted to int32 and returned
+int4 NvLoadUavTyped(RWTexture1D<int4> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x    = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u);
+}
+
+int4 NvLoadUavTyped(RWTexture2D<int4> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u);
+}
+
+int4 NvLoadUavTyped(RWTexture3D<int4> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz  = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u);
+}
+
+
+
+// loads value from a UAV of a 2-component resource of any signed integer format 
+// the loaded value is automatically converted to int32 and returned
+int2 NvLoadUavTyped(RWTexture1D<int2> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x   = address;
+    g_NvidiaExt[index].opcode    = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u.xy);
+}
+
+int2 NvLoadUavTyped(RWTexture2D<int2> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u.xy);
+}
+
+int2 NvLoadUavTyped(RWTexture3D<int2> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz   = address;
+    g_NvidiaExt[index].opcode      = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u.xy);
+}
+
+// loads value from a UAV of a single component resource of signed integer format 
+// the loaded value is automatically converted to int32 and returned
+int NvLoadUavTyped(RWTexture1D<int> uav, uint address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.x    = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u.x);
+}
+
+int NvLoadUavTyped(RWTexture2D<int> uav, uint2 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xy   = address;
+    g_NvidiaExt[index].opcode     = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u.x);
+}
+
+int NvLoadUavTyped(RWTexture3D<int> uav, uint3 address)
+{
+    __NvReferenceUAVForOp(uav);
+
+    uint index = g_NvidiaExt.IncrementCounter();
+    g_NvidiaExt[index].src0u.xyz   = address;
+    g_NvidiaExt[index].opcode      = NV_EXTN_OP_TYPED_UAV_LOAD;
+
+    return asint(g_NvidiaExt[index].dst0u.x);
+}
