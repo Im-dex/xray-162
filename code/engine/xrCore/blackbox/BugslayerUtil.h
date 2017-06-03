@@ -294,20 +294,6 @@ DWORD  __stdcall
 
 
 /*----------------------------------------------------------------------
-FUNCTION        :   IsNT
-DISCUSSION      :
-    Returns TRUE if the operating system is NT.  I simply got tired of
-always having to call GetVersionEx each time I needed to check.
-Additionally, I also need to check the OS inside loops so this function
-caches the results so it is faster.
-PARAMETERS      :
-    None.
-RETURNS         :
-
-----------------------------------------------------------------------*/
-BOOL  __stdcall IsNT ( void ) ;
-
-/*----------------------------------------------------------------------
 FUNCTION        :   BSUSymInitialize
 DISCUSSION      :
     Under Win9x, you cannot set the SymInitialize fInvadeProcess flag to

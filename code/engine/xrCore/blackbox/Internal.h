@@ -12,25 +12,11 @@ BOOL __stdcall NT4GetLoadedModules ( DWORD     dwPID        ,
                                      HMODULE * paModArray   ,
                                      LPDWORD   pdwRealCount   ) ;
 
-// The TOOLHELP32 specific version of GetLoadedModules.
-BOOL __stdcall TLHELPGetLoadedModules ( DWORD     dwPID        ,
-                                        UINT      uiCount      ,
-                                        HMODULE * paModArray   ,
-                                        LPDWORD   pdwRealCount   ) ;
-
 // The NT version of GetModuleBaseName.
 DWORD __stdcall NTGetModuleBaseName ( HANDLE  hProcess   ,
                                       HMODULE hModule    ,
                                       LPTSTR  lpBaseName ,
                                       DWORD   nSize       ) ;
-
-
-// The TOOLHELP32 specific version of GetModuleFilenameEx
-DWORD __stdcall TLHELPGetModuleFileNameEx ( DWORD     dwPID        ,
-                                            HANDLE    hProcess     ,
-                                            HMODULE   hModule      ,
-                                            LPTSTR    szFilename   ,
-                                            DWORD     nSize         ) ;
 
 // The NT version of GetModuleFilenameEx.
 DWORD __stdcall NTGetModuleFileNameEx ( DWORD     dwPID        ,

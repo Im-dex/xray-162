@@ -17,7 +17,7 @@ file(GLOB DEBUG_CORE_BLACKBOX_CPP blackbox/*.cpp)
 set_source_files_properties(${DEBUG_CORE_BLACKBOX_CPP} PROPERTIES COMPILE_FLAGS /Y-)
 set(DEBUG_CORE_BLACKBOX ${DEBUG_CORE_BLACKBOX_H} ${DEBUG_CORE_BLACKBOX_CPP})
 
-set(FS FileSystem.cpp FileSystem.h FileSystem_borland.cpp FS.h FS.cpp Fs_impl.h
+set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp Fs_impl.h
        FS_internal.h LocatorAPI.h LocatorAPI.cpp LocatorAPI_auth.cpp LocatorAPI_defs.h
        LocatorAPI_defs.cpp LocatorAPI_Notifications.h LocatorAPI_Notifications.cpp
        log.h log.cpp NET_utils.cpp net_utils.h Xr_ini.cpp xr_ini.h)
@@ -43,7 +43,7 @@ set(MATH_STLEXT FixedMap.h FixedSet.h FixedVector.h xrPool.h)
 
 set(MEM_MGR memory_allocation_stats.cpp memory_usage.cpp xrMemory.cpp xrMemory.h xrMemory_align.h
             xrMemory_align.cpp xrMemory_debug.cpp xrMemory_POOL.cpp xrMEMORY_POOL.h xrMemory_pure.h
-            xrMemory_subst_borland.h xrMemory_subst_borland.cpp xrMemory_subst_msvc.h xrMemory_subst_msvc.cpp)
+            xrMemory_subst_msvc.h xrMemory_subst_msvc.cpp)
 set(MEM_MGR_DLMALLOC_ALLOCATOR ptmalloc3/malloc.c ptmalloc3/malloc-2.8.3.h ptmalloc3/sysdeps/win32/win32.c)
 set_source_files_properties(ptmalloc3/malloc.c ptmalloc3/sysdeps/win32/win32.c PROPERTIES COMPILE_FLAGS /Y-)
 set(MEM_MGR_DLMALLOC_WRAPPER doug_lea_allocator.h doug_lea_allocator.cpp memory_allocator_options.h)

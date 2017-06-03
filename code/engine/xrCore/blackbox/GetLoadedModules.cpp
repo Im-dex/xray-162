@@ -44,37 +44,9 @@ BOOL  __stdcall
         return ( FALSE ) ;
     }
 
-    // Figure out which OS we are on.
-    OSVERSIONINFO stOSVI ;
-
-    std::memset( &stOSVI , NULL, sizeof(OSVERSIONINFO)) ;
-    stOSVI.dwOSVersionInfoSize = sizeof ( OSVERSIONINFO ) ;
-
-    BOOL bRet = GetVersionEx ( &stOSVI ) ;
-    ASSERT ( TRUE == bRet ) ;
-    if ( FALSE == bRet )
-    {
-        TRACE0 ( "GetVersionEx failed!\n" ) ;
-        return ( FALSE ) ;
-    }
-
-    // Check the version and call the appropriate thing.
-    if ( ( VER_PLATFORM_WIN32_NT == stOSVI.dwPlatformId ) &&
-         ( 4 == stOSVI.dwMajorVersion                   )    )
-    {
-        // This is NT 4 so call its specific version in PSAPI.DLL
-        return ( NT4GetLoadedModules ( dwPID        ,
-                                       uiCount      ,
-                                       paModArray   ,
-                                       pdwRealCount  ) );
-    }
-    else
-    {
-        // Win9x and Win2K go through tool help.
-        return ( TLHELPGetLoadedModules ( dwPID         ,
-                                          uiCount       ,
-                                          paModArray    ,
-                                          pdwRealCount   ) ) ;
-    }
+    return (NT4GetLoadedModules(dwPID,
+        uiCount,
+        paModArray,
+        pdwRealCount));
 }
 
