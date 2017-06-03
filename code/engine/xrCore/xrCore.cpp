@@ -21,10 +21,6 @@ namespace CPU
 
 static u32	init_counter	= 0;
 
-extern char g_application_path[256];
-
-//. extern xr_vector<shared_str>*	LogFile;
-
 void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init_fs, const char* fs_fname)
 {
 	xr_strcpy					(ApplicationName,_ApplicationName);
@@ -50,9 +46,6 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
         GetModuleFileName(GetModuleHandle(MODULE_NAME),fn,sizeof(fn));
         _splitpath		(fn,dr,di,nullptr,nullptr);
         strconcat		(sizeof(ApplicationPath),ApplicationPath,dr,di);
-#ifndef _EDITOR
-		xr_strcpy		(g_application_path,sizeof(g_application_path),ApplicationPath);
-#endif
 
 #ifdef _EDITOR
 		// working path

@@ -43,21 +43,19 @@ XRCORE_API	xrDebug		Debug;
 
 static bool	error_after_dialog = false;
 
-extern void BuildStackTrace();
-extern char g_stackTrace[100][4096];
-extern int	g_stackTraceCount;
+#include "blackbox\build_stacktrace.h"
 
 void LogStackTrace	(LPCSTR header)
 {
 	if (!shared_str_initialized)
 		return;
 
-	BuildStackTrace	();		
+    StackTrace.Count = BuildStackTrace(StackTrace.Frames, StackTrace.Capacity, StackTrace.LineCapacity);
 
 	Msg				("%s",header);
 
-	for (int i=1; i<g_stackTraceCount; ++i)
-		Msg			("%s",g_stackTrace[i]);
+	for (int i=1; i<StackTrace.Count; ++i)
+		Msg			("%s",StackTrace[i]);
 }
 
 void xrDebug::gather_info		(const char *expression, const char *description, const char *argument0, const char *argument1, const char *file, int line, const char *function, LPSTR assertion_info, u32 const assertion_info_size)
@@ -124,11 +122,12 @@ void xrDebug::gather_info		(const char *expression, const char *description, con
 		buffer			+= xr_sprintf(buffer,assertion_size - u32(buffer - buffer_base),"stack trace:%s%s",endline,endline);
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
 
-		BuildStackTrace	();		
+		//BuildStackTrace	();		
+        StackTrace.Count = BuildStackTrace(StackTrace.Frames, StackTrace.Capacity, StackTrace.LineCapacity);
 
-		for (int i=2; i<g_stackTraceCount; ++i) {
+		for (int i=2; i<StackTrace.Count; ++i) {
 			if (shared_str_initialized)
-				Msg		("%s",g_stackTrace[i]);
+				Msg		("%s",StackTrace[i]);
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
 			buffer		+= xr_sprintf(buffer,assertion_size - u32(buffer - buffer_base),"%s%s",g_stackTrace[i],endline);
@@ -578,7 +577,8 @@ LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 
 	if (!error_after_dialog && !strstr(GetCommandLine(),"-no_call_stack_assert")) {
 		CONTEXT				save = *pExceptionInfo->ContextRecord;
-		BuildStackTrace		(pExceptionInfo);
+		//BuildStackTrace		(pExceptionInfo);
+        StackTrace.Count = BuildStackTrace(pExceptionInfo, StackTrace.Frames, StackTrace.Capacity, StackTrace.LineCapacity);
 		*pExceptionInfo->ContextRecord = save;
 
 		if (shared_str_initialized)
@@ -590,10 +590,10 @@ LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 		}
 
 		string4096			buffer;
-		for (int i=0; i<g_stackTraceCount; ++i) {
+		for (int i=0; i<StackTrace.Count; ++i) {
 			if (shared_str_initialized)
-				Msg			("%s",g_stackTrace[i]);
-			xr_sprintf			(buffer, sizeof(buffer), "%s\r\n",g_stackTrace[i]);
+				Msg			("%s",StackTrace[i]);
+			xr_sprintf			(buffer, sizeof(buffer), "%s\r\n", StackTrace[i]);
 #ifdef DEBUG
 			if (!IsDebuggerPresent())
 				os_clipboard::update_clipboard(buffer);
