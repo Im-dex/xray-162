@@ -42,7 +42,7 @@ source_group("OGG encoder" FILES ${OGG_ENCODER})
 add_definitions(-DETOOLS_EXPORTS -D_SECURE_SCL=0)
 
 include_directories(${DXSDK_INCLUDE_DIR})
-link_directories(${DXSDK_LIB_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+link_directories(${DXSDK_LIB_DIR})
 
 add_compile_options("/Yustdafx.h" /fp:fast /GR)
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
@@ -50,4 +50,4 @@ set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 add_library(ETools SHARED ${KERNEL}
                           ${VIPM}
                           ${OGG_ENCODER})
-target_link_libraries(ETools xrCore xrQSlim xrCDB libogg libvorbis libvorbisfile dxerr2015 d3dx9 ColorPicker)
+target_link_libraries(ETools xrCore xrQSlim xrCDB libogg libvorbis libvorbisfile dxerr2015 d3dx9)

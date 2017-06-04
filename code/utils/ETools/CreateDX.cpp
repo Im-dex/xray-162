@@ -5,12 +5,6 @@
 #include	"D3DX_Wrapper.h"
 
 #include	"dxerr2015/dxerr.h"
-// misc
-__declspec( dllimport ) bool WINAPI FSColorPickerDoModal(unsigned int * currentColor, unsigned int * originalColor, const int initialExpansionState);
-extern "C" __declspec(dllexport) bool  __stdcall FSColorPickerExecute(unsigned int * currentColor, unsigned int * originalColor, const int initialExpansionState)
-{
-	return FSColorPickerDoModal(currentColor, originalColor, initialExpansionState);
-}
 
 extern "C"{ 
 	ETOOLS_API UINT WINAPI D3DX_GetDriverLevel(LPDIRECT3DDEVICE9 pDevice)
