@@ -107,9 +107,8 @@ void	CObjectSpace::		Load				(  LPCSTR path, LPCSTR fname, CDB::build_callback b
 	R_ASSERT					(F);
 	Load( F, build_callback );
 }
+
 void	CObjectSpace::	Load				(  IReader* F, CDB::build_callback build_callback  )
-
-
 {
 	hdrCFORM					H;
 	F->r						(&H,sizeof(hdrCFORM));
