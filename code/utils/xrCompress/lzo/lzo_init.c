@@ -141,9 +141,9 @@ static lzo_bool basic_integral_check(void)
 	COMPILE_TIME_ASSERT(SIZEOF_UNSIGNED_SHORT == sizeof(unsigned short));
 #endif
 #if !defined(__LZO_IN_MINILZO)
-#if defined(SIZEOF_SIZE_T)
-	COMPILE_TIME_ASSERT(SIZEOF_SIZE_T == sizeof(size_t));
-#endif
+//#if defined(SIZEOF_SIZE_T)
+//	COMPILE_TIME_ASSERT(SIZEOF_SIZE_T == sizeof(size_t));
+//#endif
 #endif
 
 	/* assert the signedness of our integral types */
