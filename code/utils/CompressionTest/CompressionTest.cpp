@@ -1,21 +1,17 @@
-    #include <stdio.h>
-    #include <vector>
-    #include <algorithm>
-    #include "xrcore/PPMd.h"
-    #include "xrcore/compression_ppmd_stream.h"
+#include <stdio.h>
+#include <vector>
+#include <algorithm>
 
-    #pragma warning( disable: 193 128 810 )
-    #include "../xrcompress/lzo/lzo1x.h"
-    #include "../xrcompress/lzo/lzo1y.h"
-    #pragma warning( default: 193 128 810 )
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
-	extern compression::ppmd::stream*   trained_model;
+#pragma warning( disable: 193 128 810 )
+#include "../xrcompress/lzo/lzo1x.h"
+#include "../xrcompress/lzo/lzo1y.h"
+#pragma warning( default: 193 128 810 )
 
-
-    typedef compression::ppmd::stream	stream;
-    typedef unsigned char               uint8_t;
-
-    using namespace std;
+using namespace std;
 
 
 //==============================================================================
@@ -46,15 +42,6 @@ private:
     LARGE_INTEGER   _start_time;
     LARGE_INTEGER   _stop_time;
 };
-
-
-//------------------------------------------------------------------------------
-
-void _STDCALL 
-PrintInfo( _PPMD_FILE*,_PPMD_FILE* )
-{
-}
-
 
 //------------------------------------------------------------------------------
 
@@ -108,56 +95,14 @@ BlockInfo
 
 //------------------------------------------------------------------------------
 
-static const char*      _DefaultMdlName             = "!PPMd.mdl";
-char*                   _ModelData                  = NULL;
-long                    _ModelDataSize              = 0;
-
-static const u32		_SuballocatorSize           = 32;
-static const u32		_OrderModel				    = 8;
-static const MR_METHOD	_RestorationMethodCutOff	= MRM_FREEZE;
-//static const MR_METHOD	_RestorationMethodCutOff	= MRM_RESTART;
-
-static char*            _LZOWrkMem                  = NULL;
-static uint8_t*         _LZO_Dict                   = NULL;
+static char*            _LZOWrkMem                  = nullptr;
+static uint8_t*         _LZO_Dict                   = nullptr;
 static unsigned         _LZO_Dict_Sz                = 0;
 static const char*      _DefaultDictName            = "LZO.dic";
 
-static vector<BlockInfo>    _PPM_BlockInfo;
 static vector<BlockInfo>    _LZO_BlockInfo;
-static unsigned             _PPM_TotalUncompressed  = 0;
-static unsigned             _PPM_TotalCompressed    = 0;
 static unsigned             _LZO_TotalUncompressed  = 0;
 static unsigned             _LZO_TotalCompressed    = 0;
-
-
-//------------------------------------------------------------------------------
-
-static void
-_InitPPM( const char* model_file=0 )
-{
-    if( model_file )
-    {
-        FILE*   mdl = fopen( model_file, "rb" );
-
-        if( mdl )
-        {
-            fseek( mdl, 0, SEEK_END );
-        
-            _ModelDataSize  = ftell( mdl );
-            _ModelData      = new char[_ModelDataSize];
-            trained_model   = new compression::ppmd::stream(_ModelData,_ModelDataSize);
-
-            fseek( mdl, 0, SEEK_SET );
-            fread( _ModelData, _ModelDataSize, 1, mdl );
-            fclose( mdl );
-
-            printf( "using PPMd-model trained data \"%s\"\n", model_file );
-        }
-    }
-
-    StartSubAllocator( _SuballocatorSize );
-}
-
 
 //------------------------------------------------------------------------------
 
@@ -188,133 +133,6 @@ _InitLZO( const char* dic_name=_DefaultDictName )
 
 //------------------------------------------------------------------------------
 extern void save_dictionary();
-
-static bool
-_ProcessFile_PPMd( const char* file_name )
-{
-    bool    success = false;
-    FILE*   file    = fopen( file_name, "rb" );
-
-    if( file )
-    {
-        // read data
-        
-        fseek( file, 0, SEEK_END );
-
-        unsigned    src_size    = ftell( file );
-        char*       src_data    = new char[src_size];
-
-        fseek( file, 0, SEEK_SET );
-        fread( src_data, src_size, 1, file );
-        fclose( file );
-
-
-        // compress it
-
-        unsigned    comp_size = src_size * 4;
-        char*       comp_data = new char[comp_size];
-	    stream      src( src_data, src_size );
-	    stream      dst( comp_data, comp_size );
-
-        memset( comp_data, 0xCC, comp_size );
-
-        StopWatch   timer;
-
-        timer.start();
-        if( trained_model )
-            trained_model->rewind();
-	    EncodeFile( &dst, &src, _OrderModel, _RestorationMethodCutOff );
-        timer.stop();
-        printf( "PPMd1 :  %2.0f%% %1.5fms  %u->%u\n", 
-                100.0f*float(dst.tell())/float(src.tell()),
-                (float)timer.time(),
-                src.tell(), dst.tell()
-              );
-
-		timer.start();
-        if( trained_model )
-            trained_model->rewind();
-	    EncodeFile( &dst, &src, _OrderModel, _RestorationMethodCutOff );
-        timer.stop();
-        printf( "PPMd2 :  %2.0f%% %1.5fms  %u->%u\n", 
-                100.0f*float(dst.tell())/float(src.tell()),
-                (float)timer.time(),
-                src.tell(), dst.tell()
-              );
-
-		timer.start();
-        if( trained_model )
-            trained_model->rewind();
-	    EncodeFile( &dst, &src, _OrderModel, _RestorationMethodCutOff );
-        timer.stop();
-        printf( "PPMd3 :  %2.0f%% %1.5fms  %u->%u\n", 
-                100.0f*float(dst.tell())/float(src.tell()),
-                (float)timer.time(),
-                src.tell(), dst.tell()
-              );
-		
-        _PPM_TotalUncompressed  += src.tell();
-        _PPM_TotalCompressed    += (dst.tell() < src.tell())  ? dst.tell()  : src.tell();
-
-        // decompress it
-
-        unsigned    uncomp_size = src_size * 4;
-        char*       uncomp_data = new char[uncomp_size];
-	    stream      uncomp( uncomp_data, uncomp_size );
-
-        memset( uncomp_data, 0xDD, uncomp_size );
-
-        dst.rewind();
-        if( trained_model )
-            trained_model->rewind();
-        DecodeFile( &uncomp, &dst, _OrderModel, _RestorationMethodCutOff );
-
-		
-        // compare
-
-        bool        ok      = true;
-        unsigned    err_b   = 0;
-        
-        for( const char* s=src_data,*u=uncomp_data; s!=src_data+src_size; ++s, ++u )
-        {
-            if( *s != *u )
-            {
-                ok      = false;
-                err_b   = s-src_data;
-                break;
-            }
-        }
-        if( ok )    printf( " OK\n" );
-        else        printf( " ERROR (#%u  %02X != %02X)\n", err_b, src_data[err_b]&0xFF, uncomp_data[err_b]&0xFF );
-
-        success = ok;
-
-
-        // update stats
-
-        vector<BlockInfo>::iterator i = find_if( _PPM_BlockInfo.begin(), _PPM_BlockInfo.end(), BlockInfo::EqualSize(src_size) );
-
-        if( i == _PPM_BlockInfo.end() )
-        {
-            _PPM_BlockInfo.push_back( BlockInfo(src_size) );            
-            i = _PPM_BlockInfo.end()-1;
-        }
-
-        ++i->count;
-        i->total_time   += (float)timer.time();
-        i->total_ratio  += 100.0f*float(dst.tell())/float(src.tell());
-        
-
-        // clean-up
-        
-        delete[] uncomp_data;
-        delete[] comp_data;
-        delete[] src_data;
-    }     // if file open
-
-    return success;
-}
-
 
 //------------------------------------------------------------------------------
 
@@ -439,8 +257,7 @@ static bool
 _ProcessFile( const char* file_name )
 {
     printf( "\n%s\n", file_name );
-    return (_ProcessFile_PPMd( file_name )  && _ProcessFile_LZO( file_name ));
-//    return _ProcessFile_LZO( file_name );
+    return _ProcessFile_LZO( file_name );
 }
 
 
@@ -453,7 +270,6 @@ int
 main( int argc, char* argv[] )
 {
     const char* src_name = (argc>1)  ? argv[1]  : 0;
-    const char* mdl_name = _DefaultMdlName;
     const char* dic_name = _DefaultDictName;
 
     for( int i=1; i<argc; ++i )
@@ -462,15 +278,13 @@ main( int argc, char* argv[] )
         
         if( arg[0] == '-'  ||  arg[0] == '/' )
         {
-            if( !_strnicmp( arg+1, "mdl", 3 ) )      mdl_name = arg+1+3+1;
-            else if( !_strnicmp( arg+1, "dic", 3 ) ) dic_name = arg+1+3+1;
+            if( !_strnicmp( arg+1, "dic", 3 ) ) dic_name = arg+1+3+1;
         }
     }
 
 
     if( argc > 1 )
     {
-        _InitPPM( mdl_name );
         _InitLZO( dic_name );
 
         WIN32_FIND_DATA     found_data;
@@ -528,14 +342,6 @@ main( int argc, char* argv[] )
 
 
         // dump stats
-
-        for( unsigned i=0; i<_PPM_BlockInfo.size(); ++i )
-        {
-            _PPM_BlockInfo[i].avg_ratio = _PPM_BlockInfo[i].total_ratio / _PPM_BlockInfo[i].count;
-            _PPM_BlockInfo[i].avg_time  = _PPM_BlockInfo[i].total_time / _PPM_BlockInfo[i].count;
-        }
-        sort( _PPM_BlockInfo.begin(), _PPM_BlockInfo.end(), BlockInfo::GreaterSize );
-
         for( unsigned i=0; i<_LZO_BlockInfo.size(); ++i )
         {
             _LZO_BlockInfo[i].avg_ratio = _LZO_BlockInfo[i].total_ratio / _LZO_BlockInfo[i].count;
@@ -545,26 +351,12 @@ main( int argc, char* argv[] )
 
 
         printf( "\n==========\nstats:\n" );
-        for( unsigned i=0; i<_PPM_BlockInfo.size(); ++i )
+        for( unsigned i=0; i<_LZO_BlockInfo.size(); ++i )
         {
-//            R_ASSERT(_PPM_BlockInfo[i].size == _LZO_BlockInfo[i].size);
-            
-            printf( "\n%u\n", _PPM_BlockInfo[i].size );
-            printf( "PPM :  %2.1f%%  %-2.3fms\n", _PPM_BlockInfo[i].avg_ratio, _PPM_BlockInfo[i].avg_time );
             printf( "LZO :  %2.1f%%  %-2.3fms\n", _LZO_BlockInfo[i].avg_ratio, _LZO_BlockInfo[i].avg_time );
-/*
-            printf( "%-6u :  %2.1f%%  %-2.3fms\n", 
-                    _PPM_BlockInfo[i].size, 
-                    _PPM_BlockInfo[i].avg_ratio, _PPM_BlockInfo[i].avg_time
-                  );
-*/
         }
 
         printf( "\nTOTAL\n" );
-        printf( "PPMd :  %2.1f%%  %u -> %u\n", 
-                100.0f*float(_PPM_TotalCompressed)/float(_PPM_TotalUncompressed),
-                _PPM_TotalUncompressed, _PPM_TotalCompressed
-              );
         printf( "LZO  :  %2.1f%%  %u -> %u\n", 
                 100.0f*float(_LZO_TotalCompressed)/float(_LZO_TotalUncompressed),
                 _LZO_TotalUncompressed, _LZO_TotalCompressed

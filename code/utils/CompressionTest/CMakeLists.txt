@@ -2,14 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 
 project(CompressionTest)
 
-set(PPMD ../../engine/xrCore/Coder.hpp
-         ../../engine/xrCore/compression_ppmd_stream.h
-         ../../engine/xrCore/compression_ppmd_stream_inline.h
-         ../../engine/xrCore/PPMd.h
-         ../../engine/xrCore/PPMdType.h
-         ../../engine/xrCore/SubAlloc.hpp
-         ../../engine/xrCore/Model.cpp)
-
 set(ROOT_SPECIAL_CONV CompressionTest.cpp)
 
 set(LZO ../xrCompress/lzo/compr1b.h
@@ -118,13 +110,11 @@ set(LZO ../xrCompress/lzo/compr1b.h
         ../xrCompress/lzo/lzo_str.c
         ../xrCompress/lzo/lzo_util.c)
 
-source_group("PPMd" FILES ${PPMD})
 source_group("" FILES ${ROOT_SPECIAL_CONV})
 source_group("LZO" FILES ${LZO})
 
 add_definitions(-D_CONSOLE)
 
-add_executable(CompressionTest ${PPMD}
-                               ${ROOT_SPECIAL_CONV}
+add_executable(CompressionTest ${ROOT_SPECIAL_CONV}
                                ${LZO})
 set_target_properties(CompressionTest PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
