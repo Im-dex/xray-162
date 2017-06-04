@@ -252,16 +252,9 @@ void CSE_Abstract::Spawn_Write				(NET_Packet	&tNetPacket, BOOL bLocal)
 	tNetPacket.w_seek			(position,&size,sizeof(u16));
 }
 
-static enum EGameTypes {
+enum EGameTypes {
 	GAME_ANY							= 0,
 	GAME_SINGLE							= 1,
-	GAME_DEATHMATCH						= 2,
-//	GAME_CTF							= 3,
-//	GAME_ASSAULT						= 4,	// Team1 - assaulting, Team0 - Defending
-	GAME_CS								= 5,
-	GAME_TEAMDEATHMATCH					= 6,
-	GAME_ARTEFACTHUNT					= 7,
-	GAME_CAPTURETHEARTEFACT				= 8,
 
 	//identifiers in range [100...254] are registered for script game type
 	GAME_DUMMY							= 255	// temporary game type

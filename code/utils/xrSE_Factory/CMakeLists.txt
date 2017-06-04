@@ -397,4 +397,4 @@ add_library(xrSE_Factory SHARED ${COMMON_ACOMPONENTS_SPACERESTRICTIONMANAGER}
                                 ${SERVERSTUFF_COMMON_ALIFESTUFF_ARTEFACT_ORDER}
                                 ${SCRIPTS_SCRIPTCLASSES_SCRIPTNETPACKET})
 set_target_properties(xrSE_Factory PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-target_link_libraries(xrSE_Factory xrCore luabind xrXMLParser)
+target_link_libraries(xrSE_Factory xrCore luabind xrXMLParser shlwapi)
