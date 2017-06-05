@@ -240,7 +240,7 @@ void ShowSubdiv(HWND hw)
 	ReleaseDC		(hw, dc);
 }
 
-static BOOL CALLBACK disp_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK disp_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch( message )
 	{
@@ -274,6 +274,6 @@ static BOOL CALLBACK disp_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 void xrDisplay		()
 {
 	InternalRender	();
-	DialogBox		(HINSTANCE(GetModuleHandle(0)),MAKEINTRESOURCE(IDD_NVIEW),logWindow,disp_proc);
+	DialogBox		(HINSTANCE(GetModuleHandle(nullptr)),MAKEINTRESOURCE(IDD_NVIEW),logWindow,disp_proc);
 	xr_free			(texels);
 }

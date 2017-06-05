@@ -44,6 +44,12 @@ add_library(xrDXT SHARED ${NORMALMAP}
                          ${DDS})
 target_link_libraries(xrDXT xrCore)
 
+if (ARCH_X86)
+    set(LIB_FOLDER x86)
+else()
+    set(LIB_FOLDER x64)
+endif()
+
 add_custom_command(TARGET xrDXT POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/wrap/x86/nvdxtwrap.dll" $<TARGET_FILE_DIR:xrDXT>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/wrap/${LIB_FOLDER}/nvdxtwrap.dll" $<TARGET_FILE_DIR:xrDXT>
 )
