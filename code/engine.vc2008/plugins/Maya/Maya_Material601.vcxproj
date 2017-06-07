@@ -181,12 +181,6 @@
     <None Include="Material\AElambertShaderTemplate.mel" />
     <None Include="Material\AEXRayMtlTemplate.mel" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\xrCore\xrCoreStatic.vcxproj">
-      <Project>{f1066eac-ee25-4c7a-9023-5957a6f7ba27}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

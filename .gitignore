@@ -8,6 +8,6 @@
 *.db
 *.opendb
 
-binaries/
-intermediate/
-libraries/
+build*/
+code/lib/
+code/pdb/
