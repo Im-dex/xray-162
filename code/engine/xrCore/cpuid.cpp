@@ -6,6 +6,7 @@
 #include <array>
 #include <bitset>
 #include <memory>
+#include <intrin.h>
 
 /***
 *
