@@ -147,4 +147,4 @@ add_executable(xrLC ${ROOT_SPECIAL_CONV}
                     ${KERNEL}
                     ${MGC_SRC})
 set_target_properties(xrLC PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-target_link_libraries(xrLC xrDXT ETools xrLC_Light xrQSlim xrCore xrCDB FreeImage comctl32 winmm imagehlp d3dx9 ColorPicker)
+target_link_libraries(xrLC xrDXT ETools xrLC_Light xrQSlim xrCore xrCDB FreeImage comctl32 winmm imagehlp d3dx9)
