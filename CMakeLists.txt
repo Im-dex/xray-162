@@ -33,7 +33,7 @@ if (MSVC)
         set(VC_ENV_BAT ${VS_TOOLS_PATH}../../VC/vcvarsall.bat)
     elseif(MSVC_VERSION EQUAL 1910) # MSVS 2017
         execute_process(COMMAND "vswhere" "-version" "15.0" "-property" "installationPath"
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extras
                         OUTPUT_VARIABLE VS_TOOLS_PATH
                         OUTPUT_STRIP_TRAILING_WHITESPACE)
         set(VC_ENV_BAT ${VS_TOOLS_PATH}/VC/Auxiliary/Build/vcvarsall.bat)
