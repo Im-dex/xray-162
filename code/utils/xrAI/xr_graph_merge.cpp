@@ -20,6 +20,7 @@
 #include "guid_generator.h"
 #include "game_graph_builder.h"
 #include <direct.h>
+#include <random>
 
 extern LPCSTR GAME_CONFIG;
 extern LPCSTR LEVEL_GRAPH_NAME;
@@ -155,7 +156,8 @@ public:
 				edge.m_vertex_id	= (GameGraph::_GRAPH_ID)(edge.m_vertex_id + dwOffset);
 			}
 			(*I).dwPointOffset		= 0;
-			vfGenerateDeathPoints	(int(I - B),l_tpCrossTable,l_tpAI_Map,(*I).tDeathPointCount);
+            std::mt19937 rng { std::random_device()() };
+			vfGenerateDeathPoints	(rng, int(I - B),l_tpCrossTable,l_tpAI_Map,(*I).tDeathPointCount);
 		}
 
 		xr_delete					(l_tpCrossTable);
@@ -354,7 +356,7 @@ public:
 		return					(l_dwResult);
 	}
 
-	void						vfGenerateDeathPoints(int iGraphIndex, CGameLevelCrossTable *tpCrossTable, CLevelGraph *tpAI_Map, u32 &dwDeathPointCount)
+	void						vfGenerateDeathPoints(std::mt19937& rng, int iGraphIndex, CGameLevelCrossTable *tpCrossTable, CLevelGraph *tpAI_Map, u32 &dwDeathPointCount)
 	{
 		xr_vector<u32>			l_dwaNodes;
 		l_dwaNodes.clear		();
@@ -366,7 +368,7 @@ public:
 
 		R_ASSERT2				(!l_dwaNodes.empty(),"Can't create at least one death point for specified graph point");
 
-		std::random_shuffle		(l_dwaNodes.begin(),l_dwaNodes.end());
+		std::shuffle		(l_dwaNodes.begin(),l_dwaNodes.end(), rng);
 
 		u32						m = l_dwaNodes.size() > 10 ? std::min(iFloor(.1f*l_dwaNodes.size()),255) : l_dwaNodes.size(), l_dwStartIndex = m_tpLevelPoints.size();
 		m_tpLevelPoints.resize	(l_dwStartIndex + m);

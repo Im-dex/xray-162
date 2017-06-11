@@ -11,6 +11,8 @@
 #include "xrthread.h"
 #include "spawn_constructor_space.h"
 
+#include <random>
+
 class CLevelGraph;
 class CGameLevelCrossTable;
 class CGameSpawnConstructor;
@@ -50,6 +52,7 @@ private:
 	CGraphEngine						*m_graph_engine;
 	LEVEL_CHANGER_STORAGE				m_level_changers;
 	bool								m_no_separator_check;
+    std::mt19937 rng { std::random_device()() };
 
 private:
 	const CGameLevelCrossTable			*m_cross_table;
