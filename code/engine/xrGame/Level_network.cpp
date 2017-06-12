@@ -17,7 +17,6 @@
 #include "string_table.h"
 #include "UI/UIGameTutorial.h"
 #include "ui/UIPdaWnd.h"
-#include "../xrNetServer/NET_AuthCheck.h"
 
 #include "../xrphysics/physicscommon.h"
 ENGINE_API bool g_dedicated_server;
@@ -334,14 +333,6 @@ BOOL			CLevel::Connect2Server				(LPCSTR options)
 	m_bConnectResultReceived	= false	;
 	m_bConnectResult			= true	;
 
-	if(!psNET_direct_connect)
-	{
-		xr_auth_strings_t	tmp_ignore;
-		xr_auth_strings_t	tmp_check;
-		fill_auth_check_params	(tmp_ignore, tmp_check);
-		FS.auth_generate		(tmp_ignore, tmp_check);
-	}
-
 	if (!Connect(options))		return	FALSE;
 	//---------------------------------------------------------------------------
 	if(psNET_direct_connect) m_bConnectResultReceived = true;
@@ -407,20 +398,6 @@ BOOL			CLevel::Connect2Server				(LPCSTR options)
 	//Send		(P, net_flags(TRUE, TRUE, TRUE, TRUE));
 	//---------------------------------------------------------------------------
 	return TRUE;
-};
-
-void			CLevel::OnBuildVersionChallenge		()
-{
-	NET_Packet P;
-	P.w_begin				(M_CL_AUTH);
-#ifdef USE_DEBUG_AUTH
-	u64 auth = MP_DEBUG_AUTH;
-	Msg("* Sending auth value ...");
-#else
-	u64 auth = FS.auth_get();
-#endif //#ifdef DEBUG
-	P.w_u64					(auth);
-	SecureSend				(P, net_flags(TRUE, TRUE, TRUE, TRUE));
 };
 
 void CLevel::OnConnectResult(NET_Packet*	P)

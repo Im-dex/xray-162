@@ -1129,39 +1129,3 @@ BOOL	IPureClient::net_IsSyncronised()
 {
 	return net_Syncronised;
 }
-
-#include <WINSOCK2.H>
-#include <Ws2tcpip.h>
-bool	IPureClient::GetServerAddress		(ip_address& pAddress, DWORD* pPort)
-{
-	*pPort		= 0;
-	if (!net_Address_server) return false;
-
-	WCHAR wstrHostname[ 2048 ] = {0};	
-	DWORD dwHostNameSize = sizeof(wstrHostname);
-	DWORD dwHostNameDataType = DPNA_DATATYPE_STRING;
-	CHK_DX(net_Address_server->GetComponentByName( DPNA_KEY_HOSTNAME, wstrHostname, &dwHostNameSize, &dwHostNameDataType ));
-
-	string2048				HostName;
-	CHK_DX(WideCharToMultiByte(CP_ACP,0,wstrHostname,-1,HostName,sizeof(HostName),0,0));
-
-	hostent* pHostEnt		= gethostbyname(HostName);
-	char*					localIP;
-	localIP					= inet_ntoa (*(struct in_addr *)*pHostEnt->h_addr_list);
-	pHostEnt				= gethostbyname(pHostEnt->h_name);
-	localIP					= inet_ntoa (*(struct in_addr *)*pHostEnt->h_addr_list);
-	pAddress.set			(localIP);
-
-//.	pAddress[0]				= (char)(*(struct in_addr *)*pHostEnt->h_addr_list).s_net;
-//.	pAddress[1]				= (char)(*(struct in_addr *)*pHostEnt->h_addr_list).s_host;
-//.	pAddress[2]				= (char)(*(struct in_addr *)*pHostEnt->h_addr_list).s_lh;
-//.	pAddress[3]				= (char)(*(struct in_addr *)*pHostEnt->h_addr_list).s_impno;
-
-	DWORD dwPort			= 0;
-	DWORD dwPortSize		= sizeof(dwPort);
-	DWORD dwPortDataType	= DPNA_DATATYPE_DWORD;
-	CHK_DX(net_Address_server->GetComponentByName( DPNA_KEY_PORT, &dwPort, &dwPortSize, &dwPortDataType ));
-	*pPort					= dwPort;
-
-	return true;
-};

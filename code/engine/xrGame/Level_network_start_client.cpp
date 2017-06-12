@@ -189,14 +189,7 @@ bool	CLevel::net_start_client4				()
 
 void CLevel::ClientSendProfileData	()
 {
-#ifdef DEBUG
-	Msg("* Sending profile data");
-#endif
-	NET_Packet								NP;
-	NP.w_begin								(M_CREATE_PLAYER_STATE);
-	game_PlayerState	tmp_player_state	(NULL);
-	tmp_player_state.net_Export				(NP, TRUE);
-	SecureSend								(NP,net_flags(TRUE, TRUE, TRUE, TRUE));
+    // TODO: remove me
 }
 
 

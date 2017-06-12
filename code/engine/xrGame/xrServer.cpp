@@ -101,21 +101,9 @@ void		xrServer::client_Replicate	()
 IClient*	xrServer::client_Find_Get	(ClientID ID)
 {
 	DWORD dwPort			= 0;
-	ip_address tmp_ip_address;
-
-
-	if ( !psNET_direct_connect )
-		GetClientAddress(ID, tmp_ip_address, &dwPort );
-	else
-		tmp_ip_address.set( "127.0.0.1" );
 
 	IClient* newCL = client_Create();
 	newCL->ID = ID;
-	if(!psNET_direct_connect)
-	{
-		newCL->m_cAddress	= tmp_ip_address;	
-		newCL->m_dwPort		= dwPort;
-	}
 
 	newCL->server			= this;
 	net_players.AddNewClient(newCL);
@@ -242,11 +230,6 @@ void xrServer::Update	()
 	
 	PerformCheckClientsForMaxPing	();
 	Flush_Clients_Buffers			();
-	
-	if( 0==(Device.dwFrame%100) )//once per 100 frames
-	{
-		UpdateBannedList();
-	}
 }
 
 void _stdcall xrServer::SendGameUpdateTo(IClient* client)
@@ -581,22 +564,6 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 		}break;
 	case M_STATISTIC_UPDATE_RESPOND:
 		{
-			//client method for collecting statistics are called from two places : 1 - this, 2 - game_sv_mp::WritePlayerStats
-			if (GameID() != eGameIDSingle)
-			{
-				if (CL)
-				{
-					if (static_cast<IClient*>(CL) != GetServerClient())
-					{
-						u32 tmp_pid = 0;
-						Game().m_WeaponUsageStatistic->OnUpdateRespond(&P, CL->m_cdkey_digest, tmp_pid);
-					}
-				} else
-				{
-					Msg("! ERROR: SV: update respond received from unknown sender");
-				}
-			}			
-			//if (SV_Client) SendTo	(SV_Client->ID, P, net_flags(TRUE, TRUE));
 		}break;
 	case M_PLAYER_FIRE:
 		{
@@ -653,11 +620,9 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 		}break;
 	case M_SECURE_KEY_SYNC:
 		{
-			PerformSecretKeysSyncAck(CL, P);
 		}break;
 	case M_SECURE_MESSAGE:
 		{
-			OnSecureMessage(P, CL);
 		}break;
 	}
 
@@ -795,15 +760,9 @@ void			xrServer::Server_Client_Check	( IClient* CL )
 		return;
 	};
 
-	if( CL->process_id == GetCurrentProcessId() )
-	{
-		CL->flags.bLocal	= 1;
-		SV_Client			= (xrClientData*)CL;
-		Msg( "New SV client 0x%08x", SV_Client->ID.value());
-	}else
-	{
-		CL->flags.bLocal	= 0;
-	}
+    CL->flags.bLocal = 1;
+    SV_Client = (xrClientData*)CL;
+    Msg("New SV client 0x%08x", SV_Client->ID.value());
 };
 
 bool		xrServer::OnCL_QueryHost		() 
@@ -1032,30 +991,4 @@ void xrServer::GetServerInfo( CServerInfo* si )
 		xr_strcpy( tmp256, time );
 		si->AddItem( "Game time", tmp256, RGB(205,228,178) );
 	}
-}
-
-struct PlayerInfoWriter
-{
-	NET_Packet*	dest;
-	void operator()(IClient* C)
-	{
-		xrClientData* tmp_client = smart_cast<xrClientData*>(C);
-		if (!tmp_client)
-			return;
-
-		dest->w_clientID(tmp_client->ID);
-		dest->w_stringZ(tmp_client->m_cAddress.to_string().c_str());
-		dest->w_stringZ(tmp_client->m_cdkey_digest);
-	}
-};//struct PlayerInfoWriter
-
-void xrServer::SendPlayersInfo(ClientID const & to_client)
-{
-	PlayerInfoWriter tmp_functor;
-	NET_Packet tmp_packet;
-	tmp_packet.w_begin	(M_GAMEMESSAGE); 
-	tmp_packet.w_u32	(GAME_EVENT_PLAYERS_INFO_REPLY);
-	tmp_functor.dest	= &tmp_packet;
-	ForEachClientDo		(tmp_functor);
-	SendTo				(to_client, tmp_packet, net_flags(TRUE, TRUE));
 }

@@ -345,7 +345,6 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		break;
 	case GE_REQUEST_PLAYERS_INFO:
 		{
-			SendPlayersInfo(sender);
 		}break;
 	default:
 		R_ASSERT2	(0,"Game Event not implemented!!!");

@@ -3,8 +3,6 @@
 #include "net_shared.h"
 #include "NET_Common.h"
 
-struct ip_address;
-
 class XRNETSERVER_API INetQueue
 {
 	std::recursive_mutex cs;
@@ -111,8 +109,6 @@ public:
 	IClientStatistic&		GetStatistic			() {return  net_Statistic; }
 	void					UpdateStatistic			();
 	ClientID const &		GetClientID				() { return net_ClientID; };
-
-			bool			GetServerAddress		(ip_address& pAddress, DWORD* pPort);
 	
 	// time management
 	IC u32					timeServer				()	{ return TimeGlobal(device_timer) + net_TimeDelta + net_TimeDelta_User; }

@@ -5,7 +5,6 @@
 #include "game_cl_single.h"
 #include "MainMenu.h"
 #include "../xrEngine/x_ray.h"
-#include "../xrNetServer/NET_AuthCheck.h"
 #pragma warning(push)
 #pragma warning(disable:4995)
 #include <malloc.h>
@@ -58,15 +57,6 @@ xrServer::EConnect xrServer::Connect(shared_str &session_name, GameDescriptionDa
 	
 	// Options
 	if (0==game)			return ErrConnect;
-//	game->type				= type_id;
-	if (game->Type() != eGameIDSingle)
-	{
-		LoadServerInfo();
-		xr_auth_strings_t	tmp_ignore;
-		xr_auth_strings_t	tmp_check;
-		fill_auth_check_params	(tmp_ignore, tmp_check);
-		FS.auth_generate		(tmp_ignore, tmp_check);
-	}
 #ifdef DEBUG
 	Msg("* Created server_game %s",game->type_name());
 #endif
@@ -89,7 +79,6 @@ IClient* xrServer::new_client( SClientConnectData* cl_data )
 	
 	// copy entity
 	CL->ID			= cl_data->clientID;
-	CL->process_id	= cl_data->process_id;
 	CL->name		= cl_data->name;	//only for offline mode
 	CL->pass._set	( cl_data->pass );
 
@@ -139,9 +128,6 @@ void xrServer::RequestClientDigest(IClient* CL)
 		Check_BuildVersion_Success(CL);	
 		return;
 	}
-	xrClientData* tmp_client	= smart_cast<xrClientData*>(CL);
-	VERIFY						(tmp_client);
-	PerformSecretKeysSync		(tmp_client);
 
 	NET_Packet P;
 	P.w_begin					(M_SV_DIGEST);
