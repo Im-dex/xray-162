@@ -657,22 +657,9 @@ bool xrServer::CheckAdminRights(const shared_str& user, const shared_str& pass, 
 	return				res;
 }
 
-void xrServer::SendTo_LL			(ClientID ID, void* data, u32 size, u32 dwFlags, u32 dwTimeout)
+void xrServer::SendTo_LL			(ClientID, void* data, u32 size, u32, u32)
 {
-	if ((SV_Client && SV_Client->ID==ID) || (psNET_direct_connect))
-	{
-		// optimize local traffic
-		Level().OnMessage			(data,size);
-	}
-	else 
-	{
-		IClient* pClient = ID_to_client(ID);
-		VERIFY2(pClient && pClient->flags.bConnected, "trying to send packet to disconnected client");
-		if (!pClient || !pClient->flags.bConnected)
-			return;
-
-		IPureServer::SendTo_Buf(ID,data,size,dwFlags,dwTimeout);
-	}
+    Level().OnMessage(data, size);
 }
 void xrServer::SendBroadcast(ClientID exclude, NET_Packet& P, u32 dwFlags)
 {

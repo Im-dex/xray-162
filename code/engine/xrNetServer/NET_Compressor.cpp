@@ -364,15 +364,6 @@ u16 NET_Compressor::Compress(BYTE* dest, const u32 &dest_size, BYTE* src, const 
 		offset += sizeof(u32);
     #endif // NET_USE_COMPRESSION_CRC
 
-	if( !psNET_direct_connect  && g_net_compressor_enabled && b_compress_packet) 
-	{
-        std::lock_guard<decltype(CS)> lock(CS);
-		compressed_size = offset + ENCODE( dest+offset, dest_size-offset, src, count );
-
-		if(g_net_compressor_gather_stats)
-			m_stats.total_compressed_bytes		+= compressed_size;
-	}
-
 	if( compressed_size < count ) 
 	{
 		*dest = NET_TAG_COMPRESSED;

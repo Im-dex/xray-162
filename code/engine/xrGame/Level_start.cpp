@@ -253,14 +253,6 @@ bool CLevel::net_start6				()
 	}else{
 		Msg				("! Failed to start client. Check the connection or level existance.");
 		
-		if (m_connect_server_err==xrServer::ErrConnect&&!psNET_direct_connect && !g_dedicated_server) 
-		{
-			DEL_INSTANCE	(g_pGameLevel);
-			Console->Execute("main_menu on");
-
-			MainMenu()->SwitchToMultiplayerMenu();
-		}
-		else
 		if (!map_data.m_map_loaded && map_data.m_name.size() && m_bConnectResult)	//if (map_data.m_name == "") - level not loaded, see CLevel::net_start_client3
 		{
 			LPCSTR level_id_string = NULL;

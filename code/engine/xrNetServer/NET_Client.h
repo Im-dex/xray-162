@@ -16,8 +16,8 @@ public:
 	NET_Packet*			Create	(const NET_Packet& _other);
 	NET_Packet*			Retreive();
 	void				Release	();
-	inline void			Lock	() { cs.lock(); };
-	inline void			Unlock	() { cs.unlock(); };
+    void			Lock	() { cs.lock(); };
+    void			Unlock	() { cs.unlock(); };
 };
 
 
@@ -34,7 +34,6 @@ IPureClient
 		EnmConnectionWait=-1,
 		EnmConnectionCompleted=1
 	};
-	friend void 				sync_thread(void*);
 protected:
 	struct HOST_NODE			//deprecated...
 	{
@@ -66,7 +65,6 @@ protected:
 	s32						net_TimeDelta_Calculated;
 	s32						net_TimeDelta_User;
 	
-	void					Sync_Thread		();
 	void					Sync_Average	();
 
 	void					SetClientID		(ClientID const & local_client) { net_ClientID = local_client; };
@@ -82,7 +80,6 @@ public:
 	BOOL					Connect					(LPCSTR server_name);
 	void					Disconnect				();
 
-	void					net_Syncronize			();
 	BOOL					net_isCompleted_Connect	()	{ return net_Connected==EnmConnectionCompleted;}
 	BOOL					net_isFails_Connect		()	{ return net_Connected==EnmConnectionFails;}
 	BOOL					net_isCompleted_Sync	()	{ return net_Syncronised;	}

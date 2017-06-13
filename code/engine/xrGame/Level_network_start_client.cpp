@@ -49,28 +49,18 @@ bool	CLevel::net_start_client1				()
 
 bool	CLevel::net_start_client2				()
 {
-	if(psNET_direct_connect)
-	{
-		Server->create_direct_client();
-		//offline account creation
-		m_bConnectResultReceived = false;
-		while (!m_bConnectResultReceived)
-		{ 
-			ClientReceive	();
-			Server->Update	();
-		}
-	}
+    Server->create_direct_client();
+    //offline account creation
+    m_bConnectResultReceived = false;
+    while (!m_bConnectResultReceived)
+    {
+        ClientReceive();
+        Server->Update();
+    }
 
 	connected_to_server = Connect2Server(*m_caClientOptions);
 
 	return true;
-}
-void rescan_mp_archives()
-{
-	FS_Path* mp_archs_path = FS.get_path("$game_arch_mp$");
-	FS.rescan_path(mp_archs_path->m_Path,
-		mp_archs_path->m_Flags.is(FS_Path::flRecurse)
-	);
 }
 
 bool	CLevel::net_start_client3				()
@@ -81,18 +71,9 @@ bool	CLevel::net_start_client3				()
 		LPCSTR					level_ver = NULL;
 		LPCSTR					download_url = NULL;
 
-		if (psNET_direct_connect)	//single
-		{
-			shared_str const & server_options = Server->GetConnectOptions();
-			level_name	= name().c_str();//Server->level_name		(server_options).c_str();
-			level_ver	= Server->level_version		(server_options).c_str(); //1.0
-		} else					//multiplayer
-		{
-			level_name		= get_net_DescriptionData().map_name;
-			level_ver		= get_net_DescriptionData().map_version;
-			download_url	= get_net_DescriptionData().download_url;
-			rescan_mp_archives(); //because if we are using psNET_direct_connect, we not download map...
-		}
+        shared_str const & server_options = Server->GetConnectOptions();
+        level_name = name().c_str();//Server->level_name		(server_options).c_str();
+        level_ver = Server->level_version(server_options).c_str(); //1.0
 		// Determine internal level-ID
 		int						level_id = pApp->Level_ID(level_name, level_ver, true);
 		if (level_id==-1)	
@@ -157,15 +138,6 @@ bool	CLevel::net_start_client4				()
 		Device.seqFrame.Remove				(g_pNetProcessor);
 		if (psDeviceFlags.test(mtNetwork))	Device.seqFrameMT.Add	(g_pNetProcessor,REG_PRIORITY_HIGH	+ 2);
 		else								Device.seqFrame.Add		(g_pNetProcessor,REG_PRIORITY_LOW	- 2);
-
-		if(!psNET_direct_connect)
-		{
-			// Waiting for connection/configuration completition
-			CTimer	timer_sync	;	timer_sync.Start	();
-			while	(!net_isCompleted_Connect())	Sleep	(5);
-			Msg		("* connection sync: %d ms", timer_sync.GetElapsed_ms());
-			while	(!net_isCompleted_Sync())	{ ClientReceive(); Sleep(5); }
-		}
 /*
 		if(psNET_direct_connect)
 		{

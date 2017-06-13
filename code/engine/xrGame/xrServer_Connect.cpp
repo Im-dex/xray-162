@@ -97,16 +97,9 @@ void xrServer::AttachNewClient			(IClient* CL)
 	msgConfig.sign1 = 0x12071980;
 	msgConfig.sign2 = 0x26111975;
 
-	if(psNET_direct_connect) //single_game
-	{
-        SV_Client			= CL;
-		CL->flags.bLocal	= 1;
-		SendTo_LL( SV_Client->ID, &msgConfig, sizeof(msgConfig), net_flags(TRUE,TRUE,TRUE,TRUE) );
-	} else
-	{
-		SendTo_LL				(CL->ID,&msgConfig,sizeof(msgConfig), net_flags(TRUE, TRUE, TRUE, TRUE));
-		Server_Client_Check		(CL); 
-	}
+    SV_Client = CL;
+    CL->flags.bLocal = 1;
+    SendTo_LL(SV_Client->ID, &msgConfig, sizeof(msgConfig), net_flags(TRUE, TRUE, TRUE, TRUE));
 
 	// gen message
 	if (!NeedToCheckClient_GameSpy_CDKey(CL))

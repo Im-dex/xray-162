@@ -272,31 +272,13 @@ void CLevel::ClientSave	()
 }
 
 //extern	XRPHYSICS_API	float		phTimefactor;
-extern					BOOL		g_SV_Disable_Auth_Check;
 
 void CLevel::Send		(NET_Packet& P, u32 dwFlags, u32 dwTimeout)
 {
 	if (IsDemoPlayStarted() || IsDemoPlayFinished()) return;
-	// optimize the case when server located in our memory
-	if(psNET_direct_connect){
-		ClientID	_clid;
-		_clid.set	(1);
-		Server->OnMessage		(P,	_clid );
-	}else
-	if (Server && game_configured && OnServer() )
-	{
-#ifdef DEBUG
-		VERIFY2(Server->IsPlayersMonitorLockedByMe() == false, "potential deadlock detected");
-#endif
-		Server->OnMessageSync	(P,Game().local_svdpnid	);
-	}else											
-		IPureClient::Send	(P,dwFlags,dwTimeout	);
-
-	if (g_pGameLevel && Level().game && GameID() != eGameIDSingle && !g_SV_Disable_Auth_Check)		{
-		// anti-cheat
-		phTimefactor		= 1.f					;
-		psDeviceFlags.set	(rsConstantFPS,FALSE)	;	
-	}
+    ClientID	_clid;
+    _clid.set(1);
+    Server->OnMessage(P, _clid);
 }
 
 void CLevel::net_Update	()
@@ -325,73 +307,23 @@ struct _NetworkProcessor	: public pureFrame
 
 pureFrame*	g_pNetProcessor	= &NET_processor;
 
-const int ConnectionTimeOut = 60000; //1 min
-
 BOOL			CLevel::Connect2Server				(LPCSTR options)
 {
-	NET_Packet					P;
-	m_bConnectResultReceived	= false	;
+	m_bConnectResultReceived	= true;
 	m_bConnectResult			= true	;
 
 	if (!Connect(options))		return	FALSE;
 	//---------------------------------------------------------------------------
-	if(psNET_direct_connect) m_bConnectResultReceived = true;
-	u32 EndTime = GetTickCount() + ConnectionTimeOut;
-	while	(!m_bConnectResultReceived)		{ 
-		ClientReceive	();
-		Sleep			(5); 
-		if(Server)
-			Server->Update()	;
-		//-----------------------------------------
-		u32 CurTime = GetTickCount();
-		if (CurTime > EndTime)
-		{
-			NET_Packet	P;
-			P.B.count = 0;
-			P.r_pos = 0;
 
-			P.w_u8(0);
-			P.w_u8(0);
-			P.w_stringZ("Data verification failed. Cheater?");
-
-			OnConnectResult(&P);			
-		}
-		if (net_isFails_Connect())
-		{
-			OnConnectRejected	();	
-			Disconnect		()	;
-			return	FALSE;
-		}
-		//-----------------------------------------
-	}
-	Msg							("%c client : connection %s - <%s>", m_bConnectResult ?'*':'!', m_bConnectResult ? "accepted" : "rejected", m_sConnectResult.c_str());
-	if		(!m_bConnectResult) 
-	{
-		if(Server)
-		{
-			Server->Disconnect		();
-			xr_delete				(Server);
-		}
-		OnConnectRejected			();	
-		Disconnect					();
-		return FALSE		;
-	};
-
+	Msg("%c client : connection %s - <%s>", m_bConnectResult ?'*':'!', m_bConnectResult ? "accepted" : "rejected", m_sConnectResult.c_str());
 	
-	if(psNET_direct_connect)
-		net_Syncronised = TRUE;
-	else
-		net_Syncronize	();
-
-	while (!net_IsSyncronised()) {
-		Sleep(1);
-		if (net_Disconnected)
-		{
-			OnConnectRejected	();	
-			Disconnect			();
-			return FALSE;
-		}
-	};
+    net_Syncronised = TRUE;
+    if (net_Disconnected)
+    {
+        OnConnectRejected();
+        Disconnect();
+        return FALSE;
+    }
 
 	//---------------------------------------------------------------------------
 	//P.w_begin	(M_CLIENT_REQUEST_CONNECTION_DATA);

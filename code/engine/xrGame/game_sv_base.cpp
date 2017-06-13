@@ -779,28 +779,14 @@ void game_sv_GameState::OnEvent (NET_Packet &tNetPacket, u16 type, u32 time, Cli
 			CL->ps->m_online_time	= Level().timeServer();
 			CL->ps->DeathTime		= Device.dwTimeGlobal;
 			
-			if (psNET_direct_connect) //IsGameTypeSingle())
-				break;
-
-			if (Level().IsDemoPlay())
-				break;
-
-			if (g_dedicated_server && (CL == m_server->GetServerClient()))
-				break;
-
-			CheckNewPlayer(CL);
-		}break;
+			break;
+		}
 	default:
 		{
 			string16 tmp;
 			R_ASSERT3	(0,"Game Event not implemented!!!", itoa(type, tmp, 10));
 		};
 	};
-}
-
-bool game_sv_GameState::CheckNewPlayer(xrClientData*)
-{
-	return true;
 }
 
 void game_sv_GameState::OnSwitchPhase(u32 old_phase, u32 new_phase)
