@@ -9,10 +9,6 @@
 #include <dplay/dplay8.h>
 #include "net_messages.h"
 
-
-
-#include "net_compressor.h"
-
 XRNETSERVER_API extern ClientID BroadcastCID;
 
 XRNETSERVER_API extern Flags32	psNET_Flags;
