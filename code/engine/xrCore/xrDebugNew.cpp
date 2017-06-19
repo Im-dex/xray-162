@@ -874,18 +874,5 @@ LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 		SetupExceptionHandler			( is_dedicated );
 #endif // USE_BUG_TRAP
 		previous_filter					= ::SetUnhandledExceptionFilter(UnhandledFilter);	// exception handler to all "unhandled" exceptions
-
-#if 0
-		struct foo {static void	recurs	(const u32 &count)
-		{
-			if (!count)
-				return;
-
-			_alloca			(4096);
-			recurs			(count - 1);
-		}};
-		foo::recurs			(u32(-1));
-		std::terminate		();
-#endif // 0
 	}
 #endif

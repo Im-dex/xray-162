@@ -20,8 +20,6 @@ XRNETSERVER_API extern int		psNET_ServerUpdate;
 XRNETSERVER_API extern int		get_psNET_ServerUpdate();
 XRNETSERVER_API extern int		psNET_ServerPending;
 
-XRNETSERVER_API extern BOOL		psNET_direct_connect;
-
 enum	{
 	NETFLAG_MINIMIZEUPDATES		= (1<<0),
 	NETFLAG_DBG_DUMPSIZE		= (1<<1),
