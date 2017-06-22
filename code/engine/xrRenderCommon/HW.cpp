@@ -54,11 +54,7 @@ void CHW::Reset		(HWND hwnd)
 	_RELEASE			(pBaseRT);
 
 #ifndef _EDITOR
-//#ifndef DEDICATED_SERVER
 //	BOOL	bWindowed		= !psDeviceFlags.is	(rsFullscreen);
-//#else
-//	BOOL	bWindowed		= TRUE;
-//#endif
 	BOOL	bWindowed		= TRUE;
 	if (!g_dedicated_server)
 		bWindowed		= !psDeviceFlags.is	(rsFullscreen);
@@ -95,12 +91,7 @@ void CHW::Reset		(HWND hwnd)
 
 void CHW::CreateD3D	()
 {
-//#ifndef DEDICATED_SERVER
 //	LPCSTR		_name			= "d3d9.dll";
-//#else
-//	LPCSTR		_name			= "xrd3d9-null.dll";
-//#endif
-
 	LPCSTR		_name			= "xrd3d9-null.dll";
 
 #ifndef _EDITOR
@@ -221,11 +212,7 @@ void		CHW::CreateDevice		(HWND m_hWnd, bool move_window)
 	CreateD3D				();
 
 	// General - select adapter and device
-//#ifdef DEDICATED_SERVER
-//	BOOL  bWindowed			= TRUE;
-//#else
 //	BOOL  bWindowed			= !psDeviceFlags.is(rsFullscreen);
-//#endif
 
 	BOOL  bWindowed			= TRUE;
 	
@@ -523,11 +510,7 @@ BOOL	CHW::support	(D3DFORMAT fmt, DWORD type, DWORD usage)
 void	CHW::updateWindowProps	(HWND m_hWnd)
 {
 //	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);
-//#ifndef DEDICATED_SERVER
 //	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen);
-//#else
-//	BOOL	bWindowed				= TRUE;
-//#endif
 
 	BOOL	bWindowed				= TRUE;
 #ifndef _EDITOR

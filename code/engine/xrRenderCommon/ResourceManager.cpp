@@ -238,7 +238,6 @@ Shader*	CResourceManager::_cpp_Create	(IBlender* B, LPCSTR s_shader, LPCSTR s_te
 
 Shader*	CResourceManager::_cpp_Create	(LPCSTR s_shader, LPCSTR s_textures, LPCSTR s_constants, LPCSTR s_matrices)
 {
-//#ifndef DEDICATED_SERVER
 #ifndef _EDITOR
 	if (!g_dedicated_server)
 #endif    
@@ -251,7 +250,6 @@ Shader*	CResourceManager::_cpp_Create	(LPCSTR s_shader, LPCSTR s_textures, LPCST
 #else	//	USE_DX10
 		return	_cpp_Create(_GetBlender(s_shader?s_shader:"null"),s_shader,s_textures,s_constants,s_matrices);
 #endif	//	USE_DX10
-//#else
 	}
 #ifndef _EDITOR
 	else
@@ -259,31 +257,26 @@ Shader*	CResourceManager::_cpp_Create	(LPCSTR s_shader, LPCSTR s_textures, LPCST
 	{
 		return NULL;
 	}
-//#endif
 }
 
 Shader*		CResourceManager::Create	(IBlender*	B,		LPCSTR s_shader,	LPCSTR s_textures,	LPCSTR s_constants, LPCSTR s_matrices)
 {
-//#ifndef DEDICATED_SERVER
 #ifndef _EDITOR
 	if (!g_dedicated_server)
 #endif
 	{
 		return	_cpp_Create	(B,s_shader,s_textures,s_constants,s_matrices);
-//#else
 	}
 #ifndef _EDITOR
 	else
 #endif
 	{
 		return NULL;
-//#endif
 	}
 }
 
 Shader*		CResourceManager::Create	(LPCSTR s_shader,	LPCSTR s_textures,	LPCSTR s_constants,	LPCSTR s_matrices)
 {
-//#ifndef DEDICATED_SERVER
 #ifndef _EDITOR
 	if (!g_dedicated_server)
 #endif
@@ -317,14 +310,12 @@ Shader*		CResourceManager::Create	(LPCSTR s_shader,	LPCSTR s_textures,	LPCSTR s_
 			return	_cpp_Create	(s_shader,s_textures,s_constants,s_matrices);
 #endif	//	USE_DX10
 	}
-//#else
 #ifndef _EDITOR
 	else
 #endif
 	{
 		return NULL;
 	}
-//#endif
 }
 
 void CResourceManager::Delete(const Shader* S)

@@ -41,13 +41,7 @@ extern "C" {
 	}
 };
 
-//typedef void DUMMY_STUFF (const void*,const u32&,void*);
-//XRCORE_API DUMMY_STUFF	*g_temporary_stuff;
-
 void setup_luabind_allocator		();
-
-//#define TRIVIAL_ENCRYPTOR_DECODER
-//#include UP(xrEngine/trivial_encryptor.h)
 
 BOOL APIENTRY DllMain		(HANDLE module_handle, DWORD call_reason, LPVOID reserved)
 {

@@ -10,7 +10,6 @@
 #include "igame_persistent.h"
 
 #include "dedicated_server_only.h"
-#include "no_single.h"
 
 #include "xr_input.h"
 #include "xr_ioconsole.h"
@@ -148,16 +147,7 @@ PROTECT_API void InitSettings	()
 }
 PROTECT_API void InitConsole	()
 {
-#ifdef DEDICATED_SERVER
-	{
-		Console						= xr_new<CTextConsole>	();		
-	}
-#else
-	//	else
-	{
-		Console						= xr_new<CConsole>	();
-	}
-#endif
+	Console						= xr_new<CConsole>	();
 	Console->Initialize			( );
 
 	xr_strcpy						(Console->ConfigFile,"user.ltx");
@@ -262,10 +252,9 @@ void Startup()
 	}
 
 	// Initialize APP
-//#ifndef DEDICATED_SERVER
 	ShowWindow( Device.m_hWnd , SW_SHOWNORMAL );
 	Device.Create				( );
-//#endif
+
 	LALib.OnCreate				( );
 	pApp						= xr_new<CApplication>	();
 	g_pGamePersistent			= (IGame_Persistent*)	NEW_INSTANCE (CLSID_GAME_PERSISTANT);
@@ -535,62 +524,19 @@ BOOL IsOutOfVirtualMemory()
 //typedef void DUMMY_STUFF (const void*,const u32&,void*);
 //XRCORE_API DUMMY_STUFF	*g_temporary_stuff;
 
-//#define TRIVIAL_ENCRYPTOR_DECODER
-//#include "trivial_encryptor.h"
-
 //#define RUSSIAN_BUILD
-
-#if 0
-void foo	()
-{
-	typedef std::map<int,int>	TEST_MAP;
-	TEST_MAP					temp;
-	temp.insert					(std::make_pair(0,0));
-	TEST_MAP::const_iterator	I = temp.upper_bound(2);
-	if (I == temp.end())
-		OutputDebugString		("end() returned\r\n");
-	else
-		OutputDebugString		("last element returned\r\n");
-
-	typedef void*	pvoid;
-
-	LPCSTR			path = "d:\\network\\stalker_net2";
-	FILE			*f = fopen(path,"rb");
-	int				file_handle = _fileno(f);
-	u32				buffer_size = _filelength(file_handle);
-	pvoid			buffer = xr_malloc(buffer_size);
-	size_t			result = fread(buffer,buffer_size,1,f);
-	R_ASSERT3		(!buffer_size || (result && (buffer_size >= result)),"Cannot read from file",path);
-	fclose			(f);
-
-	u32				compressed_buffer_size = rtc_csize(buffer_size);
-	pvoid			compressed_buffer = xr_malloc(compressed_buffer_size);
-	u32				compressed_size = rtc_compress(compressed_buffer,compressed_buffer_size,buffer,buffer_size);
-
-	LPCSTR			compressed_path = "d:\\network\\stalker_net2.rtc";
-	FILE			*f1 = fopen(compressed_path,"wb");
-	fwrite			(compressed_buffer,compressed_size,1,f1);
-	fclose			(f1);
-}
-#endif // 0
 
 ENGINE_API	bool g_dedicated_server	= false;
 
-#ifndef DEDICATED_SERVER
-	// forward declaration for Parental Control checks
-	BOOL IsPCAccessAllowed(); 
-#endif // DEDICATED_SERVER
+// forward declaration for Parental Control checks
+BOOL IsPCAccessAllowed(); 
 
 int APIENTRY WinMain_impl(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      char *    lpCmdLine,
                      int       nCmdShow)
 {
-#ifdef DEDICATED_SERVER
-	Debug._initialize			(true);
-#else // DEDICATED_SERVER
 	Debug._initialize			(false);
-#endif // DEDICATED_SERVER
 
 	if (!IsDebuggerPresent()) {
 
@@ -616,7 +562,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 	}
 
 //	foo();
-#ifndef DEDICATED_SERVER
 
 	// Check for virtual memory
 	if ( ( strstr( lpCmdLine , "--skipmemcheck" ) == NULL ) && IsOutOfVirtualMemory() )
@@ -646,9 +591,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 		return 1;
 	}
 #endif
-#else // DEDICATED_SERVER
-	g_dedicated_server			= true;
-#endif // DEDICATED_SERVER
 
 	SetThreadAffinityMask		(GetCurrentThread(),1);
 
@@ -702,11 +644,9 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 			xr_strcpy( Core.CompName , sizeof( Core.CompName ) , "Computer" );
 	}
 
-#ifndef DEDICATED_SERVER
 	{
 		damn_keys_filter		filter;
 		(void)filter;
-#endif // DEDICATED_SERVER
 
 		FPU::m24r				();
 		InitEngine				();
@@ -745,9 +685,8 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 			int l_res = doLauncher();
 			if (l_res != 0)
 				return 0;
-		};
+		}
 
-#ifndef DEDICATED_SERVER
 		if(strstr(Core.Params,"-r2a"))	
 			Console->Execute			("renderer renderer_r2a");
 		else
@@ -759,9 +698,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 			pTmp->Execute				(Console->ConfigFile);
 			xr_delete					(pTmp);
 		}
-#else
-			Console->Execute			("renderer renderer_r1");
-#endif
+
 //.		InitInput					( );
 		Engine.External.Initialize	( );
 		Console->Execute			("stat_memory");
@@ -784,14 +721,12 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 				temp_wf, &si, &pi);
 
 		}
-#ifndef DEDICATED_SERVER
 #ifdef NO_MULTI_INSTANCES		
 		// Delete application presence mutex
 		CloseHandle( hCheckPresenceMutex );
 #endif
 	}
 	// here damn_keys_filter class instanse will be destroyed
-#endif // DEDICATED_SERVER
 
 	return						0;
 }
@@ -959,20 +894,6 @@ void CApplication::OnEvent(EVENT E, u64 P1, u64 P2)
 		R_ASSERT	(0==g_pGameLevel);
 		R_ASSERT	(0!=g_pGamePersistent);
 
-#ifdef NO_SINGLE
-		Console->Execute("main_menu on");
-		if (	(op_server == NULL)			||
-				(!xr_strlen(op_server))		||
-				(
-					(	strstr(op_server, "/dm")	|| strstr(op_server, "/deathmatch") ||
-						strstr(op_server, "/tdm")	|| strstr(op_server, "/teamdeathmatch") ||
-						strstr(op_server, "/ah")	|| strstr(op_server, "/artefacthunt") ||
-						strstr(op_server, "/cta")	|| strstr(op_server, "/capturetheartefact")
-					) && 
-					!strstr(op_server, "/alife")
-				)
-			)
-#endif // #ifdef NO_SINGLE
 		{		
 			Console->Execute("main_menu off");
 			Console->Hide();
@@ -1056,11 +977,9 @@ void CApplication::LoadBegin	()
 
 		g_appLoaded			= FALSE;
 
-#ifndef DEDICATED_SERVER
 		_InitializeFont		(pFontSystem,"ui_font_letterica18_russian",0);
 
 		m_pRender->LoadBegin();
-#endif
 		phase_timer.Start	();
 		load_stage			= 0;
 	}
@@ -1301,7 +1220,6 @@ void CApplication::LoadAllArchives()
 	}
 }
 
-#ifndef DEDICATED_SERVER
 // Parential control for Vista and upper
 typedef BOOL (*PCCPROC)( CHAR* ); 
 
@@ -1349,7 +1267,6 @@ BOOL IsPCAccessAllowed()
 
 	return bAllowed;
 }
-#endif // DEDICATED_SERVER
 
 //launcher stuff----------------------------
 extern "C"{

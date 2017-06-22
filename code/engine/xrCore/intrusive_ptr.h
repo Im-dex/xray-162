@@ -8,8 +8,6 @@
 
 #pragma once
 
-#pragma pack(push, 4) // TODO: (portability)
-
 struct intrusive_base {
     intrusive_base() XR_NOEXCEPT
         : m_ref_count(0)
@@ -179,5 +177,3 @@ void swap(intrusive_ptr<object_type, base_type>& lhs, intrusive_ptr<object_type,
 {
     lhs.swap(rhs);
 }
-
-#pragma pack(pop)

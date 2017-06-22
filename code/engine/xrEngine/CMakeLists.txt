@@ -275,9 +275,7 @@ set(GENERAL _d3d_extensions.h
             dedicated_server_only.h
             defines.h
             mp_logging.h
-            no_single.h
             stdafx.h
-            trivial_encryptor.h
             x_ray.h
             defines.cpp
             stdafx.cpp

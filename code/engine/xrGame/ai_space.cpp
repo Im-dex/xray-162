@@ -20,8 +20,6 @@
 #include "alife_simulator.h"
 #include "moving_objects.h"
 #include "doors_manager.h"
-//#include "../xrEngine/dedicated_server_only.h"
-//#include "../xrEngine/no_single.h"
 
 ENGINE_API	bool g_dedicated_server;
 
@@ -46,7 +44,6 @@ void CAI_Space::init				()
 	if (g_dedicated_server)
 		return;
 
-#ifndef NO_SINGLE
 	VERIFY					(!m_ef_storage);
 	m_ef_storage			= xr_new<CEF_Storage>();
 
@@ -62,16 +59,12 @@ void CAI_Space::init				()
 	VERIFY					(!m_moving_objects);
 	m_moving_objects		= xr_new<::moving_objects>();
 
-#endif //#ifndef NO_SINGLE
-
 	VERIFY					(!m_script_engine);
 	m_script_engine			= xr_new<CScriptEngine>();
 	script_engine().init	();
 
-#ifndef NO_SINGLE
 	extern string4096		g_ca_stdout;
 	setvbuf					(stderr,g_ca_stdout,_IOFBF,sizeof(g_ca_stdout));
-#endif //#ifndef NO_SINGLE
 }
 
 CAI_Space::~CAI_Space				()

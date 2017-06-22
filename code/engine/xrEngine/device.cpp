@@ -39,8 +39,6 @@ ref_light	precache_light = 0;
 
 BOOL CRenderDevice::Begin	()
 {
-#ifndef DEDICATED_SERVER
-
 	/*
 	HW.Validate		();
 	HRESULT	_hr		= HW.pDevice->TestCooperativeLevel();
@@ -92,7 +90,6 @@ BOOL CRenderDevice::Begin	()
 
 	FPU::m24r	();
 	g_bRendering = 	TRUE;
-#endif
 	return		TRUE;
 }
 
@@ -106,9 +103,6 @@ extern void CheckPrivilegySlowdown();
 
 void CRenderDevice::End		(void)
 {
-#ifndef DEDICATED_SERVER
-
-
 #ifdef INGAME_EDITOR
 	bool							load_finished = false;
 #endif // #ifdef INGAME_EDITOR
@@ -169,7 +163,6 @@ void CRenderDevice::End		(void)
 		if (load_finished && m_editor)
 			m_editor->on_load_finished	();
 #	endif // #ifdef INGAME_EDITOR
-#endif
 }
 
 
@@ -205,9 +198,6 @@ void 			mt_Thread	(void *ptr)	{
 void CRenderDevice::PreCache	(u32 amount, bool b_draw_loadscreen, bool b_wait_user_input)
 {
 	if (m_pRender->GetForceGPU_REF()) amount=0;
-#ifdef DEDICATED_SERVER
-	amount = 0;
-#endif
 	// Msg			("* PCACHE: start for %d...",amount);
 	dwPrecacheFrame	= dwPrecacheTotal = amount;
 	if (amount && !precache_light && g_pGameLevel && g_loading_events.empty()) {
@@ -237,9 +227,6 @@ void CRenderDevice::on_idle		()
 		return;
 	}
 
-#ifdef DEDICATED_SERVER
-	u32 FrameStartTime = TimerGlobal.GetElapsed_ms();
-#endif
 	if (psDeviceFlags.test(rsStatistic))	g_bEnableStatGather	= TRUE;
 	else									g_bEnableStatGather	= FALSE;
 	if(g_loading_events.size())
@@ -288,7 +275,6 @@ void CRenderDevice::on_idle		()
 	mt_csEnter.unlock			();
 	Sleep						(0);
 
-#ifndef DEDICATED_SERVER
 	Statistic->RenderTOTAL_Real.FrameStart	();
 	Statistic->RenderTOTAL_Real.Begin		();
 	if (b_is_Active)							{
@@ -306,7 +292,6 @@ void CRenderDevice::on_idle		()
 	Statistic->RenderTOTAL_Real.End			();
 	Statistic->RenderTOTAL_Real.FrameEnd	();
 	Statistic->RenderTOTAL.accum	= Statistic->RenderTOTAL_Real.accum;
-#endif // #ifndef DEDICATED_SERVER
 	// *** Suspend threads
 	// Capture startup point
 	// Release end point - allow thread to wait for startup point
@@ -320,36 +305,6 @@ void CRenderDevice::on_idle		()
 		Device.seqParallel.clear_not_free	();
 		seqFrameMT.Process					(rp_Frame);
 	}
-
-#ifdef DEDICATED_SERVER
-	u32 FrameEndTime = TimerGlobal.GetElapsed_ms();
-	u32 FrameTime = (FrameEndTime - FrameStartTime);
-	/*
-	string1024 FPS_str = "";
-	string64 tmp;
-	xr_strcat(FPS_str, "FPS Real - ");
-	if (dwTimeDelta != 0)
-		xr_strcat(FPS_str, ltoa(1000/dwTimeDelta, tmp, 10));
-	else
-		xr_strcat(FPS_str, "~~~");
-
-	xr_strcat(FPS_str, ", FPS Proj - ");
-	if (FrameTime != 0)
-		xr_strcat(FPS_str, ltoa(1000/FrameTime, tmp, 10));
-	else
-		xr_strcat(FPS_str, "~~~");
-	
-*/
-	u32 DSUpdateDelta = 1000/g_svDedicateServerUpdateReate;
-	if (FrameTime < DSUpdateDelta)
-	{
-		Sleep(DSUpdateDelta - FrameTime);
-//		Msg("sleep for %d", DSUpdateDelta - FrameTime);
-//		xr_strcat(FPS_str, ", sleeped for ");
-//		xr_strcat(FPS_str, ltoa(DSUpdateDelta - FrameTime, tmp, 10));
-	}
-//	Msg(FPS_str);
-#endif // #ifdef DEDICATED_SERVER
 
 	if (!b_is_Active)
 		Sleep		(1);
@@ -504,8 +459,6 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 //	Msg("pause [%s] timer=[%s] sound=[%s] reason=%s",bOn?"ON":"OFF", bTimer?"ON":"OFF", bSound?"ON":"OFF", reason);
 #endif // DEBUG
 
-#ifndef DEDICATED_SERVER	
-
 	if(bOn)
 	{
 		if(!Paused())						
@@ -557,7 +510,6 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 		}
 	}
 
-#endif
 
 }
 
@@ -581,12 +533,10 @@ void CRenderDevice::OnWM_Activate(WPARAM wParam, LPARAM lParam)
 			Device.seqAppActivate.Process(rp_AppActivate);
 			app_inactive_time		+= TimerMM.GetElapsed_ms() - app_inactive_time_start;
 
-#ifndef DEDICATED_SERVER
-#	ifdef INGAME_EDITOR
+#ifdef INGAME_EDITOR
 			if (!editor())
-#	endif // #ifdef INGAME_EDITOR
+#endif // #ifdef INGAME_EDITOR
 				ShowCursor			(FALSE);
-#endif // #ifndef DEDICATED_SERVER
 		}else	
 		{
 			app_inactive_time_start	= TimerMM.GetElapsed_ms();

@@ -148,7 +148,7 @@ LPCTSTR __stdcall InternalGetStackTraceString(DWORD dwOpts, EXCEPTION_POINTERS* 
         InitializeSymbolEngine();
 
 #ifdef _M_X64
-#define CH_MACHINE IMAGE_FILE_MACHINE_IA64
+#define CH_MACHINE IMAGE_FILE_MACHINE_AMD64
 #else
 #define CH_MACHINE IMAGE_FILE_MACHINE_I386
 #endif

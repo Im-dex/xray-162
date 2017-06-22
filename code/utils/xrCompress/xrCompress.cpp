@@ -5,12 +5,6 @@
 //XRCORE_API DUMMY_STUFF	*g_temporary_stuff;
 //XRCORE_API DUMMY_STUFF	*g_dummy_stuff;
 
-//#	define TRIVIAL_ENCRYPTOR_ENCODER
-//#	define TRIVIAL_ENCRYPTOR_DECODER
-//#	include "../../xrEngine/trivial_encryptor.h"
-//#	undef TRIVIAL_ENCRYPTOR_ENCODER
-//#	undef TRIVIAL_ENCRYPTOR_DECODER
-
 xrCompressor::xrCompressor()
 :fs_pack_writer(NULL),bFast(false),files_list(NULL),folders_list(NULL),bStoreFiles(false),pPackHeader(NULL),config_ltx(NULL)
 {
