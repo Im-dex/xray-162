@@ -737,7 +737,6 @@ BOOL CHW::support( D3DFORMAT fmt, DWORD type, DWORD usage)
 
 void CHW::updateWindowProps(HWND m_hWnd)
 {
-	//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);
 	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen);
 
 	u32		dwWindowStyle			= 0;

@@ -15,45 +15,35 @@
 
 void CBackend::OnFrameEnd	()
 {
-#ifndef _EDITOR
-	if (!g_dedicated_server)
-#endif    
-	{
 #if defined(USE_DX10) || defined(USE_DX11)
-		HW.pContext->ClearState();
-		Invalidate			();
+    HW.pContext->ClearState();
+    Invalidate();
 #else	//	USE_DX10
 
-		for (u32 stage=0; stage<HW.Caps.raster.dwStages; stage++)
-			CHK_DX(HW.pDevice->SetTexture(0,0));
-		CHK_DX				(HW.pDevice->SetStreamSource	(0,0,0,0));
-		CHK_DX				(HW.pDevice->SetIndices			(0));
-		CHK_DX				(HW.pDevice->SetVertexShader	(0));
-		CHK_DX				(HW.pDevice->SetPixelShader		(0));
-		Invalidate			();
+    for (u32 stage = 0; stage<HW.Caps.raster.dwStages; stage++)
+        CHK_DX(HW.pDevice->SetTexture(0, 0));
+    CHK_DX(HW.pDevice->SetStreamSource(0, 0, 0, 0));
+    CHK_DX(HW.pDevice->SetIndices(0));
+    CHK_DX(HW.pDevice->SetVertexShader(0));
+    CHK_DX(HW.pDevice->SetPixelShader(0));
+    Invalidate();
 #endif	//	USE_DX10
-	}
 }
 
 void CBackend::OnFrameBegin	()
 {
-#ifndef _EDITOR
-	if (!g_dedicated_server)
-#endif    
-	{
-		PGO					(Msg("PGO:*****frame[%d]*****",RDEVICE.dwFrame));
+    PGO(Msg("PGO:*****frame[%d]*****", RDEVICE.dwFrame));
 #if defined(USE_DX10) || defined(USE_DX11)
-		Invalidate();
-		//	DX9 sets base rt nd base zb by default
-		RImplementation.rmNormal();
-		set_RT				(HW.pBaseRT);
-		set_ZB				(HW.pBaseZB);
+    Invalidate();
+    //	DX9 sets base rt nd base zb by default
+    RImplementation.rmNormal();
+    set_RT(HW.pBaseRT);
+    set_ZB(HW.pBaseZB);
 #endif	//	USE_DX10
-        std::memset(&stat,0,sizeof(stat));
-		Vertex.Flush		();
-		Index.Flush			();
-		set_Stencil			(FALSE);
-	}
+    std::memset(&stat, 0, sizeof(stat));
+    Vertex.Flush();
+    Index.Flush();
+    set_Stencil(FALSE);
 }
 
 void CBackend::Invalidate	()

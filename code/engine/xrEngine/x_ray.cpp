@@ -521,12 +521,7 @@ BOOL IsOutOfVirtualMemory()
 
 #include "xr_ioc_cmd.h"
 
-//typedef void DUMMY_STUFF (const void*,const u32&,void*);
-//XRCORE_API DUMMY_STUFF	*g_temporary_stuff;
-
 //#define RUSSIAN_BUILD
-
-ENGINE_API	bool g_dedicated_server	= false;
 
 // forward declaration for Parental Control checks
 BOOL IsPCAccessAllowed(); 
@@ -536,7 +531,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
                      char *    lpCmdLine,
                      int       nCmdShow)
 {
-	Debug._initialize			(false);
+	Debug._initialize			();
 
 	if (!IsDebuggerPresent()) {
 
@@ -1015,11 +1010,7 @@ PROTECT_API void CApplication::LoadDraw		()
 
 	if(!Device.Begin () )		return;
 
-	if	(g_dedicated_server)
-		Console->OnRender			();
-	else
-		load_draw_internal			();
-
+	load_draw_internal			();
 	Device.End					();
 }
 

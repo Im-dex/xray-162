@@ -323,7 +323,7 @@ void	__cdecl			thread_entry	(void*	_params )	{
 
 void	thread_spawn	(thread_t*	entry, const char*	name, unsigned	stack, void* arglist )
 {
-	Debug._initialize	(false);
+	Debug._initialize	();
 
 	THREAD_STARTUP*		startup	= xr_new<THREAD_STARTUP>	();
 	startup->entry		= entry;

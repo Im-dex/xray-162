@@ -126,7 +126,7 @@ BOOL IGame_Level::Load			(u32 dwNum)
 	// Done
 	FS.r_close					( LL_Stream );
 	bReady						= true;
-	if (!g_dedicated_server)	IR_Capture();
+	IR_Capture();
 
 	Device.seqRender.Add		(this);
 	Device.seqFrame.Add			(this);

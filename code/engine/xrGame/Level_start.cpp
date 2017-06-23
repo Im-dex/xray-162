@@ -122,8 +122,7 @@ bool CLevel::net_start1				()
 			
 			map_data.m_name				= game_sv_GameState::parse_level_name(m_caServerOptions);
 			
-			if (!g_dedicated_server)
-				g_pGamePersistent->LoadTitle(true, map_data.m_name);
+			g_pGamePersistent->LoadTitle(true, map_data.m_name);
 
 			int							id = pApp->Level_ID(map_data.m_name.c_str(), l_ver.c_str(), true);
 
@@ -153,8 +152,7 @@ bool CLevel::net_start2				()
 		}
 		Server->SLS_Default		();
 		map_data.m_name			= Server->level_name(m_caServerOptions);
-		if (!g_dedicated_server)
-			g_pGamePersistent->LoadTitle(true, map_data.m_name);
+		g_pGamePersistent->LoadTitle(true, map_data.m_name);
 	}
 	return true;
 }
@@ -268,11 +266,8 @@ bool CLevel::net_start6				()
 			DEL_INSTANCE	(g_pGameLevel);
 			Console->Execute("main_menu on");
 
-			if	(!g_dedicated_server)
-			{
-				MainMenu()->SwitchToMultiplayerMenu();
-				MainMenu()->Show_DownloadMPMap(dialog_string, download_url);
-			}
+            MainMenu()->SwitchToMultiplayerMenu();
+            MainMenu()->Show_DownloadMPMap(dialog_string, download_url);
 		}
 		else
 		if (map_data.IsInvalidClientChecksum())
@@ -290,11 +285,8 @@ bool CLevel::net_start6				()
 			g_pGameLevel->net_Stop();
 			DEL_INSTANCE	(g_pGameLevel);
 			Console->Execute("main_menu on");
-			if	(!g_dedicated_server)
-			{
-				MainMenu()->SwitchToMultiplayerMenu();
-				MainMenu()->Show_DownloadMPMap(dialog_string, download_url);
-			}
+            MainMenu()->SwitchToMultiplayerMenu();
+            MainMenu()->Show_DownloadMPMap(dialog_string, download_url);
 		}
 		else 
 		{
@@ -305,11 +297,8 @@ bool CLevel::net_start6				()
 		return true;
 	}
 
-	if	(!g_dedicated_server)
-	{
-		if (CurrentGameUI())
-			CurrentGameUI()->OnConnected();
-	}
+    if (CurrentGameUI())
+        CurrentGameUI()->OnConnected();
 
 	return true;
 }

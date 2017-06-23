@@ -48,7 +48,7 @@ xrClientData::~xrClientData()
 }
 
 
-xrServer::xrServer() : IPureServer(Device.GetTimerGlobal(), g_dedicated_server)
+xrServer::xrServer() : IPureServer(Device.GetTimerGlobal())
 {
 	m_aDelayedPackets.clear();
 	m_server_logo		= NULL;

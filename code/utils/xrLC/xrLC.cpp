@@ -146,7 +146,7 @@ int APIENTRY WinMain(HINSTANCE hInst,
                      int       nCmdShow)
 {
 	// Initialize debugging
-	Debug._initialize	(false);
+	Debug._initialize	();
 	Core._initialize	("xrLC");
 	
 	if(strstr(Core.Params,"-nosmg"))

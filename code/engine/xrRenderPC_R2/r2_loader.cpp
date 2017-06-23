@@ -52,38 +52,36 @@ void CRender::level_Load(IReader* fs)
 	Wallmarks					= xr_new<CWallmarksEngine>	();
 	Details						= xr_new<CDetailManager>	();
 
-	if	(!g_dedicated_server)	{
-		// VB,IB,SWI
-//		g_pGamePersistent->LoadTitle("st_loading_geometry");
-		g_pGamePersistent->LoadTitle();
-		{
-			CStreamReader			*geom = FS.rs_open("$level$","level.geom");
-			R_ASSERT2				(geom, "level.geom");
-			LoadBuffers				(geom,FALSE);
-			LoadSWIs				(geom);
-			FS.r_close				(geom);
-		}
+    // VB,IB,SWI
+    //		g_pGamePersistent->LoadTitle("st_loading_geometry");
+    g_pGamePersistent->LoadTitle();
+    {
+        CStreamReader			*geom = FS.rs_open("$level$", "level.geom");
+        R_ASSERT2(geom, "level.geom");
+        LoadBuffers(geom, FALSE);
+        LoadSWIs(geom);
+        FS.r_close(geom);
+    }
 
-		//...and alternate/fast geometry
-		{
-			CStreamReader			*geom = FS.rs_open("$level$","level.geomx");
-			R_ASSERT2				(geom, "level.geomX");
-			LoadBuffers				(geom,TRUE);
-			FS.r_close				(geom);
-		}
+    //...and alternate/fast geometry
+    {
+        CStreamReader			*geom = FS.rs_open("$level$", "level.geomx");
+        R_ASSERT2(geom, "level.geomX");
+        LoadBuffers(geom, TRUE);
+        FS.r_close(geom);
+    }
 
-		// Visuals
-//		g_pGamePersistent->LoadTitle("st_loading_spatial_db");
-		g_pGamePersistent->LoadTitle();
-		chunk						= fs->open_chunk(fsL_VISUALS);
-		LoadVisuals					(chunk);
-		chunk->close				();
+    // Visuals
+    //		g_pGamePersistent->LoadTitle("st_loading_spatial_db");
+    g_pGamePersistent->LoadTitle();
+    chunk = fs->open_chunk(fsL_VISUALS);
+    LoadVisuals(chunk);
+    chunk->close();
 
-		// Details
-//		g_pGamePersistent->LoadTitle("st_loading_details");
-		g_pGamePersistent->LoadTitle();
-		Details->Load				();
-	}
+    // Details
+    //		g_pGamePersistent->LoadTitle("st_loading_details");
+    g_pGamePersistent->LoadTitle();
+    Details->Load();
 
 	// Sectors
 //	g_pGamePersistent->LoadTitle("st_loading_sectors_portals");

@@ -12,7 +12,7 @@ private:
 	on_dialog*		m_on_dialog;
 
 public:
-	void			_initialize			(const bool &dedicated);
+	void			_initialize			();
 	void			_destroy			();
 	
 public:

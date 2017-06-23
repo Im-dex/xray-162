@@ -14,8 +14,6 @@
 
 #include "debug_renderer.h"
 
-ENGINE_API	bool g_dedicated_server;
-
 #define			MAPROT_LIST_NAME		"maprot_list.ltx"
 string_path		MAPROT_LIST		= "";
 BOOL	net_sv_control_hit	= FALSE		;
@@ -301,7 +299,7 @@ void game_sv_GameState::net_Export_State						(NET_Packet& P, ClientID to)
 	P.w_u8			(u8(g_bCollectStatisticData));
 
 	// Players
-//	u32	p_count			= get_players_count() - ((g_dedicated_server)? 1 : 0);
+//	u32	p_count			= get_players_count();
 
 	xrClientData*		tmp_client = static_cast<xrClientData*>(
 		m_server->GetClientByID(to));
@@ -419,23 +417,20 @@ void game_sv_GameState::Create					(shared_str &options)
 		FS.r_close	(F);
 	}
 
-	if (!g_dedicated_server)
-	{
-		// loading scripts
-		ai().script_engine().remove_script_process(ScriptEngine::eScriptProcessorGame);
-		string_path					S;
-		FS.update_path				(S,"$game_config$","script.ltx");
-		CInifile					*l_tpIniFile = xr_new<CInifile>(S);
-		R_ASSERT					(l_tpIniFile);
+    // loading scripts
+    ai().script_engine().remove_script_process(ScriptEngine::eScriptProcessorGame);
+    string_path					S;
+    FS.update_path(S, "$game_config$", "script.ltx");
+    CInifile					*l_tpIniFile = xr_new<CInifile>(S);
+    R_ASSERT(l_tpIniFile);
 
-		if( l_tpIniFile->section_exist( type_name() ) )
-			if (l_tpIniFile->r_string(type_name(),"script"))
-				ai().script_engine().add_script_process(ScriptEngine::eScriptProcessorGame,xr_new<CScriptProcess>("game",l_tpIniFile->r_string(type_name(),"script")));
-			else
-				ai().script_engine().add_script_process(ScriptEngine::eScriptProcessorGame,xr_new<CScriptProcess>("game",""));
+    if (l_tpIniFile->section_exist(type_name()))
+        if (l_tpIniFile->r_string(type_name(), "script"))
+            ai().script_engine().add_script_process(ScriptEngine::eScriptProcessorGame, xr_new<CScriptProcess>("game", l_tpIniFile->r_string(type_name(), "script")));
+        else
+            ai().script_engine().add_script_process(ScriptEngine::eScriptProcessorGame, xr_new<CScriptProcess>("game", ""));
 
-		xr_delete					(l_tpIniFile);
-	}
+    xr_delete(l_tpIniFile);
 
 	//---------------------------------------------------------------------
 	ConsoleCommands_Create();
@@ -631,14 +626,11 @@ void game_sv_GameState::Update		()
 		m_item_respawner.update(Level().timeServer());
 	}
 	
-	if (!g_dedicated_server)
-	{
-		if (Level().game) {
-			CScriptProcess				*script_process = ai().script_engine().script_process(ScriptEngine::eScriptProcessorGame);
-			if (script_process)
-				script_process->update	();
-		}
-	}
+    if (Level().game) {
+        CScriptProcess				*script_process = ai().script_engine().script_process(ScriptEngine::eScriptProcessorGame);
+        if (script_process)
+            script_process->update();
+    }
 }
 
 void game_sv_GameState::OnDestroyObject(u16 eid_who)
@@ -662,8 +654,7 @@ game_sv_GameState::game_sv_GameState()
 
 game_sv_GameState::~game_sv_GameState()
 {
-	if (!g_dedicated_server)
-		ai().script_engine().remove_script_process(ScriptEngine::eScriptProcessorGame);
+	ai().script_engine().remove_script_process(ScriptEngine::eScriptProcessorGame);
 	xr_delete(m_event_queue);
 
 	SaveMapList();

@@ -76,24 +76,21 @@ CMainMenu::CMainMenu	()
 	GetCDKeyFromRegistry			();
 	m_demo_info_loader				= NULL;
 
-	if(!g_dedicated_server)
-	{
-		g_btnHint						= xr_new<CUIButtonHint>();
-		g_statHint						= xr_new<CUIButtonHint>();
-		
-		for (u32 i=0; i<u32(ErrMax); i++)
-		{
-			CUIMessageBoxEx*			pNewErrDlg;
-			INIT_MSGBOX					(pNewErrDlg, ErrMsgBoxTemplate[i]);
-			m_pMB_ErrDlgs.push_back		(pNewErrDlg);
-		}
+    g_btnHint = xr_new<CUIButtonHint>();
+    g_statHint = xr_new<CUIButtonHint>();
 
-		m_pMB_ErrDlgs[PatchDownloadSuccess]->AddCallbackStr("button_yes", MESSAGE_BOX_YES_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnRunDownloadedPatch));
-		m_pMB_ErrDlgs[PatchDownloadSuccess]->AddCallbackStr("button_yes", MESSAGE_BOX_OK_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnConnectToMasterServerOkClicked));
+    for (u32 i = 0; i<u32(ErrMax); i++)
+    {
+        CUIMessageBoxEx*			pNewErrDlg;
+        INIT_MSGBOX(pNewErrDlg, ErrMsgBoxTemplate[i]);
+        m_pMB_ErrDlgs.push_back(pNewErrDlg);
+    }
 
-		m_pMB_ErrDlgs[DownloadMPMap]->AddCallbackStr("button_copy", MESSAGE_BOX_COPY_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnDownloadMPMap_CopyURL));
-		m_pMB_ErrDlgs[DownloadMPMap]->AddCallbackStr("button_yes", MESSAGE_BOX_YES_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnDownloadMPMap));
-	}
+    m_pMB_ErrDlgs[PatchDownloadSuccess]->AddCallbackStr("button_yes", MESSAGE_BOX_YES_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnRunDownloadedPatch));
+    m_pMB_ErrDlgs[PatchDownloadSuccess]->AddCallbackStr("button_yes", MESSAGE_BOX_OK_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnConnectToMasterServerOkClicked));
+
+    m_pMB_ErrDlgs[DownloadMPMap]->AddCallbackStr("button_copy", MESSAGE_BOX_COPY_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnDownloadMPMap_CopyURL));
+    m_pMB_ErrDlgs[DownloadMPMap]->AddCallbackStr("button_yes", MESSAGE_BOX_YES_CLICKED, CUIWndCallback::void_function(this, &CMainMenu::OnDownloadMPMap));
 	
 	Device.seqFrame.Add		(this,REG_PRIORITY_LOW-1000);
 }
@@ -140,8 +137,6 @@ void CMainMenu::Activate	(bool bActivate)
 		(m_screenshotFrame == Device.dwFrame+1))	return;
 
 	bool b_is_single				= IsGameTypeSingle();
-
-	if(g_dedicated_server && bActivate) return;
 
 	if(bActivate)
 	{
