@@ -14,7 +14,6 @@
 #include "GlobalFeelTouch.hpp"
 
 #include "Level_network_map_sync.h"
-#include "secure_messaging.h"
 
 
 class	CHUDManager;
@@ -121,13 +120,6 @@ public:
 	virtual void				OnConnectRejected		();
 
 private:
-			
-			void				OnSecureMessage			(NET_Packet & P);
-			void				OnSecureKeySync			(NET_Packet & P);
-			void				SecureSend				(NET_Packet& P, u32 dwFlags=DPNSEND_GUARANTEED, u32 dwTimeout=0);
-			
-	secure_messaging::key_t		m_secret_key;
-private:
 	BOOL						m_bNeed_CrPr;
 	u32							m_dwNumSteps;
 	bool						m_bIn_CrPr;
@@ -157,7 +149,6 @@ private:
 	void						BlockCheatLoad					()				;
 
 	BOOL						Connect2Server					(LPCSTR options);
-	void						SendClientDigestToServer		();
 	shared_str					m_client_digest;	//for screenshots
 public:
 	shared_str get_cdkey_digest() const { return m_client_digest; };
@@ -166,7 +157,6 @@ private:
 	bool						m_bConnectResult;
 	xr_string					m_sConnectResult;
 public:	
-	void						OnBuildVersionChallenge			();
 	void						OnConnectResult					(NET_Packet* P);
 public:
 	//////////////////////////////////////////////	

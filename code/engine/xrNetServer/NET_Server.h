@@ -1,7 +1,6 @@
 #pragma once
 
 #include "net_shared.h"
-#include "ip_filter.h"
 #include "NET_Common.h"
 #include "NET_PlayersMonitor.h"
 
@@ -22,30 +21,6 @@ struct SClientConnectData
 // -----------------------------------------------------
 
 class IPureServer;
-
-struct XRNETSERVER_API ip_address
-{
-	union{
-		struct{
-			u8	a1;
-			u8	a2;
-			u8	a3;
-			u8	a4;
-		};
-		u32		data;
-	}m_data;
-	void		set		(LPCSTR src_string);
-	xr_string	to_string	()	const;
-
-	bool operator == (const ip_address& other) const
-	{
-		return (m_data.data==other.m_data.data)		|| 
-				(	(m_data.a1==other.m_data.a1)	&& 
-					(m_data.a2==other.m_data.a2)	&& 
-					(m_data.a3==other.m_data.a3)	&& 
-					(m_data.a4==0)					);
-	}
-};
 
 class XRNETSERVER_API 
 IClient		: public MultipacketSender
@@ -71,10 +46,6 @@ public:
 
 	Flags				flags;	// local/host/normal
 	u32					dwTime_LastUpdate;
-
-	ip_address			m_cAddress;
-	DWORD				m_dwPort;
-	u32					process_id;
 	
     IPureServer*        server;
 
@@ -105,24 +76,6 @@ public:
 	u32		dwBytesSended;
 	u32		dwSendTime;
 	u32		dwBytesPerSec;
-};
-
-
-class XRNETSERVER_API IBannedClient
-{
-public:
-	ip_address			HAddr;
-	time_t				BanTime;
-	
-	IBannedClient ()
-	{
-		HAddr.m_data.data	= 0;
-		BanTime				= 0;
-	};
-	void				Load(CInifile& ini, const shared_str& sect);
-	void				Save(CInifile& ini);
-	
-	xr_string			BannedTimeTo() const;
 };
 
 
@@ -159,8 +112,6 @@ protected:
 	shared_str				connect_options;
 	IDirectPlay8Server*		NET;
 	IDirectPlay8Address*	net_Address_device;
-	
-	NET_Compressor			net_Compressor;
 
 	PlayersMonitor			net_players;
 	//xrCriticalSection		csPlayers;
@@ -169,10 +120,6 @@ protected:
 	IClient*				SV_Client;
 
 	int						psNET_Port;	
-	
-
-	xr_vector<IBannedClient*>		BannedAddresses;
-	ip_filter						m_ip_filter;
 
 	// 
 	std::recursive_mutex		csMessage;
@@ -183,23 +130,12 @@ protected:
 	// Statistic
 	IServerStatistic		stats;
 	CTimer*					device_timer;
-	BOOL					m_bDedicated;
 
 	IClient*				ID_to_client		(ClientID ID, bool ScanAll = false);
 	
-	virtual IClient*		new_client			( SClientConnectData* cl_data )   =0;
-			bool			GetClientAddress	(IDirectPlay8Address* pClientAddress, ip_address& Address, DWORD* pPort = NULL);
-
-			IBannedClient*	GetBannedClient		(const ip_address& Address);			
-			void			BannedList_Save		();
-			void			BannedList_Load		();
-			void			IpList_Load			();
-			void			IpList_Unload		();
-			LPCSTR			GetBannedListName	();
-
-			void			UpdateBannedList	();
+	virtual IClient*		new_client			( SClientConnectData* cl_data ) = 0;
 public:
-							IPureServer			(CTimer* timer, BOOL Dedicated = FALSE);
+							IPureServer			(CTimer* timer);
 	virtual					~IPureServer		();
 	HRESULT					net_Handler			(u32 dwMessageType, PVOID pMessage);
 	
@@ -239,14 +175,7 @@ public:
 	BOOL					HasBandwidth			(IClient* C);
 
 	IC int					GetPort					()				{ return psNET_Port; };
-			bool			GetClientAddress		(ClientID ID, ip_address& Address, DWORD* pPort = NULL);	
-//			bool			DisconnectClient		(IClient* C);
 	virtual bool			DisconnectClient		(IClient* C, LPCSTR Reason);
-	virtual bool			DisconnectAddress		(const ip_address& Address, LPCSTR reason);
-	virtual void			BanClient				(IClient* C, u32 BanTime);
-	virtual void			BanAddress				(const ip_address& Address, u32 BanTime);
-	virtual void			UnBanAddress			(const ip_address& Address);
-			void			Print_Banned_Addreses	();
 
 	virtual bool			Check_ServerAccess( IClient* CL, string512& reason )	{ return true; }
 	virtual void			Assign_ServerType( string512& res ) {};
@@ -274,7 +203,6 @@ public:
 #ifdef DEBUG
 	bool					IsPlayersMonitorLockedByMe()	const				{ return net_players.IsCurrentThreadIteratingOnClients() && !sender_functor_invoked; };
 #endif
-	bool					IsPlayerIPDenied(u32 ip_address);
 	//WARNING! very bad method :(
 	//IClient*				client_Get		(u32 index)							{return net_players.GetClientByIndex(index);};
 	IClient*				GetClientByID	(ClientID clientId)					{return net_players.GetFoundClient(ClientIdSearchPredicate(clientId));};

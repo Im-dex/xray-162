@@ -9,10 +9,6 @@
 #include <dplay/dplay8.h>
 #include "net_messages.h"
 
-
-
-#include "net_compressor.h"
-
 XRNETSERVER_API extern ClientID BroadcastCID;
 
 XRNETSERVER_API extern Flags32	psNET_Flags;
@@ -23,8 +19,6 @@ XRNETSERVER_API extern char		psNET_Name[];
 XRNETSERVER_API extern int		psNET_ServerUpdate;
 XRNETSERVER_API extern int		get_psNET_ServerUpdate();
 XRNETSERVER_API extern int		psNET_ServerPending;
-
-XRNETSERVER_API extern BOOL		psNET_direct_connect;
 
 enum	{
 	NETFLAG_MINIMIZEUPDATES		= (1<<0),

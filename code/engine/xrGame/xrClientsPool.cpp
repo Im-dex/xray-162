@@ -69,9 +69,6 @@ bool const xrClientsPool::pooled_client_finder::operator()(dclient const & right
 	if (!right.m_client->ps || !m_new_client->ps)
 		return false;
 
-	if (m_new_client->m_cdkey_digest != right.m_client->m_cdkey_digest)
-		return false;
-
 	if (!xr_strcmp(m_new_client->ps->getName(), right.m_client->ps->getName()))
 		return true;
 

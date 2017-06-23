@@ -191,6 +191,4 @@ public:
 	virtual		void				on_death				(CSE_Abstract *e_dest, CSE_Abstract *e_src);
 
 	virtual		void				DumpOnlineStatistic		(){};
-				
-				bool				CheckNewPlayer			(xrClientData* CL);
 };

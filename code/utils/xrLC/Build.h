@@ -14,6 +14,8 @@
 #include "../shader_xrlc.h"
 //#include "xrMU_Model.h"
 
+#include <random>
+
 struct		 STextureParams;
 
 extern "C" bool __declspec(dllimport) __stdcall DXTCompress(LPCSTR out_name, u8* raw_data, u8* normal_map, u32 w, u32 h, u32 pitch, STextureParams* fmt, u32 depth);
@@ -56,6 +58,7 @@ public:
 	xr_vector<b_lod>				lods;
 	string_path						path;
 	xr_vector<LPCSTR>				g_Shaders;
+    std::mt19937 rng{ std::random_device()() };
 
 
 	xr_vector<b_material>			&materials()	;

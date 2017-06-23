@@ -54,20 +54,15 @@ void CHW::Reset		(HWND hwnd)
 	_RELEASE			(pBaseRT);
 
 #ifndef _EDITOR
-//#ifndef DEDICATED_SERVER
 //	BOOL	bWindowed		= !psDeviceFlags.is	(rsFullscreen);
-//#else
-//	BOOL	bWindowed		= TRUE;
-//#endif
 	BOOL	bWindowed		= TRUE;
-	if (!g_dedicated_server)
-		bWindowed		= !psDeviceFlags.is	(rsFullscreen);
+	bWindowed		= !psDeviceFlags.is	(rsFullscreen);
 
 	selectResolution		(DevPP.BackBufferWidth, DevPP.BackBufferHeight, bWindowed);
 	// Windoze
 	DevPP.SwapEffect			= bWindowed?D3DSWAPEFFECT_COPY:D3DSWAPEFFECT_DISCARD;
 	DevPP.Windowed				= bWindowed;
-	DevPP.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
+    DevPP.PresentationInterval = selectPresentInterval();
 	if( !bWindowed )		DevPP.FullScreen_RefreshRateInHz	= selectRefresh	(DevPP.BackBufferWidth,DevPP.BackBufferHeight,Caps.fTarget);
 	else					DevPP.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
 #endif
@@ -95,19 +90,7 @@ void CHW::Reset		(HWND hwnd)
 
 void CHW::CreateD3D	()
 {
-//#ifndef DEDICATED_SERVER
-//	LPCSTR		_name			= "d3d9.dll";
-//#else
-//	LPCSTR		_name			= "xrd3d9-null.dll";
-//#endif
-
-	LPCSTR		_name			= "xrd3d9-null.dll";
-
-#ifndef _EDITOR
-	if (!g_dedicated_server)
-#endif    
-		_name			= "d3d9.dll";
-
+	LPCSTR		_name			= "d3d9.dll";
 
 	hD3D            			= LoadLibrary(_name);
 	R_ASSERT2	           	 	(hD3D,"Can't find 'd3d9.dll'\nPlease install latest version of DirectX before running this program");
@@ -181,36 +164,27 @@ void	CHW::DestroyDevice	()
 void	CHW::selectResolution	(u32 &dwWidth, u32 &dwHeight, BOOL bWindowed)
 {
 	fill_vid_mode_list			(this);
+    if (bWindowed)
+    {
+        dwWidth = psCurrentVidMode[0];
+        dwHeight = psCurrentVidMode[1];
+    }
+    else //check
+    {
 #ifndef _EDITOR
-	if (g_dedicated_server)
-	{
-		dwWidth		= 640;
-		dwHeight	= 480;
-	}
-	else
-#endif
-	{
-		if(bWindowed)
-		{
-			dwWidth		= psCurrentVidMode[0];
-			dwHeight	= psCurrentVidMode[1];
-		}else //check
-		{
-#ifndef _EDITOR
-			string64					buff;
-			xr_sprintf					(buff,sizeof(buff),"%dx%d",psCurrentVidMode[0],psCurrentVidMode[1]);
+        string64					buff;
+        xr_sprintf(buff, sizeof(buff), "%dx%d", psCurrentVidMode[0], psCurrentVidMode[1]);
 
-			if(_ParseItem(buff,vid_mode_token)==u32(-1)) //not found
-			{ //select safe
-				xr_sprintf				(buff,sizeof(buff),"vid_mode %s",vid_mode_token[0].name);
-				Console->Execute		(buff);
-			}
+        if (_ParseItem(buff, vid_mode_token) == u32(-1)) //not found
+        { //select safe
+            xr_sprintf(buff, sizeof(buff), "vid_mode %s", vid_mode_token[0].name);
+            Console->Execute(buff);
+        }
 
-			dwWidth						= psCurrentVidMode[0];
-			dwHeight					= psCurrentVidMode[1];
+        dwWidth = psCurrentVidMode[0];
+        dwHeight = psCurrentVidMode[1];
 #endif
-		}
-	}
+    }
 //#endif
 
 }
@@ -221,17 +195,12 @@ void		CHW::CreateDevice		(HWND m_hWnd, bool move_window)
 	CreateD3D				();
 
 	// General - select adapter and device
-//#ifdef DEDICATED_SERVER
-//	BOOL  bWindowed			= TRUE;
-//#else
 //	BOOL  bWindowed			= !psDeviceFlags.is(rsFullscreen);
-//#endif
 
 	BOOL  bWindowed			= TRUE;
 	
 #ifndef _EDITOR
-	if (!g_dedicated_server)
-		bWindowed			= !psDeviceFlags.is(rsFullscreen);
+	bWindowed			= !psDeviceFlags.is(rsFullscreen);
 #else
 	bWindowed				= 1;
 #endif        
@@ -351,7 +320,7 @@ void		CHW::CreateDevice		(HWND m_hWnd, bool move_window)
 	P.Flags					= 0;	//. D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
 
 	// Refresh rate
-	P.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
+    P.PresentationInterval = selectPresentInterval();
     if( !bWindowed )		P.FullScreen_RefreshRateInHz	= selectRefresh	(P.BackBufferWidth, P.BackBufferHeight,fTarget);
     else					P.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
 
@@ -522,17 +491,9 @@ BOOL	CHW::support	(D3DFORMAT fmt, DWORD type, DWORD usage)
 
 void	CHW::updateWindowProps	(HWND m_hWnd)
 {
-//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);
-//#ifndef DEDICATED_SERVER
-//	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen);
-//#else
-//	BOOL	bWindowed				= TRUE;
-//#endif
-
 	BOOL	bWindowed				= TRUE;
 #ifndef _EDITOR
-	if (!g_dedicated_server)
-		bWindowed			= !psDeviceFlags.is(rsFullscreen);
+	bWindowed			= !psDeviceFlags.is(rsFullscreen);
 #endif	
 
 	u32		dwWindowStyle			= 0;
@@ -555,11 +516,6 @@ void	CHW::updateWindowProps	(HWND m_hWnd)
 			RECT			m_rcWindowBounds;
 			BOOL			bCenter = FALSE;
 			if (strstr(Core.Params, "-center_screen"))	bCenter = TRUE;
-
-#ifndef _EDITOR
-			if (g_dedicated_server)
-				bCenter		= TRUE;
-#endif
 
 			if(bCenter){
 				RECT				DesktopRect;
@@ -597,11 +553,8 @@ void	CHW::updateWindowProps	(HWND m_hWnd)
 	}
 
 #ifndef _EDITOR
-	if (!g_dedicated_server)
-	{
-		ShowCursor	(FALSE);
-		SetForegroundWindow( m_hWnd );
-	}
+    ShowCursor(FALSE);
+    SetForegroundWindow(m_hWnd);
 #endif
 }
 

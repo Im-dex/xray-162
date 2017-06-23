@@ -17,10 +17,8 @@
 #include "string_table.h"
 #include "UI/UIGameTutorial.h"
 #include "ui/UIPdaWnd.h"
-#include "../xrNetServer/NET_AuthCheck.h"
 
 #include "../xrphysics/physicscommon.h"
-ENGINE_API bool g_dedicated_server;
 
 const int max_objects_size			= 2*1024;
 const int max_objects_size_in_save	= 8*1024;
@@ -75,14 +73,12 @@ void CLevel::remove_objects	()
 	ph_commander().clear		();
 	ph_commander_scripts().clear();
 
-	if(!g_dedicated_server)
-		space_restriction_manager().clear	();
+	space_restriction_manager().clear	();
 
 	psDeviceFlags.set			(rsDisableObjectsAsCrows, b_stored);
 	g_b_ClearGameCaptions		= true;
 
-	if (!g_dedicated_server)
-		ai().script_engine().collect_all_garbage	();
+	ai().script_engine().collect_all_garbage	();
 
 	stalker_animation_data_storage().clear		();
 	
@@ -92,15 +88,11 @@ void CLevel::remove_objects	()
 	Render->clear_static_wallmarks				();
 
 #ifdef DEBUG
-	if(!g_dedicated_server)
-		if (!client_spawn_manager().registry().empty())
-			client_spawn_manager().dump				();
+	if (!client_spawn_manager().registry().empty())
+		client_spawn_manager().dump				();
 #endif // DEBUG
-	if(!g_dedicated_server)
-	{
-		VERIFY										(client_spawn_manager().registry().empty());
-		client_spawn_manager().clear			();
-	}
+    VERIFY(client_spawn_manager().registry().empty());
+    client_spawn_manager().clear();
 
 	g_pGamePersistent->destroy_particles		(false);
 
@@ -159,8 +151,7 @@ void CLevel::net_Stop		()
 		xr_delete				(Server);
 	}
 
-	if (!g_dedicated_server)
-		ai().script_engine().collect_all_garbage	();
+	ai().script_engine().collect_all_garbage	();
 
 #ifdef DEBUG
 	show_animation_stats		();
@@ -273,31 +264,13 @@ void CLevel::ClientSave	()
 }
 
 //extern	XRPHYSICS_API	float		phTimefactor;
-extern					BOOL		g_SV_Disable_Auth_Check;
 
 void CLevel::Send		(NET_Packet& P, u32 dwFlags, u32 dwTimeout)
 {
 	if (IsDemoPlayStarted() || IsDemoPlayFinished()) return;
-	// optimize the case when server located in our memory
-	if(psNET_direct_connect){
-		ClientID	_clid;
-		_clid.set	(1);
-		Server->OnMessage		(P,	_clid );
-	}else
-	if (Server && game_configured && OnServer() )
-	{
-#ifdef DEBUG
-		VERIFY2(Server->IsPlayersMonitorLockedByMe() == false, "potential deadlock detected");
-#endif
-		Server->OnMessageSync	(P,Game().local_svdpnid	);
-	}else											
-		IPureClient::Send	(P,dwFlags,dwTimeout	);
-
-	if (g_pGameLevel && Level().game && GameID() != eGameIDSingle && !g_SV_Disable_Auth_Check)		{
-		// anti-cheat
-		phTimefactor		= 1.f					;
-		psDeviceFlags.set	(rsConstantFPS,FALSE)	;	
-	}
+    ClientID	_clid;
+    _clid.set(1);
+    Server->OnMessage(P, _clid);
 }
 
 void CLevel::net_Update	()
@@ -326,101 +299,29 @@ struct _NetworkProcessor	: public pureFrame
 
 pureFrame*	g_pNetProcessor	= &NET_processor;
 
-const int ConnectionTimeOut = 60000; //1 min
-
 BOOL			CLevel::Connect2Server				(LPCSTR options)
 {
-	NET_Packet					P;
-	m_bConnectResultReceived	= false	;
+	m_bConnectResultReceived	= true;
 	m_bConnectResult			= true	;
-
-	if(!psNET_direct_connect)
-	{
-		xr_auth_strings_t	tmp_ignore;
-		xr_auth_strings_t	tmp_check;
-		fill_auth_check_params	(tmp_ignore, tmp_check);
-		FS.auth_generate		(tmp_ignore, tmp_check);
-	}
 
 	if (!Connect(options))		return	FALSE;
 	//---------------------------------------------------------------------------
-	if(psNET_direct_connect) m_bConnectResultReceived = true;
-	u32 EndTime = GetTickCount() + ConnectionTimeOut;
-	while	(!m_bConnectResultReceived)		{ 
-		ClientReceive	();
-		Sleep			(5); 
-		if(Server)
-			Server->Update()	;
-		//-----------------------------------------
-		u32 CurTime = GetTickCount();
-		if (CurTime > EndTime)
-		{
-			NET_Packet	P;
-			P.B.count = 0;
-			P.r_pos = 0;
 
-			P.w_u8(0);
-			P.w_u8(0);
-			P.w_stringZ("Data verification failed. Cheater?");
-
-			OnConnectResult(&P);			
-		}
-		if (net_isFails_Connect())
-		{
-			OnConnectRejected	();	
-			Disconnect		()	;
-			return	FALSE;
-		}
-		//-----------------------------------------
-	}
-	Msg							("%c client : connection %s - <%s>", m_bConnectResult ?'*':'!', m_bConnectResult ? "accepted" : "rejected", m_sConnectResult.c_str());
-	if		(!m_bConnectResult) 
-	{
-		if(Server)
-		{
-			Server->Disconnect		();
-			xr_delete				(Server);
-		}
-		OnConnectRejected			();	
-		Disconnect					();
-		return FALSE		;
-	};
-
+	Msg("%c client : connection %s - <%s>", m_bConnectResult ?'*':'!', m_bConnectResult ? "accepted" : "rejected", m_sConnectResult.c_str());
 	
-	if(psNET_direct_connect)
-		net_Syncronised = TRUE;
-	else
-		net_Syncronize	();
-
-	while (!net_IsSyncronised()) {
-		Sleep(1);
-		if (net_Disconnected)
-		{
-			OnConnectRejected	();	
-			Disconnect			();
-			return FALSE;
-		}
-	};
+    net_Syncronised = TRUE;
+    if (net_Disconnected)
+    {
+        OnConnectRejected();
+        Disconnect();
+        return FALSE;
+    }
 
 	//---------------------------------------------------------------------------
 	//P.w_begin	(M_CLIENT_REQUEST_CONNECTION_DATA);
 	//Send		(P, net_flags(TRUE, TRUE, TRUE, TRUE));
 	//---------------------------------------------------------------------------
 	return TRUE;
-};
-
-void			CLevel::OnBuildVersionChallenge		()
-{
-	NET_Packet P;
-	P.w_begin				(M_CL_AUTH);
-#ifdef USE_DEBUG_AUTH
-	u64 auth = MP_DEBUG_AUTH;
-	Msg("* Sending auth value ...");
-#else
-	u64 auth = FS.auth_get();
-#endif //#ifdef DEBUG
-	P.w_u64					(auth);
-	SecureSend				(P, net_flags(TRUE, TRUE, TRUE, TRUE));
 };
 
 void CLevel::OnConnectResult(NET_Packet*	P)

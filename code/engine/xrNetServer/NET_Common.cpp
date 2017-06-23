@@ -1,44 +1,5 @@
-
-    #include "stdafx.h"
-        
-    #include "NET_Common.h"
-
-/*#ifdef DEBUG
-void PrintParsedPacket(const char* message, u16 message_type, const void* packet_data, u32 packet_size)
-{
-	NET_Packet			tNetPacket;
-	tNetPacket.construct		( packet_data, packet_size );	
-	u16 msg_type;
-	tNetPacket.r_begin			(msg_type);
-	if (msg_type == message_type)
-	{
-		if (message_type == 1) //M_SPAWN
-		{
-			shared_str			s_name;
-			tNetPacket.r_stringZ		(s_name			);
-			
-			string256					temp;
-			tNetPacket.r_stringZ		(temp);
-			u8							temp_gt;
-			tNetPacket.r_u8				(temp_gt		);
-			u8							s_RP;
-			tNetPacket.r_u8				(s_RP			);
-			Fvector						o_Position, o_Angle;
-			tNetPacket.r_vec3			(o_Position		);
-			tNetPacket.r_vec3			(o_Angle		);
-			u16							RespawnTime, ID;
-			tNetPacket.r_u16			(RespawnTime	);
-			tNetPacket.r_u16			(ID				);
-			
-			Msg("%s M_SPAWN for [%s]-[%d]", message, s_name.c_str(), ID);
-		} else
-		{
-			Msg("%s NOT_IMPLEMENTED_PRINT type[%d]", message, message_type);
-		}
-	}
-}
-#endif*/
-//==============================================================================
+#include "stdafx.h"
+#include "NET_Common.h"
 
 #pragma pack( push )
 #pragma pack( 1 )
@@ -53,7 +14,6 @@ MultipacketHeader
 
 //==============================================================================
 
-static NET_Compressor   Compressor;
 static const unsigned   MaxMultipacketSize          = 32768;
 
 XRNETSERVER_API int     psNET_GuaranteedPacketMode  = NET_GUARANTEEDPACKET_DEFAULT;
@@ -134,20 +94,12 @@ MultipacketSender::_FlushSendBuffer( u32 timeout, Buffer* buf )
     {
         // compress data
 
-        unsigned            comp_sz     = Compressor.compressed_size( buf->buffer.B.count );        
         u8                  packet_data[MaxMultipacketSize];
         MultipacketHeader*  header      = (MultipacketHeader*)packet_data;
 
-        R_ASSERT(comp_sz < sizeof(packet_data)-sizeof(MultipacketHeader));
-        R_ASSERT(comp_sz < 65535);
-
-        comp_sz = Compressor.Compress( packet_data+sizeof(MultipacketHeader), sizeof(packet_data)-sizeof(MultipacketHeader), 
-                                       buf->buffer.B.data, buf->buffer.B.count 
-                                     );
-
+        std::memcpy(packet_data + sizeof(MultipacketHeader), buf->buffer.B.data, buf->buffer.B.count);
         header->tag             = NET_TAG_MERGED;
         header->unpacked_size   = (u16)buf->buffer.B.count;
-
 
         // dump/log if needed
 
@@ -179,8 +131,8 @@ MultipacketSender::_FlushSendBuffer( u32 timeout, Buffer* buf )
 
         // do send
         
-        _SendTo_LL( packet_data, comp_sz+sizeof(MultipacketHeader), buf->last_flags, timeout );
-        buf->buffer.B.count = 0;        
+        _SendTo_LL( packet_data, buf->buffer.B.count+sizeof(MultipacketHeader), buf->last_flags, timeout );
+        buf->buffer.B.count = 0;
     } // if buffer not empty
 }
 
@@ -196,9 +148,7 @@ MultipacketReciever::RecievePacket( const void* packet_data, u32 packet_sz, u32 
     if ( header->tag != NET_TAG_MERGED  &&  header->tag != NET_TAG_NONMERGED )
        return;
 
-    Compressor.Decompress( data, sizeof(data), 
-                           (u8*)packet_data+sizeof(MultipacketHeader), packet_sz-sizeof(MultipacketHeader) 
-                         );
+    std::memcpy(data, (u8*)packet_data + sizeof(MultipacketHeader), packet_sz - sizeof(MultipacketHeader));
 
     #if NET_LOG_PACKETS
     Msg( "#receive multi-packet %u", packet_sz );
@@ -249,9 +199,3 @@ MultipacketReciever::RecievePacket( const void* packet_data, u32 packet_sz, u32 
         processed_sz += size + ((is_multi_packet) ? sizeof(u16) : 0);
     }
 }
-
-void XRNETSERVER_API DumpNetCompressorStats(bool brief)
-{
-	Compressor.DumpStats(brief);
-}
-

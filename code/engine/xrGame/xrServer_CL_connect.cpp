@@ -186,26 +186,9 @@ void xrServer::Check_GameSpy_CDKey_Success			(IClient* CL)
 	RequestClientDigest(CL);
 };
 
-BOOL	g_SV_Disable_Auth_Check = FALSE;
-
-bool xrServer::NeedToCheckClient_BuildVersion		(IClient* CL)	
+bool xrServer::NeedToCheckClient_BuildVersion		(IClient*)	
 {
-/*#ifdef DEBUG
-
-	return false; 
-
-#endif*/
-	xrClientData* tmp_client	= smart_cast<xrClientData*>(CL);
-	VERIFY						(tmp_client);
-	PerformSecretKeysSync		(tmp_client);
-
-
-	if (g_SV_Disable_Auth_Check) return false;
-	CL->flags.bVerified = FALSE;
-	NET_Packet	P;
-	P.w_begin	(M_AUTH_CHALLENGE);
-	SendTo		(CL->ID, P);
-	return true;
+    return false;
 };
 
 void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )

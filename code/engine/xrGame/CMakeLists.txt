@@ -518,7 +518,6 @@ set(CORE_SERVER_SERVERPERFORM xrServer_perform_GameExport.cpp
                               xrServer_perform_sls_load.cpp
                               xrServer_perform_sls_save.cpp
                               xrServer_perform_transfer.cpp
-                              xrServer_secure_messaging.cpp
                               xrServer_sls_clear.cpp)
 
 set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTHIT script_hit.h
@@ -1671,8 +1670,6 @@ set(AI_AMONSTERS_COMMON_COMPONENTS_MORALE ai/Monsters/monster_morale.h
                                           ai/Monsters/monster_morale_inline.h
                                           ai/Monsters/monster_morale.cpp)
 
-set(CORE_CLIENT_LEVEL_CLIENTDIGESTCOMPUTER Level_network_digest_computer.cpp)
-
 set(AI_AMONSTERS_MONSTERS_BLOODSUCKER_ALIEN_FEATURE ai/Monsters/Bloodsucker/bloodsucker_alien.h
                                                     ai/Monsters/Bloodsucker/bloodsucker_alien.cpp)
 
@@ -2773,7 +2770,6 @@ set(CORE_CLIENT_LEVEL Level.h
                       Level_network_spawn.cpp
                       Level_network_start_client.cpp
                       level_script.cpp
-                      Level_secure_messaging.cpp
                       Level_SLS_Default.cpp
                       Level_SLS_Load.cpp
                       Level_SLS_Save.cpp
@@ -3167,9 +3163,6 @@ set(CORE_CLIENT_OBJECTS_BASE_GAMEOBJECT_AI_OBSTACLE_MIN_OBB_MAGIC_BOX magic_box3
 
 set(AI_ASCRIPT_SCRIPTCLASSES script_bind_macroses.h)
 
-set(CORE_COMMON_NET_SHARED_SECUREMESSAGES secure_messaging.h
-                                          secure_messaging.cpp)
-
 set(AI_AMONSTERS_MONSTERS_RATS_STATES rat_states.h
                                       ai/monsters/rats/rat_state_activation.cpp
                                       ai/monsters/rats/rat_state_initialize.cpp
@@ -3533,7 +3526,6 @@ source_group("AI\\AMonsters\\monsters\\Burer\\Script" FILES ${AI_AMONSTERS_MONST
 source_group("AI\\AComponents\\doors_manager" FILES ${AI_ACOMPONENTS_DOORS_MANAGER})
 source_group("AI\\ANavigation\\Pathfinding\\DataStorages\\vertex_managers\\hash_fixed" FILES ${AI_ANAVIGATION_PATHFINDING_DATASTORAGES_VERTEX_MANAGERS_HASH_FIXED})
 source_group("AI\\AMonsters\\common\\components\\Morale" FILES ${AI_AMONSTERS_COMMON_COMPONENTS_MORALE})
-source_group("Core\\Client\\Level\\ClientDigestComputer" FILES ${CORE_CLIENT_LEVEL_CLIENTDIGESTCOMPUTER})
 source_group("AI\\AMonsters\\monsters\\Bloodsucker\\Alien Feature" FILES ${AI_AMONSTERS_MONSTERS_BLOODSUCKER_ALIEN_FEATURE})
 source_group("Core\\Common\\ObjectBroker" FILES ${CORE_COMMON_OBJECTBROKER})
 source_group("Core\\Client\\Objects\\items &amp; weapons\\Artifacts\\RustyHairArtifact" FILES ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_RUSTYHAIRARTIFACT})
@@ -3876,7 +3868,6 @@ source_group("AI\\AMonsters\\humans\\stalker\\MovementManager\\obstacles\\refres
 source_group("Core\\Client\\Objects\\zones\\LevelChanger" FILES ${CORE_CLIENT_OBJECTS_ZONES_LEVELCHANGER})
 source_group("Core\\Client\\Objects\\base\\GameObject\\ai_obstacle\\min_obb\\magic_box" FILES ${CORE_CLIENT_OBJECTS_BASE_GAMEOBJECT_AI_OBSTACLE_MIN_OBB_MAGIC_BOX})
 source_group("AI\\AScript\\ScriptClasses" FILES ${AI_ASCRIPT_SCRIPTCLASSES})
-source_group("Core\\Common\\NET Shared\\SecureMessages" FILES ${CORE_COMMON_NET_SHARED_SECUREMESSAGES})
 source_group("AI\\AMonsters\\monsters\\Rats\\states" FILES ${AI_AMONSTERS_MONSTERS_RATS_STATES})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ../xrServerEntities ../../3rd-party/luajit/include)
@@ -4243,7 +4234,6 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${AI_AMONSTERS_MONSTERS_SNORK}
                           ${AI_ASCRIPT_SCRIPTCLASSES_UI_HUD}
                           ${AI_AMONSTERS_MONSTERS_CONTROLLER_BASE_CONTROLLERS_DIRECTION}
-                          ${CORE_COMMON_NET_SHARED_SECUREMESSAGES}
                           ${AI_ASCRIPT_SCRIPTSTORAGE}
                           ${AI_ANAVIGATION_PATROLPATHS_PATROLPOINT}
                           ${AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_WORLDPROPERTYEVALUATOR}
@@ -4439,7 +4429,6 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${CORE_CLIENT_OBJECTS_PHYSICS_CHARACTERSUPPORT_DEATH_ANIMS}
                           ${CORE_CLIENT_OBJECTS_INVENTORY_ATTACHABLEITEM}
                           ${AI_AMONSTERS_MONSTERS_BLOODSUCKER_SCRIPT}
-                          ${CORE_CLIENT_LEVEL_CLIENTDIGESTCOMPUTER}
                           ${AI_ANAVIGATION_PATHFINDING_PATHMANAGERS_PATH_MANAGER_GAME}
                           ${AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONBASE}
                           ${CORE_CLIENT_OBJECTS_BASE_GAMEOBJECT_AI_OBSTACLE_MIN_OBB_MINIMIZE_1D}

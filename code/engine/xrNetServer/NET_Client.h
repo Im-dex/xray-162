@@ -3,8 +3,6 @@
 #include "net_shared.h"
 #include "NET_Common.h"
 
-struct ip_address;
-
 class XRNETSERVER_API INetQueue
 {
 	std::recursive_mutex cs;
@@ -18,8 +16,8 @@ public:
 	NET_Packet*			Create	(const NET_Packet& _other);
 	NET_Packet*			Retreive();
 	void				Release	();
-	inline void			Lock	() { cs.lock(); };
-	inline void			Unlock	() { cs.unlock(); };
+    void			Lock	() { cs.lock(); };
+    void			Unlock	() { cs.unlock(); };
 };
 
 
@@ -36,7 +34,6 @@ IPureClient
 		EnmConnectionWait=-1,
 		EnmConnectionCompleted=1
 	};
-	friend void 				sync_thread(void*);
 protected:
 	struct HOST_NODE			//deprecated...
 	{
@@ -54,8 +51,6 @@ protected:
 	std::recursive_mutex		net_csEnumeration;
 	xr_vector<HOST_NODE>	net_Hosts;
 
-	NET_Compressor			net_Compressor;
-
 	ConnectionState			net_Connected;
 	BOOL					net_Syncronised;
 	BOOL					net_Disconnected;
@@ -68,7 +63,6 @@ protected:
 	s32						net_TimeDelta_Calculated;
 	s32						net_TimeDelta_User;
 	
-	void					Sync_Thread		();
 	void					Sync_Average	();
 
 	void					SetClientID		(ClientID const & local_client) { net_ClientID = local_client; };
@@ -84,7 +78,6 @@ public:
 	BOOL					Connect					(LPCSTR server_name);
 	void					Disconnect				();
 
-	void					net_Syncronize			();
 	BOOL					net_isCompleted_Connect	()	{ return net_Connected==EnmConnectionCompleted;}
 	BOOL					net_isFails_Connect		()	{ return net_Connected==EnmConnectionFails;}
 	BOOL					net_isCompleted_Sync	()	{ return net_Syncronised;	}
@@ -111,8 +104,6 @@ public:
 	IClientStatistic&		GetStatistic			() {return  net_Statistic; }
 	void					UpdateStatistic			();
 	ClientID const &		GetClientID				() { return net_ClientID; };
-
-			bool			GetServerAddress		(ip_address& pAddress, DWORD* pPort);
 	
 	// time management
 	IC u32					timeServer				()	{ return TimeGlobal(device_timer) + net_TimeDelta + net_TimeDelta_User; }

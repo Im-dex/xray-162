@@ -4,9 +4,7 @@
 
 #include "client_id.h"
 
-#pragma pack(push,1)
-
-const	u32			NET_PacketSizeLimit	= 16*1024;
+static constexpr const size_t NET_PacketSizeLimit = 16*1024;
 
 struct XRCORE_API IIniFileStream
 {
@@ -267,7 +265,5 @@ public:
 	void		r_matrix		(Fmatrix& M);
 	void		r_clientID		(ClientID& C);
 };
-
-#pragma pack(pop)
 
 #endif /*_INCDEF_NETUTILS_H_*/

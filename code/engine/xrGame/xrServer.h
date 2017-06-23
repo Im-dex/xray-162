@@ -11,7 +11,6 @@
 #include "game_sv_base.h"
 #include "id_generator.h"
 #include "../xrEngine/mp_logging.h"
-#include "secure_messaging.h"
 #include "xrServer_updates_compressor.h"
 #include "xrClientsPool.h"
 
@@ -46,10 +45,6 @@ public:
 		BOOL					m_has_admin_rights;
 		u32						m_dwLoginTime;
 	}m_admin_rights;
-
-	shared_str					m_cdkey_digest;
-	secure_messaging::key_t		m_secret_key;
-	s32							m_last_key_sync_request_seed;
 
 							xrClientData			();
 	virtual					~xrClientData			();
@@ -123,7 +118,6 @@ private:
 
 private:
 	id_generator_type					m_tID_Generator;
-	secure_messaging::seed_generator	m_seed_generator;
 
 protected:
 	void					Server_Client_Check				(IClient* CL);
@@ -188,12 +182,6 @@ protected:
 	void					OnChatMessage			(NET_Packet* P, xrClientData* CL);
 	void					OnProcessClientMapData	(NET_Packet& P, ClientID const & clientID);
 
-private:
-	void					PerformSecretKeysSync				(xrClientData* xrCL);
-	void					PerformSecretKeysSyncAck			(xrClientData* xrCL, NET_Packet & P);
-protected:
-	void					OnSecureMessage						(NET_Packet & P, xrClientData* xrClSender);
-
 public:
 	// constr / destr
 	xrServer				();
@@ -206,7 +194,6 @@ public:
 	virtual void			OnCL_Disconnected	(IClient* CL);
 	virtual bool			OnCL_QueryHost		();
 	virtual void			SendTo_LL			(ClientID ID, void* data, u32 size, u32 dwFlags=DPNSEND_GUARANTEED, u32 dwTimeout=0);
-			void			SecureSendTo		(xrClientData* xrCL, NET_Packet& P, u32 dwFlags=DPNSEND_GUARANTEED, u32 dwTimeout=0);
 	virtual	void			SendBroadcast		(ClientID exclude, NET_Packet& P, u32 dwFlags=DPNSEND_GUARANTEED);
 			void			GetPooledState			(xrClientData* xrCL);
 			void			ClearDisconnectedPool	() { m_disconnected_clients.Clear(); };
@@ -239,14 +226,12 @@ public:
 	static	LPCSTR			get_map_download_url(LPCSTR level_name, LPCSTR level_version);
 
 	void					create_direct_client();
-	BOOL					IsDedicated			() const	{return m_bDedicated;};
 
 	virtual void			Assign_ServerType	( string512& res ) {};
 	virtual bool			HasPassword			()	{ return false; }
 	virtual bool			HasProtected		()	{ return false; }
 
 	virtual void			GetServerInfo		( CServerInfo* si );
-			void			SendPlayersInfo		(ClientID const & to_client);
 public:
 	xr_string				ent_name_safe		(u16 eid);
 #ifdef DEBUG

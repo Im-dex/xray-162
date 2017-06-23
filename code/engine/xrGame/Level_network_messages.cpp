@@ -322,7 +322,6 @@ void CLevel::ClientReceive()
 		case M_AUTH_CHALLENGE:
 			{
 				ClientSendProfileData		();
-				OnBuildVersionChallenge		();
 			}break;
 		case M_CLIENT_CONNECT_RESULT:
 			{
@@ -354,7 +353,6 @@ void CLevel::ClientReceive()
 			}break;
 		case M_SV_DIGEST:
 			{
-				SendClientDigestToServer();
 			}break;
 		case M_CHANGE_LEVEL_GAME:
 			{
@@ -451,11 +449,9 @@ void CLevel::ClientReceive()
 			}break;
 		case M_SECURE_KEY_SYNC:
 			{
-				OnSecureKeySync			(*P);
 			}break;
 		case M_SECURE_MESSAGE:
 			{
-				OnSecureMessage			(*P);
 			}break;
 		}
 

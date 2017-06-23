@@ -130,7 +130,7 @@ void xrDebug::gather_info		(const char *expression, const char *description, con
 				Msg		("%s",StackTrace[i]);
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
-			buffer		+= xr_sprintf(buffer,assertion_size - u32(buffer - buffer_base),"%s%s",g_stackTrace[i],endline);
+			buffer		+= xr_sprintf(buffer,assertion_size - u32(buffer - buffer_base),"%s%s",StackTrace[i],endline);
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
 		}
 
@@ -343,11 +343,11 @@ void CALLBACK PreErrorHandler	(INT_PTR)
 }
 
 #ifdef USE_BUG_TRAP
-void SetupExceptionHandler	(const bool &dedicated)
+void SetupExceptionHandler	()
 {
 	BT_InstallSehFilter		();
 #if 1//ndef USE_OWN_ERROR_MESSAGE_WINDOW
-	if (!dedicated && !strstr(GetCommandLine(),"-silent_error_mode"))
+	if (!strstr(GetCommandLine(),"-silent_error_mode"))
 		BT_SetActivityType	(BTA_SHOWUI);
 	else
 		BT_SetActivityType	(BTA_SAVEREPORT);
@@ -391,8 +391,6 @@ please Submit Bug or save report and email it manually (button More...).\
 			0
 		);
 #else // #ifndef MASTER_GOLD
-		dedicated ?
-		MiniDumpNoDump :
 		(
 			MiniDumpWithDataSegs |
 //			MiniDumpWithFullMemory |
@@ -653,24 +651,6 @@ LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 #endif
 
 //////////////////////////////////////////////////////////////////////
-#ifdef M_BORLAND
-	namespace std{
-		extern new_handler _RTLENTRY _EXPFUNC set_new_handler( new_handler new_p );
-	};
-
-	static void __cdecl def_new_handler() 
-    {
-		FATAL		("Out of memory.");
-    }
-
-    void	xrDebug::_initialize		(const bool &dedicated)
-    {
-		handler							= 0;
-		m_on_dialog						= 0;
-        std::set_new_handler			(def_new_handler);	// exception-handler for 'out of memory' condition
-//		::SetUnhandledExceptionFilter	(UnhandledFilter);	// exception handler to all "unhandled" exceptions
-    }
-#else
     typedef int		(__cdecl * _PNH)( size_t );
 //    _CRTIMP int		__cdecl _set_new_mode( int );
 //    _CRTIMP _PNH	__cdecl _set_new_handler( _PNH );
@@ -862,30 +842,14 @@ LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 #endif
 	}
 
-    void	xrDebug::_initialize		(const bool &dedicated)
+    void	xrDebug::_initialize		()
     {
-		static bool is_dedicated		= dedicated;
-
 		*g_bug_report_file				= 0;
 
 		debug_on_thread_spawn			();
 
 #ifdef USE_BUG_TRAP
-		SetupExceptionHandler			( is_dedicated );
+		SetupExceptionHandler			();
 #endif // USE_BUG_TRAP
 		previous_filter					= ::SetUnhandledExceptionFilter(UnhandledFilter);	// exception handler to all "unhandled" exceptions
-
-#if 0
-		struct foo {static void	recurs	(const u32 &count)
-		{
-			if (!count)
-				return;
-
-			_alloca			(4096);
-			recurs			(count - 1);
-		}};
-		foo::recurs			(u32(-1));
-		std::terminate		();
-#endif // 0
 	}
-#endif

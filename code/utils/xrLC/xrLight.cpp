@@ -68,7 +68,7 @@ void	CBuild::LMapsLocal				()
 
 		// Randomize deflectors
 #ifndef NET_CMP
-		std::random_shuffle	(lc_global_data()->g_deflectors().begin(),lc_global_data()->g_deflectors().end());
+		std::shuffle(lc_global_data()->g_deflectors().begin(),lc_global_data()->g_deflectors().end(), rng);
 #endif
 
 #ifndef NET_CMP	

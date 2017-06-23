@@ -568,7 +568,7 @@ public:
 	}
 
 };
-#ifndef DEDICATED_SERVER
+
 class CCC_soundDevice : public CCC_Token
 {
 	typedef CCC_Token inherited;
@@ -604,7 +604,6 @@ public:
 		inherited::Save			(F);
 	}
 };
-#endif
 //-----------------------------------------------------------------------
 class CCC_ExclusiveMode : public IConsole_Command {
 private:
@@ -673,7 +672,6 @@ extern int			psNET_ClientUpdate;
 extern int			psNET_ClientPending;
 extern int			psNET_ServerUpdate;
 extern int			psNET_ServerPending;
-extern int			psNET_DedicatedSleep;
 extern char			psNET_Name[32];
 extern Flags32		psEnvFlags;
 //extern float		r__dtex_range;
@@ -753,7 +751,6 @@ void CCC_Register()
 
 	// Texture manager	
 	CMD4(CCC_Integer,	"texture_lod",			&psTextureLOD,				0,	4	);
-	CMD4(CCC_Integer,	"net_dedicated_sleep",	&psNET_DedicatedSleep,		0,	64	);
 
 	// General video control
 	CMD1(CCC_VidMode,	"vid_mode"				);
@@ -795,9 +792,7 @@ void CCC_Register()
 
 	CMD1(CCC_r2,		"renderer"				);
 
-#ifndef DEDICATED_SERVER
 	CMD1(CCC_soundDevice, "snd_device"			);
-#endif
 	//psSoundRolloff	= pSettings->r_float	("sound","rolloff");		clamp(psSoundRolloff,			EPS_S,	2.f);
 	psSoundOcclusionScale	= pSettings->r_float	("sound","occlusion_scale");clamp(psSoundOcclusionScale,	0.1f,	.5f);
 
@@ -814,9 +809,6 @@ void CCC_Register()
 
 	extern int g_svTextConsoleUpdateRate;
 	CMD4(CCC_Integer, "sv_console_update_rate", &g_svTextConsoleUpdateRate, 1, 100);
-
-	extern int g_svDedicateServerUpdateReate;
-	CMD4(CCC_Integer, "sv_dedicated_server_update_rate", &g_svDedicateServerUpdateReate, 1, 1000);
 
 	CMD1(CCC_HideConsole,		"hide");
 

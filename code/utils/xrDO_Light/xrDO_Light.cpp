@@ -77,7 +77,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      int       nCmdShow)
 {
 	// Initialize debugging
-	Debug._initialize	(false);
+	Debug._initialize	();
 	Core._initialize	("xrDO");
 	Startup				(lpCmdLine);
 	

@@ -4,9 +4,7 @@
 #include <time.h>
 #include "resource.h"
 #include "log.h"
-#ifdef _EDITOR
-	#include "malloc.h"
-#endif
+#include "malloc.h"
 
 extern BOOL					LogExecCB		= TRUE;
 static string_path			logFName		= "engine.log";
