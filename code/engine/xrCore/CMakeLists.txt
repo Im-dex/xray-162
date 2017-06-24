@@ -19,8 +19,7 @@ set(DEBUG_CORE_BLACKBOX ${DEBUG_CORE_BLACKBOX_H} ${DEBUG_CORE_BLACKBOX_CPP})
 
 set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp Fs_impl.h
        FS_internal.h LocatorAPI.h LocatorAPI.cpp LocatorAPI_auth.cpp LocatorAPI_defs.h
-       LocatorAPI_defs.cpp LocatorAPI_Notifications.h LocatorAPI_Notifications.cpp
-       log.h log.cpp NET_utils.cpp net_utils.h Xr_ini.cpp xr_ini.h)
+       LocatorAPI_defs.cpp log.h log.cpp NET_utils.cpp net_utils.h Xr_ini.cpp xr_ini.h)
 set(FS_STREAM_READER stream_reader.h stream_reader.cpp stream_reader_inline.h)
 set(FS_FILE_STREAM_READER file_stream_reader.h file_stream_reader.cpp)
 
@@ -63,7 +62,6 @@ source_group("Debug core" FILES ${DEBUG_CORE})
 source_group("Debug core\\BlackBox" FILES ${DEBUG_CORE_BLACKBOX})
 
 source_group("FS" FILES ${FS})
-set_source_files_properties(LocatorAPI_Notifications.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 source_group("FS\\file stream reader" FILES ${FS_FILE_STREAM_READER})
 source_group("FS\\stream reader" FILES ${FS_STREAM_READER})
 
