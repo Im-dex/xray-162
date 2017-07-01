@@ -17,97 +17,81 @@ using namespace Mgc;
 
 static constexpr Real MaxReal = std::numeric_limits<Real>::max();
 
-const Vector3 Vector3::ZERO(0.0f,0.0f,0.0f);
-const Vector3 Vector3::UNIT_X(1.0f,0.0f,0.0f);
-const Vector3 Vector3::UNIT_Y(0.0f,1.0f,0.0f);
-const Vector3 Vector3::UNIT_Z(0.0f,0.0f,1.0f);
+const Vector3 Vector3::ZERO(0.0f, 0.0f, 0.0f);
+const Vector3 Vector3::UNIT_X(1.0f, 0.0f, 0.0f);
+const Vector3 Vector3::UNIT_Y(0.0f, 1.0f, 0.0f);
+const Vector3 Vector3::UNIT_Z(0.0f, 0.0f, 1.0f);
 Real Vector3::FUZZ = 0.0f;
 
 //----------------------------------------------------------------------------
-Vector3::Vector3 (Real fX, Real fY, Real fZ)
-{
+Vector3::Vector3(Real fX, Real fY, Real fZ) {
     x = fX;
     y = fY;
     z = fZ;
 }
 //----------------------------------------------------------------------------
-Vector3::Vector3 (Real afCoordinate[3])
-{
+Vector3::Vector3(Real afCoordinate[3]) {
     x = afCoordinate[0];
     y = afCoordinate[1];
     z = afCoordinate[2];
 }
 //----------------------------------------------------------------------------
-Vector3::Vector3 (const Vector3& rkVector)
-{
+Vector3::Vector3(const Vector3& rkVector) {
     x = rkVector.x;
     y = rkVector.y;
     z = rkVector.z;
 }
 //----------------------------------------------------------------------------
-Vector3& Vector3::operator= (const Vector3& rkVector)
-{
+Vector3& Vector3::operator=(const Vector3& rkVector) {
     x = rkVector.x;
     y = rkVector.y;
     z = rkVector.z;
     return *this;
 }
 //----------------------------------------------------------------------------
-bool Vector3::operator== (const Vector3& rkVector) const
-{
-    if ( FUZZ == 0.0f )
-    {
+bool Vector3::operator==(const Vector3& rkVector) const {
+    if (FUZZ == 0.0f) {
         return x == rkVector.x && y == rkVector.y && z == rkVector.z;
-    }
-    else
-    {
-        return std::fabs(x - rkVector.x) <= FUZZ
-            && std::fabs(y - rkVector.y) <= FUZZ
-            && std::fabs(z - rkVector.z) <= FUZZ;
+    } else {
+        return std::fabs(x - rkVector.x) <= FUZZ && std::fabs(y - rkVector.y) <= FUZZ &&
+               std::fabs(z - rkVector.z) <= FUZZ;
     }
 }
 //----------------------------------------------------------------------------
-bool Vector3::operator!= (const Vector3& rkVector) const
-{
-    if ( FUZZ == 0.0f )
-    {
+bool Vector3::operator!=(const Vector3& rkVector) const {
+    if (FUZZ == 0.0f) {
         return x != rkVector.x || y != rkVector.y || z != rkVector.z;
-    }
-    else
-    {
-        return std::fabs(x - rkVector.x) > FUZZ
-            || std::fabs(y - rkVector.y) > FUZZ
-            || std::fabs(z - rkVector.z) > FUZZ;
+    } else {
+        return std::fabs(x - rkVector.x) > FUZZ || std::fabs(y - rkVector.y) > FUZZ ||
+               std::fabs(z - rkVector.z) > FUZZ;
     }
 }
 //----------------------------------------------------------------------------
-bool Vector3::operator< (const Vector3& rkVector) const
-{
+bool Vector3::operator<(const Vector3& rkVector) const {
     Real fXTmp = rkVector.x, fYTmp = rkVector.y, fZTmp = rkVector.z;
-    if ( FUZZ > 0.0f )
-    {
-        if (std::fabs(x - fXTmp) <= FUZZ )
+    if (FUZZ > 0.0f) {
+        if (std::fabs(x - fXTmp) <= FUZZ)
             fXTmp = x;
-        if (std::fabs(y - fYTmp) <= FUZZ )
+        if (std::fabs(y - fYTmp) <= FUZZ)
             fYTmp = y;
-        if (std::fabs(z - fZTmp) <= FUZZ )
+        if (std::fabs(z - fZTmp) <= FUZZ)
             fZTmp = z;
     }
 
     // compare z values
     unsigned int uiTest0 = *(unsigned int*)&z;
     unsigned int uiTest1 = *(unsigned int*)&fZTmp;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return true;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return false;
 
     // compare y values
     uiTest0 = *(unsigned int*)&y;
     uiTest1 = *(unsigned int*)&fYTmp;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return true;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return false;
 
     // compare x values
@@ -116,33 +100,31 @@ bool Vector3::operator< (const Vector3& rkVector) const
     return uiTest0 < uiTest1;
 }
 //----------------------------------------------------------------------------
-bool Vector3::operator<= (const Vector3& rkVector) const
-{
+bool Vector3::operator<=(const Vector3& rkVector) const {
     Real fXTmp = rkVector.x, fYTmp = rkVector.y, fZTmp = rkVector.z;
-    if ( FUZZ > 0.0f )
-    {
-        if (std::fabs(x - fXTmp) <= FUZZ )
+    if (FUZZ > 0.0f) {
+        if (std::fabs(x - fXTmp) <= FUZZ)
             fXTmp = x;
-        if (std::fabs(y - fYTmp) <= FUZZ )
+        if (std::fabs(y - fYTmp) <= FUZZ)
             fYTmp = y;
-        if (std::fabs(z - fZTmp) <= FUZZ )
+        if (std::fabs(z - fZTmp) <= FUZZ)
             fZTmp = z;
     }
 
     // compare z values
     unsigned int uiTest0 = *(unsigned int*)&z;
     unsigned int uiTest1 = *(unsigned int*)&fZTmp;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return true;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return false;
 
     // compare y values
     uiTest0 = *(unsigned int*)&y;
     uiTest1 = *(unsigned int*)&fYTmp;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return true;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return false;
 
     // compare x values
@@ -151,33 +133,31 @@ bool Vector3::operator<= (const Vector3& rkVector) const
     return uiTest0 <= uiTest1;
 }
 //----------------------------------------------------------------------------
-bool Vector3::operator> (const Vector3& rkVector) const
-{
+bool Vector3::operator>(const Vector3& rkVector) const {
     Real fXTmp = rkVector.x, fYTmp = rkVector.y, fZTmp = rkVector.z;
-    if ( FUZZ > 0.0f )
-    {
-        if (std::fabs(x - fXTmp) <= FUZZ )
+    if (FUZZ > 0.0f) {
+        if (std::fabs(x - fXTmp) <= FUZZ)
             fXTmp = x;
-        if (std::fabs(y - fYTmp) <= FUZZ )
+        if (std::fabs(y - fYTmp) <= FUZZ)
             fYTmp = y;
-        if (std::fabs(z - fZTmp) <= FUZZ )
+        if (std::fabs(z - fZTmp) <= FUZZ)
             fZTmp = z;
     }
 
     // compare z values
     unsigned int uiTest0 = *(unsigned int*)&z;
     unsigned int uiTest1 = *(unsigned int*)&fZTmp;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return true;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return false;
 
     // compare y values
     uiTest0 = *(unsigned int*)&y;
     uiTest1 = *(unsigned int*)&fYTmp;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return true;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return false;
 
     // compare x values
@@ -186,33 +166,31 @@ bool Vector3::operator> (const Vector3& rkVector) const
     return uiTest0 > uiTest1;
 }
 //----------------------------------------------------------------------------
-bool Vector3::operator>= (const Vector3& rkVector) const
-{
+bool Vector3::operator>=(const Vector3& rkVector) const {
     Real fXTmp = rkVector.x, fYTmp = rkVector.y, fZTmp = rkVector.z;
-    if ( FUZZ > 0.0f )
-    {
-        if (std::fabs(x - fXTmp) <= FUZZ )
+    if (FUZZ > 0.0f) {
+        if (std::fabs(x - fXTmp) <= FUZZ)
             fXTmp = x;
-        if (std::fabs(y - fYTmp) <= FUZZ )
+        if (std::fabs(y - fYTmp) <= FUZZ)
             fYTmp = y;
-        if (std::fabs(z - fZTmp) <= FUZZ )
+        if (std::fabs(z - fZTmp) <= FUZZ)
             fZTmp = z;
     }
 
     // compare z values
     unsigned int uiTest0 = *(unsigned int*)&z;
     unsigned int uiTest1 = *(unsigned int*)&fZTmp;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return true;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return false;
 
     // compare y values
     uiTest0 = *(unsigned int*)&y;
     uiTest1 = *(unsigned int*)&fYTmp;
-    if ( uiTest0 > uiTest1 )
+    if (uiTest0 > uiTest1)
         return true;
-    if ( uiTest0 < uiTest1 )
+    if (uiTest0 < uiTest1)
         return false;
 
     // compare x values
@@ -221,85 +199,66 @@ bool Vector3::operator>= (const Vector3& rkVector) const
     return uiTest0 >= uiTest1;
 }
 //----------------------------------------------------------------------------
-Vector3 Vector3::operator+ (const Vector3& rkVector) const
-{
-    return Vector3(x+rkVector.x,y+rkVector.y,z+rkVector.z);
+Vector3 Vector3::operator+(const Vector3& rkVector) const {
+    return Vector3(x + rkVector.x, y + rkVector.y, z + rkVector.z);
 }
 //----------------------------------------------------------------------------
-Vector3 Vector3::operator- (const Vector3& rkVector) const
-{
-    return Vector3(x-rkVector.x,y-rkVector.y,z-rkVector.z);
+Vector3 Vector3::operator-(const Vector3& rkVector) const {
+    return Vector3(x - rkVector.x, y - rkVector.y, z - rkVector.z);
 }
 //----------------------------------------------------------------------------
-Vector3 Vector3::operator* (Real fScalar) const
-{
-    return Vector3(fScalar*x,fScalar*y,fScalar*z);
+Vector3 Vector3::operator*(Real fScalar) const {
+    return Vector3(fScalar * x, fScalar * y, fScalar * z);
 }
 //----------------------------------------------------------------------------
-Vector3 Vector3::operator/ (Real fScalar) const
-{
+Vector3 Vector3::operator/(Real fScalar) const {
     Vector3 kQuot;
 
-    if ( fScalar != 0.0f )
-    {
-        Real fInvScalar = 1.0f/fScalar;
-        kQuot.x = fInvScalar*x;
-        kQuot.y = fInvScalar*y;
-        kQuot.z = fInvScalar*z;
+    if (fScalar != 0.0f) {
+        Real fInvScalar = 1.0f / fScalar;
+        kQuot.x = fInvScalar * x;
+        kQuot.y = fInvScalar * y;
+        kQuot.z = fInvScalar * z;
         return kQuot;
-    }
-    else
-    {
+    } else {
         return Vector3(MaxReal, MaxReal, MaxReal);
     }
 }
 //----------------------------------------------------------------------------
-Vector3 Vector3::operator- () const
-{
-    return Vector3(-x,-y,-z);
+Vector3 Vector3::operator-() const { return Vector3(-x, -y, -z); }
+//----------------------------------------------------------------------------
+Vector3 Mgc::operator*(Real fScalar, const Vector3& rkVector) {
+    return Vector3(fScalar * rkVector.x, fScalar * rkVector.y, fScalar * rkVector.z);
 }
 //----------------------------------------------------------------------------
-Vector3 Mgc::operator* (Real fScalar, const Vector3& rkVector)
-{
-    return Vector3(fScalar*rkVector.x,fScalar*rkVector.y,
-        fScalar*rkVector.z);
-}
-//----------------------------------------------------------------------------
-Vector3& Vector3::operator+= (const Vector3& rkVector)
-{
+Vector3& Vector3::operator+=(const Vector3& rkVector) {
     x += rkVector.x;
     y += rkVector.y;
     z += rkVector.z;
     return *this;
 }
 //----------------------------------------------------------------------------
-Vector3& Vector3::operator-= (const Vector3& rkVector)
-{
+Vector3& Vector3::operator-=(const Vector3& rkVector) {
     x -= rkVector.x;
     y -= rkVector.y;
     z -= rkVector.z;
     return *this;
 }
 //----------------------------------------------------------------------------
-Vector3& Vector3::operator*= (Real fScalar)
-{
+Vector3& Vector3::operator*=(Real fScalar) {
     x *= fScalar;
     y *= fScalar;
     z *= fScalar;
     return *this;
 }
 //----------------------------------------------------------------------------
-Vector3& Vector3::operator/= (Real fScalar)
-{
-    if ( fScalar != 0.0f )
-    {
-        Real fInvScalar = 1.0f/fScalar;
+Vector3& Vector3::operator/=(Real fScalar) {
+    if (fScalar != 0.0f) {
+        Real fInvScalar = 1.0f / fScalar;
         x *= fInvScalar;
         y *= fInvScalar;
         z *= fInvScalar;
-    }
-    else
-    {
+    } else {
         x = MaxReal;
         y = MaxReal;
         z = MaxReal;
@@ -308,56 +267,42 @@ Vector3& Vector3::operator/= (Real fScalar)
     return *this;
 }
 //----------------------------------------------------------------------------
-Real Vector3::SquaredLength () const
-{
-    return x*x + y*y + z*z;
+Real Vector3::SquaredLength() const { return x * x + y * y + z * z; }
+//----------------------------------------------------------------------------
+Real Vector3::Length() const { return std::sqrtf(x * x + y * y + z * z); }
+//----------------------------------------------------------------------------
+Real Vector3::Dot(const Vector3& rkVector) const {
+    return x * rkVector.x + y * rkVector.y + z * rkVector.z;
 }
 //----------------------------------------------------------------------------
-Real Vector3::Length () const
-{
-    return std::sqrtf(x*x + y*y + z*z);
+Vector3 Vector3::Cross(const Vector3& rkVector) const {
+    return Vector3(y * rkVector.z - z * rkVector.y, z * rkVector.x - x * rkVector.z,
+                   x * rkVector.y - y * rkVector.x);
 }
 //----------------------------------------------------------------------------
-Real Vector3::Dot (const Vector3& rkVector) const
-{
-    return x*rkVector.x + y*rkVector.y + z*rkVector.z;
-}
-//----------------------------------------------------------------------------
-Vector3 Vector3::Cross (const Vector3& rkVector) const
-{
-    return Vector3(y*rkVector.z-z*rkVector.y,z*rkVector.x-x*rkVector.z,
-        x*rkVector.y-y*rkVector.x);
-}
-//----------------------------------------------------------------------------
-Vector3 Vector3::UnitCross (const Vector3& rkVector) const
-{
-    Vector3 kCross(y*rkVector.z-z*rkVector.y,z*rkVector.x-x*rkVector.z,
-        x*rkVector.y-y*rkVector.x);
+Vector3 Vector3::UnitCross(const Vector3& rkVector) const {
+    Vector3 kCross(y * rkVector.z - z * rkVector.y, z * rkVector.x - x * rkVector.z,
+                   x * rkVector.y - y * rkVector.x);
     kCross.Unitize();
     return kCross;
 }
 //----------------------------------------------------------------------------
-Real Vector3::Unitize (Real fTolerance)
-{
+Real Vector3::Unitize(Real fTolerance) {
     Real fLength = Length();
 
-    if ( fLength > fTolerance )
-    {
-        Real fInvLength = 1.0f/fLength;
+    if (fLength > fTolerance) {
+        Real fInvLength = 1.0f / fLength;
         x *= fInvLength;
         y *= fInvLength;
         z *= fInvLength;
-    }
-    else
-    {
+    } else {
         fLength = 0.0f;
     }
 
     return fLength;
 }
 //----------------------------------------------------------------------------
-void Vector3::Orthonormalize (Vector3 akVector[/*3*/])
-{
+void Vector3::Orthonormalize(Vector3 akVector[/*3*/]) {
     // If the input vectors are v0, v1, and v2, then the Gram-Schmidt
     // orthonormalization produces vectors u0, u1, and u2 as follows,
     //
@@ -372,44 +317,38 @@ void Vector3::Orthonormalize (Vector3 akVector[/*3*/])
     akVector[0].Unitize();
 
     // compute u1
-    Real fDot0 = akVector[0].Dot(akVector[1]); 
-    akVector[1] -= fDot0*akVector[0];
+    Real fDot0 = akVector[0].Dot(akVector[1]);
+    akVector[1] -= fDot0 * akVector[0];
     akVector[1].Unitize();
 
     // compute u2
     Real fDot1 = akVector[1].Dot(akVector[2]);
     fDot0 = akVector[0].Dot(akVector[2]);
-    akVector[2] -= fDot0*akVector[0] + fDot1*akVector[1];
+    akVector[2] -= fDot0 * akVector[0] + fDot1 * akVector[1];
     akVector[2].Unitize();
 }
 //----------------------------------------------------------------------------
-void Vector3::GenerateOrthonormalBasis (Vector3& rkU, Vector3& rkV,
-    Vector3& rkW, bool bUnitLengthW)
-{
-    if ( !bUnitLengthW )
+void Vector3::GenerateOrthonormalBasis(Vector3& rkU, Vector3& rkV, Vector3& rkW,
+                                       bool bUnitLengthW) {
+    if (!bUnitLengthW)
         rkW.Unitize();
 
     Real fInvLength;
 
-    if (std::fabs(rkW.x) >= std::fabs(rkW.y) )
-    {
+    if (std::fabs(rkW.x) >= std::fabs(rkW.y)) {
         // W.x or W.z is the largest magnitude component, swap them
-        fInvLength = (Real)(1.0 / std::sqrtf(rkW.x*rkW.x+rkW.z*rkW.z));
-        rkU.x = -rkW.z*fInvLength;
+        fInvLength = (Real)(1.0 / std::sqrtf(rkW.x * rkW.x + rkW.z * rkW.z));
+        rkU.x = -rkW.z * fInvLength;
         rkU.y = 0.0f;
-        rkU.z = +rkW.x*fInvLength;
-    }
-    else
-    {
+        rkU.z = +rkW.x * fInvLength;
+    } else {
         // W.y or W.z is the largest magnitude component, swap them
-        fInvLength = (Real)(1.0 / std::sqrtf(rkW.y*rkW.y + rkW.z*rkW.z));
+        fInvLength = (Real)(1.0 / std::sqrtf(rkW.y * rkW.y + rkW.z * rkW.z));
         rkU.x = 0.0f;
-        rkU.y = +rkW.z*fInvLength;
-        rkU.z = -rkW.y*fInvLength;
+        rkU.y = +rkW.z * fInvLength;
+        rkU.z = -rkW.y * fInvLength;
     }
 
     rkV = rkW.Cross(rkU);
 }
 //----------------------------------------------------------------------------
-
-

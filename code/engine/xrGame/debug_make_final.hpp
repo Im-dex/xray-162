@@ -11,7 +11,7 @@
 
 namespace debug {
 
-#if 0 // DEBUG
+#if 0  // DEBUG
 	namespace detail {
 
 		template <typename T1, typename T2>
@@ -32,9 +32,9 @@ namespace debug {
 			>
 	{
 	}; // class make_final
-#else // DEBUG
-	template <typename T>
-	class make_final {};
+#else  // DEBUG
+template <typename T>
+class make_final {};
 #endif // DEBUG
 
 } // namespace debug

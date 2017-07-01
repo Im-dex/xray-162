@@ -17,8 +17,7 @@ public:
     typedef T value_type;
 
     template <class Other>
-    struct rebind
-    {
+    struct rebind {
         using other = xalloc<Other>;
     };
 
@@ -29,15 +28,16 @@ public:
     template <class Other>
     xalloc(const xalloc<Other>&) {}
     template <class Other>
-    xalloc<T>& operator=(const xalloc<Other>&) { return (*this); }
+    xalloc<T>& operator=(const xalloc<Other>&) {
+        return (*this);
+    }
     pointer allocate(size_type n, const void* p = nullptr) const { return xr_alloc<T>((u32)n); }
     char* _charalloc(size_type n) { return (char*)allocate(n); }
     void deallocate(pointer p, size_type n) const { xr_free(p); }
     void deallocate(void* p, size_type n) const { xr_free(p); }
-    void construct(pointer p, const T& _Val) { new(p) T(_Val); }
+    void construct(pointer p, const T& _Val) { new (p) T(_Val); }
     void destroy(pointer p) { p->~T(); }
-    size_type max_size() const
-    {
+    size_type max_size() const {
         size_type _Count = (size_type)(-1) / sizeof(T);
         return (0 < _Count ? _Count : 1);
     }
@@ -51,20 +51,30 @@ struct xr_allocator {
 
     static void* alloc(const u32& n) { return xr_malloc((u32)n); }
     template <typename T>
-    static void dealloc(T*& p) { xr_free(p); }
+    static void dealloc(T*& p) {
+        xr_free(p);
+    }
 };
 
 template <class _Ty, class _Other>
-inline bool operator==(const xalloc<_Ty>&, const xalloc<_Other>&) { return (true); }
+inline bool operator==(const xalloc<_Ty>&, const xalloc<_Other>&) {
+    return (true);
+}
 template <class _Ty, class _Other>
-inline bool operator!=(const xalloc<_Ty>&, const xalloc<_Other>&) { return (false); }
+inline bool operator!=(const xalloc<_Ty>&, const xalloc<_Other>&) {
+    return (false);
+}
 
 namespace std {
 template <class _Tp1, class _Tp2>
-inline xalloc<_Tp2>& __stl_alloc_rebind(xalloc<_Tp1>& __a, const _Tp2*) { return (xalloc<_Tp2>&)(__a); }
+inline xalloc<_Tp2>& __stl_alloc_rebind(xalloc<_Tp1>& __a, const _Tp2*) {
+    return (xalloc<_Tp2>&)(__a);
+}
 template <class _Tp1, class _Tp2>
-inline xalloc<_Tp2> __stl_alloc_create(xalloc<_Tp1>&, const _Tp2*) { return xalloc<_Tp2>(); }
-};
+inline xalloc<_Tp2> __stl_alloc_create(xalloc<_Tp1>&, const _Tp2*) {
+    return xalloc<_Tp2>();
+}
+}; // namespace std
 
 // string(char)
 typedef std::basic_string<char, std::char_traits<char>, xalloc<char>> xr_string;
@@ -79,24 +89,14 @@ public:
     typedef allocator allocator_type;
 
 public:
-    xr_vector()
-        : inherited()
-    {
-    }
-    xr_vector(size_t _count, const T& _value)
-        : inherited(_count, _value)
-    {
-    }
-    explicit xr_vector(size_t _count)
-        : inherited(_count)
-    {
-    }
+    xr_vector() : inherited() {}
+    xr_vector(size_t _count, const T& _value) : inherited(_count, _value) {}
+    explicit xr_vector(size_t _count) : inherited(_count) {}
     u32 size() const { return (u32)inherited::size(); }
 
     void clear_and_free() { inherited::clear(); }
     void clear_not_free() { erase(begin(), end()); }
-    void clear_and_reserve()
-    {
+    void clear_and_reserve() {
         if (capacity() <= (size() + size() / 4))
             clear_not_free();
         else {
@@ -106,22 +106,23 @@ public:
         }
     }
 
-    void clear()
-    {
-        clear_and_free();
-    }
+    void clear() { clear_and_free(); }
 
-    const_reference operator[](size_type _Pos) const
-    {
+    const_reference operator[](size_type _Pos) const {
         {
-            VERIFY2(_Pos < size(), make_string("index is out of range: index requested[%d], size of container[%d]", _Pos, size()).c_str());
+            VERIFY2(_Pos < size(),
+                    make_string("index is out of range: index requested[%d], size of container[%d]",
+                                _Pos, size())
+                        .c_str());
         }
         return (*(begin() + _Pos));
     }
-    reference operator[](size_type _Pos)
-    {
+    reference operator[](size_type _Pos) {
         {
-            VERIFY2(_Pos < size(), make_string("index is out of range: index requested[%d], size of container[%d]", _Pos, size()).c_str());
+            VERIFY2(_Pos < size(),
+                    make_string("index is out of range: index requested[%d], size of container[%d]",
+                                _Pos, size())
+                        .c_str());
         }
         return (*(begin() + _Pos));
     }
@@ -155,7 +156,7 @@ public:
     typedef typename allocator allocator_type;
     typedef typename allocator_type::value_type value_type;
     typedef typename allocator_type::size_type size_type;
-    u32 size() const { return (u32) __super ::size(); }
+    u32 size() const { return (u32) __super::size(); }
 };
 
 // stack
@@ -166,7 +167,7 @@ public:
     typedef typename allocator_type::value_type value_type;
     typedef typename allocator_type::size_type size_type;
 
-    //explicit			stack(const allocator_type& _Al = allocator_type()) : c(_Al) {}
+    // explicit			stack(const allocator_type& _Al = allocator_type()) : c(_Al) {}
     allocator_type get_allocator() const { return (c.get_allocator()); }
     bool empty() const { return (c.empty()); }
     u32 size() const { return c.size(); }
@@ -188,33 +189,34 @@ protected:
 template <typename T, typename allocator = xalloc<T>>
 class xr_list : public std::list<T, allocator> {
 public:
-    u32 size() const { return (u32) __super ::size(); }
+    u32 size() const { return (u32) __super::size(); }
 };
 template <typename K, class P = std::less<K>, typename allocator = xalloc<K>>
 class xr_set : public std::set<K, P, allocator> {
 public:
-    u32 size() const { return (u32) __super ::size(); }
+    u32 size() const { return (u32) __super::size(); }
 };
 template <typename K, class P = std::less<K>, typename allocator = xalloc<K>>
 class xr_multiset : public std::multiset<K, P, allocator> {
 public:
-    u32 size() const { return (u32) __super ::size(); }
+    u32 size() const { return (u32) __super::size(); }
 };
 template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<K, V>>>
 class xr_map : public std::map<K, V, P, allocator> {
 public:
-    u32 size() const { return (u32) __super ::size(); }
+    u32 size() const { return (u32) __super::size(); }
 };
 template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<K, V>>>
 class xr_multimap : public std::multimap<K, V, P, allocator> {
 public:
-    u32 size() const { return (u32) __super ::size(); }
+    u32 size() const { return (u32) __super::size(); }
 };
 
-template <typename K, class V, class _Traits = std::equal_to<K>, typename allocator = xalloc<std::pair<K, V>>>
+template <typename K, class V, class _Traits = std::equal_to<K>,
+          typename allocator = xalloc<std::pair<K, V>>>
 class xr_hash_map : public std::unordered_map<K, V, std::hash<K>, _Traits, allocator> {
 public:
-    u32 size() const { return (u32) __super ::size(); }
+    u32 size() const { return (u32) __super::size(); }
 };
 
 struct pred_str {
@@ -243,14 +245,12 @@ template <typename T>
 using xr_arc = std::shared_ptr<T>;
 
 template <typename T, typename... Args>
-xr_box<T> xr_new_box(Args&&... args)
-{
+xr_box<T> xr_new_box(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-xr_arc<T> xr_new_arc(Args&&... args)
-{
+xr_arc<T> xr_new_arc(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 

@@ -17,54 +17,50 @@
 using namespace Mgc;
 
 //----------------------------------------------------------------------------
-Real Mgc::OrthogonalPlaneFit (int iQuantity, Vector3* akPoint,
-    Vector3& rkOffset, Vector3& rkNormal)
-{
+Real Mgc::OrthogonalPlaneFit(int iQuantity, Vector3* akPoint, Vector3& rkOffset,
+                             Vector3& rkNormal) {
     // compute average of points
     rkOffset = akPoint[0];
     int i;
     for (i = 1; i < iQuantity; i++)
         rkOffset += akPoint[i];
-    Real fInvQuantity = 1.0f/iQuantity;
+    Real fInvQuantity = 1.0f / iQuantity;
     rkOffset *= fInvQuantity;
 
     // compute sums of products
     Real fSumXX = 0.0f, fSumXY = 0.0f, fSumXZ = 0.0f;
     Real fSumYY = 0.0f, fSumYZ = 0.0f, fSumZZ = 0.0f;
-    for (i = 0; i < iQuantity; i++) 
-    {
+    for (i = 0; i < iQuantity; i++) {
         Vector3 kDiff = akPoint[i] - rkOffset;
-        fSumXX += kDiff.x*kDiff.x;
-        fSumXY += kDiff.x*kDiff.y;
-        fSumXZ += kDiff.x*kDiff.z;
-        fSumYY += kDiff.y*kDiff.y;
-        fSumYZ += kDiff.y*kDiff.z;
-        fSumZZ += kDiff.z*kDiff.z;
+        fSumXX += kDiff.x * kDiff.x;
+        fSumXY += kDiff.x * kDiff.y;
+        fSumXZ += kDiff.x * kDiff.z;
+        fSumYY += kDiff.y * kDiff.y;
+        fSumYZ += kDiff.y * kDiff.z;
+        fSumZZ += kDiff.z * kDiff.z;
     }
 
     // setup the eigensolver
     Eigen kES(3);
-    kES.Matrix(0,0) = fSumXX;
-    kES.Matrix(0,1) = fSumXY;
-    kES.Matrix(0,2) = fSumXZ;
-    kES.Matrix(1,0) = kES.Matrix(0,1);
-    kES.Matrix(1,1) = fSumYY;
-    kES.Matrix(1,2) = fSumYZ;
-    kES.Matrix(2,0) = kES.Matrix(0,2);
-    kES.Matrix(2,1) = kES.Matrix(1,2);
-    kES.Matrix(2,2) = fSumZZ;
+    kES.Matrix(0, 0) = fSumXX;
+    kES.Matrix(0, 1) = fSumXY;
+    kES.Matrix(0, 2) = fSumXZ;
+    kES.Matrix(1, 0) = kES.Matrix(0, 1);
+    kES.Matrix(1, 1) = fSumYY;
+    kES.Matrix(1, 2) = fSumYZ;
+    kES.Matrix(2, 0) = kES.Matrix(0, 2);
+    kES.Matrix(2, 1) = kES.Matrix(1, 2);
+    kES.Matrix(2, 2) = fSumZZ;
 
     // compute eigenstuff, smallest eigenvalue is in last position
     kES.DecrSortEigenStuff3();
 
     // unit-length direction for best-fit line
-    rkNormal.x = kES.GetEigenvector(0,2);
-    rkNormal.y = kES.GetEigenvector(1,2);
-    rkNormal.z = kES.GetEigenvector(2,2);
+    rkNormal.x = kES.GetEigenvector(0, 2);
+    rkNormal.y = kES.GetEigenvector(1, 2);
+    rkNormal.z = kES.GetEigenvector(2, 2);
 
     // the minimum energy
     return kES.GetEigenvalue(2);
 }
 //----------------------------------------------------------------------------
-
-

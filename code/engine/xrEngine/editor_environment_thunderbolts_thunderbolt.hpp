@@ -24,45 +24,44 @@ namespace thunderbolts {
 
 class manager;
 
-class thunderbolt :
-	public SThunderboltDesc,
-	public editor::property_holder_holder
-{
+class thunderbolt : public SThunderboltDesc, public editor::property_holder_holder {
 private:
-	typedef SThunderboltDesc			inherited;
+    typedef SThunderboltDesc inherited;
 
 public:
-							thunderbolt				(manager* manager, shared_str const& id);
-                            thunderbolt(const thunderbolt&) = delete;
-                            thunderbolt& operator= (const thunderbolt&) = delete;
-	virtual					~thunderbolt			();
-			void			load					(CInifile& config);
-			void			save					(CInifile& config);
-			void			fill					(::editor::environment::manager& environment, editor::property_holder_collection* collection);
-	inline	LPCSTR			id						() const { return m_id.c_str(); }
-	virtual	void			create_top_gradient		(CInifile& pIni, shared_str const& sect);
-	virtual	void			create_center_gradient	(CInifile& pIni, shared_str const& sect);
+    thunderbolt(manager* manager, shared_str const& id);
+    thunderbolt(const thunderbolt&) = delete;
+    thunderbolt& operator=(const thunderbolt&) = delete;
+    virtual ~thunderbolt();
+    void load(CInifile& config);
+    void save(CInifile& config);
+    void fill(::editor::environment::manager& environment,
+              editor::property_holder_collection* collection);
+    inline LPCSTR id() const { return m_id.c_str(); }
+    virtual void create_top_gradient(CInifile& pIni, shared_str const& sect);
+    virtual void create_center_gradient(CInifile& pIni, shared_str const& sect);
 
 private:
-			LPCSTR xr_stdcall id_getter	() const;
-			void   xr_stdcall id_setter	(LPCSTR value);
+    LPCSTR xr_stdcall id_getter() const;
+    void xr_stdcall id_setter(LPCSTR value);
+
 private:
-	typedef editor::property_holder		property_holder_type;
+    typedef editor::property_holder property_holder_type;
 
 public:
-	virtual	property_holder_type* object();
+    virtual property_holder_type* object();
 
 private:
-	shared_str				m_id;
-	manager&				m_manager;
-	property_holder_type*	m_property_holder;
+    shared_str m_id;
+    manager& m_manager;
+    property_holder_type* m_property_holder;
 
 private:
-	gradient*				m_center;
-	gradient*				m_top;
-	shared_str				m_color_animator;
-	shared_str				m_lighting_model;
-	shared_str				m_sound;
+    gradient* m_center;
+    gradient* m_top;
+    shared_str m_color_animator;
+    shared_str m_lighting_model;
+    shared_str m_sound;
 }; // class thunderbolt
 
 } // namespace thunderbolts

@@ -12,18 +12,13 @@
 
 using namespace luabind;
 
-#pragma optimize("s",on)
-void CActor::script_register(lua_State *L)
-{
-	module(L)
-	[
-		class_<CActor,CGameObject>("CActor")
-			.def(constructor<>())
-			
-#ifndef	BENCHMARK_BUILD
-		,
-		class_<CLevelChanger,CGameObject>("CLevelChanger")
-			.def(constructor<>())
-#endif	//	BENCHMARK_BUILD
-	];
+#pragma optimize("s", on)
+void CActor::script_register(lua_State* L) {
+    module(L)[class_<CActor, CGameObject>("CActor").def(constructor<>())
+
+#ifndef BENCHMARK_BUILD
+                  ,
+              class_<CLevelChanger, CGameObject>("CLevelChanger").def(constructor<>())
+#endif //	BENCHMARK_BUILD
+    ];
 }

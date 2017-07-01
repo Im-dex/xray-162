@@ -26,25 +26,27 @@ class flare;
 
 class flares {
 public:
-					flares	();
-                    flares(const flares&) = delete;
-                    flares& operator= (const flares&) = delete;
-	virtual			~flares	();
-			void	load	(CInifile& config, shared_str const& section);
-			void	save	(CInifile& config, shared_str const& section);
-			void	fill	(manager const& manager, editor::property_holder* holder, editor::property_holder_collection* collection);
+    flares();
+    flares(const flares&) = delete;
+    flares& operator=(const flares&) = delete;
+    virtual ~flares();
+    void load(CInifile& config, shared_str const& section);
+    void save(CInifile& config, shared_str const& section);
+    void fill(manager const& manager, editor::property_holder* holder,
+              editor::property_holder_collection* collection);
+
 private:
-	typedef xr_vector<flare*>							flares_type;
-	typedef editor::property_holder_collection			property_holder_collection;
+    typedef xr_vector<flare*> flares_type;
+    typedef editor::property_holder_collection property_holder_collection;
 
 public:
-	typedef property_collection<flares_type, flares>	collection_type;
+    typedef property_collection<flares_type, flares> collection_type;
 
 private:
-	flares_type				m_flares;
-    shared_str				m_shader;
-	collection_type*		m_collection;
-    bool					m_use;
+    flares_type m_flares;
+    shared_str m_shader;
+    collection_type* m_collection;
+    bool m_use;
 }; // class flares
 
 } // namespace suns

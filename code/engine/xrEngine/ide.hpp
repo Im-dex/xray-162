@@ -14,13 +14,12 @@
 #include "editor/ide.hpp"
 
 namespace editor {
-	class ide;
+class ide;
 } // namespace editor
 
-inline editor::ide&	ide	()
-{
-	VERIFY	(Device.editor());
-	return	(*Device.editor());
+inline editor::ide& ide() {
+    VERIFY(Device.editor());
+    return (*Device.editor());
 }
 
 #endif // #ifdef INGAME_EDITOR

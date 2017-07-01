@@ -22,8 +22,7 @@ float psCamSlideInert = 0.25f;
 SPPInfo pp_identity;
 SPPInfo pp_zero;
 
-SPPInfo& SPPInfo::add(const SPPInfo& ppi)
-{
+SPPInfo& SPPInfo::add(const SPPInfo& ppi) {
     blur += ppi.blur;
     gray += ppi.gray;
     duality.h += ppi.duality.h;
@@ -50,8 +49,7 @@ SPPInfo& SPPInfo::add(const SPPInfo& ppi)
     return *this;
 }
 
-SPPInfo& SPPInfo::sub(const SPPInfo& ppi)
-{
+SPPInfo& SPPInfo::sub(const SPPInfo& ppi) {
     blur -= ppi.blur;
     gray -= ppi.gray;
     duality.h -= ppi.duality.h;
@@ -62,8 +60,7 @@ SPPInfo& SPPInfo::sub(const SPPInfo& ppi)
     return *this;
 }
 
-SPPInfo::SPPInfo()
-{
+SPPInfo::SPPInfo() {
     blur = gray = duality.h = duality.v = 0;
     noise.intensity = 0;
     noise.grain = 1;
@@ -74,12 +71,9 @@ SPPInfo::SPPInfo()
     cm_influence = 0.0f;
     cm_interpolate = 0.0f;
 }
-void SPPInfo::normalize()
-{
-}
+void SPPInfo::normalize() {}
 
-void SPPInfo::validate(LPCSTR str)
-{
+void SPPInfo::validate(LPCSTR str) {
     VERIFY2(_valid(duality.h), str);
     VERIFY2(_valid(duality.v), str);
     VERIFY2(_valid(blur), str);
@@ -98,8 +92,7 @@ void SPPInfo::validate(LPCSTR str)
     VERIFY2(_valid(color_add.b), str);
 }
 
-SPPInfo& SPPInfo::lerp(const SPPInfo& def, const SPPInfo& to, float factor)
-{
+SPPInfo& SPPInfo::lerp(const SPPInfo& def, const SPPInfo& to, float factor) {
     VERIFY(_valid(factor));
     SPPInfo& pp = *this;
     clamp(factor, 0.0f, 1.0f);
@@ -108,24 +101,25 @@ SPPInfo& SPPInfo::lerp(const SPPInfo& def, const SPPInfo& to, float factor)
     pp.duality.v += def.duality.v + (to.duality.v - def.duality.v) * factor;
     pp.gray += def.gray + (to.gray - def.gray) * factor;
     pp.blur += def.blur + (to.blur - def.blur) * factor;
-    pp.noise.intensity = to.noise.intensity; //	+ (to.noise.intensity	- def.noise.intensity)	* factor;
-    pp.noise.grain = to.noise.grain; //		+ (to.noise.grain		- def.noise.grain)		* factor;
-    pp.noise.fps = to.noise.fps; //		+ (to.noise.fps			- def.noise.fps)		* factor;
+    pp.noise.intensity =
+        to.noise.intensity; //	+ (to.noise.intensity	- def.noise.intensity)	* factor;
+    pp.noise.grain = to.noise
+                         .grain; //		+ (to.noise.grain		- def.noise.grain)
+                                 //* factor;
+    pp.noise.fps = to.noise.fps; //		+ (to.noise.fps			- def.noise.fps)
+                                 //* factor;
 
-    pp.color_base.set(
-        def.color_base.r + (to.color_base.r - def.color_base.r) * factor,
-        def.color_base.g + (to.color_base.g - def.color_base.g) * factor,
-        def.color_base.b + (to.color_base.b - def.color_base.b) * factor);
+    pp.color_base.set(def.color_base.r + (to.color_base.r - def.color_base.r) * factor,
+                      def.color_base.g + (to.color_base.g - def.color_base.g) * factor,
+                      def.color_base.b + (to.color_base.b - def.color_base.b) * factor);
 
-    pp.color_gray.set(
-        def.color_gray.r + (to.color_gray.r - def.color_gray.r) * factor,
-        def.color_gray.g + (to.color_gray.g - def.color_gray.g) * factor,
-        def.color_gray.b + (to.color_gray.b - def.color_gray.b) * factor);
+    pp.color_gray.set(def.color_gray.r + (to.color_gray.r - def.color_gray.r) * factor,
+                      def.color_gray.g + (to.color_gray.g - def.color_gray.g) * factor,
+                      def.color_gray.b + (to.color_gray.b - def.color_gray.b) * factor);
 
-    pp.color_add.set(
-        def.color_add.r + (to.color_add.r - def.color_add.r) * factor,
-        def.color_add.g + (to.color_add.g - def.color_add.g) * factor,
-        def.color_add.b + (to.color_add.b - def.color_add.b) * factor);
+    pp.color_add.set(def.color_add.r + (to.color_add.r - def.color_add.r) * factor,
+                     def.color_add.g + (to.color_add.g - def.color_add.g) * factor,
+                     def.color_add.b + (to.color_add.b - def.color_add.b) * factor);
 
     pp.cm_tex1 = to.cm_tex1;
     pp.cm_tex2 = to.cm_tex2;
@@ -135,8 +129,7 @@ SPPInfo& SPPInfo::lerp(const SPPInfo& def, const SPPInfo& to, float factor)
     return *this;
 }
 
-CCameraManager::CCameraManager(bool bApplyOnUpdate)
-{
+CCameraManager::CCameraManager(bool bApplyOnUpdate) {
 #ifdef DEBUG
     dbg_upd_frame = 0;
 #endif
@@ -165,16 +158,14 @@ CCameraManager::CCameraManager(bool bApplyOnUpdate)
     pp_affected = pp_identity;
 }
 
-CCameraManager::~CCameraManager()
-{
+CCameraManager::~CCameraManager() {
     for (auto it = m_EffectorsCam.begin(); it != m_EffectorsCam.end(); it++)
         xr_delete(*it);
     for (auto it = m_EffectorsPP.begin(); it != m_EffectorsPP.end(); it++)
         xr_delete(*it);
 }
 
-CEffectorCam* CCameraManager::GetCamEffector(ECamEffectorType type)
-{
+CEffectorCam* CCameraManager::GetCamEffector(ECamEffectorType type) {
     for (auto it = m_EffectorsCam.begin(); it != m_EffectorsCam.end(); it++)
         if ((*it)->eType == type) {
             return *it;
@@ -182,14 +173,12 @@ CEffectorCam* CCameraManager::GetCamEffector(ECamEffectorType type)
     return 0;
 }
 
-CEffectorCam* CCameraManager::AddCamEffector(CEffectorCam* ef)
-{
+CEffectorCam* CCameraManager::AddCamEffector(CEffectorCam* ef) {
     m_EffectorsCam_added_deffered.push_back(ef);
     return m_EffectorsCam_added_deffered.back();
 }
 
-void CCameraManager::UpdateDeffered()
-{
+void CCameraManager::UpdateDeffered() {
     auto it = m_EffectorsCam_added_deffered.begin();
     auto it_e = m_EffectorsCam_added_deffered.end();
     for (; it != it_e; ++it) {
@@ -204,8 +193,7 @@ void CCameraManager::UpdateDeffered()
     m_EffectorsCam_added_deffered.clear();
 }
 
-void CCameraManager::RemoveCamEffector(ECamEffectorType type)
-{
+void CCameraManager::RemoveCamEffector(ECamEffectorType type) {
     for (auto it = m_EffectorsCam.begin(); it != m_EffectorsCam.end(); it++)
         if ((*it)->eType == type) {
             OnEffectorReleased(*it);
@@ -214,16 +202,14 @@ void CCameraManager::RemoveCamEffector(ECamEffectorType type)
         }
 }
 
-CEffectorPP* CCameraManager::GetPPEffector(EEffectorPPType type)
-{
+CEffectorPP* CCameraManager::GetPPEffector(EEffectorPPType type) {
     for (auto it = m_EffectorsPP.begin(); it != m_EffectorsPP.end(); it++)
         if ((*it)->Type() == type)
             return *it;
     return 0;
 }
 
-ECamEffectorType CCameraManager::RequestCamEffectorId()
-{
+ECamEffectorType CCameraManager::RequestCamEffectorId() {
     auto index = (ECamEffectorType)effCustomEffectorStartID;
     for (; GetCamEffector(index); index = (ECamEffectorType)(index + 1)) {
         ;
@@ -231,8 +217,7 @@ ECamEffectorType CCameraManager::RequestCamEffectorId()
     return index;
 }
 
-EEffectorPPType CCameraManager::RequestPPEffectorId()
-{
+EEffectorPPType CCameraManager::RequestPPEffectorId() {
     auto index = (EEffectorPPType)effCustomEffectorStartID;
     for (; GetPPEffector(index); index = (EEffectorPPType)(index + 1)) {
         ;
@@ -240,15 +225,13 @@ EEffectorPPType CCameraManager::RequestPPEffectorId()
     return index;
 }
 
-CEffectorPP* CCameraManager::AddPPEffector(CEffectorPP* ef)
-{
+CEffectorPP* CCameraManager::AddPPEffector(CEffectorPP* ef) {
     RemovePPEffector(ef->Type());
     m_EffectorsPP.push_back(ef);
     return m_EffectorsPP.back();
 }
 
-void CCameraManager::RemovePPEffector(EEffectorPPType type)
-{
+void CCameraManager::RemovePPEffector(EEffectorPPType type) {
     for (auto it = m_EffectorsPP.begin(); it != m_EffectorsPP.end(); it++)
         if ((*it)->Type() == type) {
             if ((*it)->FreeOnRemove()) {
@@ -260,21 +243,20 @@ void CCameraManager::RemovePPEffector(EEffectorPPType type)
         }
 }
 
-void CCameraManager::OnEffectorReleased(SBaseEffector* e)
-{
+void CCameraManager::OnEffectorReleased(SBaseEffector* e) {
     if (!e->m_on_b_remove_callback.empty())
         e->m_on_b_remove_callback();
 
     xr_delete(e);
 }
 
-void CCameraManager::UpdateFromCamera(const CCameraBase* C)
-{
-    Update(C->vPosition, C->vDirection, C->vNormal, C->f_fov, C->f_aspect, g_pGamePersistent->Environment().CurrentEnv->far_plane, C->m_Flags.flags);
+void CCameraManager::UpdateFromCamera(const CCameraBase* C) {
+    Update(C->vPosition, C->vDirection, C->vNormal, C->f_fov, C->f_aspect,
+           g_pGamePersistent->Environment().CurrentEnv->far_plane, C->m_Flags.flags);
 }
 
-void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N, float fFOV_Dest, float fASPECT_Dest, float fFAR_Dest, u32 flags)
-{
+void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N, float fFOV_Dest,
+                            float fASPECT_Dest, float fFAR_Dest, u32 flags) {
 #ifdef DEBUG
     if (!Device.Paused()) {
         VERIFY(dbg_upd_frame != Device.dwFrame); // already updated !!!
@@ -319,8 +301,7 @@ void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N
     UpdateDeffered();
 }
 
-bool CCameraManager::ProcessCameraEffector(CEffectorCam* eff)
-{
+bool CCameraManager::ProcessCameraEffector(CEffectorCam* eff) {
     bool res = false;
     if (eff->Valid() && eff->ProcessCam(m_cam_info)) {
         res = true;
@@ -338,8 +319,7 @@ bool CCameraManager::ProcessCameraEffector(CEffectorCam* eff)
     return res;
 }
 
-void CCameraManager::UpdateCamEffectors()
-{
+void CCameraManager::UpdateCamEffectors() {
     if (m_EffectorsCam.empty())
         return;
     EffectorCamVec::reverse_iterator rit = m_EffectorsCam.rbegin();
@@ -352,8 +332,7 @@ void CCameraManager::UpdateCamEffectors()
     m_cam_info.n.crossproduct(m_cam_info.d, m_cam_info.r);
 }
 
-void CCameraManager::UpdatePPEffectors()
-{
+void CCameraManager::UpdatePPEffectors() {
     pp_affected.validate("before applying pp");
 
     int _count = 0;
@@ -391,8 +370,7 @@ void CCameraManager::UpdatePPEffectors()
     pp_affected.validate("after applying pp");
 }
 
-void CCameraManager::ApplyDevice(float _viewport_near)
-{
+void CCameraManager::ApplyDevice(float _viewport_near) {
     // Device params
     Device.mView.build_camera_dir(m_cam_info.p, m_cam_info.d, m_cam_info.n);
 
@@ -404,7 +382,8 @@ void CCameraManager::ApplyDevice(float _viewport_near)
     // projection
     Device.fFOV = m_cam_info.fFov;
     Device.fASPECT = m_cam_info.fAspect;
-    Device.mProject.build_projection(deg2rad(m_cam_info.fFov), m_cam_info.fAspect, _viewport_near, m_cam_info.fFar);
+    Device.mProject.build_projection(deg2rad(m_cam_info.fFov), m_cam_info.fAspect, _viewport_near,
+                                     m_cam_info.fFar);
 
     if (g_pGamePersistent && g_pGamePersistent->m_pMainMenu->IsActive())
         ResetPP();
@@ -433,8 +412,7 @@ void CCameraManager::ApplyDevice(float _viewport_near)
     }
 }
 
-void CCameraManager::ResetPP()
-{
+void CCameraManager::ResetPP() {
     IRender_Target* T = ::Render->getTarget();
     T->set_duality_h(pp_identity.duality.h);
     T->set_duality_v(pp_identity.duality.v);
@@ -451,8 +429,7 @@ void CCameraManager::ResetPP()
     T->set_cm_textures("", "");
 }
 
-void CCameraManager::Dump()
-{
+void CCameraManager::Dump() {
     Fmatrix mInvCamera;
     Fvector _R, _U, _T, _P;
 

@@ -23,23 +23,24 @@ class manager;
 
 class gradient {
 public:
-					gradient	();
-                    gradient(const gradient&) = delete;
-                    gradient& operator= (const gradient&) = delete;
-			void	load		(CInifile& config, shared_str const& section);
-			void	save		(CInifile& config, shared_str const& section);
-			void	fill		(manager const& manager, editor::property_holder* holder, editor::property_holder_collection* collection);
+    gradient();
+    gradient(const gradient&) = delete;
+    gradient& operator=(const gradient&) = delete;
+    void load(CInifile& config, shared_str const& section);
+    void save(CInifile& config, shared_str const& section);
+    void fill(manager const& manager, editor::property_holder* holder,
+              editor::property_holder_collection* collection);
 
 private:
-	bool xr_stdcall	use_getter	();
-	void xr_stdcall use_setter	(bool value);
+    bool xr_stdcall use_getter();
+    void xr_stdcall use_setter(bool value);
 
 private:
-	bool			m_use;
-    float			m_opacity;
-    float			m_radius;
-    shared_str		m_shader;
-    shared_str		m_texture;
+    bool m_use;
+    float m_opacity;
+    float m_radius;
+    shared_str m_shader;
+    shared_str m_texture;
 }; // class gradient
 
 } // namespace suns

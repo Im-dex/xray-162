@@ -1,5 +1,5 @@
 #pragma hdrstop
 
-#define INITGUID 
+#define INITGUID
 #include <dsound.h>
 #include <eax/eax.h>

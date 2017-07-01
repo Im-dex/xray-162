@@ -13,56 +13,51 @@
 #include "profiler.h"
 
 extern "C" {
-	DLL_API DLL_Pure*	__cdecl xrFactory_Create		(CLASS_ID clsid)
-	{
-		DLL_Pure			*object = object_factory().client_object(clsid);
+DLL_API DLL_Pure* __cdecl xrFactory_Create(CLASS_ID clsid) {
+    DLL_Pure* object = object_factory().client_object(clsid);
 #ifdef DEBUG
-		if (!object)
-			return			(0);
+    if (!object)
+        return (0);
 #endif
-		object->CLS_ID		= clsid;
-		return				(object);
-	}
+    object->CLS_ID = clsid;
+    return (object);
+}
 
-	DLL_API void		__cdecl	xrFactory_Destroy		(DLL_Pure* O)
-	{
-		xr_delete			(O);
-	}
+DLL_API void __cdecl xrFactory_Destroy(DLL_Pure* O) { xr_delete(O); }
 };
 
-void CCC_RegisterCommands	();
+void CCC_RegisterCommands();
 void setup_luabind_allocator();
 
 /*#ifdef NDEBUG
 
 namespace std {
-	void terminate			()
-	{
-		abort				();
-	}
+        void terminate			()
+        {
+                abort				();
+        }
 } // namespace std
 
 #endif // #ifdef NDEBUG*/
 
-BOOL APIENTRY DllMain(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved)
-{
-	switch (ul_reason_for_call) {
-		case DLL_PROCESS_ATTACH: {
-			// register console commands
-			CCC_RegisterCommands();
-			// keyboard binding
-			CCC_RegisterInput	();
+BOOL APIENTRY DllMain(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved) {
+    switch (ul_reason_for_call) {
+    case DLL_PROCESS_ATTACH: {
+        // register console commands
+        CCC_RegisterCommands();
+        // keyboard binding
+        CCC_RegisterInput();
 
-			setup_luabind_allocator	();
+        setup_luabind_allocator();
 #ifdef DEBUG
-			g_profiler			= xr_new<CProfiler>();
+        g_profiler = xr_new<CProfiler>();
 #endif
-			break;
-		}
+        break;
+    }
 
-		case DLL_PROCESS_DETACH: {
-			break;
-		}
-	}
-    return								(TRUE);
+    case DLL_PROCESS_DETACH: {
+        break;
+    }
+    }
+    return (TRUE);
 }

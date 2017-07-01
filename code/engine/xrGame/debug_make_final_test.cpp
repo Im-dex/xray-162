@@ -9,23 +9,18 @@
 #include "stdafx.h"
 #include "debug_make_final.hpp"
 
-struct A
-{
+struct A {
     A() = default;
     A(const A& other) = delete;
     A& operator=(const A& other) = delete;
 };
 
-struct B :
-	public A,
-	private debug::make_final<B>
-{
-};
+struct B : public A, private debug::make_final<B> {};
 
 struct C : B {};
 
-B	b;
+B b;
 
 // the next 2 lines won't compile
-C	*c0 = new C();
-C	c1;
+C* c0 = new C();
+C c1;

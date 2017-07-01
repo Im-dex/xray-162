@@ -6,7 +6,7 @@
 #define stdafxH
 #pragma once
 
-#pragma warning (disable:4661)
+#pragma warning(disable : 4661)
 
 #include "xrCore.h"
 #include "xrCore_platform.h"
@@ -14,4 +14,3 @@
 #endif
 
 #pragma hdrstop
-

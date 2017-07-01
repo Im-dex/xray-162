@@ -3,14 +3,14 @@
 
 #include "UIListBoxItem.h"
 
-class CUIListBoxItemMsgChain : public CUIListBoxItem
-{
-	typedef CUIListBoxItem inherited;
-public:
-					CUIListBoxItemMsgChain	(float height) : CUIListBoxItem(height) {};
-	virtual			~CUIListBoxItemMsgChain	() {};
+class CUIListBoxItemMsgChain : public CUIListBoxItem {
+    typedef CUIListBoxItem inherited;
 
-	virtual bool	OnMouseDown				(int mouse_btn);
+public:
+    CUIListBoxItemMsgChain(float height) : CUIListBoxItem(height){};
+    virtual ~CUIListBoxItemMsgChain(){};
+
+    virtual bool OnMouseDown(int mouse_btn);
 };
 
 #endif //#ifndef UILISTBOXITEMMSGCHAIN_H_INCLUDED

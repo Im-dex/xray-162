@@ -10,11 +10,11 @@
 namespace doors {
 
 class door;
-typedef xr_vector<door*>	doors_type;
+typedef xr_vector<door*> doors_type;
 
 enum door_state {
-	door_state_open,
-	door_state_closed,
+    door_state_open,
+    door_state_closed,
 }; // enum door_state
 
 extern float const g_door_length;

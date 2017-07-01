@@ -8,20 +8,20 @@
 #define AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_
 
 #pragma once
-#define ENGINE_API 
+#define ENGINE_API
 #define NO_XRC_STATS
 
 #include "xrCore/xrCore.h"
 
 #pragma warning(push)
-#pragma warning(disable:4995)
+#pragma warning(disable : 4995)
 #include "d3dx9.h"
 #pragma warning(pop)
 
 // Warnings
-#pragma warning (disable : 4786 )		// too long names
-#pragma warning (disable : 4503 )		// decorated name length exceeded
-#pragma warning (disable : 4251 )		// object needs DLL interface
+#pragma warning(disable : 4786) // too long names
+#pragma warning(disable : 4503) // decorated name length exceeded
+#pragma warning(disable : 4251) // object needs DLL interface
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

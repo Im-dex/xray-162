@@ -11,8 +11,8 @@
 template <>
 class CScriptCallbackEx<void> : public CScriptCallbackEx_<void> {
 public:
-#	define	macros_return_operator
-#	undef	SCRIPT_CALLBACK_EX_GENERATORS
-#	include "script_callback_ex_generators.h"
-#	undef	macros_return_operator
+#define macros_return_operator
+#undef SCRIPT_CALLBACK_EX_GENERATORS
+#include "script_callback_ex_generators.h"
+#undef macros_return_operator
 };

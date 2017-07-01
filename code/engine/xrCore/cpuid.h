@@ -21,12 +21,13 @@ struct processor_info {
     string64 modelName;
 
     unsigned char family; // family of the processor, eg. Intel_Pentium_Pro is family 6 processor
-    unsigned char model; // model of processor, eg. Intel_Pentium_Pro is model 1 of family 6 processor
+    unsigned char
+        model; // model of processor, eg. Intel_Pentium_Pro is model 1 of family 6 processor
     unsigned char stepping; // Processor revision number
 
     unsigned int features; // processor Feature ( same as return value).
 
-    unsigned int n_cores; // number of available physical cores
+    unsigned int n_cores;   // number of available physical cores
     unsigned int n_threads; // number of available logical threads
 
     unsigned int affinity_mask; // recommended affinity mask
@@ -34,8 +35,7 @@ struct processor_info {
     // except 2nd (and upper) logical threads
     // of the same physical core
 
-    bool hasFeature(const CpuFeature feature) const XR_NOEXCEPT
-    {
+    bool hasFeature(const CpuFeature feature) const XR_NOEXCEPT {
         return (features & static_cast<u32>(feature)) != 0;
     }
 };

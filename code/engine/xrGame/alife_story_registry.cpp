@@ -12,24 +12,25 @@
 #include "ai_space.h"
 #include "game_graph.h"
 
-CALifeStoryRegistry::~CALifeStoryRegistry	()
-{
-}
+CALifeStoryRegistry::~CALifeStoryRegistry() {}
 
-void CALifeStoryRegistry::add				(ALife::_STORY_ID id, CSE_ALifeDynamicObject *object, bool no_assert)
-{
-	if (id == INVALID_STORY_ID)
-		return;
+void CALifeStoryRegistry::add(ALife::_STORY_ID id, CSE_ALifeDynamicObject* object, bool no_assert) {
+    if (id == INVALID_STORY_ID)
+        return;
 
 #ifdef DEBUG
-	Msg("Adding Story item ID [%u], Object [%s] at level [%s]",id, object->name_replace(), *ai().game_graph().header().level(ai().game_graph().vertex(object->m_tGraphID)->level_id()).name());
+    Msg("Adding Story item ID [%u], Object [%s] at level [%s]", id, object->name_replace(),
+        *ai().game_graph()
+             .header()
+             .level(ai().game_graph().vertex(object->m_tGraphID)->level_id())
+             .name());
 #endif
 
-    auto	I = m_objects.find(id);
-	if (I != m_objects.end()) {
-		R_ASSERT2			(no_assert,"Specified story object is already in the Story registry!");
-		return;
-	} 
+    auto I = m_objects.find(id);
+    if (I != m_objects.end()) {
+        R_ASSERT2(no_assert, "Specified story object is already in the Story registry!");
+        return;
+    }
 
-	m_objects.insert		(std::make_pair(id,object));
+    m_objects.insert(std::make_pair(id, object));
 }

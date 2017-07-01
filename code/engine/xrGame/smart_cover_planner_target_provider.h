@@ -15,77 +15,75 @@
 
 namespace smart_cover {
 
-class target_provider : 
-	public	CActionBase<animation_planner>
-{
+class target_provider : public CActionBase<animation_planner> {
 private:
-	typedef CActionBase<animation_planner> inherited;
+    typedef CActionBase<animation_planner> inherited;
 
 public:
-						target_provider					(animation_planner *object, LPCSTR name, StalkerDecisionSpace::EWorldProperties const &world_property, u32 const &loophole_value);
+    target_provider(animation_planner* object, LPCSTR name,
+                    StalkerDecisionSpace::EWorldProperties const& world_property,
+                    u32 const& loophole_value);
 
     target_provider(const target_provider& other) = delete;
     target_provider& operator=(const target_provider& other) = delete;
-	virtual	void		setup							(animation_planner *object, CPropertyStorage *storage);
-	virtual	void		initialize						();
-	virtual void		finalize						();
+    virtual void setup(animation_planner* object, CPropertyStorage* storage);
+    virtual void initialize();
+    virtual void finalize();
 
 private:
-	StalkerDecisionSpace::EWorldProperties m_world_property;
-	u32					m_loophole_value;
+    StalkerDecisionSpace::EWorldProperties m_world_property;
+    u32 m_loophole_value;
 };
 
 ////////////////////////////////////////////////////////////////////////////
 //	class target_idle
 ////////////////////////////////////////////////////////////////////////////
 
-class target_idle : 
-	public	target_provider,
-	private debug::make_final<target_idle>
-{
+class target_idle : public target_provider, private debug::make_final<target_idle> {
 private:
-	typedef target_provider inherited;
+    typedef target_provider inherited;
 
 public:
-						target_idle						(animation_planner *object, LPCSTR name, StalkerDecisionSpace::EWorldProperties const &world_property, u32 const &loophole_value);
-	virtual	void		execute							();
+    target_idle(animation_planner* object, LPCSTR name,
+                StalkerDecisionSpace::EWorldProperties const& world_property,
+                u32 const& loophole_value);
+    virtual void execute();
 };
 
 ////////////////////////////////////////////////////////////////////////////
 //	class target_fire
 ////////////////////////////////////////////////////////////////////////////
 
-class target_fire : 
-	public	target_provider,
-	private debug::make_final<target_fire>
-{
+class target_fire : public target_provider, private debug::make_final<target_fire> {
 private:
-	typedef target_provider inherited;
+    typedef target_provider inherited;
 
 public:
-						target_fire						(animation_planner *object, LPCSTR name, StalkerDecisionSpace::EWorldProperties const &world_property, u32 const &loophole_value);
-	virtual	void		initialize						();
-	virtual	void		execute							();
+    target_fire(animation_planner* object, LPCSTR name,
+                StalkerDecisionSpace::EWorldProperties const& world_property,
+                u32 const& loophole_value);
+    virtual void initialize();
+    virtual void execute();
 };
 
 ////////////////////////////////////////////////////////////////////////////
 //	class target_fire_no_lookout
 ////////////////////////////////////////////////////////////////////////////
 
-class target_fire_no_lookout : 
-	public	target_provider,
-	private debug::make_final<target_fire_no_lookout>
-{
+class target_fire_no_lookout : public target_provider,
+                               private debug::make_final<target_fire_no_lookout> {
 private:
-	typedef target_provider inherited;
+    typedef target_provider inherited;
 
 public:
-						target_fire_no_lookout			(animation_planner *object, LPCSTR name, StalkerDecisionSpace::EWorldProperties const &world_property, u32 const &loophole_value);
-	virtual	void		initialize						();
+    target_fire_no_lookout(animation_planner* object, LPCSTR name,
+                           StalkerDecisionSpace::EWorldProperties const& world_property,
+                           u32 const& loophole_value);
+    virtual void initialize();
 
 private:
-	StalkerDecisionSpace::EWorldProperties m_world_property;
-	u32					m_loophole_value;
+    StalkerDecisionSpace::EWorldProperties m_world_property;
+    u32 m_loophole_value;
 };
 
 } // namespace smart_cover

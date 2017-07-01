@@ -1,7 +1,7 @@
 #ifndef MXVEC4_INCLUDED // -*- C++ -*-
 #define MXVEC4_INCLUDED
 #if !defined(__GNUC__)
-#  pragma once
+#pragma once
 #endif
 
 /************************************************************************
@@ -9,7 +9,7 @@
   4D Vector class
 
   Copyright (C) 1998 Michael Garland.  See "COPYING.txt" for details.
-  
+  
   $Id: MxVec4.h,v 1.11 2000/11/20 20:36:38 garland Exp $
 
  ************************************************************************/

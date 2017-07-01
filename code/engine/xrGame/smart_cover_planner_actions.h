@@ -19,88 +19,78 @@ namespace smart_cover {
 class animation_planner;
 
 ////////////////////////////////////////////////////////////////////////////
-// action_base 
+// action_base
 ////////////////////////////////////////////////////////////////////////////
 
-class action_base :
-	public CStalkerActionCombatBase
-{
+class action_base : public CStalkerActionCombatBase {
 private:
-	typedef CStalkerActionCombatBase inherited;
+    typedef CStalkerActionCombatBase inherited;
 
 public:
-						action_base					(CAI_Stalker *object, LPCSTR action_name = "");
+    action_base(CAI_Stalker* object, LPCSTR action_name = "");
 
     action_base(const action_base& other) = delete;
     action_base& operator=(const action_base& other) = delete;
-	virtual void		select_animation			(shared_str &result) = 0;
-	virtual	void		on_animation_end			() = 0;
-	virtual	void		on_mark						();
-	virtual	void		on_no_mark					();
-	virtual bool		is_animated_action			();
-			void		setup_orientation			();
+    virtual void select_animation(shared_str& result) = 0;
+    virtual void on_animation_end() = 0;
+    virtual void on_mark();
+    virtual void on_no_mark();
+    virtual bool is_animated_action();
+    void setup_orientation();
 };
 
 ////////////////////////////////////////////////////////////////////////////
 // change_loophole
 ////////////////////////////////////////////////////////////////////////////
 
-class change_loophole :	
-	public action_base,
-	private debug::make_final<change_loophole>
-{
+class change_loophole : public action_base, private debug::make_final<change_loophole> {
 private:
-	typedef action_base								inherited;
+    typedef action_base inherited;
 
 public:
-						change_loophole				(CAI_Stalker *object, LPCSTR action_name);
-	virtual void		initialize					();
-	virtual	void		execute						();
-	virtual void		finalize					();
-	virtual void		select_animation			(shared_str &result);
-	virtual	void		on_animation_end			();
+    change_loophole(CAI_Stalker* object, LPCSTR action_name);
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
+    virtual void select_animation(shared_str& result);
+    virtual void on_animation_end();
 };
 
 ////////////////////////////////////////////////////////////////////////////
 // non_animated_change_loophole
 ////////////////////////////////////////////////////////////////////////////
 
-class non_animated_change_loophole:
-	public action_base,
-	private debug::make_final<non_animated_change_loophole>
-{
+class non_animated_change_loophole : public action_base,
+                                     private debug::make_final<non_animated_change_loophole> {
 private:
-	typedef action_base								inherited;
+    typedef action_base inherited;
 
 public:
-						non_animated_change_loophole(CAI_Stalker *object, LPCSTR action_name);
-	virtual void		initialize					();
-	virtual void		execute						();
-	virtual void		finalize					();
-	virtual bool		is_animated_action			();
-	virtual void		select_animation			(shared_str &result);
-	virtual	void		on_animation_end			();
+    non_animated_change_loophole(CAI_Stalker* object, LPCSTR action_name);
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
+    virtual bool is_animated_action();
+    virtual void select_animation(shared_str& result);
+    virtual void on_animation_end();
 };
 
 ////////////////////////////////////////////////////////////////////////////
 // exit
 ////////////////////////////////////////////////////////////////////////////
 
-class exit :
-	public action_base,
-	private debug::make_final<exit>
-{
+class exit : public action_base, private debug::make_final<exit> {
 private:
-	typedef action_base								inherited;
+    typedef action_base inherited;
 
 public:
-						exit						(CAI_Stalker *object, LPCSTR action_name);
-	virtual void		initialize					();
-	virtual void		execute						();
-	virtual void		finalize					();
-	virtual bool		is_animated_action			();
-	virtual void		select_animation			(shared_str &result);
-	virtual	void		on_animation_end			();
+    exit(CAI_Stalker* object, LPCSTR action_name);
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
+    virtual bool is_animated_action();
+    virtual void select_animation(shared_str& result);
+    virtual void on_animation_end();
 };
 
 } // namespace smart_cover

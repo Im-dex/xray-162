@@ -4,13 +4,13 @@
   this code without permission or acknowledgement in any way you wish.
   Send questions, comments, complaints, performance data, etc to
   dl@cs.oswego.edu.
- 
+ 
   last update: Sun Feb 25 18:38:11 2001  Doug Lea  (dl at gee)
 
   This header is for ANSI C/C++ only.  You can set either of
   the following #defines before including:
 
-  * If USE_DL_PREFIX is defined, it is assumed that malloc.c 
+  * If USE_DL_PREFIX is defined, it is assumed that malloc.c
     was also compiled with this option, so all routines
     have names starting with "dl".
 
@@ -28,12 +28,12 @@
 // config
 #define USE_DL_PREFIX
 
-// 
+//
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stddef.h>   /* for size_t */
+#include <stddef.h> /* for size_t */
 
 /*
   malloc(size_t n)
@@ -55,9 +55,9 @@ extern "C" {
 */
 
 #ifndef USE_DL_PREFIX
-void*  malloc(size_t);
+void* malloc(size_t);
 #else
-void*  dlmalloc(size_t);
+void* dlmalloc(size_t);
 #endif
 
 /*
@@ -72,9 +72,9 @@ void*  dlmalloc(size_t);
   back unused memory to the system, thus reducing program footprint.
 */
 #ifndef USE_DL_PREFIX
-void     free(void*);
+void free(void*);
 #else
-void     dlfree(void*);
+void dlfree(void*);
 #endif
 
 /*
@@ -83,9 +83,9 @@ void     dlfree(void*);
   set to zero.
 */
 #ifndef USE_DL_PREFIX
-void*  calloc(size_t, size_t);
+void* calloc(size_t, size_t);
 #else
-void*  dlcalloc(size_t, size_t);
+void* dlcalloc(size_t, size_t);
 #endif
 
 /*
@@ -97,7 +97,7 @@ void*  dlcalloc(size_t, size_t);
   prefers extending p when possible, otherwise it employs the
   equivalent of a malloc-copy-free sequence.
 
-  If p is null, realloc is equivalent to malloc.  
+  If p is null, realloc is equivalent to malloc.
 
   If space is not available, realloc returns null, errno is set (if on
   ANSI) and p is NOT freed.
@@ -116,9 +116,9 @@ void*  dlcalloc(size_t, size_t);
 */
 
 #ifndef USE_DL_PREFIX
-void*  realloc(void*, size_t);
+void* realloc(void*, size_t);
 #else
-void*  dlrealloc(void*, size_t);
+void* dlrealloc(void*, size_t);
 #endif
 
 /*
@@ -135,11 +135,10 @@ void*  dlrealloc(void*, size_t);
 */
 
 #ifndef USE_DL_PREFIX
-void*  memalign(size_t, size_t);
+void* memalign(size_t, size_t);
 #else
-void*  dlmemalign(size_t, size_t);
+void* dlmemalign(size_t, size_t);
 #endif
-
 
 /*
   valloc(size_t n);
@@ -149,11 +148,10 @@ void*  dlmemalign(size_t, size_t);
 */
 
 #ifndef USE_DL_PREFIX
-void*  valloc(size_t);
+void* valloc(size_t);
 #else
-void*  dlvalloc(size_t);
+void* dlvalloc(size_t);
 #endif
-
 
 /*
   independent_calloc(size_t n_elements, size_t element_size, void* chunks[]);
@@ -184,7 +182,7 @@ void*  dlvalloc(size_t);
   should instead use regular calloc and assign pointers into this
   space to represent elements.  (In this case though, you cannot
   independently free elements.)
-  
+  
   independent_calloc simplifies and speeds up implementations of many
   kinds of pools.  It may also be useful when constructing large data
   structures that initially have a fixed number of fixed-sized nodes,
@@ -192,16 +190,16 @@ void*  dlvalloc(size_t);
   may later need to be freed. For example:
 
   struct Node { int item; struct Node* next; };
-  
+  
   struct Node* build_list() {
     struct Node** pool;
     int n = read_number_of_nodes_needed();
     if (n <= 0) return 0;
     pool = (struct Node**)(independent_calloc(n, sizeof(struct Node), 0);
     if (pool == 0) return 0; // failure
-    // organize into a linked list... 
+    // organize into a linked list...
     struct Node* first = pool[0];
-    for (i = 0; i < n-1; ++i) 
+    for (i = 0; i < n-1; ++i)
       pool[i]->next = pool[i+1];
     free(pool);     // Can now free the array (or not, if it is needed later)
     return first;
@@ -235,11 +233,11 @@ void** dlindependent_calloc(size_t, size_t, void**);
   null if the allocation failed.  If n_elements is zero and chunks is
   null, it returns a chunk representing an array with zero elements
   (which should be freed if not wanted).
-  
+  
   Each element must be individually freed when it is no longer
   needed. If you'd like to instead be able to free all at once, you
   should instead use a single regular malloc, and assign pointers at
-  particular offsets in the aggregate space. (In this case though, you 
+  particular offsets in the aggregate space. (In this case though, you
   cannot independently free elements.)
 
   independent_comallac differs from independent_calloc in that each
@@ -280,7 +278,6 @@ void** independent_comalloc(size_t, size_t*, void**);
 void** dlindependent_comalloc(size_t, size_t*, void**);
 #endif
 
-
 /*
   pvalloc(size_t n);
   Equivalent to valloc(minimum-page-that-holds(n)), that is,
@@ -288,9 +285,9 @@ void** dlindependent_comalloc(size_t, size_t*, void**);
  */
 
 #ifndef USE_DL_PREFIX
-void*  pvalloc(size_t);
+void* pvalloc(size_t);
 #else
-void*  dlpvalloc(size_t);
+void* dlpvalloc(size_t);
 #endif
 
 /*
@@ -298,16 +295,15 @@ void*  dlpvalloc(size_t);
   Equivalent to free(p).
 
   cfree is needed/defined on some systems that pair it with calloc,
-  for odd historical reasons (such as: cfree is used in example 
+  for odd historical reasons (such as: cfree is used in example
   code in the first edition of K&R).
 */
 
 #ifndef USE_DL_PREFIX
-void     cfree(void*);
+void cfree(void*);
 #else
-void     dlcfree(void*);
+void dlcfree(void*);
 #endif
-
 
 /*
   malloc_trim(size_t pad);
@@ -320,7 +316,7 @@ void     dlcfree(void*);
   some allocation patterns, some large free blocks of memory will be
   locked between two used chunks, so they cannot be given back to
   the system.
-  
+  
   The `pad' argument to malloc_trim represents the amount of free
   trailing space to leave untrimmed. If this argument is zero,
   only the minimum amount of memory to maintain internal data
@@ -328,18 +324,17 @@ void     dlcfree(void*);
   can be supplied to maintain enough trailing space to service
   future expected allocations without having to re-obtain memory
   from the system.
-  
+  
   Malloc_trim returns 1 if it actually released any memory, else 0.
   On systems that do not support "negative sbrks", it will always
   return 0.
 */
 
 #ifndef USE_DL_PREFIX
-int      malloc_trim(size_t);
+int malloc_trim(size_t);
 #else
-int      dlmalloc_trim(size_t);
+int dlmalloc_trim(size_t);
 #endif
-
 
 /*
   malloc_usable_size(void* p);
@@ -357,11 +352,10 @@ int      dlmalloc_trim(size_t);
 */
 
 #ifndef USE_DL_PREFIX
-size_t   malloc_usable_size(void*);
+size_t malloc_usable_size(void*);
 #else
-size_t   dlmalloc_usable_size(void*);
+size_t dlmalloc_usable_size(void*);
 #endif
-
 
 /*
   malloc_stats();
@@ -384,26 +378,26 @@ size_t   dlmalloc_usable_size(void*);
 */
 
 #ifndef USE_DL_PREFIX
-void     malloc_stats();
+void malloc_stats();
 #else
-void     dlmalloc_stats();
+void dlmalloc_stats();
 #endif
 
 /*
   mallinfo()
   Returns (by copy) a struct containing various summary statistics:
 
-  arena:     current total non-mmapped bytes allocated from system 
-  ordblks:   the number of free chunks 
+  arena:     current total non-mmapped bytes allocated from system
+  ordblks:   the number of free chunks
   smblks:    the number of fastbin blocks (i.e., small chunks that
                have been freed but not use resused or consolidated)
-  hblks:     current number of mmapped regions 
-  hblkhd:    total bytes held in mmapped regions 
+  hblks:     current number of mmapped regions
+  hblkhd:    total bytes held in mmapped regions
   usmblks:   the maximum total allocated space. This will be greater
                 than current total if trimming has occurred.
-  fsmblks:   total bytes held in fastbin blocks 
+  fsmblks:   total bytes held in fastbin blocks
   uordblks:  current total allocated space (normal or mmapped)
-  fordblks:  total free space 
+  fordblks:  total free space
   keepcost:  the maximum number of bytes that could ideally be released
                back to system via malloc_trim. ("ideally" means that
                it ignores page restrictions etc.)
@@ -411,7 +405,7 @@ void     dlmalloc_stats();
   The names of some of these fields don't bear much relation with
   their contents because this struct was defined as standard in
   SVID/XPG so reflects the malloc implementation that was then used
-  in SystemV Unix.  
+  in SystemV Unix.
 
   The original SVID version of this struct, defined on most systems
   with mallinfo, declares all fields as ints. But some others define
@@ -430,16 +424,16 @@ void     dlmalloc_stats();
 #ifndef HAVE_USR_INCLUDE_MALLOC_H
 #ifndef _MALLOC_H
 struct mallinfo {
-  int arena;    
-  int ordblks;  
-  int smblks;   
-  int hblks;    
-  int hblkhd;   
-  int usmblks;  
-  int fsmblks;  
-  int uordblks; 
-  int fordblks; 
-  int keepcost; 
+    int arena;
+    int ordblks;
+    int smblks;
+    int hblks;
+    int hblkhd;
+    int usmblks;
+    int fsmblks;
+    int uordblks;
+    int fordblks;
+    int keepcost;
 };
 #endif
 #endif
@@ -467,15 +461,15 @@ struct mallinfo dlmallinfo(void);
   Symbol            param #   default    allowed param values
   M_MXFAST          1         64         0-80  (0 disables fastbins)
   M_TRIM_THRESHOLD -1         128*1024   any   (-1U disables trimming)
-  M_TOP_PAD        -2         0          any  
+  M_TOP_PAD        -2         0          any
   M_MMAP_THRESHOLD -3         128*1024   any   (or 0 if no MMAP support)
   M_MMAP_MAX       -4         65536      any   (0 disables use of mmap)
 */
 
 #ifndef USE_DL_PREFIX
-int  mallopt(int, int);
+int mallopt(int, int);
 #else
-int  dlmallopt(int, int);
+int dlmallopt(int, int);
 #endif
 
 /* Descriptions of tuning options */
@@ -504,7 +498,7 @@ int  dlmallopt(int, int);
 */
 
 #ifndef M_MXFAST
-#define M_MXFAST  1
+#define M_MXFAST 1
 #endif
 
 /*
@@ -549,7 +543,7 @@ int  dlmallopt(int, int);
   safeguards.
 
   The trim value It must be greater than page size to have any useful
-  effect.  To disable trimming completely, you can set to 
+  effect.  To disable trimming completely, you can set to
   (unsigned long)(-1)
 
   Trim settings interact with fastbin (MXFAST) settings: Unless
@@ -568,7 +562,7 @@ int  dlmallopt(int, int);
   since that memory will immediately be returned to the system.
 */
 
-#define M_TRIM_THRESHOLD    -1
+#define M_TRIM_THRESHOLD -1
 
 /*
   M_TOP_PAD is the amount of extra `padding' space to allocate or
@@ -597,8 +591,7 @@ int  dlmallopt(int, int);
   the program needs.
 */
 
-#define M_TOP_PAD           -2
-
+#define M_TOP_PAD -2
 
 /*
   M_MMAP_THRESHOLD is the request size threshold for using mmap()
@@ -614,9 +607,9 @@ int  dlmallopt(int, int);
 
   Segregating space in this way has the benefits that:
 
-   1. Mmapped space can ALWAYS be individually released back 
-      to the system, which helps keep the system level memory 
-      demands of a long-lived program low. 
+   1. Mmapped space can ALWAYS be individually released back
+      to the system, which helps keep the system level memory
+      demands of a long-lived program low.
    2. Mapped memory can never become `locked' between
       other chunks, as can happen with normally allocated chunks, which
       means that even trimming via malloc_trim would not release them.
@@ -638,7 +631,7 @@ int  dlmallopt(int, int);
   systems.
 */
 
-#define M_MMAP_THRESHOLD    -3
+#define M_MMAP_THRESHOLD -3
 
 /*
   M_MMAP_MAX is the maximum number of requests to simultaneously
@@ -653,31 +646,30 @@ int  dlmallopt(int, int);
   attempts to set it to non-zero values in mallopt will fail.
 */
 
-#define M_MMAP_MAX          -4
-
+#define M_MMAP_MAX -4
 
 /* Unused SVID2/XPG mallopt options, listed for completeness */
 
 #ifndef M_NBLKS
-#define M_NLBLKS  2    /* UNUSED in this malloc */
+#define M_NLBLKS 2 /* UNUSED in this malloc */
 #endif
 #ifndef M_GRAIN
-#define M_GRAIN   3    /* UNUSED in this malloc */
+#define M_GRAIN 3 /* UNUSED in this malloc */
 #endif
 #ifndef M_KEEP
-#define M_KEEP    4    /* UNUSED in this malloc */
+#define M_KEEP 4 /* UNUSED in this malloc */
 #endif
 
-/* 
+/*
   Some malloc.h's declare alloca, even though it is not part of malloc.
 */
 
 //#ifndef _ALLOCA_H
-//extern void* alloca(size_t);
+// extern void* alloca(size_t);
 //#endif
 
 #ifdef __cplusplus
-};  /* end of extern "C" */
+}; /* end of extern "C" */
 #endif
 
 #endif /* MALLOC_270_H */

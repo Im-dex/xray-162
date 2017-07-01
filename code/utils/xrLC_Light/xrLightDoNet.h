@@ -6,8 +6,7 @@
 
 #ifndef XRLIGHTDONET_H_INCLUDED
 #define XRLIGHTDONET_H_INCLUDED
-namespace lc_net
-{
-void	xrNetDOLight();
+namespace lc_net {
+void xrNetDOLight();
 }
 #endif // #ifndef XRLIGHTDONET_H_INCLUDED

@@ -34,9 +34,8 @@
 
 #include "../xrcore/xr_resource.h"
 
-#ifdef _EDITOR    
-# 	include "ETools.h"
+#ifdef _EDITOR
+#include "ETools.h"
 #endif
 // TODO: reference additional headers your program requires here
 #endif
-

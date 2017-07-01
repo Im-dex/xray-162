@@ -12,27 +12,24 @@
 
 namespace smart_cover {
 
-class storage : 
-	private debug::make_final<storage>
-{
+class storage : private debug::make_final<storage> {
 public:
-	typedef xr_vector<smart_cover::description*>		Descriptions;
-	typedef cover::DescriptionPtr						DescriptionPtr;
+    typedef xr_vector<smart_cover::description*> Descriptions;
+    typedef cover::DescriptionPtr DescriptionPtr;
 
 private:
-	Descriptions	m_descriptions;
+    Descriptions m_descriptions;
 
 public:
-
     storage() : m_descriptions() {}
-							~storage		();
+    ~storage();
 
     storage(const storage& other) = delete;
     storage& operator=(const storage& other) = delete;
-			DescriptionPtr	description		(shared_str const &table_id);
-			void			collect_garbage	();
+    DescriptionPtr description(shared_str const& table_id);
+    void collect_garbage();
 };
 
-} //namespace smart_cover
+} // namespace smart_cover
 
-#endif //SMART_COVER_STORAGE_H_INCLUDED
+#endif // SMART_COVER_STORAGE_H_INCLUDED

@@ -22,79 +22,74 @@
 //#include "character_rank.h"
 //#include "character_reputation.h"
 
-extern CSE_Abstract *F_entity_Create	(LPCSTR section);
+extern CSE_Abstract* F_entity_Create(LPCSTR section);
 
-extern CScriptPropertiesListHelper	*g_property_list_helper;
-extern HMODULE						prop_helper_module;
+extern CScriptPropertiesListHelper* g_property_list_helper;
+extern HMODULE prop_helper_module;
 
 extern "C" {
-	FACTORY_API	ISE_Abstract* __stdcall create_entity	(LPCSTR section)
-	{
-		return					(F_entity_Create(section));
-	}
-
-	FACTORY_API	void		__stdcall destroy_entity	(ISE_Abstract *&abstract)
-	{
-		CSE_Abstract			*object = smart_cast<CSE_Abstract*>(abstract);
-		F_entity_Destroy		(object);
-		abstract				= 0;
-	}
-};
-
-void setup_luabind_allocator		();
-
-BOOL APIENTRY DllMain		(HANDLE module_handle, DWORD call_reason, LPVOID reserved)
-{
-	switch (call_reason) {
-		case DLL_PROCESS_ATTACH: {
-//			g_temporary_stuff			= &trivial_encryptor::decode;
-
-			Debug._initialize			();
- 			Core._initialize			("xrSE_Factory",NULL,TRUE,"fsfactory.ltx");
-			string_path					SYSTEM_LTX;
-			FS.update_path				(SYSTEM_LTX,"$game_config$","system.ltx");
-			pSettings					= xr_new<CInifile>(SYSTEM_LTX);
-
-			setup_luabind_allocator		();
-
-			CCharacterInfo::InitInternal					();
-			CSpecificCharacter::InitInternal				();
-
-			break;
-		}
-		case DLL_PROCESS_DETACH: {
-			CCharacterInfo::DeleteSharedData				();
-			CCharacterInfo::DeleteIdToIndexData				();
-			CSpecificCharacter::DeleteSharedData			();
-			CSpecificCharacter::DeleteIdToIndexData			();
-
-
-			xr_delete					(g_object_factory);
-			CInifile** s				= (CInifile**)(&pSettings);
-			xr_delete					(*s);
-			xr_delete					(g_property_list_helper);
-			xr_delete					(g_ai_space);
-			xr_delete					(g_object_factory);
-			if (prop_helper_module)
-				FreeLibrary				(prop_helper_module);
-			Core._destroy				();
-			break;
-		}
-	}
-    return				(TRUE);
+FACTORY_API ISE_Abstract* __stdcall create_entity(LPCSTR section) {
+    return (F_entity_Create(section));
 }
 
-void _destroy_item_data_vector_cont(T_VECTOR* vec)
-{
-	T_VECTOR::iterator it		= vec->begin();
-	T_VECTOR::iterator it_e		= vec->end();
+FACTORY_API void __stdcall destroy_entity(ISE_Abstract*& abstract) {
+    CSE_Abstract* object = smart_cast<CSE_Abstract*>(abstract);
+    F_entity_Destroy(object);
+    abstract = 0;
+}
+};
 
-	xr_vector<CUIXml*>			_tmp;	
-	for(;it!=it_e;++it)
-	{
-		xr_vector<CUIXml*>::iterator it_f = std::find(_tmp.begin(), _tmp.end(), (*it)._xml);
-		if(it_f==_tmp.end())
-			_tmp.push_back	((*it)._xml);
-	}
-	delete_data	(_tmp);
+void setup_luabind_allocator();
+
+BOOL APIENTRY DllMain(HANDLE module_handle, DWORD call_reason, LPVOID reserved) {
+    switch (call_reason) {
+    case DLL_PROCESS_ATTACH: {
+        //			g_temporary_stuff			=
+        //&trivial_encryptor::decode;
+
+        Debug._initialize();
+        Core._initialize("xrSE_Factory", NULL, TRUE, "fsfactory.ltx");
+        string_path SYSTEM_LTX;
+        FS.update_path(SYSTEM_LTX, "$game_config$", "system.ltx");
+        pSettings = xr_new<CInifile>(SYSTEM_LTX);
+
+        setup_luabind_allocator();
+
+        CCharacterInfo::InitInternal();
+        CSpecificCharacter::InitInternal();
+
+        break;
+    }
+    case DLL_PROCESS_DETACH: {
+        CCharacterInfo::DeleteSharedData();
+        CCharacterInfo::DeleteIdToIndexData();
+        CSpecificCharacter::DeleteSharedData();
+        CSpecificCharacter::DeleteIdToIndexData();
+
+        xr_delete(g_object_factory);
+        CInifile** s = (CInifile**)(&pSettings);
+        xr_delete(*s);
+        xr_delete(g_property_list_helper);
+        xr_delete(g_ai_space);
+        xr_delete(g_object_factory);
+        if (prop_helper_module)
+            FreeLibrary(prop_helper_module);
+        Core._destroy();
+        break;
+    }
+    }
+    return (TRUE);
+}
+
+void _destroy_item_data_vector_cont(T_VECTOR* vec) {
+    T_VECTOR::iterator it = vec->begin();
+    T_VECTOR::iterator it_e = vec->end();
+
+    xr_vector<CUIXml*> _tmp;
+    for (; it != it_e; ++it) {
+        xr_vector<CUIXml*>::iterator it_f = std::find(_tmp.begin(), _tmp.end(), (*it)._xml);
+        if (it_f == _tmp.end())
+            _tmp.push_back((*it)._xml);
+    }
+    delete_data(_tmp);
 }

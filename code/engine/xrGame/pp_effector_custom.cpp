@@ -3,83 +3,74 @@
 #include "actor.h"
 #include "ActorEffector.h"
 
-#define TRANSLATE_TYPE(val) EEffectorPPType(val ? u32(u64(typeid(this).name())) : u32(u64(this) & u32(-1)))
+#define TRANSLATE_TYPE(val) \
+    EEffectorPPType(val ? u32(u64(typeid(this).name())) : u32(u64(this) & u32(-1)))
 
 #pragma warning(push)
-#pragma warning(disable:4355) // 'this' : used in base member initializer list
+#pragma warning(disable : 4355) // 'this' : used in base member initializer list
 
-CPPEffectorCustom::CPPEffectorCustom(const SPPInfo &ppi, bool one_instance, bool destroy_from_engine) :
-inherited(TRANSLATE_TYPE(one_instance), flt_max, destroy_from_engine)
-{
-	m_state		= ppi;
-	m_factor	= 0.f;
-	m_type		= TRANSLATE_TYPE(one_instance);
+CPPEffectorCustom::CPPEffectorCustom(const SPPInfo& ppi, bool one_instance,
+                                     bool destroy_from_engine)
+    : inherited(TRANSLATE_TYPE(one_instance), flt_max, destroy_from_engine) {
+    m_state = ppi;
+    m_factor = 0.f;
+    m_type = TRANSLATE_TYPE(one_instance);
 }
 #pragma warning(pop)
 
+#define SET_VALUE(def, target, factor) (def + (target - def) * factor)
 
+BOOL CPPEffectorCustom::Process(SPPInfo& pp) {
+    if (!inherited::Process(pp))
+        return FALSE;
 
-#define SET_VALUE(def, target, factor) (def + (target-def) * factor)
+    // update factor
+    if (!update())
+        return FALSE;
 
-BOOL CPPEffectorCustom::Process(SPPInfo& pp)
-{
-	if (!inherited::Process(pp)) return FALSE;
+    pp.lerp(pp_identity, m_state, m_factor);
 
-	// update factor
-	if (!update()) return FALSE;
-
-	pp.lerp				(pp_identity, m_state, m_factor);
-
-	return TRUE;
+    return TRUE;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-CPPEffectorControlled::CPPEffectorControlled(CPPEffectorController *controller, const SPPInfo &ppi, bool one_instance , bool destroy_from_engine ) : inherited (ppi,one_instance,destroy_from_engine)
-{
-	m_controller = controller;
+CPPEffectorControlled::CPPEffectorControlled(CPPEffectorController* controller, const SPPInfo& ppi,
+                                             bool one_instance, bool destroy_from_engine)
+    : inherited(ppi, one_instance, destroy_from_engine) {
+    m_controller = controller;
 }
-BOOL CPPEffectorControlled::update()
-{
-	m_controller->update_factor();
-	return TRUE;
-}
-
-
-CPPEffectorController::CPPEffectorController() 
-{
+BOOL CPPEffectorControlled::update() {
+    m_controller->update_factor();
+    return TRUE;
 }
 
-CPPEffectorController::~CPPEffectorController()
-{
-	if (m_effector) {
-		Actor()->Cameras().RemovePPEffector(m_effector->get_type());
-	}
+CPPEffectorController::CPPEffectorController() {}
+
+CPPEffectorController::~CPPEffectorController() {
+    if (m_effector) {
+        Actor()->Cameras().RemovePPEffector(m_effector->get_type());
+    }
 }
 
+void CPPEffectorController::activate() {
+    VERIFY(!m_effector);
 
-void CPPEffectorController::activate()
-{	
-	VERIFY							(!m_effector);
-	
-	m_effector = create_effector	();
-	Actor()->Cameras().AddPPEffector		(m_effector);
+    m_effector = create_effector();
+    Actor()->Cameras().AddPPEffector(m_effector);
 }
 
-void CPPEffectorController::deactivate()
-{
-	VERIFY				(m_effector);
-	
-	Actor()->Cameras().RemovePPEffector(m_effector->get_type());
-	m_effector			= 0;
+void CPPEffectorController::deactivate() {
+    VERIFY(m_effector);
+
+    Actor()->Cameras().RemovePPEffector(m_effector->get_type());
+    m_effector = 0;
 }
 
-void CPPEffectorController::frame_update()
-{
-	if (m_effector) {
-		if (check_completion())				deactivate();
-	} else if (check_start_conditions())	activate();
+void CPPEffectorController::frame_update() {
+    if (m_effector) {
+        if (check_completion())
+            deactivate();
+    } else if (check_start_conditions())
+        activate();
 }
-
-
-

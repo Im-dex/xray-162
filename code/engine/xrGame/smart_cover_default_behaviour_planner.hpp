@@ -16,35 +16,33 @@ namespace smart_cover {
 
 class animation_planner;
 
-class default_behaviour_planner : 
-	public CActionPlannerAction<animation_planner>,
-	private debug::make_final<default_behaviour_planner>
-{
+class default_behaviour_planner : public CActionPlannerAction<animation_planner>,
+                                  private debug::make_final<default_behaviour_planner> {
 private:
-	typedef CActionPlannerAction<animation_planner>	inherited;
+    typedef CActionPlannerAction<animation_planner> inherited;
 
 private:
-				void		add_evaluators				();
-				void		add_actions					();
+    void add_evaluators();
+    void add_actions();
 
 public:
-							default_behaviour_planner	(animation_planner *object, LPCSTR action_name);
+    default_behaviour_planner(animation_planner* object, LPCSTR action_name);
 
     default_behaviour_planner(const default_behaviour_planner& other) = delete;
     default_behaviour_planner& operator=(const default_behaviour_planner& other) = delete;
-		virtual	void		setup						(animation_planner *object, CPropertyStorage *storage);
-		virtual	void		initialize					();
-		virtual void		update						();
-		virtual	void		finalize					();
-	IC			u32	const	&idle_time					() const;
-	IC			void		idle_time					(u32 const &value);
-	IC			u32	const	&lookout_time				() const;
-	IC			void		lookout_time				(u32 const &value);
-		virtual LPCSTR		object_name					() const;
+    virtual void setup(animation_planner* object, CPropertyStorage* storage);
+    virtual void initialize();
+    virtual void update();
+    virtual void finalize();
+    IC u32 const& idle_time() const;
+    IC void idle_time(u32 const& value);
+    IC u32 const& lookout_time() const;
+    IC void lookout_time(u32 const& value);
+    virtual LPCSTR object_name() const;
 
 private:
-		u32				m_idle_time;
-		u32				m_lookout_time;
+    u32 m_idle_time;
+    u32 m_lookout_time;
 };
 
 } // namespace smart_cover

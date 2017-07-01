@@ -25,36 +25,33 @@ namespace suns {
 class flare;
 class manager;
 
-class sun :
-	public CLensFlare,
-	public editor::property_holder_holder
-{
+class sun : public CLensFlare, public editor::property_holder_holder {
 public:
-								sun			(manager const& manager, shared_str const &section);
-                                sun(const sun&) = delete;
-                                sun& operator= (const sun&) = delete;
-								~sun		();
-			void				load		(CInifile& config);
-			void				save		(CInifile& config);
-			void				fill		(editor::property_holder_collection* collection);
+    sun(manager const& manager, shared_str const& section);
+    sun(const sun&) = delete;
+    sun& operator=(const sun&) = delete;
+    ~sun();
+    void load(CInifile& config);
+    void save(CInifile& config);
+    void fill(editor::property_holder_collection* collection);
 
 private:
-			LPCSTR xr_stdcall	id_getter	() const;
-			void   xr_stdcall	id_setter	(LPCSTR value);
+    LPCSTR xr_stdcall id_getter() const;
+    void xr_stdcall id_setter(LPCSTR value);
+
 public:
-	inline	shared_str const&	id			() const { return m_id; }
-	virtual	property_holder*	object		();
+    inline shared_str const& id() const { return m_id; }
+    virtual property_holder* object();
 
 private:
-
-	shared_str					m_id;
-    shared_str					m_shader;
-    shared_str					m_texture;
-	manager const&				m_manager;
-	editor::property_holder*	m_property_holder;
-    float						m_radius;
-    bool						m_use;
-    bool						m_ignore_color;
+    shared_str m_id;
+    shared_str m_shader;
+    shared_str m_texture;
+    manager const& m_manager;
+    editor::property_holder* m_property_holder;
+    float m_radius;
+    bool m_use;
+    bool m_ignore_color;
 }; // class sun
 
 } // namespace suns

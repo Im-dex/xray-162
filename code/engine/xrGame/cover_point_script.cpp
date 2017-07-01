@@ -11,19 +11,12 @@
 
 using namespace luabind;
 
-bool CCoverPoint__is_smart_cover	(CCoverPoint const* cover)
-{
-	return		(cover->m_is_smart_cover);
-}
+bool CCoverPoint__is_smart_cover(CCoverPoint const* cover) { return (cover->m_is_smart_cover); }
 
-#pragma optimize("s",on)
-void CCoverPoint::script_register(lua_State *L)
-{
-	module(L)
-	[
-		class_<CCoverPoint>("cover_point")
-			.def("position",			&CCoverPoint::position)
-			.def("level_vertex_id",		&CCoverPoint::level_vertex_id)
-			.def("is_smart_cover",		&CCoverPoint__is_smart_cover)
-	];
+#pragma optimize("s", on)
+void CCoverPoint::script_register(lua_State* L) {
+    module(L)[class_<CCoverPoint>("cover_point")
+                  .def("position", &CCoverPoint::position)
+                  .def("level_vertex_id", &CCoverPoint::level_vertex_id)
+                  .def("is_smart_cover", &CCoverPoint__is_smart_cover)];
 }

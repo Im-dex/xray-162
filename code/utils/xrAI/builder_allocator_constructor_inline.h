@@ -8,29 +8,23 @@
 
 #pragma once
 
-#define TEMPLATE_SPECIALIZATION \
-	template <typename _1,typename _2>\
-	template <template <typename _T> class _vertex> 
+#define TEMPLATE_SPECIALIZATION         \
+    template <typename _1, typename _2> \
+    template <template <typename _T> class _vertex>
 
-#define CConstructorBuilderAllocator CBuilderAllocatorConstructor<_1,_2>::CDataStorage<_vertex>
-
-TEMPLATE_SPECIALIZATION
-IC	CConstructorBuilderAllocator::CDataStorage	(const u32 vertex_count) :
-	CDataStorageBase			(vertex_count),
-	CDataStorageAllocator		()
-{
-}
+#define CConstructorBuilderAllocator CBuilderAllocatorConstructor<_1, _2>::CDataStorage<_vertex>
 
 TEMPLATE_SPECIALIZATION
-CConstructorBuilderAllocator::~CDataStorage		()
-{
-}
+IC CConstructorBuilderAllocator::CDataStorage(const u32 vertex_count)
+    : CDataStorageBase(vertex_count), CDataStorageAllocator() {}
 
 TEMPLATE_SPECIALIZATION
-IC	void CConstructorBuilderAllocator::init		()
-{
-	CDataStorageBase::init		();
-	CDataStorageAllocator::init ();
+CConstructorBuilderAllocator::~CDataStorage() {}
+
+TEMPLATE_SPECIALIZATION
+IC void CConstructorBuilderAllocator::init() {
+    CDataStorageBase::init();
+    CDataStorageAllocator::init();
 }
 
 #undef TEMPLATE_SPECIALIZATION

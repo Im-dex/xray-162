@@ -18,16 +18,16 @@ class CAI_Trader;
 
 class CStalkerActionSolveZonePuzzle : public CStalkerActionBase {
 protected:
-	typedef CStalkerActionBase inherited;
+    typedef CStalkerActionBase inherited;
 
 protected:
-	u32					m_stop_weapon_handling_time;
+    u32 m_stop_weapon_handling_time;
 
 public:
-						CStalkerActionSolveZonePuzzle	(CAI_Stalker *object, LPCSTR action_name = "");
-	virtual void		initialize						();
-	virtual void		execute							();
-	virtual void		finalize						();
+    CStalkerActionSolveZonePuzzle(CAI_Stalker* object, LPCSTR action_name = "");
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -36,11 +36,11 @@ public:
 
 class CStalkerActionSmartTerrain : public CStalkerActionBase {
 protected:
-	typedef CStalkerActionBase inherited;
+    typedef CStalkerActionBase inherited;
 
 public:
-						CStalkerActionSmartTerrain		(CAI_Stalker *object, LPCSTR action_name = "");
-	virtual void		initialize						();
-	virtual void		execute							();
-	virtual void		finalize						();
+    CStalkerActionSmartTerrain(CAI_Stalker* object, LPCSTR action_name = "");
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
 };

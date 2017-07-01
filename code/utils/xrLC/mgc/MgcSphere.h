@@ -17,17 +17,15 @@
 
 namespace Mgc {
 
-
-class Sphere
-{
+class Sphere {
 public:
-    Sphere () {}
+    Sphere() {}
 
-    Vector3& Center () { return m_kCenter; }
-    const Vector3& Center () const { return m_kCenter; }
+    Vector3& Center() { return m_kCenter; }
+    const Vector3& Center() const { return m_kCenter; }
 
-    Real& Radius () { return m_fRadius; }
-    const Real& Radius () const { return m_fRadius; }
+    Real& Radius() { return m_fRadius; }
+    const Real& Radius() const { return m_fRadius; }
 
 protected:
     Vector3 m_kCenter;

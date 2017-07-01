@@ -23,17 +23,18 @@ class manager;
 
 class blend {
 public:
-					blend		();
-                    blend(const blend&) = delete;
-                    blend& operator= (const blend&) = delete;
-			void	load		(CInifile& config, shared_str const& section);
-			void	save		(CInifile& config, shared_str const& section);
-			void	fill		(manager const& manager, editor::property_holder* holder, editor::property_holder_collection* collection);
+    blend();
+    blend(const blend&) = delete;
+    blend& operator=(const blend&) = delete;
+    void load(CInifile& config, shared_str const& section);
+    void save(CInifile& config, shared_str const& section);
+    void fill(manager const& manager, editor::property_holder* holder,
+              editor::property_holder_collection* collection);
 
 private:
-    float			m_down_time;
-    float			m_rise_time;
-    float			m_time;
+    float m_down_time;
+    float m_rise_time;
+    float m_time;
 }; // class blend
 
 } // namespace suns

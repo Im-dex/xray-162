@@ -4,4 +4,3 @@
 
 IGridUser* CreateGridUserObject(DWORD version);
 IGenericStream* CreateGenericStream();
-

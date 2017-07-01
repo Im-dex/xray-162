@@ -25,45 +25,40 @@ namespace sound_channels {
 class source;
 class manager;
 
-class channel :
-	public CEnvAmbient::SSndChannel,
-	public editor::property_holder_holder
-{
+class channel : public CEnvAmbient::SSndChannel, public editor::property_holder_holder {
 private:
-	typedef CEnvAmbient::SSndChannel	inherited;
+    typedef CEnvAmbient::SSndChannel inherited;
 
 public:
-							channel		(manager const& manager, shared_str const& id);
-                            channel(const channel&) = delete;
-                            channel& operator= (const channel&) = delete;
-	virtual					~channel	();
-			void			load		(CInifile& config);
-			void			save		(CInifile& config);
-			void			fill		(editor::property_holder_collection* collection);
-	inline	LPCSTR			id			() const { return m_load_section.c_str(); }
-	virtual	sounds_type&	sounds		();
+    channel(manager const& manager, shared_str const& id);
+    channel(const channel&) = delete;
+    channel& operator=(const channel&) = delete;
+    virtual ~channel();
+    void load(CInifile& config);
+    void save(CInifile& config);
+    void fill(editor::property_holder_collection* collection);
+    inline LPCSTR id() const { return m_load_section.c_str(); }
+    virtual sounds_type& sounds();
 
 private:
-			LPCSTR xr_stdcall id_getter	() const;
-			void   xr_stdcall id_setter	(LPCSTR value);
-public:
-	typedef xr_vector<source*>			sound_container_type;
-
-private:
-	typedef editor::property_holder		property_holder_type;
-	typedef property_collection<
-				sound_container_type,
-				channel
-			>							collection_type;
+    LPCSTR xr_stdcall id_getter() const;
+    void xr_stdcall id_setter(LPCSTR value);
 
 public:
-	virtual	property_holder_type*	object	();
+    typedef xr_vector<source*> sound_container_type;
 
 private:
-	manager const&			m_manager;
-	property_holder_type*	m_property_holder;
-	collection_type*		m_collection;
-	sound_container_type	m_sounds;
+    typedef editor::property_holder property_holder_type;
+    typedef property_collection<sound_container_type, channel> collection_type;
+
+public:
+    virtual property_holder_type* object();
+
+private:
+    manager const& m_manager;
+    property_holder_type* m_property_holder;
+    collection_type* m_collection;
+    sound_container_type m_sounds;
 }; // class channel
 } // namespace sound_channels
 } // namespace environment

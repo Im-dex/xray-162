@@ -13,86 +13,68 @@ Comments:
 
 ******************************************************************************/
 
-
 #ifndef __NVIMAGELIB_CONVOLUTION_H
 #define __NVIMAGELIB_CONVOLUTION_H
 
-
 #include "NVI_Image.h"
 
-namespace xray_nvi{
-struct ConvolutionKernelElement
-{
-	int	x_offset;		// Coordinates of sample point
-	int y_offset;		//   relative to center
+namespace xray_nvi {
+struct ConvolutionKernelElement {
+    int x_offset; // Coordinates of sample point
+    int y_offset; //   relative to center
 
-	float	weight;		// Weight to multiply sample point by
+    float weight; // Weight to multiply sample point by
 };
-
 
 /////////////////////////////////////////////////////
-//  Kernel with arbitrary sample placement - 
+//  Kernel with arbitrary sample placement -
 //  Doesn't have to be square or evenly distributed
 
-class ConvolutionKernel
-{
+class ConvolutionKernel {
 public:
-	ConvolutionKernelElement * m_pElements;
-	int		m_nNumElements;
+    ConvolutionKernelElement* m_pElements;
+    int m_nNumElements;
 
+    ConvolutionKernel();
+    ~ConvolutionKernel();
 
+    HRESULT Initialize(int num_elements);
+    HRESULT Free();
 
-	ConvolutionKernel();
-	~ConvolutionKernel();
+    void SetElements(int num_elements, ConvolutionKernelElement* pElements);
 
+    //  Find extent (rectangle) over which the kernel samples
+    //  Values are the offset from the (0,0) element
+    void GetKernelExtents(int* xlow, int* xhigh, int* ylow, int* yhigh);
 
-	HRESULT 	Initialize( int num_elements );
-	HRESULT		Free();
-
-	void	SetElements( int num_elements, ConvolutionKernelElement * pElements );
-
-			//  Find extent (rectangle) over which the kernel samples
-			//  Values are the offset from the (0,0) element
-	void	GetKernelExtents( int * xlow, int * xhigh, int * ylow, int * yhigh );
-
-
-	ConvolutionKernel & operator = ( const ConvolutionKernel & src );
-
-
-
+    ConvolutionKernel& operator=(const ConvolutionKernel& src);
 };
-
 
 ///////////////////////////////////////////////////////
 //  A class to drive convolutions.
 //  Currently only supports A8R8G8B8 inputs
 
-class Convolver
-{
+class Convolver {
 private:
+    NVI_Image** m_hSrcImage;
+    NVI_ImageBordered m_BorderedImage;
 
-	NVI_Image		 ** m_hSrcImage;
-	NVI_ImageBordered 	m_BorderedImage;
-
-	ConvolutionKernel * m_pKernels;
-	int					m_nNumKernels;
-
+    ConvolutionKernel* m_pKernels;
+    int m_nNumKernels;
 
 public:
-	Convolver();
-	~Convolver();
+    Convolver();
+    ~Convolver();
 
-	HRESULT Initialize( NVI_Image ** pSrcImage, const ConvolutionKernel * pKernels,
-						int num_kernels, bool wrap );
-	HRESULT Free();
+    HRESULT Initialize(NVI_Image** pSrcImage, const ConvolutionKernel* pKernels, int num_kernels,
+                       bool wrap);
+    HRESULT Free();
 
-			// Coords in source image
-			// num_results must equal num_kernels set on Initialize();
-	void	Convolve_Alpha_At	( int i, int j, float * results, int num_results );
+    // Coords in source image
+    // num_results must equal num_kernels set on Initialize();
+    void Convolve_Alpha_At(int i, int j, float* results, int num_results);
 };
 
+}; // namespace xray_nvi
 
-};
-
-
-#endif			// __NVIMAGELIB_CONVOLUTION_H
+#endif // __NVIMAGELIB_CONVOLUTION_H

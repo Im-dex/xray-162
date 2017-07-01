@@ -9,15 +9,10 @@
 #ifndef INVENTORY_UPGRADE_ROOT_INLINE_H_INCLUDED
 #define INVENTORY_UPGRADE_ROOT_INLINE_H_INCLUDED
 
-namespace inventory
-{
-namespace upgrade
-{
+namespace inventory {
+namespace upgrade {
 
-IC LPCSTR Root::scheme() const
-{
-	return	m_upgrade_scheme.c_str();
-}
+IC LPCSTR Root::scheme() const { return m_upgrade_scheme.c_str(); }
 
 } // namespace upgrade
 } // namespace inventory

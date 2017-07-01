@@ -18,36 +18,35 @@ namespace editor {
 class property_holder_collection;
 
 namespace environment {
-	namespace sound_channels {
-		class manager;
-	} // namespace sound_channels
+namespace sound_channels {
+class manager;
+} // namespace sound_channels
 
 namespace ambients {
 
-class sound_id :
-	public editor::property_holder_holder {
+class sound_id : public editor::property_holder_holder {
 public:
-							sound_id		(sound_channels::manager const& manager, shared_str const& sound);
-                            sound_id(const sound_id&) = delete;
-                            sound_id& operator= (const sound_id&) = delete;
-	virtual					~sound_id		();
-			void			fill			(editor::property_holder_collection* collection);
-	inline	shared_str const& id			() const { return m_id; }
+    sound_id(sound_channels::manager const& manager, shared_str const& sound);
+    sound_id(const sound_id&) = delete;
+    sound_id& operator=(const sound_id&) = delete;
+    virtual ~sound_id();
+    void fill(editor::property_holder_collection* collection);
+    inline shared_str const& id() const { return m_id; }
 
 private:
-	typedef editor::property_holder			property_holder_type;
+    typedef editor::property_holder property_holder_type;
 
 public:
-	virtual	property_holder_type* object	();
+    virtual property_holder_type* object();
 
 private:
-	LPCSTR const* xr_stdcall collection		();
-	u32  xr_stdcall			collection_size	();
+    LPCSTR const* xr_stdcall collection();
+    u32 xr_stdcall collection_size();
 
 private:
-	property_holder_type*					m_property_holder;
-	sound_channels::manager const&			m_manager;
-	shared_str								m_id;
+    property_holder_type* m_property_holder;
+    sound_channels::manager const& m_manager;
+    shared_str m_id;
 }; // class sound_id
 } // namespace ambients
 } // namespace environment
