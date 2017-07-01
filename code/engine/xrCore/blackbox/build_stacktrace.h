@@ -44,14 +44,14 @@ size_t BuildStackTrace(char* buffer, size_t capacity, size_t lineCapacity) {
     if (GetThreadContext(GetCurrentThread(), &context)) {
 #ifndef _M_X64
         context.Eip = (DWORD)GetInstructionPtr();
-        __asm mov context.Ebp, ebp __asm mov context.Esp,
-            esp
+        __asm mov context.Ebp, ebp
+        __asm mov context.Esp, esp
 #else
         context.Rip = GetInstructionPtr();
         context.Rbp = (DWORD64)&ebp;
         context.Rsp = (DWORD64)&context;
 #endif
-                ex_ptrs.ContextRecord = &context;
+        ex_ptrs.ContextRecord = &context;
         ex_ptrs.ExceptionRecord = nullptr;
         return BuildStackTrace(&ex_ptrs, buffer, capacity, lineCapacity);
     }
