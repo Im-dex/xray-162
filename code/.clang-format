@@ -1,0 +1,13 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+DerivePointerAlignment: false
+PointerAlignment: Left
+ColumnLimit: 100
+AlwaysBreakTemplateDeclarations: true
+AccessModifierOffset: -4
+AlignEscapedNewlines: true
+AlignOperands: true
+ConstructorInitializerIndentWidth: 4
+Cpp11BracedListStyle: false
+SpaceAfterTemplateKeyword: true
+SortIncludes: false
