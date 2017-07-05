@@ -283,7 +283,7 @@ Shader* CResourceManager::Create(LPCSTR s_shader, LPCSTR s_textures, LPCSTR s_co
                 return _lua_Create("stub_default", s_textures);
             else {
                 FATAL("Can't find stub_default.s");
-                return 0;
+                return nullptr;
             }
         }
     }

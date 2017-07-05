@@ -110,4 +110,4 @@ add_library(xrCore SHARED ${COMPRESSOR_LZ} ${COMPRESSOR_LZO} ${COMPRESSOR_RT}
                           ${OS}
                           
                           ${SMEM_STR_LIB})
-target_link_libraries(xrCore dxerr2015 bugtrap version dbghelp winmm faultrep psapi)
+target_link_libraries(xrCore dxerr2015 version dbghelp winmm faultrep psapi)

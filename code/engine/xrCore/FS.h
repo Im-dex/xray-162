@@ -112,7 +112,7 @@ class XRCORE_API CMemoryWriter : public IWriter {
 
 public:
     CMemoryWriter() {
-        data = 0;
+        data = nullptr;
         position = 0;
         mem_size = 0;
         file_size = 0;

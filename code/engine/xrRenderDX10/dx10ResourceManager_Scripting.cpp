@@ -404,7 +404,7 @@ void CResourceManager::LS_Load() {
 
 void CResourceManager::LS_Unload() {
     lua_close(LSVM);
-    LSVM = NULL;
+    LSVM = nullptr;
 }
 
 BOOL CResourceManager::_lua_HasShader(LPCSTR s_shader) {

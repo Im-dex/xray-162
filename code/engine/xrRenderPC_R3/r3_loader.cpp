@@ -21,7 +21,7 @@
 #pragma warning(pop)
 
 void CRender::level_Load(IReader* fs) {
-    R_ASSERT(0 != g_pGameLevel);
+    R_ASSERT(nullptr != g_pGameLevel);
     R_ASSERT(!b_loaded);
 
     // Begin
@@ -35,17 +35,17 @@ void CRender::level_Load(IReader* fs) {
     {
         chunk = fs->open_chunk(fsL_SHADERS);
         R_ASSERT2(chunk, "Level doesn't builded correctly.");
-        u32 count = chunk->r_u32();
+        const u32 count = chunk->r_u32();
         Shaders.resize(count);
-        for (u32 i = 0; i < count; i++) // skip first shader as "reserved" one
+        for (size_t i = 0; i < count; i++) // skip first shader as "reserved" one
         {
             string512 n_sh, n_tlist;
-            LPCSTR n = LPCSTR(chunk->pointer());
+            const char* n = static_cast<const char*>(chunk->pointer());
             chunk->skip_stringZ();
             if (0 == n[0])
                 continue;
             xr_strcpy(n_sh, n);
-            LPSTR delim = strchr(n_sh, '/');
+            char* delim = strchr(n_sh, '/');
             *delim = 0;
             xr_strcpy(n_tlist, delim + 1);
             Shaders[i] = dxRenderDeviceRender::Instance().Resources->Create(n_sh, n_tlist);

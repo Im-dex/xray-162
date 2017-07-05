@@ -640,13 +640,13 @@ void CLocatorAPI::_initialize(u32 flags, LPCSTR target_folder, LPCSTR fs_name) {
 
     // append application path
     if (m_Flags.is(flScanAppRoot))
-        append_path("$app_root$", Core.ApplicationPath, 0, FALSE);
+        append_path("$app_root$", Core.ApplicationPath, nullptr, FALSE);
 
     //-----------------------------------------------------------
     // append application data path
     // target folder
     if (m_Flags.is(flTargetFolderOnly)) {
-        append_path("$target_folder$", target_folder, 0, TRUE);
+        append_path("$target_folder$", target_folder, nullptr, TRUE);
     } else {
         IReader* pFSltx = setup_fs_ltx(fs_name);
         /*

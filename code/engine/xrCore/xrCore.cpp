@@ -24,13 +24,6 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
                          const char* fs_fname) {
     xr_strcpy(ApplicationName, _ApplicationName);
     if (0 == init_counter) {
-#ifdef XRCORE_STATIC
-        _clear87();
-        _control87(_PC_53, MCW_PC);
-        _control87(_RC_CHOP, MCW_RC);
-        _control87(_RC_NEAR, MCW_RC);
-        _control87(_MCW_EM, MCW_EM);
-#endif
         // Init COM so we can use CoCreateInstance
         //		HRESULT co_res =
         if (!strstr(GetCommandLine(), "-editor"))

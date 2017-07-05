@@ -15,19 +15,10 @@
 
 extern bool shared_str_initialized;
 
-#define USE_BUG_TRAP
 #define DEBUG_INVOKE __debugbreak()
 static BOOL bException = FALSE;
 
-#ifndef USE_BUG_TRAP
-#include <exception>
-#endif
-
 #include <dbghelp.h> // MiniDump flags
-
-#ifdef USE_BUG_TRAP
-#include "bugtrap/bugtrap.h" // for BugTrap functionality
-#endif                       // USE_BUG_TRAP
 
 #include <new.h>    // for _set_new_mode
 #include <signal.h> // for signals
@@ -204,9 +195,6 @@ void xrDebug::backend(const char* expression, const char* description, const cha
 
     switch (result) {
     case IDCANCEL: {
-#ifdef USE_BUG_TRAP
-        BT_SetUserMessage(assertion_info);
-#endif // USE_BUG_TRAP
         DEBUG_INVOKE;
         break;
     }
@@ -223,9 +211,6 @@ void xrDebug::backend(const char* expression, const char* description, const cha
         NODEFAULT;
     }
 #else  // USE_OWN_ERROR_MESSAGE_WINDOW
-#ifdef USE_BUG_TRAP
-    BT_SetUserMessage(assertion_info);
-#endif // USE_BUG_TRAP
     DEBUG_INVOKE;
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
 #endif
@@ -242,7 +227,7 @@ LPCSTR xrDebug::error2string(long code) {
     #else
             result				= DXGetErrorDescription	(code);
     #endif*/
-    if (0 == result) {
+    if (nullptr == result) {
         FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, 0, code, 0, desc_storage,
                       sizeof(desc_storage) - 1, 0);
         result = desc_storage;
@@ -320,109 +305,6 @@ int out_of_memory_handler(size_t size) {
 extern LPCSTR log_name();
 
 XRCORE_API string_path g_bug_report_file;
-
-void CALLBACK PreErrorHandler(INT_PTR) {
-#ifdef USE_BUG_TRAP
-    if (!xr_FS || !FS.m_Flags.test(CLocatorAPI::flReady))
-        return;
-
-    string_path log_folder;
-
-    __try {
-        FS.update_path(log_folder, "$logs$", "");
-        if ((log_folder[0] != '\\') && (log_folder[1] != ':')) {
-            string256 current_folder;
-            _getcwd(current_folder, sizeof(current_folder));
-
-            string256 relative_path;
-            xr_strcpy(relative_path, sizeof(relative_path), log_folder);
-            strconcat(sizeof(log_folder), log_folder, current_folder, "\\", relative_path);
-        }
-    } __except (EXCEPTION_EXECUTE_HANDLER) {
-        xr_strcpy(log_folder, sizeof(log_folder), "logs");
-    }
-
-    string_path temp;
-    strconcat(sizeof(temp), temp, log_folder, log_name());
-    BT_AddLogFile(temp);
-
-    if (*g_bug_report_file)
-        BT_AddLogFile(g_bug_report_file);
-
-    BT_SaveSnapshot(nullptr);
-#endif // USE_BUG_TRAP
-}
-
-#ifdef USE_BUG_TRAP
-void SetupExceptionHandler() {
-    BT_InstallSehFilter();
-#if 1 // ndef USE_OWN_ERROR_MESSAGE_WINDOW
-    if (!strstr(GetCommandLine(), "-silent_error_mode"))
-        BT_SetActivityType(BTA_SHOWUI);
-    else
-        BT_SetActivityType(BTA_SAVEREPORT);
-#else  // USE_OWN_ERROR_MESSAGE_WINDOW
-    BT_SetActivityType(BTA_SAVEREPORT);
-#endif // USE_OWN_ERROR_MESSAGE_WINDOW
-
-    BT_SetDialogMessage(BTDM_INTRO2, "\
-This is X-Ray Engine v1.6 crash reporting client. \
-To help the development process, \
-please Submit Bug or save report and email it manually (button More...).\
-\r\nMany thanks in advance and sorry for the inconvenience.");
-
-    BT_SetPreErrHandler(PreErrorHandler, 0);
-    BT_SetAppName("XRay Engine");
-    BT_SetReportFormat(BTRF_TEXT);
-    BT_SetFlags(
-        /**/ BTF_DETAILEDMODE | /**BTF_EDIETMAIL | /**/
-        BTF_ATTACHREPORT /**| BTF_LISTPROCESSES /**| BTF_SHOWADVANCEDUI /**| BTF_SCREENCAPTURE/**/);
-
-    u32 const minidump_flags =
-#ifndef MASTER_GOLD
-        (MiniDumpWithDataSegs |
-//			MiniDumpWithFullMemory |
-//			MiniDumpWithHandleData |
-//			MiniDumpFilterMemory |
-//			MiniDumpScanMemory |
-//			MiniDumpWithUnloadedModules |
-#ifndef _EDITOR
-         MiniDumpWithIndirectlyReferencedMemory |
-#endif   // _EDITOR
-         //			MiniDumpFilterModulePaths |
-         //			MiniDumpWithProcessThreadData |
-         //			MiniDumpWithPrivateReadWriteMemory |
-         //			MiniDumpWithoutOptionalData |
-         //			MiniDumpWithFullMemoryInfo |
-         //			MiniDumpWithThreadInfo |
-         //			MiniDumpWithCodeSegs |
-         0);
-#else // #ifndef MASTER_GOLD
-        (MiniDumpWithDataSegs |
-//			MiniDumpWithFullMemory |
-//			MiniDumpWithHandleData |
-//			MiniDumpFilterMemory |
-//			MiniDumpScanMemory |
-//			MiniDumpWithUnloadedModules |
-#ifndef _EDITOR
-         MiniDumpWithIndirectlyReferencedMemory |
-#endif // _EDITOR
-         //			MiniDumpFilterModulePaths |
-         //			MiniDumpWithProcessThreadData |
-         //			MiniDumpWithPrivateReadWriteMemory |
-         //			MiniDumpWithoutOptionalData |
-         //			MiniDumpWithFullMemoryInfo |
-         //			MiniDumpWithThreadInfo |
-         //			MiniDumpWithCodeSegs |
-         0);
-#endif // #ifndef MASTER_GOLD
-
-    BT_SetDumpType(minidump_flags);
-    BT_SetSupportEMail("cop-crash-report@stalker-game.com");
-    //	BT_SetSupportServer		("localhost", 9999);
-    //	BT_SetSupportURL		("www.gsc-game.com");
-}
-#endif // USE_BUG_TRAP
 
 #if 1
 extern void BuildStackTrace(struct _EXCEPTION_POINTERS* pExceptionInfo);
@@ -639,7 +521,6 @@ typedef int(__cdecl* _PNH)(size_t);
 //    _CRTIMP int		__cdecl _set_new_mode( int );
 //    _CRTIMP _PNH	__cdecl _set_new_handler( _PNH );
 
-#ifndef USE_BUG_TRAP
 void _terminate() {
     if (strstr(GetCommandLine(), "-silent_error_mode"))
         exit(-1);
@@ -663,7 +544,7 @@ void _terminate() {
 
     LPCSTR endline = "\r\n";
     LPSTR buffer = assertion_info + xr_strlen(assertion_info);
-    buffer += xr_sprintf(buffer, "Press OK to abort execution%s", endline);
+    buffer += xr_sprintf(buffer, xr_strlen(assertion_info), "Press OK to abort execution%s", endline);
 
     MessageBox(GetTopWindow(NULL), assertion_info, "Fatal Error",
                MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
@@ -671,7 +552,6 @@ void _terminate() {
     exit(-1);
     //	FATAL					("Unexpected application termination");
 }
-#endif // USE_BUG_TRAP
 
 static void handler_base(LPCSTR reason_string) {
     bool ignore_always = false;
@@ -731,11 +611,7 @@ static void illegal_instruction_handler(int signal) { handler_base("illegal inst
 static void termination_handler(int signal) { handler_base("termination with exit code 3"); }
 
 void debug_on_thread_spawn() {
-#ifdef USE_BUG_TRAP
-    BT_SetTerminate();
-#else  // USE_BUG_TRAP
-// std::set_terminate				(_terminate);
-#endif // USE_BUG_TRAP
+    //std::set_terminate				(_terminate);
 
     _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
     signal(SIGABRT, abort_handler);
@@ -754,10 +630,6 @@ void debug_on_thread_spawn() {
     //		std::set_new_handler			(&std_out_of_memory_handler);
 
     _set_purecall_handler(&pure_call_handler);
-
-#if 0 // should be if we use exceptions
-		std::set_unexpected				(_terminate);
-#endif
 }
 
 void xrDebug::_initialize() {
@@ -765,9 +637,6 @@ void xrDebug::_initialize() {
 
     debug_on_thread_spawn();
 
-#ifdef USE_BUG_TRAP
-    SetupExceptionHandler();
-#endif // USE_BUG_TRAP
     previous_filter = ::SetUnhandledExceptionFilter(
         UnhandledFilter); // exception handler to all "unhandled" exceptions
 }
