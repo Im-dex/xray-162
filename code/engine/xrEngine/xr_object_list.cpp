@@ -320,13 +320,13 @@ u32 CObjectList::net_Export(NET_Packet* _Packet, u32 start, u32 max_object_size)
         Msg("---- net_export --- ");
 
     NET_Packet& Packet = *_Packet;
-    u32 position;
     for (; start < objects_active.size() + objects_sleeping.size(); start++) {
         CObject* P = (start < objects_active.size())
                          ? objects_active[start]
                          : objects_sleeping[start - objects_active.size()];
         if (P->net_Relevant() && !P->getDestroy()) {
             Packet.w_u16(u16(P->ID()));
+            u32 position;
             Packet.w_chunk_open8(position);
             // Msg						("cl_export: %d
             // '%s'",P->ID(),*P->cName());

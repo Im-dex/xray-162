@@ -145,7 +145,7 @@ INetQueue::~INetQueue() {
 
 static u32 LastTimeCreate = 0;
 NET_Packet* INetQueue::Create() {
-    NET_Packet* P = 0;
+    NET_Packet* P = nullptr;
     // cs.Enter		();
     //#ifdef _DEBUG
     //		Msg ("- INetQueue::Create - ready %d, unused %d", ready.size(), unused.size());
@@ -548,7 +548,7 @@ void IPureClient::OnMessage(void* data, u32 size) {
     net_Queue.Lock();
     NET_Packet* P = net_Queue.Create();
 
-    P->construct(data, size);
+    P->set(data, size);
     P->timeReceive = timeServer_Async(); // TimerAsync				(device_timer);
 
     u16 m_type;
