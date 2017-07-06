@@ -1,5 +1,7 @@
 # xray-162
-XRay engine 1.6.2
+XRay engine 1.7
+
+[![Build status](https://ci.appveyor.com/api/projects/status/fo8iwn5bvcmgnh8e?svg=true)](https://ci.appveyor.com/project/Im-dex/xray-162)
 
 ## Build instructions
 ### Prerequisites
