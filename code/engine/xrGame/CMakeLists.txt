@@ -631,11 +631,7 @@ set(AI_AGROUP_AGENT_MANAGER agent_manager.h
 set(CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_BLACKDROPS BlackDrops.h
                                                                  BlackDrops.cpp)
 
-set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTCALLBACKEX script_callback_ex.h
-                                              script_callback_ex_generators.h
-                                              script_callback_ex_inline.h
-                                              script_callback_ex_nonvoid.h
-                                              script_callback_ex_void.h)
+set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTCALLBACKEX script_callback_ex.h)
 
 set(AI_AMONSTERS_MONSTERS_SNORK_SCRIPT ai/Monsters/Snork/snork_script.cpp)
 
