@@ -98,7 +98,6 @@ public:
     virtual void Flush_Send_Buffer();
     virtual void OnMessage(void* data, u32 size);
     virtual void OnInvalidHost(){};
-    virtual void OnInvalidPassword(){};
     virtual void OnSessionFull(){};
     virtual void OnConnectRejected(){};
     BOOL net_HasBandwidth();

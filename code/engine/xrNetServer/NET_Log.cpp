@@ -36,7 +36,7 @@ string64 PacketName[] = {
     //-----------------------------------------------------
     "M_PAUSE_GAME",
     //-----------------------------------------------------
-    "M_AUTH_CHALLENGE", "M_CL_AUTH", "M_BULLET_CHECK_RESPOND",
+    "M_CL_AUTH", "M_BULLET_CHECK_RESPOND",
     //-----------------------------------------------------
     "M_STATISTIC_UPDATE", "M_STATISTIC_UPDATE_RESPOND",
     //-----------------------------------------------------

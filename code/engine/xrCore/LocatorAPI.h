@@ -63,9 +63,6 @@ private:
     files_set m_files;
     BOOL bNoRecurse;
 
-    std::recursive_mutex m_auth_lock;
-    u64 m_auth_code;
-
     void Register(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real, u32 size_compressed,
                   u32 modif);
     void ProcessArchive(LPCSTR path);
@@ -173,10 +170,6 @@ public:
 
     bool load_all_unloaded_archives();
     void unload_archive(archive& A);
-
-    void auth_generate(xr_vector<shared_str>& ignore, xr_vector<shared_str>& important);
-    u64 auth_get();
-    void auth_runtime(void*);
 
     void rescan_path(LPCSTR full_path, BOOL bRecurse);
     // editor functions

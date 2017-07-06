@@ -296,9 +296,6 @@ void CLevel::ClientReceive() {
         case M_SAVE_GAME: {
             ClientSave();
         } break;
-        case M_AUTH_CHALLENGE: {
-            ClientSendProfileData();
-        } break;
         case M_CLIENT_CONNECT_RESULT: {
             OnConnectResult(P);
         } break;

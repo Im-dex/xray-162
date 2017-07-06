@@ -57,14 +57,9 @@ class CMainMenu : public IMainMenu,
 
 public:
     enum EErrorDlg {
-        ErrInvalidPassword,
         ErrInvalidHost,
         ErrSessionFull,
         ErrServerReject,
-        ErrCDKeyInUse,
-        ErrCDKeyDisabled,
-        ErrCDKeyInvalid,
-        ErrDifferentVersion,
         ErrGSServiceFailed,
         ErrMasterServerConnectFailed,
         NoNewPatch,

@@ -146,69 +146,16 @@ void xrServer::SendConnectResult(IClient* CL, u8 res, u8 res1, char* ResultStr) 
 
         return;
     }
-};
-
-void xrServer::SendProfileCreationError(IClient* CL, char const* reason) {
-    VERIFY(CL);
-
-    NET_Packet P;
-    P.w_begin(M_CLIENT_CONNECT_RESULT);
-    P.w_u8(0);
-    P.w_u8(ecr_profile_error);
-    P.w_stringZ(reason);
-    P.w_clientID(CL->ID);
-    SendTo(CL->ID, P);
-    if (CL != GetServerClient()) {
-        Flush_Clients_Buffers();
-        DisconnectClient(CL, reason);
-    }
 }
 
-// this method response for client validation on connect state (CLevel::net_start_client2)
-// the first validation is CDKEY, then gamedata checksum (NeedToCheckClient_BuildVersion), then
-// banned or not...
-// WARNING ! if you will change this method see M_AUTH_CHALLENGE event handler
-void xrServer::Check_GameSpy_CDKey_Success(IClient* CL) {
-    if (NeedToCheckClient_BuildVersion(CL))
-        return;
-    //-------------------------------------------------------------
-    RequestClientDigest(CL);
-};
-
-bool xrServer::NeedToCheckClient_BuildVersion(IClient*) { return false; };
-
 void xrServer::OnBuildVersionRespond(IClient* CL, NET_Packet& P) {
-    u16 Type;
+    // imdex NOTE: useless now
+    /*u16 Type;
     P.r_begin(Type);
-    u64 _our = FS.auth_get();
-    u64 _him = P.r_u64();
+    u64 _him = P.r_u64();*/
 
-#ifdef USE_DEBUG_AUTH
-    Msg("_our = %d", _our);
-    Msg("_him = %d", _him);
-    _our = MP_DEBUG_AUTH;
-#endif // USE_DEBUG_AUTH
-
-    if (_our != _him) {
-        SendConnectResult(CL, 0, ecr_data_verification_failed,
-                          "Data verification failed. Cheater?");
-    } else {
-        bool bAccessUser = false;
-        string512 res_check;
-
-        if (!CL->flags.bLocal) {
-            bAccessUser = Check_ServerAccess(CL, res_check);
-        }
-
-        if (CL->flags.bLocal || bAccessUser) {
-            // Check_BuildVersion_Success( CL );
-            RequestClientDigest(CL);
-        } else {
-            Msg("* Client 0x%08x has an incorrect password", CL->ID.value());
-            xr_strcat(res_check, "Invalid password.");
-            SendConnectResult(CL, 0, ecr_password_verification_failed, res_check);
-        }
-    }
+    // Check_BuildVersion_Success( CL );
+    RequestClientDigest(CL);
 };
 
 void xrServer::Check_BuildVersion_Success(IClient* CL) {

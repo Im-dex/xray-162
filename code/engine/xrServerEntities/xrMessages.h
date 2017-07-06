@@ -48,7 +48,6 @@ enum {
     M_CL_PING_CHALLENGE,
     M_CL_PING_CHALLENGE_RESPOND,
     //-----------------------------------------------------
-    M_AUTH_CHALLENGE,
     M_CL_AUTH,
     M_BULLET_CHECK_RESPOND,
     //-----------------------------------------------------
@@ -239,13 +238,5 @@ enum {
 
     M_SPAWN_OBJECT_FORCEDWORD = u32(-1)
 };
-
-enum enum_connection_results {
-    ecr_data_verification_failed = 0x00,
-    ecr_cdkey_validation_failed,
-    ecr_password_verification_failed,
-    ecr_have_been_banned,
-    ecr_profile_error,
-}; // enum enum_connection_results
 
 #endif /*_INCDEF_XRMESSAGES_H_*/

@@ -114,7 +114,6 @@ public:
 
     virtual void OnMessage(void* data, u32 size);
     virtual void OnInvalidHost();
-    virtual void OnInvalidPassword();
     virtual void OnSessionFull();
     virtual void OnConnectRejected();
 
@@ -272,7 +271,6 @@ public:
     void InitializeClientGame(NET_Packet& P);
     void ClientReceive();
     void ClientSend();
-    void ClientSendProfileData();
     void ClientSave();
     u32 Objects_net_Save(NET_Packet* _Packet, u32 start, u32 count);
     virtual void Send(NET_Packet& P, u32 dwFlags = DPNSEND_GUARANTEED, u32 dwTimeout = 0);

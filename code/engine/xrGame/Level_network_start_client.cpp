@@ -151,10 +151,6 @@ bool CLevel::net_start_client4() {
     return true;
 }
 
-void CLevel::ClientSendProfileData() {
-    // TODO: remove me
-}
-
 bool CLevel::net_start_client5() {
     if (connected_to_server) {
         // HUD

@@ -150,7 +150,6 @@ public:
     xrClientData* SelectBestClientToMigrateTo(CSE_Abstract* E, BOOL bForceAnother = FALSE);
     void SendConnectResult(IClient* CL, u8 res, u8 res1, char* ResultStr);
     void __stdcall SendConfigFinished(ClientID const& clientId);
-    void SendProfileCreationError(IClient* CL, char const* reason);
     void AttachNewClient(IClient* CL);
     virtual void OnBuildVersionRespond(IClient* CL, NET_Packet& P);
 
@@ -159,14 +158,9 @@ protected:
     bool CheckAdminRights(const shared_str& user, const shared_str& pass, string512& reason);
     virtual IClient* new_client(SClientConnectData* cl_data);
 
-    virtual bool Check_ServerAccess(IClient* CL, string512& reason) { return true; }
-
-    virtual bool NeedToCheckClient_GameSpy_CDKey(IClient* CL) { return false; }
-    virtual void Check_GameSpy_CDKey_Success(IClient* CL);
     void RequestClientDigest(IClient* CL);
     void ProcessClientDigest(xrClientData* xrCL, NET_Packet* P);
 
-    virtual bool NeedToCheckClient_BuildVersion(IClient* CL);
     virtual void Check_BuildVersion_Success(IClient* CL);
 
     void SendConnectionData(IClient* CL);

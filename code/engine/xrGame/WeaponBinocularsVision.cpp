@@ -245,7 +245,7 @@ void CBinocularsVision::Update() {
     for (; it != m_active_objects.end(); ++it) {
         SBinocVisibleObj* visObj = (*it);
 
-        BOOL bLocked = visObj->m_flags.test(flTargetLocked);
+        const bool bLocked = visObj->m_flags.test(flTargetLocked);
 
         (*it)->Update();
 

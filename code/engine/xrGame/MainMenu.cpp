@@ -21,14 +21,9 @@
 
 #include "object_broker.h"
 
-string128 ErrMsgBoxTemplate[] = { "message_box_invalid_pass",
-                                  "message_box_invalid_host",
+string128 ErrMsgBoxTemplate[] = { "message_box_invalid_host",
                                   "message_box_session_full",
                                   "message_box_server_reject",
-                                  "message_box_cdkey_in_use",
-                                  "message_box_cdkey_disabled",
-                                  "message_box_cdkey_invalid",
-                                  "message_box_different_version",
                                   "message_box_gs_service_not_available",
                                   "message_box_sb_master_server_connect_failed",
                                   "msg_box_no_new_patch",
