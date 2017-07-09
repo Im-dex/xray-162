@@ -45,13 +45,9 @@ XRCORE_API void m64r(void) {
 }
 
 void initialize() {
-#ifndef XRCORE_STATIC
-    m24r();
-#endif // XRCORE_STATIC
-
     ::Random.seed(u32(CPU::GetCLK() % (1i64 << 32i64)));
 }
-}; // namespace FPU
+} // namespace FPU
 #else
 u16 getFPUsw() {
     u16 SW;
