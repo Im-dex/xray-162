@@ -39,15 +39,6 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
         _splitpath(fn, dr, di, nullptr, nullptr);
         strconcat(sizeof(ApplicationPath), ApplicationPath, dr, di);
 
-#ifdef _EDITOR
-        // working path
-        if (strstr(Params, "-wf")) {
-            string_path c_name;
-            sscanf(strstr(Core.Params, "-wf ") + 4, "%[^ ] ", c_name);
-            SetCurrentDirectory(c_name);
-        }
-#endif
-
         GetCurrentDirectory(sizeof(WorkingPath), WorkingPath);
 
         // User/Comp Name
@@ -88,25 +79,18 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
         else
             flags &= ~CLocatorAPI::flCacheFiles;
 #endif         // DEBUG
-#ifdef _EDITOR // for EDITORS - no cache
-        flags &= ~CLocatorAPI::flCacheFiles;
-#endif // _EDITOR
         flags |= CLocatorAPI::flScanAppRoot;
 
-#ifndef _EDITOR
 #ifndef ELocatorAPIH
         if (nullptr != strstr(Params, "-file_activity"))
             flags |= CLocatorAPI::flDumpFileActivity;
-#endif
 #endif
         FS._initialize(flags, nullptr, fs_fname);
         Msg("'%s' build %d, %s\n", "xrCore", build_id, build_date);
         EFS._initialize();
 #ifdef DEBUG
-#ifndef _EDITOR
         Msg("CRT heap 0x%08x", _get_heap_handle());
         Msg("Process heap 0x%08x", GetProcessHeap());
-#endif
 #endif // DEBUG
     }
     SetLogCB(cb);
@@ -125,14 +109,7 @@ void xrCore::_destroy() {
     }
 }
 
-#ifndef XRCORE_STATIC
-
-//. why ???
-#ifdef _EDITOR
-BOOL WINAPI DllEntryPoint(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved)
-#else
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved)
-#endif
 {
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH: {
@@ -159,4 +136,3 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvRese
     }
     return TRUE;
 }
-#endif // XRCORE_STATIC

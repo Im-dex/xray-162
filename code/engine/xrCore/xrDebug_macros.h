@@ -4,15 +4,11 @@
 
 //#define ANONYMOUS_BUILD
 
-#ifndef __BORLANDC__
 #ifndef ANONYMOUS_BUILD
 #define DEBUG_INFO __FILE__, __LINE__, __FUNCTION__
 #else // ANONYMOUS_BUILD
 #define DEBUG_INFO "", __LINE__, ""
 #endif // ANONYMOUS_BUILD
-#else  // __BORLANDC__
-#define DEBUG_INFO __FILE__, __LINE__, __FILE__
-#endif // __BORLANDC__
 
 #ifdef ANONYMOUS_BUILD
 #define _TRE(arg) ""
@@ -104,11 +100,7 @@
             ::Debug.error(hr, #expr, DEBUG_INFO, ignore_always); \
     } while (0)
 #else // DEBUG
-#ifdef __BORLANDC__
-#define NODEFAULT
-#else
 #define NODEFAULT __assume(0)
-#endif
 #define VERIFY(expr) \
     do {             \
     } while (0)

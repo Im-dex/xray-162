@@ -40,28 +40,21 @@ public:
     }
     IC u32 GetElapsed_ms() const { return u32(GetElapsed_ticks() * u64(1000) / CPU::qpc_freq); }
     IC float GetElapsed_sec() const {
-#ifndef _EDITOR
         FPU::m64r();
-#endif
         float _result = float(double(GetElapsed_ticks()) / double(CPU::qpc_freq));
-#ifndef _EDITOR
         FPU::m24r();
-#endif
         return _result;
     }
     IC void Dump() const { Msg("* Elapsed time (sec): %f", GetElapsed_sec()); }
 };
 
 class XRCORE_API CTimer : public CTimerBase {
-private:
     typedef CTimerBase inherited;
 
-private:
     float m_time_factor;
     u64 m_real_ticks;
     u64 m_ticks;
 
-private:
     IC u64 GetElapsed_ticks(const u64& current_ticks) const {
         u64 delta = current_ticks - m_real_ticks;
         double delta_d = (double)delta;
@@ -94,15 +87,9 @@ public:
     }
 
     IC u64 GetElapsed_ticks() const {
-#ifndef _EDITOR
         FPU::m64r();
-#endif // _EDITOR
-
         u64 result = GetElapsed_ticks(inherited::GetElapsed_ticks());
-
-#ifndef _EDITOR
         FPU::m24r();
-#endif // _EDITOR
 
         return (result);
     }
@@ -110,13 +97,9 @@ public:
     IC u32 GetElapsed_ms() const { return (u32(GetElapsed_ticks() * u64(1000) / CPU::qpc_freq)); }
 
     IC float GetElapsed_sec() const {
-#ifndef _EDITOR
         FPU::m64r();
-#endif
         float result = float(double(GetElapsed_ticks()) / double(CPU::qpc_freq));
-#ifndef _EDITOR
         FPU::m24r();
-#endif
         return (result);
     }
 
@@ -180,13 +163,9 @@ public:
 
     IC u32 GetElapsed_ms() const { return u32(GetElapsed_ticks() * u64(1000) / CPU::qpc_freq); }
     IC float GetElapsed_sec() const {
-#ifndef _EDITOR
         FPU::m64r();
-#endif
         float _result = float(double(GetElapsed_ticks()) / double(CPU::qpc_freq));
-#ifndef _EDITOR
         FPU::m24r();
-#endif
         return _result;
     }
 };

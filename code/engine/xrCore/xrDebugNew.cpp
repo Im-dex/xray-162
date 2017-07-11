@@ -33,19 +33,24 @@ XRCORE_API xrDebug Debug;
 
 static bool error_after_dialog = false;
 
+#if XR_USE_BLACKBOX
 #include "blackbox\build_stacktrace.h"
+#else
+#include "stacktrace_collector.h"
+#endif
+
+static thread_local StackTraceInfo stackTrace;
 
 void LogStackTrace(LPCSTR header) {
     if (!shared_str_initialized)
         return;
 
-    StackTrace.Count =
-        BuildStackTrace(StackTrace.Frames, StackTrace.Capacity, StackTrace.LineCapacity);
+    BuildStackTrace(stackTrace);
 
     Msg("%s", header);
 
-    for (int i = 1; i < StackTrace.Count; ++i)
-        Msg("%s", StackTrace[i]);
+    for (int i = 1; i < stackTrace.count; ++i)
+        Msg("%s", stackTrace[i]);
 }
 
 void xrDebug::gather_info(const char* expression, const char* description, const char* argument0,
@@ -124,13 +129,11 @@ void xrDebug::gather_info(const char* expression, const char* description, const
                              endline, endline);
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
 
-        // BuildStackTrace	();
-        StackTrace.Count =
-            BuildStackTrace(StackTrace.Frames, StackTrace.Capacity, StackTrace.LineCapacity);
+        BuildStackTrace(stackTrace);
 
-        for (int i = 2; i < StackTrace.Count; ++i) {
+        for (int i = 2; i < stackTrace.count; ++i) {
             if (shared_str_initialized)
-                Msg("%s", StackTrace[i]);
+                Msg("%s", stackTrace[i]);
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
             buffer += xr_sprintf(buffer, assertion_size - u32(buffer - buffer_base), "%s%s",
@@ -185,9 +188,6 @@ void xrDebug::backend(const char* expression, const char* description, const cha
 
     FlushLog();
 
-#ifdef XRCORE_STATIC
-    MessageBox(NULL, assertion_info, "X-Ray error", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-#else
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
     int result = MessageBox(
         /*GetTopWindow(NULL)*/ nullptr, assertion_info, "Fatal Error",
@@ -213,7 +213,6 @@ void xrDebug::backend(const char* expression, const char* description, const cha
 #else  // USE_OWN_ERROR_MESSAGE_WINDOW
     DEBUG_INVOKE;
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
-#endif
 
     if (get_on_dialog())
         get_on_dialog()(false);
@@ -306,7 +305,6 @@ extern LPCSTR log_name();
 
 XRCORE_API string_path g_bug_report_file;
 
-#if 1
 extern void BuildStackTrace(struct _EXCEPTION_POINTERS* pExceptionInfo);
 typedef LONG WINAPI UnhandledExceptionFilterType(struct _EXCEPTION_POINTERS* pExceptionInfo);
 typedef LONG(__stdcall* PFNCHFILTFN)(EXCEPTION_POINTERS* pExPtrs);
@@ -430,9 +428,7 @@ void format_message(LPSTR buffer, const u32& buffer_size) {
     LocalFree(message);
 }
 
-#ifndef _EDITOR
 #include <errorrep.h>
-#endif
 
 LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
     string256 error_message;
@@ -440,9 +436,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
 
     if (!error_after_dialog && !strstr(GetCommandLine(), "-no_call_stack_assert")) {
         CONTEXT save = *pExceptionInfo->ContextRecord;
-        // BuildStackTrace		(pExceptionInfo);
-        StackTrace.Count = BuildStackTrace(pExceptionInfo, StackTrace.Frames, StackTrace.Capacity,
-                                           StackTrace.LineCapacity);
+        BuildStackTrace(pExceptionInfo, stackTrace);
         *pExceptionInfo->ContextRecord = save;
 
         if (shared_str_initialized)
@@ -453,10 +447,10 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
         }
 
         string4096 buffer;
-        for (int i = 0; i < StackTrace.Count; ++i) {
+        for (int i = 0; i < stackTrace.count; ++i) {
             if (shared_str_initialized)
-                Msg("%s", StackTrace[i]);
-            xr_sprintf(buffer, sizeof(buffer), "%s\r\n", StackTrace[i]);
+                Msg("%s", stackTrace[i]);
+            xr_sprintf(buffer, sizeof(buffer), "%s\r\n", stackTrace[i]);
 #ifdef DEBUG
             if (!IsDebuggerPresent())
                 os_clipboard::update_clipboard(buffer);
@@ -492,9 +486,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
     }
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
 
-#ifndef _EDITOR
     ReportFault(pExceptionInfo, 0);
-#endif
 
     if (!previous_filter) {
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
@@ -514,7 +506,6 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
 
     return (EXCEPTION_CONTINUE_SEARCH);
 }
-#endif
 
 //////////////////////////////////////////////////////////////////////
 typedef int(__cdecl* _PNH)(size_t);
@@ -535,11 +526,7 @@ void _terminate() {
 #else
         __FILE__, __LINE__,
 #endif
-#ifndef _EDITOR
         __FUNCTION__,
-#else  // _EDITOR
-        "",
-#endif // _EDITOR
         assertion_info);
 
     LPCSTR endline = "\r\n";

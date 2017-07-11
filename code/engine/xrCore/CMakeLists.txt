@@ -26,7 +26,8 @@ set(FS_FILE_STREAM_READER file_stream_reader.h file_stream_reader.cpp)
 set(INTRUSIVE_PTR intrusive_ptr.h)
 
 set(KERNEL FTimer.h FTimer.cpp resource.h stdafx.h stdafx.cpp xrCore.h xrCore.cpp
-           xrCore_platform.h xrCore.rc)
+           xrCore_platform.h xrCore.rc xr_build_config.h stacktrace_collector.h
+           stacktrace_collector.cpp)
            
 set(MATH_ _bitwise.h _color.h _compressed_normal.h _compressed_normal.cpp _cylinder.h
           _fbox.h _fbox2.h _flags.h _math.cpp _math.h _matrix.h _matrix33.h _obb.h

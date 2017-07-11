@@ -13,29 +13,28 @@ void __declspec(naked, noinline) * __cdecl GetInstructionPtr() { _asm mov eax, [
 }
 
 struct StackTraceInfo {
-    static const size_t Capacity = 100;
-    static const size_t LineCapacity = 256;
-    char Frames[Capacity * LineCapacity];
-    size_t Count;
+    static constexpr size_t capacity = 100;
+    static constexpr size_t lineCapacity = 256;
+    char frames[capacity * lineCapacity];
+    size_t count;
 
-    char* operator[](size_t i) { return Frames + i * LineCapacity; }
+    char* operator[](const size_t i) { return frames + i * lineCapacity; }
 };
 
-size_t BuildStackTrace(EXCEPTION_POINTERS* exPtrs, char* buffer, size_t capacity,
-                       size_t lineCapacity) {
-    memset(buffer, 0, capacity * lineCapacity);
+inline void BuildStackTrace(EXCEPTION_POINTERS* exPtrs, StackTraceInfo& stackTrace) {
+    memset(stackTrace.frames, 0, StackTraceInfo::capacity * StackTraceInfo::lineCapacity);
     auto flags = GSTSO_MODULE | GSTSO_SYMBOL | GSTSO_SRCLINE;
     auto traceDump = GetFirstStackTraceString(flags, exPtrs);
-    int frameCount = 0;
+    size_t frameCount = 0;
     while (traceDump) {
-        lstrcpy(buffer + frameCount * lineCapacity, traceDump);
+        lstrcpy(stackTrace.frames + frameCount * StackTraceInfo::lineCapacity, traceDump);
         frameCount++;
         traceDump = GetNextStackTraceString(flags, exPtrs);
     }
-    return frameCount;
+    stackTrace.count = frameCount;
 }
 
-size_t BuildStackTrace(char* buffer, size_t capacity, size_t lineCapacity) {
+inline void BuildStackTrace(StackTraceInfo& stackTrace) {
     // TODO: x64 - incorrect registers values
     CONTEXT context;
     EXCEPTION_POINTERS ex_ptrs;
@@ -53,9 +52,6 @@ size_t BuildStackTrace(char* buffer, size_t capacity, size_t lineCapacity) {
 #endif
         ex_ptrs.ContextRecord = &context;
         ex_ptrs.ExceptionRecord = nullptr;
-        return BuildStackTrace(&ex_ptrs, buffer, capacity, lineCapacity);
+        BuildStackTrace(&ex_ptrs, stackTrace);
     }
-    return 0;
 }
-
-StackTraceInfo StackTrace = {};

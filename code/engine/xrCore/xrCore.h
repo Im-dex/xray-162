@@ -2,6 +2,8 @@
 #define xrCoreH
 #pragma once
 
+#include "xr_build_config.h"
+
 #ifndef DEBUG
 #define MASTER_GOLD
 #endif // DEBUG
@@ -81,29 +83,14 @@
 #endif
 #endif
 
-#ifdef XRCORE_STATIC
-#define NO_FS_SCAN
-#endif
-
-#ifdef _EDITOR
-#define NO_FS_SCAN
-#endif
-
 // inline control - redefine to use compiler's heuristics ONLY
 // it seems "IC" is misused in many places which cause code-bloat
 // ...and VC7.1 really don't miss opportunities for inline :)
-#ifdef _EDITOR
-#define __forceinline inline
-#endif
 #define _inline inline
 #define __inline inline
 #define IC inline
 #define ICF __forceinline // !!! this should be used only in critical places found by PROFILER
-#ifdef _EDITOR
-#define ICN
-#else
 #define ICN __declspec(noinline)
-#endif
 
 #ifndef DEBUG
 #pragma inline_depth(254)
@@ -144,24 +131,18 @@
 #include <map>
 #include <mutex>
 
-#ifndef _EDITOR
 #include <unordered_map>
 #include <unordered_set>
-#endif
 
 #include <string>
 #pragma warning(pop)
 #pragma warning(disable : 4100) // unreferenced formal parameter
 
 // Our headers
-#ifdef XRCORE_STATIC
-#define XRCORE_API
-#else
 #ifdef XRCORE_EXPORTS
 #define XRCORE_API __declspec(dllexport)
 #else
 #define XRCORE_API __declspec(dllimport)
-#endif
 #endif
 
 #include "xrDebug.h"
@@ -188,7 +169,6 @@ struct XRCORE_API xr_rtoken {
         id = _id;
     }
 
-public:
     void rename(const char* _nm) { name = _nm; }
     bool equal(const char* _nm) { return (0 == xr_strcmp(*name, _nm)); }
 };
@@ -262,7 +242,6 @@ public:
     string512 Params;
     DWORD dwFrame;
 
-public:
     void _initialize(const char* ApplicationName, LogCallback cb = nullptr, bool init_fs = true,
                      const char* fs_fname = nullptr);
     void _destroy();
