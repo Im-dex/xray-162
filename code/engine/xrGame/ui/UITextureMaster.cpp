@@ -31,10 +31,10 @@ void CUITextureMaster::ParseShTexInfo(LPCSTR xml_file) {
     int files_num = xml.GetNodesNum("", 0, "file");
 
     for (int fi = 0; fi < files_num; ++fi) {
-        XML_NODE* root_node = xml.GetLocalRoot();
+        XML_NODE root_node = xml.GetLocalRoot();
         shared_str file = xml.ReadAttrib("file", fi, "name");
 
-        XML_NODE* node = xml.NavigateToNode("file", fi);
+        XML_NODE node = xml.NavigateToNode("file", fi);
 
         int num = xml.GetNodesNum(node, "texture");
         for (int i = 0; i < num; i++) {

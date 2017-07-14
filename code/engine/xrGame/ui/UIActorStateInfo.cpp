@@ -38,10 +38,10 @@ ui_actor_state_wnd::ui_actor_state_wnd() {}
 ui_actor_state_wnd::~ui_actor_state_wnd() { delete_data(m_hint_wnd); }
 
 void ui_actor_state_wnd::init_from_xml(CUIXml& xml, LPCSTR path) {
-    XML_NODE* stored_root = xml.GetLocalRoot();
+    XML_NODE stored_root = xml.GetLocalRoot();
     CUIXmlInit::InitWindow(xml, path, 0, this);
 
-    XML_NODE* new_root = xml.NavigateToNode(path, 0);
+    XML_NODE new_root = xml.NavigateToNode(path, 0);
     xml.SetLocalRoot(new_root);
 
     m_hint_wnd = UIHelper::CreateHint(xml, "hint_wnd");
@@ -288,8 +288,8 @@ ui_actor_state_item::~ui_actor_state_item() {}
 void ui_actor_state_item::init_from_xml(CUIXml& xml, LPCSTR path) {
     CUIXmlInit::InitWindow(xml, path, 0, this);
 
-    XML_NODE* stored_root = xml.GetLocalRoot();
-    XML_NODE* new_root = xml.NavigateToNode(path, 0);
+    XML_NODE stored_root = xml.GetLocalRoot();
+    XML_NODE new_root = xml.NavigateToNode(path, 0);
     xml.SetLocalRoot(new_root);
 
     LPCSTR hint_text = xml.Read("hint_text", 0, "no hint");

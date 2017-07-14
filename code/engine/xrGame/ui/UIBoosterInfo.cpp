@@ -42,8 +42,8 @@ LPCSTR boost_influence_caption[] = { "ui_inv_health",
 
 void CUIBoosterInfo::InitFromXml(CUIXml& xml) {
     LPCSTR base = "booster_params";
-    XML_NODE* stored_root = xml.GetLocalRoot();
-    XML_NODE* base_node = xml.NavigateToNode(base, 0);
+    XML_NODE stored_root = xml.GetLocalRoot();
+    XML_NODE base_node = xml.NavigateToNode(base, 0);
     if (!base_node)
         return;
 

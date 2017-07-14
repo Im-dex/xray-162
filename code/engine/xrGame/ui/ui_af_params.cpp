@@ -85,8 +85,8 @@ LPCSTR af_actor_param_names[]=
 void CUIArtefactParams::InitFromXml(CUIXml& xml) {
     LPCSTR base = "af_params";
 
-    XML_NODE* stored_root = xml.GetLocalRoot();
-    XML_NODE* base_node = xml.NavigateToNode(base, 0);
+    XML_NODE stored_root = xml.GetLocalRoot();
+    XML_NODE base_node = xml.NavigateToNode(base, 0);
     if (!base_node) {
         return;
     }

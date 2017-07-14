@@ -47,7 +47,7 @@ CUIWindow* find_child_window(CUIWindow* parent, const shared_str& _name) {
 void CUISequenceSimpleItem::Load(CUIXml* xml, int idx) {
     CUISequenceItem::Load(xml, idx);
 
-    XML_NODE* _stored_root = xml->GetLocalRoot();
+    XML_NODE _stored_root = xml->GetLocalRoot();
     xml->SetLocalRoot(xml->NavigateToNode("item", idx));
 
     LPCSTR m_snd_name = xml->Read("sound", 0, "");
@@ -95,7 +95,7 @@ void CUISequenceSimpleItem::Load(CUIXml* xml, int idx) {
     // ui-components
     m_UIWindow = xr_new<CUIWindow>();
     m_UIWindow->SetAutoDelete(false);
-    XML_NODE* _lsr = xml->GetLocalRoot();
+    XML_NODE _lsr = xml->GetLocalRoot();
     CUIXmlInit xml_init;
     xml_init.InitWindow(*xml, "main_wnd", 0, m_UIWindow);
     xml->SetLocalRoot(_lsr);
@@ -105,7 +105,7 @@ void CUISequenceSimpleItem::Load(CUIXml* xml, int idx) {
     m_subitems.resize(cnt);
     string64 sname;
     for (int i = 0; i < cnt; ++i) {
-        XML_NODE* _sr = xml->GetLocalRoot();
+        XML_NODE _sr = xml->GetLocalRoot();
         xml->SetLocalRoot(xml->NavigateToNode("main_wnd", 0));
 
         xr_sprintf(sname, "auto_static_%d", i);
@@ -123,8 +123,8 @@ void CUISequenceSimpleItem::Load(CUIXml* xml, int idx) {
         _si->m_wnd->SetWidth(_si->m_wnd->GetWidth() * UI().get_current_kx());
 
         if (UI().is_widescreen()) {
-            XML_NODE* autostatic_node = xml->NavigateToNode("auto_static", i);
-            XML_NODE* ws_rect = xml->NavigateToNode(autostatic_node, "widescreen_rect", 0);
+            XML_NODE autostatic_node = xml->NavigateToNode("auto_static", i);
+            XML_NODE ws_rect = xml->NavigateToNode(autostatic_node, "widescreen_rect", 0);
             if (ws_rect) {
                 xml->SetLocalRoot(autostatic_node);
 

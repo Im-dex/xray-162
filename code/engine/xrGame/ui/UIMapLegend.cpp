@@ -31,8 +31,8 @@ UIMapLegend::~UIMapLegend() { xr_delete(m_list); }
 void UIMapLegend::init_from_xml(CUIXml& xml, LPCSTR path) {
     CUIXmlInit::InitWindow(xml, path, 0, this);
 
-    XML_NODE* stored_root = xml.GetLocalRoot();
-    XML_NODE* tmpl_root = xml.NavigateToNode(path, 0);
+    XML_NODE stored_root = xml.GetLocalRoot();
+    XML_NODE tmpl_root = xml.NavigateToNode(path, 0);
     xml.SetLocalRoot(tmpl_root);
 
     m_background = UIHelper::CreateFrameWindow(xml, "background_frame", this);
@@ -46,7 +46,7 @@ void UIMapLegend::init_from_xml(CUIXml& xml, LPCSTR path) {
     UIMapLegendItem* list_item = NULL;
 
     int cn = xml.GetNodesNum("legend_list", 0, "item");
-    XML_NODE* root2 = xml.NavigateToNode("legend_list", 0);
+    XML_NODE root2 = xml.NavigateToNode("legend_list", 0);
     xml.SetLocalRoot(root2);
 
     for (int i = 0; i < cn; ++i) {
@@ -80,7 +80,7 @@ UIMapLegendItem::~UIMapLegendItem() {}
 void UIMapLegendItem::init_from_xml(CUIXml& xml, int index) {
     CUIXmlInit::InitWindow(xml, "item", index, this);
 
-    XML_NODE* root3 = xml.NavigateToNode("item", index);
+    XML_NODE root3 = xml.NavigateToNode("item", index);
     xml.SetLocalRoot(root3);
 
     m_image[0] = UIHelper::CreateStatic(xml, "image", this);

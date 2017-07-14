@@ -48,17 +48,13 @@ void CSpecificCharacter::Load(shared_str id) {
 }
 
 void CSpecificCharacter::load_shared(LPCSTR) {
-#if 0
-	CTimer			timer;
-	timer.Start		();
-#endif
     const ITEM_DATA& item_data = *id_to_index::GetById(m_OwnId);
 
     CUIXml* pXML = item_data._xml;
 
     pXML->SetLocalRoot(pXML->GetRoot());
 
-    XML_NODE* item_node = pXML->NavigateToNode(id_to_index::tag_name, item_data.pos_in_file);
+    XML_NODE item_node = pXML->NavigateToNode(id_to_index::tag_name, item_data.pos_in_file);
     R_ASSERT3(item_node, "specific_character id=", *item_data.id);
 
     pXML->SetLocalRoot(item_node);

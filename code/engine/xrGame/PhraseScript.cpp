@@ -11,7 +11,7 @@
 #include "actor.h"
 
 //загрузка из XML файла
-void CDialogScriptHelper::Load(CUIXml* uiXml, XML_NODE* phrase_node) {
+void CDialogScriptHelper::Load(CUIXml* uiXml, XML_NODE phrase_node) {
     LoadSequence(uiXml, phrase_node, "precondition", m_Preconditions);
     LoadSequence(uiXml, phrase_node, "action", m_ScriptActions);
 
@@ -23,12 +23,12 @@ void CDialogScriptHelper::Load(CUIXml* uiXml, XML_NODE* phrase_node) {
 }
 
 template <class T>
-void CDialogScriptHelper::LoadSequence(CUIXml* uiXml, XML_NODE* phrase_node, LPCSTR tag,
+void CDialogScriptHelper::LoadSequence(CUIXml* uiXml, XML_NODE phrase_node, LPCSTR tag,
                                        T& str_vector) {
     int tag_num = uiXml->GetNodesNum(phrase_node, tag);
     str_vector.clear();
     for (int i = 0; i < tag_num; ++i) {
-        LPCSTR tag_text = uiXml->Read(phrase_node, tag, i, NULL);
+        LPCSTR tag_text = uiXml->Read(phrase_node, tag, i, nullptr);
         str_vector.push_back(tag_text);
     }
 }

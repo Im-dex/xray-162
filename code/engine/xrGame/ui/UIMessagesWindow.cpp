@@ -58,7 +58,7 @@ void CUIMessagesWindow::Init(float x, float y, float width, float height) {
 
         m_in_pending_mode = false;
 
-        XML_NODE* pending_chat_list = xml.NavigateToNode(CHAT_LOG_LIST_PENDING);
+        XML_NODE pending_chat_list = xml.NavigateToNode(CHAT_LOG_LIST_PENDING);
 
         if (pending_chat_list) {
             m_pending_chat_log_rect.x1 = xml.ReadAttribFlt(CHAT_LOG_LIST_PENDING, 0, "x");

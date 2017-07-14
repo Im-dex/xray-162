@@ -39,7 +39,7 @@ bool CUISequenceVideoItem::IsPlaying() { return (!!m_flags.test(etiPlaying)); }
 void CUISequenceVideoItem::Load(CUIXml* xml, int idx) {
     CUISequenceItem::Load(xml, idx);
 
-    XML_NODE* _stored_root = xml->GetLocalRoot();
+    XML_NODE _stored_root = xml->GetLocalRoot();
     xml->SetLocalRoot(xml->NavigateToNode("item", idx));
 
     LPCSTR str = xml->Read("pause_state", 0, "ignore");
