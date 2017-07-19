@@ -74,7 +74,7 @@ void CParticlesPlayer::LoadParticles(IKinematics* K) {
     if (ini && ini->section_exist("particle_bones")) {
         bone_mask = 0;
         CInifile::Sect& data = ini->r_section("particle_bones");
-        for (CInifile::SectCIt I = data.Data.begin(); I != data.Data.end(); I++) {
+        for (auto I = data.Data.cbegin(); I != data.Data.cend(); I++) {
             const CInifile::Item& item = *I;
             u16 index = K->LL_BoneID(*item.first);
             R_ASSERT3(index != BI_NONE, "Particles bone not found", *item.first);

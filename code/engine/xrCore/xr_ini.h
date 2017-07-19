@@ -22,22 +22,16 @@ public:
               //#endif
               {};
     };
-    typedef xr_vector<Item> Items;
-    typedef Items::const_iterator SectCIt;
-    typedef Items::iterator SectIt_;
+    using Items = xr_vector<Item>;
     struct XRCORE_API Sect {
         shared_str Name;
         Items Data;
 
         BOOL line_exist(LPCSTR L, LPCSTR* val = 0);
     };
-    typedef xr_vector<Sect*> Root;
-    typedef Root::iterator RootIt;
-    typedef Root::const_iterator RootCIt;
+    using Root = xr_vector<Sect*>;
 
-#ifndef _EDITOR
     typedef fastdelegate::FastDelegate1<LPCSTR, bool> allow_include_func_t;
-#endif
     static CInifile* Create(LPCSTR szFileName, BOOL ReadOnly = TRUE);
     static void Destroy(CInifile*);
     static IC BOOL IsBOOL(LPCSTR B) {
@@ -55,27 +49,13 @@ private:
     string_path m_file_name;
     Root DATA;
 
-    void Load(IReader* F, LPCSTR path
-#ifndef _EDITOR
-              ,
-              allow_include_func_t allow_include_func = NULL
-#endif
-    );
+    void Load(IReader* F, const char* path, allow_include_func_t allow_include_func = nullptr);
 public:
-    CInifile(IReader* F, LPCSTR path = 0
-#ifndef _EDITOR
-             ,
-             allow_include_func_t allow_include_func = NULL
-#endif
-    );
+    CInifile(IReader* F, const char* path = nullptr, allow_include_func_t allow_include_func = nullptr);
 
     CInifile(LPCSTR szFileName, BOOL ReadOnly = TRUE, BOOL bLoadAtStart = TRUE,
-             BOOL SaveAtEnd = TRUE, u32 sect_count = 0
-#ifndef _EDITOR
-             ,
-             allow_include_func_t allow_include_func = NULL
-#endif
-    );
+             BOOL SaveAtEnd = TRUE, u32 sect_count = 0,
+             allow_include_func_t allow_include_func = nullptr);
 
     virtual ~CInifile();
     bool save_as(LPCSTR new_fname = 0);

@@ -298,8 +298,8 @@ void CMapListHelper::LoadMapInfo(LPCSTR map_cfg_fn, const xr_string& map_name, L
             _map_ver = ini.r_string("map_usage", "ver");
 
         CInifile::Sect S = ini.r_section("map_usage");
-        CInifile::SectCIt si = S.Data.begin();
-        CInifile::SectCIt si_e = S.Data.end();
+        auto si = S.Data.cbegin();
+        auto si_e = S.Data.cend();
         for (; si != si_e; ++si) {
             const shared_str& game_type = (*si).first;
 
@@ -340,8 +340,8 @@ void CMapListHelper::Load() {
 
     // read weathers set
     CInifile::Sect w = map_list_cfg.r_section("weather");
-    CInifile::SectCIt wi = w.Data.begin();
-    CInifile::SectCIt wi_e = w.Data.end();
+    auto wi = w.Data.cbegin();
+    auto wi_e = w.Data.cend();
     for (; wi != wi_e; ++wi) {
         m_weathers.resize(m_weathers.size() + 1);
         SGameWeathers& gw = m_weathers.back();

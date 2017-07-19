@@ -150,8 +150,8 @@ void Manager::load_all_inventory() {
     }
 
     CInifile::Sect& inv_section = pSettings->r_section(items_section);
-    CInifile::SectIt_ ib = inv_section.Data.begin();
-    CInifile::SectIt_ ie = inv_section.Data.end();
+    auto ib = inv_section.Data.begin();
+    auto ie = inv_section.Data.end();
     for (; ib != ie; ++ib) {
         shared_str root_id((*ib).first);
         //		if ( !item_upgrades_exist( root_id ) ) continue;
@@ -180,8 +180,8 @@ void Manager::load_all_properties() {
             make_string("Section [%s] is empty !", properties_section));
 
     CInifile::Sect& inv_section = pSettings->r_section(properties_section);
-    CInifile::SectIt_ ib = inv_section.Data.begin();
-    CInifile::SectIt_ ie = inv_section.Data.end();
+    auto ib = inv_section.Data.begin();
+    auto ie = inv_section.Data.end();
     for (; ib != ie; ++ib) {
         shared_str property_id((*ib).first);
         add_property(property_id);

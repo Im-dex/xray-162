@@ -39,7 +39,7 @@ void SBoneProtections::reload(const shared_str& bone_sect, IKinematics* kinemati
     m_default.BonePassBullet = FALSE;
 
     CInifile::Sect& protections = pSettings->r_section(bone_sect);
-    for (CInifile::SectCIt i = protections.Data.begin(); protections.Data.end() != i; ++i) {
+    for (auto i = protections.Data.cbegin(); protections.Data.cend() != i; ++i) {
         string256 buffer;
 
         BoneProtection BP;
@@ -70,7 +70,7 @@ void SBoneProtections::add(const shared_str& bone_sect, IKinematics* kinematics)
         READ_IF_EXISTS(pSettings, r_float, bone_sect.c_str(), "hit_fraction_npc", 0.0f);
 
     CInifile::Sect& protections = pSettings->r_section(bone_sect);
-    for (CInifile::SectCIt i = protections.Data.begin(); protections.Data.end() != i; ++i) {
+    for (auto i = protections.Data.cbegin(); protections.Data.cend() != i; ++i) {
         if (!xr_strcmp(i->first.c_str(), "hit_fraction"))
             continue;
 

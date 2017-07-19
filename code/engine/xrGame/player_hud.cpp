@@ -33,8 +33,8 @@ player_hud_motion* player_hud_motion_container::find_motion(const shared_str& na
 
 void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_str& sect) {
     CInifile::Sect& _sect = pSettings->r_section(sect);
-    CInifile::SectCIt _b = _sect.Data.begin();
-    CInifile::SectCIt _e = _sect.Data.end();
+    auto _b = _sect.Data.cbegin();
+    auto _e = _sect.Data.cend();
     player_hud_motion* pm = NULL;
 
     string512 buff;
@@ -401,8 +401,8 @@ void player_hud::load(const shared_str& player_hud_sect) {
     m_model = smart_cast<IKinematicsAnimated*>(::Render->model_Create(model_name.c_str()));
 
     CInifile::Sect& _sect = pSettings->r_section(player_hud_sect);
-    CInifile::SectCIt _b = _sect.Data.begin();
-    CInifile::SectCIt _e = _sect.Data.end();
+    auto _b = _sect.Data.cbegin();
+    auto _e = _sect.Data.cend();
     for (; _b != _e; ++_b) {
         if (strstr(_b->first.c_str(), "ancor_") == _b->first.c_str()) {
             const shared_str& _bone = _b->second;
