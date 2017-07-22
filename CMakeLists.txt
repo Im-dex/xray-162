@@ -15,18 +15,6 @@ if ("${BIN_PATH}" STREQUAL "")
     message(FATAL_ERROR "Invalid bin path")
 endif()
 
-if(NOT EXISTS "$ENV{DXSDK_DIR}")
-    message(FATAL_ERROR "DirectX SDK not found")
-endif()
-
-set(DXSDK_DIR $ENV{DXSDK_DIR})
-set(DXSDK_INCLUDE_DIR ${DXSDK_DIR}/include)
-if (ARCH_X86)
-    set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x86)
-else()
-    set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x64)
-endif()
-
 if (MSVC)
     if (MSVC_VERSION EQUAL 1900) #MSVS 2015
         set(VS_TOOLS_PATH $ENV{VS140COMNTOOLS})
@@ -91,6 +79,7 @@ set(CMAKE_PDB_OUTPUT_DIRECTORY ${PDB_OUT_PATH})
 include_directories(code/3rd-party code/engine code/utils)
 
 # 3d-party
+add_subdirectory(code/3rd-party/dxsdk)
 add_subdirectory(code/3rd-party/zlib)
 add_subdirectory(code/3rd-party/minizip)
 add_subdirectory(code/3rd-party/dxerr2015)
