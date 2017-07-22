@@ -16,10 +16,7 @@ if ("${BIN_PATH}" STREQUAL "")
 endif()
 
 if (MSVC)
-    if (MSVC_VERSION EQUAL 1900) #MSVS 2015
-        set(VS_TOOLS_PATH $ENV{VS140COMNTOOLS})
-        set(VC_ENV_BAT ${VS_TOOLS_PATH}../../VC/vcvarsall.bat)
-    elseif(MSVC_VERSION EQUAL 1910) # MSVS 2017
+    if(MSVC_VERSION EQUAL 1910) # MSVS 2017
         execute_process(COMMAND "vswhere" "-version" "15.0" "-property" "installationPath"
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extras
                         OUTPUT_VARIABLE VS_TOOLS_PATH
@@ -28,7 +25,7 @@ if (MSVC)
         add_compile_options(/std:c++latest)
         add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/Oi>")
     else()
-        message(FATAL_ERROR "Only MSVC 14.x (MSVS 2015) and MSVC 15.x (MSVS 2017) is supported")
+        message(FATAL_ERROR "Only MSVC 15.2 (MSVS 2017) and higher is supported")
     endif()
 else()
     message(FATAL_ERROR "Only MSVC compiler is supported")
