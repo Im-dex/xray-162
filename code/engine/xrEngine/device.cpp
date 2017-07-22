@@ -64,7 +64,6 @@ if (FAILED(_hr))
         // If the device was lost, do not render until we get it back
         Sleep(33);
         return FALSE;
-        break;
 
     case IRenderDeviceRender::dsNeedReset:
         // Check if the device is ready to be reset
@@ -226,7 +225,7 @@ void CRenderDevice::on_idle() {
         pApp->LoadDraw();
         return;
     } else {
-        if ((!Device.dwPrecacheFrame) && (!g_SASH.IsBenchmarkRunning()) && g_bLoaded)
+        if (!Device.dwPrecacheFrame && !g_SASH.IsBenchmarkRunning() && g_bLoaded)
             g_SASH.StartBenchmark();
 
         FrameMove();
@@ -249,7 +248,7 @@ void CRenderDevice::on_idle() {
     m_pRender->SetCacheXform(mView, mProject);
     // RCache.set_xform_view		( mView				);
     // RCache.set_xform_project	( mProject			);
-    D3DXMatrixInverse((D3DXMATRIX*)&mInvFullTransform, 0, (D3DXMATRIX*)&mFullTransform);
+    D3DXMatrixInverse((D3DXMATRIX*)&mInvFullTransform, nullptr, (D3DXMATRIX*)&mFullTransform);
 
     vCameraPosition_saved = vCameraPosition;
     mFullTransform_saved = mFullTransform;
