@@ -21,7 +21,7 @@ public:
     on_dialog* get_on_dialog() { return m_on_dialog; }
     void set_on_dialog(on_dialog* on_dialog) { m_on_dialog = on_dialog; }
 
-    LPCSTR error2string(long code);
+    const char* error2string(const DWORD code);
 
     void gather_info(const char* expression, const char* description, const char* argument0,
                      const char* argument1, const char* file, int line, const char* function,

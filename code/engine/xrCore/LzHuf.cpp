@@ -52,9 +52,9 @@ private:
     unsigned putbuf;
     unsigned putlen;
 
-    u8* in_start;
-    u8* in_end;
-    u8* in_iterator;
+    const u8* in_start;
+    const u8* in_end;
+    const u8* in_iterator;
 
     u8* out_start;
     u8* out_end;
@@ -81,7 +81,7 @@ public:
         out_start = out_end = out_iterator = 0;
     }
 
-    IC void Init_Input(u8* _start, u8* _end) {
+    void Init_Input(const u8* _start, const u8* _end) {
         // input
         in_start = _start;
         in_end = _end;
@@ -90,7 +90,8 @@ public:
         // bitwise input/output
         getbuf = getlen = putbuf = putlen = 0;
     }
-    IC void Init_Output(int _rsize) {
+
+    void Init_Output(const int _rsize) {
         // output
         out_start = (u8*)xr_malloc(_rsize);
         out_end = out_start + _rsize;
@@ -600,16 +601,16 @@ unsigned _writeLZ(int hf, void* d, unsigned size) {
     return size_out;
 }
 
-void _compressLZ(u8** dest, unsigned* dest_sz, void* src, unsigned src_sz) {
-    u8* start = (u8*)src;
+void _compressLZ(u8** dest, unsigned* dest_sz, const void* src, const size_t src_sz) {
+    const u8* start = static_cast<const u8*>(src);
     fs.Init_Input(start, start + src_sz);
     Encode();
     *dest = fs.OutPointer();
     *dest_sz = fs.OutSize();
 }
 
-void _decompressLZ(u8** dest, unsigned* dest_sz, void* src, unsigned src_sz) {
-    u8* start = (u8*)src;
+void _decompressLZ(u8** dest, unsigned* dest_sz, const void* src, const size_t src_sz) {
+    const u8* start = static_cast<const u8*>(src);
     fs.Init_Input(start, start + src_sz);
     Decode();
     *dest = fs.OutPointer();

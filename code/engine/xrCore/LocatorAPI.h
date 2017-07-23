@@ -1,9 +1,6 @@
 // LocatorAPI.h: interface for the CLocatorAPI class.
 //
 //////////////////////////////////////////////////////////////////////
-
-#ifndef LocatorAPIH
-#define LocatorAPIH
 #pragma once
 
 #pragma warning(push)
@@ -20,7 +17,7 @@ class XRCORE_API CLocatorAPI {
 
 public:
     struct file {
-        LPCSTR name;         // low-case name
+        const char* name;    // low-case name
         u32 vfs;             // 0xffffffff - standart file
         u32 crc;             // contents CRC
         u32 ptr;             // pointer inside vfs
@@ -180,5 +177,3 @@ public:
 
 extern XRCORE_API CLocatorAPI* xr_FS;
 #define FS (*xr_FS)
-
-#endif // LocatorAPIH

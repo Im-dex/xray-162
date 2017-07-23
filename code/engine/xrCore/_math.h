@@ -27,23 +27,18 @@ XRCORE_API extern u32 qpc_counter;
 XRCORE_API extern processor_info ID;
 XRCORE_API extern u64 QPC();
 
-#ifdef M_VISUAL
 #ifndef _M_AMD64
 #pragma warning(disable : 4035)
-IC u64 GetCLK(void) {
+inline u64 GetCLK() {
     _asm _emit 0x0F;
     _asm _emit 0x31;
 }
 #pragma warning(default : 4035)
 #else
-IC u64 GetCLK(void) { return __rdtsc(); }
-#endif
+inline u64 GetCLK() { return __rdtsc(); }
 #endif
 
-#ifdef M_BORLAND
-XRCORE_API u64 __fastcall GetCLK(void);
-#endif
-}; // namespace CPU
+} // namespace CPU
 
 extern XRCORE_API void _initialize_cpu();
 extern XRCORE_API void _initialize_cpu_thread();

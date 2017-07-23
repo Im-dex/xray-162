@@ -218,17 +218,13 @@ void xrDebug::backend(const char* expression, const char* description, const cha
         get_on_dialog()(false);
 }
 
-LPCSTR xrDebug::error2string(long code) {
-    LPCSTR result = 0;
+const char* xrDebug::error2string(const DWORD code) {
+    const char* result = nullptr;
     static string1024 desc_storage;
 
-    /*#ifdef _M_AMD64
-    #else
-            result				= DXGetErrorDescription	(code);
-    #endif*/
     if (nullptr == result) {
-        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, 0, code, 0, desc_storage,
-                      sizeof(desc_storage) - 1, 0);
+        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, code, 0, desc_storage,
+                      sizeof(desc_storage) - 1, nullptr);
         result = desc_storage;
     }
     return result;

@@ -13,11 +13,6 @@
 #else
 #define XRCDB_API __declspec(dllimport)
 #endif
-#ifdef M_VISUAL
-#define ALIGN(a) __declspec(align(a))
-#else
-#define ALIGN(a)
-#endif
 
 // forward declarations
 class CFrustum;
