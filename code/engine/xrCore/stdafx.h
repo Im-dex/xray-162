@@ -4,8 +4,6 @@
 //
 #pragma once
 
-#include <filesystem>
-
 #pragma warning(disable : 4661)
 
 #include "xrCore.h"

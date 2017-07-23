@@ -2,9 +2,7 @@
 #include "net_stream.h"
 
 class XRLC_LIGHT_API INetFileBuffWriter : public INetBuffWriter {
-
-    virtual void w(const void* ptr, u32 count);
-
+    void w(const void* ptr, const size_t count) override;
 public:
     void w_close() {
         CFileWriteBlock* fr = dynamic_cast<CFileWriteBlock*>(mem_writter);
@@ -12,23 +10,26 @@ public:
         fr->w_close();
     };
 
-    INetFileBuffWriter(LPCSTR _file_name, u32 block_size,
-                       bool _reopen); //:INetWriter(),file_name(file_name)
+    INetFileBuffWriter(const char* file_name, const size_t block_size,
+                       const bool reopen);
     virtual ~INetFileBuffWriter();
 };
 
 INetReader::~INetReader() {}
 
-void INetReaderGenStream::r(void* p, int cnt) { stream->Read(p, cnt); }
+void INetReaderGenStream::r(void* p, const size_t cnt) { stream->Read(p, cnt); }
+
 INetReaderGenStream::~INetReaderGenStream() {}
-void INetBlockReader::r(void* p, int cnt) {
-    if (cnt == 0)
+
+void INetBlockReader::r(void* p, const size_t count) {
+    if (count == 0)
         return;
-    u8* pointer = (u8*)p;
-    add(cnt);
+    u8* pointer = static_cast<u8*>(p);
+    add(count);
+    auto cnt = count;
     for (;;) {
         if (mem_reader.allocated()) {
-            u32 read_cnt = std::min(static_cast<u32>(cnt), mem_reader.count());
+            const auto read_cnt = std::min(cnt, mem_reader.count());
             mem_reader.r(pointer, read_cnt);
             pointer += read_cnt;
             cnt -= read_cnt;
@@ -40,36 +41,15 @@ void INetBlockReader::r(void* p, int cnt) {
         if (cnt == 0)
             return;
         R_ASSERT(stream);
-        u32 block_size;
+        u32 block_size; // TODO: imdex note: block size is 32 bit
         stream->Read(&block_size, sizeof(block_size));
-        create_block(block_size);
+        create_block(size_t(block_size));
         stream->Read(mem_reader.pdata(), block_size);
     }
 }
 
-void INetBlockReader::create_block(u32 size) {
+void INetBlockReader::create_block(const size_t size) {
     VERIFY(!mem_reader.allocated());
-    /*
-            if( !_buffer )
-            {
-                            _buffer = (u8*)	Memory.mem_alloc	( size
-    #ifdef DEBUG_MEMORY_NAME
-                            ,		"INetBlockReader - storage"
-    #endif // DEBUG_MEMORY_NAME
-                            );
-                    _block_size = size ;
-            }
-            if( _block_size < size )
-            {
-                            _buffer = (u8*)Memory.mem_realloc	(_buffer,size
-    #ifdef DEBUG_MEMORY_NAME
-                            ,	"CMemoryWriter - storage"
-    #endif // DEBUG_MEMORY_NAME
-                            );
-                    _block_size = size ;
-            }
-    */
-    // R_ASSERT( _block_size >= size );
     mem_reader.alloc(size);
 }
 
@@ -87,35 +67,28 @@ INetBlockReader::~INetBlockReader() {
    w_stringZ(shared_str& p)		{	w(*p?*p:"",p.size());w_u8(0);		}
 */
 
-void INetReader::r_string(char* dest, u32 tgt_sz) {
-
+void INetReader::r_string(char* dest, const size_t tgt_sz) {
     R_ASSERT(tgt_sz < 1024);
     char buf[1024];
 
     buf[0] = r_u8();
-    u32 i = 1;
+    size_t i = 1;
     for (; i < 1024; ++i) {
 
         buf[i] = r_u8();
         if (buf[i - 1] == 13 && buf[i] == 10)
             break;
     }
-    u32 lenght = i - 1;
+    const auto lenght = i - 1;
     R_ASSERT2(lenght < (tgt_sz - 1), "Dest string less than needed.");
     // R_ASSERT	(!IsBadReadPtr((void*)src,sz));
 
     buf[lenght] = 0;
-
     strncpy_s(dest, tgt_sz, buf, lenght + 1);
-
-    // dest[sz]	= 0;
 }
 
 void INetReader::r_stringZ(char* dest) {
-
-    // R_ASSERT( tgt_sz < 1024 );
-
-    u32 i = 0;
+    size_t i = 0;
     for (; i < 1024; ++i) {
         dest[i] = r_u8();
 
@@ -123,12 +96,14 @@ void INetReader::r_stringZ(char* dest) {
             break;
     }
 }
+
 void INetReader::r_stringZ(shared_str& dest) {
     char buf[1024];
     r_stringZ(buf);
     dest._set(buf);
 }
-void INetBlockReader::load_buffer(LPCSTR fn) {
+
+void INetBlockReader::load_buffer(const char* fn) {
     // xr_delete(mem_reader);
     mem_reader.free_buff();
     IReader* fs = FS.r_open(fn);
@@ -139,14 +114,12 @@ void INetBlockReader::load_buffer(LPCSTR fn) {
         FS.r_close(fs); // ->close();
     }
 }
+
 void INetMemoryBuffWriter::send_and_clear() {
     if (mem_writter.is_empty())
         return;
-    // send_not_clear( stream );
-    // R_ASSERT(mem_writter);
+
     mem_writter.send(stream);
-    // clear();
-    // xr_delete( mem_writter );
     mem_writter.clear();
 }
 
@@ -157,84 +130,62 @@ void INetBuffWriter::send_not_clear(IGenericStream* _stream) {
 
 void INetBuffWriter::clear() { xr_delete(mem_writter); }
 
-void INetMemoryBuffWriter::w(const void* ptr, u32 count) {
+void INetMemoryBuffWriter::w(const void* ptr, const size_t count) {
     if (count == 0)
         return;
     add(count);
-    const u8* pointer = (const u8*)ptr;
+    const u8* pointer = static_cast<const u8*>(ptr);
+
+    auto amount = count;
     for (;;) {
         VERIFY(mem_writter.rest() >= 0);
         if (mem_writter.rest() != 0) {
-            u32 write_cnt = std::min(count, mem_writter.rest());
+            const auto write_cnt = std::min(amount, mem_writter.rest());
             mem_writter.w(pointer, write_cnt);
-            count -= write_cnt;
+            amount -= write_cnt;
             pointer += write_cnt;
         } else {
             R_ASSERT(u32(-1) != net_block_write_data_size);
-
             send_and_clear();
         }
-        //	create_block();
 
-        // VERIFY(mem_writter->rest()>=0);
-        // if( !mem_writter.is_empty() && mem_writter.rest()==0 )
-        //{
-        //	R_ASSERT(u32(-1)!=net_block_write_data_size);
-
-        //	send_and_clear ();
-        //	create_block();
-
-        //}
-
-        if (count == 0)
+        if (amount == 0)
             return;
     }
 }
 
-void INetFileBuffWriter::w(const void* ptr, u32 count) {
+void INetFileBuffWriter::w(const void* ptr, const size_t count) {
     VERIFY(mem_writter);
     add(count);
     mem_writter->w(ptr, count);
 }
 
-// void INetMemoryBuffWriter::create_block()
-//{
-//	VERIFY(!mem_writter);
-//	mem_writter = xr_new<CMemoryWriteBlock>( net_block_write_data_size );
-//}
 INetMemoryBuffWriter::~INetMemoryBuffWriter() {
     if (!mem_writter.is_empty())
         send_and_clear();
-    // R_ASSERT(!mem_writter);
 }
 INetBuffWriter::~INetBuffWriter() { R_ASSERT(!mem_writter); }
 
-void INetBuffWriter::save_buffer(LPCSTR fn) const {
+void INetBuffWriter::save_buffer(const char* fn) const {
     if (mem_writter)
         mem_writter->save_to(fn);
 }
 
-INetFileBuffWriter::INetFileBuffWriter(LPCSTR _file_name, u32 block_size, bool _reopen)
+INetFileBuffWriter::INetFileBuffWriter(const char* file_name, const size_t block_size, const bool reopen)
     : INetBuffWriter() {
 
-    mem_writter = xr_new<CFileWriteBlock>(_file_name, block_size, _reopen);
+    mem_writter = xr_new<CFileWriteBlock>(file_name, block_size, reopen);
 }
 
 INetFileBuffWriter::~INetFileBuffWriter() { xr_delete(mem_writter); }
-/*
-                        data = (BYTE*)	Memory.mem_realloc	(data,mem_size
-#ifdef DEBUG_MEMORY_NAME
-                        ,	"CMemoryWriter - storage"
-#endif // DEBUG_MEMORY_NAME
-                        );
-*/
-void CReadMemoryBlock::r(void* p, int cnt) const {
+
+void CReadMemoryBlock::r(void* p, const size_t cnt) const {
     R_ASSERT((position + cnt) <= file_size);
     std::memcpy(p, _buffer + position, cnt);
     position += cnt;
 }
 
-CReadMemoryBlock::CReadMemoryBlock(const u32 buff_size_, u8* buffer)
+CReadMemoryBlock::CReadMemoryBlock(const size_t buff_size_, u8* buffer)
     : buf_size(buff_size_), file_size(0), position(0), _buffer(buffer) {
     /*
             data = (u8*)	Memory.mem_alloc	(file_size_
@@ -250,19 +201,21 @@ CReadMemoryBlock::~CReadMemoryBlock() {
     // Memory.mem_free( data );
 }
 
-#include "xrCore/FS_impl.h"
-u32 INetReader::find_chunk(u32 ID, BOOL* bCompressed) {
+size_t INetReader::find_chunk(const u32 ID, bool* bCompressed) {
     R_ASSERT(false);
-    return inherited::find_chunk(ID, bCompressed);
+    return __super::find_chunk(ID, bCompressed);
 }
 
 void CMemoryWriteBlock::send(IGenericStream* _stream) {
-    u32 block_size = tell();
+    // TODO: imdex note: block size should be 32 bit
+    const auto size = tell();
+    R_ASSERT(size <= sizeof(u32));
+    const auto block_size = static_cast<u32>(size);
     _stream->Write(&block_size, sizeof(block_size));
     _stream->Write(pointer(), block_size);
 }
-CFileWriteBlock::CFileWriteBlock(LPCSTR fn, u32 _size, bool _reopen)
-    : IWriteBlock(_size), file_name(fn), file(0), file_map(0), reopen(_reopen) {
+CFileWriteBlock::CFileWriteBlock(const char* fn, const size_t size, const bool reopen)
+    : IWriteBlock(size), file(nullptr), file_map(nullptr), file_name(fn), reopen(reopen) {
 
     if (reopen)
         return;
@@ -273,7 +226,6 @@ CFileWriteBlock::CFileWriteBlock(LPCSTR fn, u32 _size, bool _reopen)
 }
 
 CFileWriteBlock::~CFileWriteBlock() {
-
     fclose(file);
     if (file_map)
         fclose(file_map);
@@ -285,9 +237,8 @@ CFileWriteBlock::~CFileWriteBlock() {
         FS.file_delete(N);
 }
 
-void CFileWriteBlock::w(const void* ptr, u32 count) {
-
-    fwrite(const_cast<void*>(ptr), 1, count, file);
+void CFileWriteBlock::w(const void* ptr, const size_t count) {
+    fwrite(ptr, 1, count, file);
 }
 
 void CFileWriteBlock::send(IGenericStream* _stream) {
@@ -323,7 +274,7 @@ void CFileWriteBlock::send(IGenericStream* _stream) {
     _stream->Write(block, block_size);
 }
 
-u32 CFileWriteBlock::rest() {
+size_t CFileWriteBlock::rest() {
     VERIFY(file);
     return size - ftell(file_map);
 }
@@ -339,7 +290,7 @@ void CFileWriteBlock::w_close() {
     file_map = fopen(lfile_name, "rb");
 }
 
-INetReaderFile::INetReaderFile(LPCSTR file_name) : file(0) {
+INetReaderFile::INetReaderFile(const char* file_name) : file(nullptr) {
     file = fopen(file_name, "rb"); // FS.r_open( file_name );
 }
 
@@ -347,8 +298,7 @@ INetReaderFile::~INetReaderFile() {
     fclose(file); // FS.r_close( file );
 }
 
-void INetReaderFile::r(void* p, int cnt) {
-    // file->r( p, cnt );
+void INetReaderFile::r(void* p, const size_t cnt) {
     fread(p, 1, cnt, file);
 }
 
@@ -371,19 +321,17 @@ DWORD __stdcall CGenStreamOnFile::Read(void* Data, DWORD count) {
     return count;
 }
 
-INetIWriterGenStream::INetIWriterGenStream(IGenericStream* _stream, u32 inital_size)
-    : stream(_stream), block_size(inital_size) {
-    R_ASSERT(_stream);
-    u32 const position = _stream->GetPos();
-    _stream->SetLength(position + inital_size);
-    _stream->Seek(position);
+INetIWriterGenStream::INetIWriterGenStream(IGenericStream* stream, const size_t inital_size)
+    : stream(stream), block_size(inital_size) {
+    R_ASSERT(stream);
+    const auto position = stream->GetPos();
+    stream->SetLength(position + inital_size);
+    stream->Seek(position);
 }
-INetIWriterGenStream::~INetIWriterGenStream() {}
 
-void INetIWriterGenStream::w(const void* ptr, u32 count) {
-
-    u32 const position = stream->GetPos();
-    u32 const length = stream->GetLength();
+void INetIWriterGenStream::w(const void* ptr, const size_t count) {
+    const auto position = stream->GetPos();
+    const auto length = stream->GetLength();
 
     if (position + count > length) {
         stream->SetLength(position + block_size);
@@ -393,13 +341,9 @@ void INetIWriterGenStream::w(const void* ptr, u32 count) {
     stream->Write(ptr, count);
 }
 
-void CMemoryWriteBlock::w(const void* ptr, u32 count) {
+void CMemoryWriteBlock::w(const void* ptr, const size_t count) {
     VERIFY(rest() >= count);
-
     R_ASSERT(position + count <= buffer_size);
-    // mem_writer.w(ptr,count);
-
     std::memcpy(buffer + position, ptr, count);
     position += count;
-    // if (position>file_size) file_size=position;//?
 }

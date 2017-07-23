@@ -3,8 +3,6 @@
 
 #include "xrstring.h"
 
-#include "FS_impl.h"
-
 XRCORE_API extern str_container* g_pStringContainer = NULL;
 #define HEADER 12 + sizeof(void*) // ref + len + crc + next
 
@@ -241,10 +239,6 @@ str_value* str_container::dock(str_c value) {
 // 		Msg("shared_strings");
 // 		g_find_chunk_counter.flush();
 // 	}
-//
-// 	//#ifdef FIND_CHUNK_BENCHMARK_ENABLE
-// 	find_chunk_auto_timer timer;
-// 	//#endif // FIND_CHUNK_BENCHMARK_ENABLE
 
 #ifdef DEBUG_MEMORY_MANAGER
     Memory.stat_strdock++;

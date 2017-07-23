@@ -17,10 +17,10 @@ file(GLOB DEBUG_CORE_BLACKBOX_CPP blackbox/*.cpp)
 set_source_files_properties(${DEBUG_CORE_BLACKBOX_CPP} PROPERTIES COMPILE_FLAGS /Y-)
 set(DEBUG_CORE_BLACKBOX ${DEBUG_CORE_BLACKBOX_H} ${DEBUG_CORE_BLACKBOX_CPP})
 
-set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp Fs_impl.h
+set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp
        FS_internal.h LocatorAPI.h LocatorAPI.cpp LocatorAPI_defs.h
        LocatorAPI_defs.cpp log.h log.cpp NET_utils.cpp net_utils.h Xr_ini.cpp xr_ini.h)
-set(FS_STREAM_READER stream_reader.h stream_reader.cpp stream_reader_inline.h)
+set(FS_STREAM_READER stream_reader.h stream_reader.cpp)
 set(FS_FILE_STREAM_READER file_stream_reader.h file_stream_reader.cpp)
 
 set(INTRUSIVE_PTR intrusive_ptr.h)

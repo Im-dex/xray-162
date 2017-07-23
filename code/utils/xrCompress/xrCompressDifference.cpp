@@ -154,7 +154,7 @@ int ProcessDifference() {
         SetConsoleTitle(stats);
 
         strconcat(sizeof(out_path), out_path, target_folder, "\\", fn);
-        VerifyPath(out_path);
+        createPath(out_path);
         IReader* r = FS_new->r_open("$target_folder$", fn);
         IWriter* w = FS_old->w_open(out_path);
         w->w(r->pointer(), r->length());

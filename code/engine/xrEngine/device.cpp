@@ -16,10 +16,6 @@
 #include "x_ray.h"
 #include "render.h"
 
-// must be defined before include of FS_impl.h
-#define INCLUDE_FROM_ENGINE
-#include "../xrCore/FS_impl.h"
-
 #ifdef INGAME_EDITOR
 #include "editor/ide.hpp"
 #include "engine_impl.hpp"
@@ -120,10 +116,6 @@ void CRenderDevice::End(void) {
             Memory.mem_compact();
             Msg("* MEMORY USAGE: %d K", Memory.mem_usage() / 1024);
             Msg("* End of synchronization A[%d] R[%d]", b_is_Active, b_is_Ready);
-
-#ifdef FIND_CHUNK_BENCHMARK_ENABLE
-            g_find_chunk_counter.flush();
-#endif // FIND_CHUNK_BENCHMARK_ENABLE
 
             CheckPrivilegySlowdown();
 

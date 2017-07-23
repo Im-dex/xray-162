@@ -1,5 +1,3 @@
-#ifndef xrCoreH
-#define xrCoreH
 #pragma once
 
 #include "xr_build_config.h"
@@ -128,15 +126,20 @@
 #include <stack>
 #include <list>
 #include <set>
+#include <array>
 #include <map>
 #include <mutex>
+#include <filesystem>
 
 #include <unordered_map>
 #include <unordered_set>
 
 #include <string>
+#include <string_view>
 #pragma warning(pop)
 #pragma warning(disable : 4100) // unreferenced formal parameter
+
+namespace stdfs = std::experimental::filesystem;
 
 // Our headers
 #ifdef XRCORE_EXPORTS
@@ -228,7 +231,7 @@ class destructor {
 public:
     destructor(T* p) { ptr = p; }
     ~destructor() { xr_delete(ptr); }
-    IC T& operator()() { return *ptr; }
+    T& operator()() { return *ptr; }
 };
 
 // ********************************************** The Core definition
@@ -254,5 +257,3 @@ public:
 #define _BGCL __stdcall
 
 extern XRCORE_API xrCore Core;
-
-#endif

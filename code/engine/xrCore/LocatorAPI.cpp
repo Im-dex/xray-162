@@ -557,8 +557,8 @@ bool CLocatorAPI::Recurse(const char* path) {
     return true;
 }
 
-bool file_handle_internal(LPCSTR file_name, u32& size, int& file_handle);
-void* FileDownload(LPCSTR file_name, const int& file_handle, u32& file_size);
+bool file_handle_internal(const char* file_name, size_t& size, int& file_handle);
+void* FileDownload(const char* file_name, const int& file_handle, size_t& file_size);
 
 void CLocatorAPI::setup_fs_path(LPCSTR fs_name, string_path& fs_path) {
     xr_strcpy(fs_path, fs_name ? fs_name : "");
@@ -603,14 +603,14 @@ IReader* CLocatorAPI::setup_fs_ltx(LPCSTR fs_name) {
     Log("using fs-ltx", fs_file_name);
 
     int file_handle;
-    u32 file_size;
-    IReader* result = 0;
+    size_t file_size;
+    IReader* result = nullptr;
     CHECK_OR_EXIT(
         file_handle_internal(fs_file_name, file_size, file_handle),
         make_string("Cannot open file \"%s\".\nCheck your working folder.", fs_file_name));
 
     void* buffer = FileDownload(fs_file_name, file_handle, file_size);
-    result = xr_new<CTempReader>(buffer, file_size, 0);
+    result = xr_new<CTempReader>(buffer, (int)file_size, 0);
 
 #ifdef DEBUG
     if (result && m_Flags.is(flBuildCopy | flReady))
@@ -620,7 +620,7 @@ IReader* CLocatorAPI::setup_fs_ltx(LPCSTR fs_name) {
     if (m_Flags.test(flDumpFileActivity))
         _register_open_file(result, fs_file_name);
 
-    return (result);
+    return result;
 }
 
 void CLocatorAPI::_initialize(u32 flags, LPCSTR target_folder, LPCSTR fs_name) {
@@ -1399,7 +1399,7 @@ void CLocatorAPI::file_rename(LPCSTR src, LPCSTR dest, bool bOwerwrite) {
         if (D != m_files.end()) {
             if (!bOwerwrite)
                 return;
-            unlink(D->name);
+            _unlink(D->name);
             char* str = LPSTR(D->name);
             xr_free(str);
             m_files.erase(D);
@@ -1415,7 +1415,7 @@ void CLocatorAPI::file_rename(LPCSTR src, LPCSTR dest, bool bOwerwrite) {
         m_files.insert(new_desc);
 
         // physically rename file
-        VerifyPath(dest);
+        createPath(dest);
         rename(src, dest);
     }
 }
