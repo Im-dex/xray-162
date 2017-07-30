@@ -266,7 +266,6 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint) {
     string_path fs_entry_point;
     fs_entry_point[0] = 0;
     if (A.header) {
-
         shared_str read_path = A.header->r_string("header", "entry_point");
         if (0 == stricmp(read_path.c_str(), "gamedata")) {
             read_path = "$fs_root$";

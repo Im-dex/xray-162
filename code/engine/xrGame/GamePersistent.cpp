@@ -390,11 +390,7 @@ void CGamePersistent::WeathersUpdate() {
 }
 
 bool allow_intro() {
-#ifdef MASTER_GOLD
-    if (g_SASH.IsRunning())
-#else  // #ifdef MASTER_GOLD
-    if ((0 != strstr(Core.Params, "-nointro")) || g_SASH.IsRunning())
-#endif // #ifdef MASTER_GOLD
+    if ((nullptr != strstr(Core.Params, "-nointro")) || g_SASH.IsRunning())
     {
         return false;
     } else
@@ -404,12 +400,14 @@ bool allow_intro() {
 void CGamePersistent::start_logo_intro() {
     if (Device.dwPrecacheFrame == 0) {
         m_intro_event.bind(this, &CGamePersistent::update_logo_intro);
-        if (0 == xr_strlen(m_game_params.m_game_or_spawn) && NULL == g_pGameLevel) {
+        if (0 == xr_strlen(m_game_params.m_game_or_spawn) && NULL == g_pGameLevel && allow_intro()) {
             VERIFY(NULL == m_intro);
             m_intro = xr_new<CUISequencer>();
             m_intro->Start("intro_logo");
             Msg("intro_start intro_logo");
             Console->Hide();
+        } else {
+            Console->Execute("main_menu on");
         }
     }
 }
@@ -428,7 +426,7 @@ void CGamePersistent::update_logo_intro() {
 extern int g_keypress_on_start;
 void CGamePersistent::game_loaded() {
     if (Device.dwPrecacheFrame <= 2) {
-        if (g_pGameLevel && g_pGameLevel->bReady && (allow_intro() && g_keypress_on_start) &&
+        if (g_pGameLevel && g_pGameLevel->bReady && g_keypress_on_start &&
             load_screen_renderer.b_need_user_input &&
             m_game_params.m_e_game_type == eGameIDSingle) {
             VERIFY(NULL == m_intro);
