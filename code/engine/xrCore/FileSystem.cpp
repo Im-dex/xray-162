@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
-xr_string EFS_Utils::ChangeFileExt(const std::string_view& src, const char* ext) {
+xr_string EFS_Utils::ChangeFileExt(const std::string_view src, const std::string_view ext) {
+    // TODO: [imdex] use stdfs::path.replace_extension instead
     xr_string tmp;
     const char* src_ext = strext(src.data());
     if (src_ext) {

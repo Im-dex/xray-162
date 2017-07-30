@@ -5,10 +5,6 @@
 //	Author		: Dmitriy Iassenev
 //	Description : XRay Script export space
 ////////////////////////////////////////////////////////////////////////////
-
-#ifndef script_export_spaceH
-#define script_export_spaceH
-
 #pragma once
 
 struct lua_State;
@@ -36,5 +32,3 @@ template <typename T>
 struct class_exporter {
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
-
-#endif

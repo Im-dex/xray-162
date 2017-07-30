@@ -234,12 +234,10 @@ IReader* open_chunk(void* ptr, u32 ID) {
         res = ReadFile(ptr, &dwType, 4, &read_byte, 0);
         if (read_byte == 0)
             return NULL;
-        //.		VERIFY(res&&(read_byte==4));
 
         res = ReadFile(ptr, &dwSize, 4, &read_byte, 0);
         if (read_byte == 0)
             return NULL;
-        //.		VERIFY(res&&(read_byte==4));
 
         if ((dwType & (~CFS_CompressMark)) == ID) {
             u8* src_data = xr_alloc<u8>(dwSize);
@@ -248,9 +246,6 @@ IReader* open_chunk(void* ptr, u32 ID) {
             if (dwType & CFS_CompressMark) {
                 BYTE* dest;
                 unsigned dest_sz;
-                //				if (g_temporary_stuff)
-                //					g_temporary_stuff
-                //(src_data,dwSize,src_data);
                 _decompressLZ(&dest, &dest_sz, src_data, dwSize);
                 xr_free(src_data);
                 return xr_new<CTempReader>(dest, dest_sz, 0);
@@ -311,14 +306,6 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint) {
     }
     if (entrypoint)
         xr_strcpy(fs_entry_point, sizeof(fs_entry_point), entrypoint);
-
-    //	DUMMY_STUFF	*g_temporary_stuff_subst = NULL;
-    //
-    //	if(strstr(A.path.c_str(),".xdb"))
-    //	{
-    //		g_temporary_stuff_subst		= g_temporary_stuff;
-    //		g_temporary_stuff			= NULL;
-    //	}
 
     // Read FileSystem
     A.open();

@@ -75,7 +75,9 @@ public:
 // It automatically frees memory after destruction
 class CTempReader : public IReader {
 public:
-    CTempReader(void* data, const int size, const int iterpos) : IReader(data, size, iterpos) {}
+    CTempReader(void* data, const int size, const int iterpos)
+        : IReader(data, size, iterpos)
+    {}
     virtual ~CTempReader();
 };
 
