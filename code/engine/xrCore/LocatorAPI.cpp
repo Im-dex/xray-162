@@ -580,7 +580,7 @@ void CLocatorAPI::setup_fs_path(LPCSTR fs_name) {
     string_path full_current_directory;
     _fullpath(full_current_directory, fs_path, sizeof(full_current_directory));
 
-    FS_Path* path = xr_new<FS_Path>(full_current_directory, "", "", "", 0);
+    FS_Path* path = xr_new<FS_Path>(full_current_directory, "", "", 0);
 #ifdef DEBUG
     Msg("$fs_root$ = %s", full_current_directory);
 #endif // #ifdef DEBUG
@@ -676,8 +676,8 @@ void CLocatorAPI::_initialize(u32 flags, LPCSTR target_folder, LPCSTR fs_name) {
                         Log				("using fs-ltx",fs_ltx);
         */
         // append all pathes
-        string_path id, root, add, def, capt;
-        LPCSTR lp_add, lp_def, lp_capt;
+        string_path id, root, add, def;
+        LPCSTR lp_add, lp_def;
         string16 b_v;
         string4096 temp;
 
@@ -707,18 +707,16 @@ void CLocatorAPI::_initialize(u32 flags, LPCSTR target_folder, LPCSTR fs_name) {
             _GetItem(temp, 2, root, _delimiter);
             _GetItem(temp, 3, add, _delimiter);
             _GetItem(temp, 4, def, _delimiter);
-            _GetItem(temp, 5, capt, _delimiter);
             xr_strlwr(id);
 
             xr_strlwr(root);
             lp_add = (cnt >= 4) ? xr_strlwr(add) : 0;
             lp_def = (cnt >= 5) ? def : 0;
-            lp_capt = (cnt >= 6) ? capt : 0;
 
             auto p_it = pathes.find(root);
 
             FS_Path* P = xr_new<FS_Path>((p_it != pathes.end()) ? p_it->second->m_Path : root,
-                                         lp_add, lp_def, lp_capt, fl);
+                                         lp_add, lp_def, fl);
             bNoRecurse = !(fl & FS_Path::flRecurse);
             Recurse(P->m_Path);
             auto I = pathes.insert(std::make_pair(xr_strdup(id), P));
@@ -928,7 +926,7 @@ int CLocatorAPI::file_list(FS_FileSet& dest, LPCSTR path, u32 flags, LPCSTR mask
             }
             FS_File file;
             if (flags & FS_ClampExt)
-                file.name = EFS.ChangeFileExt(entry_begin, "");
+                file.name = EFS_Utils::ChangeFileExt(entry_begin, "");
             else
                 file.name = entry_begin;
 
@@ -1430,7 +1428,7 @@ bool CLocatorAPI::path_exist(LPCSTR path) { return pathes.find(path) != pathes.e
 FS_Path* CLocatorAPI::append_path(LPCSTR path_alias, LPCSTR root, LPCSTR add, BOOL recursive) {
     VERIFY(root /**&&root[0]/**/);
     VERIFY(false == path_exist(path_alias));
-    FS_Path* P = xr_new<FS_Path>(root, add, LPCSTR(0), LPCSTR(0), 0);
+    FS_Path* P = xr_new<FS_Path>(root, add, LPCSTR(0), 0);
     bNoRecurse = !recursive;
     Recurse(P->m_Path);
     pathes.insert(std::make_pair(xr_strdup(path_alias), P));

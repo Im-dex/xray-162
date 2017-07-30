@@ -63,8 +63,6 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
         rtc_initialize();
 
         xr_FS = xr_new<CLocatorAPI>();
-
-        xr_EFS = xr_new<EFS_Utils>();
         //.		R_ASSERT			(co_res==S_OK);
     }
     if (init_fs) {
@@ -87,7 +85,6 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
 #endif
         FS._initialize(flags, nullptr, fs_fname);
         Msg("'%s' build %d, %s\n", "xrCore", build_id, build_date);
-        EFS._initialize();
 #ifdef DEBUG
         Msg("CRT heap 0x%08x", _get_heap_handle());
         Msg("Process heap 0x%08x", GetProcessHeap());
@@ -101,9 +98,7 @@ void xrCore::_destroy() {
     --init_counter;
     if (0 == init_counter) {
         FS._destroy();
-        EFS._destroy();
         xr_delete(xr_FS);
-        xr_delete(xr_EFS);
 
         Memory._destroy();
     }

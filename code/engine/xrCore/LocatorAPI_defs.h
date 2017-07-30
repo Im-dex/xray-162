@@ -20,10 +20,9 @@ public:
     LPSTR m_Root;
     LPSTR m_Add;
     LPSTR m_DefExt;
-    LPSTR m_FilterCaption;
     Flags32 m_Flags;
 
-    FS_Path(LPCSTR _Root, LPCSTR _Add, LPCSTR _DefExt = 0, LPCSTR _FilterString = 0, u32 flags = 0);
+    FS_Path(LPCSTR _Root, LPCSTR _Add, LPCSTR _DefExt = nullptr, u32 flags = 0);
     ~FS_Path();
     LPCSTR _update(string_path& dest, LPCSTR src) const;
     void _set(LPCSTR add);
