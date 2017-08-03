@@ -1,7 +1,12 @@
-# xray-162
+# xray-1.7
 XRay engine 1.7
 
 [![Build status](https://ci.appveyor.com/api/projects/status/fo8iwn5bvcmgnh8e?svg=true)](https://ci.appveyor.com/project/Im-dex/xray-162)
+
+## Branches
+[master](https://github.com/Im-dex/xray-16) - stable code
+
+[develop](https://github.com/Im-dex/xray-162/tree/develop) - latest, unstable and possibly broken code (time to time merged into master)
 
 ## Build instructions
 ### Prerequisites
