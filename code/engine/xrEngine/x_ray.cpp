@@ -513,7 +513,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
     Debug._initialize();
 
     if (!IsDebuggerPresent()) {
-
         HMODULE const kernel32 = LoadLibrary("kernel32.dll");
         R_ASSERT(kernel32);
 
@@ -531,8 +530,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
             VERIFY2(result, "can't set process heap low fragmentation");
         }
     }
-
-    //	foo();
 
     // Check for virtual memory
     if ((strstr(lpCmdLine, "--skipmemcheck") == NULL) && IsOutOfVirtualMemory())

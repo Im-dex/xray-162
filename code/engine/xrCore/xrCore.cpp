@@ -16,7 +16,7 @@ XRCORE_API LPCSTR build_date;
 
 namespace CPU {
 extern void Detect();
-};
+}
 
 static u32 init_counter = 0;
 
