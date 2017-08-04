@@ -6,7 +6,7 @@
 static constexpr auto CFS_CompressMark = 1ul << 31ul;
 static constexpr auto CFS_HeaderChunkID = 666;
 
-XRCORE_API void createPath(const stdfs::path& path);
+XRCORE_API void createPath(const std::string_view path);
 
 //#define FS_DEBUG
 

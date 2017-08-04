@@ -1248,12 +1248,7 @@ IWriter* CLocatorAPI::w_open(LPCSTR path, LPCSTR _fname) {
     xr_strlwr(fname); //,".$");
     if (path && path[0])
         update_path(fname, path, fname);
-    CFileWriter* W = xr_new<CFileWriter>(fname, false);
-#ifdef _EDITOR
-    if (!W->valid())
-        xr_delete(W);
-#endif
-    return W;
+    return xr_new<CFileWriter>(fname, false);
 }
 
 IWriter* CLocatorAPI::w_open_ex(LPCSTR path, LPCSTR _fname) {
