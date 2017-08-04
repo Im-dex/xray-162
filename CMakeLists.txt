@@ -10,6 +10,7 @@ endif()
 
 set(BIN_PATH "" CACHE STRING "engine bin output directory path")
 option(BUILD_UTILS "enable utils projects build" OFF)
+option(REL_DEVELOP "switch RelWithDebInfo configuration into development mode" OFF)
 
 if ("${BIN_PATH}" STREQUAL "")
     message(FATAL_ERROR "Invalid bin path")
@@ -35,9 +36,12 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo" CACHE STRING "" FORCE)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-add_compile_options(/MP "$<$<CONFIG:RELWITHDEBINFO>:/GL>" "$<$<CONFIG:RELWITHDEBINFO>:/Ob2>"
-                    "$<$<CONFIG:DEBUG>:/EHsc>" "$<$<CONFIG:RELWITHDEBINFO>:/Ot>"
-                    "$<$<CONFIG:RELWITHDEBINFO>:/wd4577>")
+add_compile_options(/MP "$<$<CONFIG:RELWITHDEBINFO>:/Ob2>" "$<$<CONFIG:DEBUG>:/EHsc>"
+                    "$<$<CONFIG:RELWITHDEBINFO>:/Ot>" "$<$<CONFIG:RELWITHDEBINFO>:/wd4577>")
+if (NOT REL_DEVELOP)
+    add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/GL>")
+endif()
+
 if (ARCH_X86)
     add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/arch:SSE2>")
 endif()
@@ -50,7 +54,11 @@ if (ARCH_X86)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
 endif()
 
-set(SHARED_RELEASE_LINKER_FLAGS "/LTCG /OPT:REF /INCREMENTAL:NO")
+if (REL_DEVELOP)
+    set(SHARED_RELEASE_LINKER_FLAGS "")
+else()
+    set(SHARED_RELEASE_LINKER_FLAGS "/LTCG /OPT:REF /INCREMENTAL:NO")
+endif()
 set(STATIC_RELEASE_LINKER_FLAGS "/LTCG")
 set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} ${SHARED_RELEASE_LINKER_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} ${SHARED_RELEASE_LINKER_FLAGS}")
