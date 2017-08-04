@@ -23,10 +23,19 @@ Open command line at the root of repository and execute the following commands:
 * x86: cmake .. -DBIN_PATH=%BIN_PATH% -G "Visual Studio 15 2017" -T "host=x64"
 * x64: cmake .. -DBIN_PATH=%BIN_PATH% -G "Visual Studio 15 2017 Win64" -T "host=x64"
 
-If you want to build utils projects add -DBUILD_UTILS=ON parameter to cmake command line.
-
 Open generated solution and build the engine.
 
 > %BIN_PATH% - path to your stalker bin folder.
+          
+### Additional CMake command line options
+
+#### BUILD_UTILS (boolean)
+Enable utils projects build
+
+#### REL_DEVELOP (boolean)
+Switch the following useful options for development using RelWithDebInfo build configuration
+* Enable incremental linking
+* Disable LTCG
+* Disable unreferenced function elimination by linker
 
 If you have issues with openal when the game is starting, install extras\oalinst.exe.
