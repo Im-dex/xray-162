@@ -42,7 +42,7 @@
 #include "../../stalker_movement_manager_smart_cover.h"
 #include "../../entitycondition.h"
 #include "../../../xrServerEntities/script_engine.h"
-//#include "ai_stalker_impl.h"
+#include "ai_stalker_impl.h"
 #include "../../sound_player.h"
 #include "../../stalker_sound_data.h"
 #include "../../stalker_sound_data_visitor.h"

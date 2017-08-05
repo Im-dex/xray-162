@@ -24,7 +24,7 @@
 #include "ai_object_location.h"
 #include "profiler.h"
 #include "stalker_animation_manager.h"
-//#include "object_handler_planner_impl.h"
+#include "object_handler_planner_impl.h"
 #include "effectorshot.h"
 
 CObjectHandler::CObjectHandler() {
