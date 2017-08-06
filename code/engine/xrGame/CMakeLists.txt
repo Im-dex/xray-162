@@ -3873,7 +3873,7 @@ add_definitions(-DXRGAME_EXPORTS -DdSINGLE -DMSVC -D_SECURE_SCL=0)
 add_compile_options(/fp:fast /GR "/Yustdafx.h" /wd4237)
 
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS "/Ycstdafx.h")
-set(SCRIPT_PCH_FILE ${CMAKE_CURRENT_BINARY_DIR}/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/xrGame_script.pch)
+set(SCRIPT_PCH_FILE ${CMAKE_CURRENT_BINARY_DIR}/$<$<CONFIG:Debug>:DEBUG>$<$<CONFIG:RELWITHDEBINFO>:RelWithDebInfo>/xrGame_script.pch)
 set_source_files_properties(../xrServerEntities/pch_script.cpp PROPERTIES COMPILE_FLAGS "/Ycpch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 set_source_files_properties(actor.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 set_source_files_properties(animation_script_callback.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
