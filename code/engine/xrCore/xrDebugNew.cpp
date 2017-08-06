@@ -137,7 +137,7 @@ void xrDebug::gather_info(const char* expression, const char* description, const
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
             buffer += xr_sprintf(buffer, assertion_size - u32(buffer - buffer_base), "%s%s",
-                                 StackTrace[i], endline);
+                                 stackTrace[i], endline);
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
         }
 

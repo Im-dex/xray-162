@@ -144,7 +144,7 @@ bool CUIKeyBinding::IsActionExist(LPCSTR action, CUIXml& xml_doc) {
     for (int i = 0; i < groupsCount; i++) {
         // add group items
         int commandsCount = xml_doc.GetNodesNum("group", i, "command");
-        XML_NODE* tab_node = xml_doc.NavigateToNode("group", i);
+        XML_NODE tab_node = xml_doc.NavigateToNode("group", i);
         xml_doc.SetLocalRoot(tab_node);
 
         for (int j = 0; j < commandsCount; ++j) {

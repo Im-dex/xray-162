@@ -4215,6 +4215,8 @@ set_source_files_properties(../xrServerEntities/xrServer_Objects_Alife_Smartcove
 set_source_files_properties(../xrServerEntities/xrServer_Objects_script.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 set_source_files_properties(../xrServerEntities/xrServer_Objects_script2.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 
+set_property(SOURCE script_game_object_script3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " /bigobj")
+
 add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${AI_AMONSTERS_COMMON_COMPONENTS_CONTROL_MANAGER_PURE_COMS_PATH_BUILDER}
                           ${AI_ANAVIGATION_PATHFINDING_PATHMANAGERS_PATH_MANAGER_LEVEL}
