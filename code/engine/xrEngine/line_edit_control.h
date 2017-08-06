@@ -10,7 +10,7 @@
 
 namespace text_editor {
 
-void remove_spaces(PSTR str); // in & out
+void remove_spaces(char* str); // in & out
 void split_cmd(PSTR first, PSTR second, LPCSTR str);
 
 class base;

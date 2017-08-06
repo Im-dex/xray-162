@@ -704,37 +704,28 @@ void line_edit_control::SwitchKL() { ActivateKeyboardLayout((HKL)HKL_NEXT, 0); }
 
 // -------------------------------------------------------------------------------------------------
 
-void remove_spaces(PSTR str) // in & out
-{
-    u32 str_size = xr_strlen(str);
-    if (str_size < 1) {
+void remove_spaces(char* str /* in & out */) {
+    std::string_view source = str;
+    if (source.size() < 1) {
         return;
     }
-    PSTR new_str = (PSTR)_alloca((str_size + 1) * sizeof(char));
-    new_str[0] = 0;
 
-    u32 a = 0, b = 0, i = 0;
-    while (b < str_size) {
-        a = b;
-        while (a < str_size && str[a] == ' ') {
-            ++a;
+    size_t pos = 0;
+
+    bool spaceFound = false;
+    for (const auto symbol : source) {
+        if (symbol == ' ') {
+            spaceFound = true;
+        } else {
+            if (spaceFound) {
+                str[pos++] = ' ';
+                spaceFound = false;
+            }
+            str[pos++] = symbol;
         }
-        b = a;
-        while (b < str_size && str[b] != ' ') {
-            ++b;
-        }
-        strncpy_s(new_str + i, str_size + 1, str + a, b - a);
-        i += (b - a);
-        if (i < str_size) {
-            new_str[i] = ' ';
-        }
-        ++b;
-        ++i;
     }
-    --i;
-    if (i < str_size) {
-        strncpy_s(str, str_size, new_str, i);
-    }
+
+    str[pos] = 0;
 }
 
 void split_cmd(PSTR first, PSTR second, LPCSTR str) {

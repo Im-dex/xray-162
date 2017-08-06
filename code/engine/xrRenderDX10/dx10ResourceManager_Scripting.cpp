@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "xrEngine/Render.h"
 #include "xrRenderCommon/ResourceManager.h"
@@ -15,20 +14,6 @@
 #include "luabind/return_reference_to_policy.hpp"
 
 #include "xrRenderCommon/dxRenderDeviceRender.h"
-
-/*#ifdef NDEBUG
-
-namespace std
-{
-
-void terminate ()
-{
-        abort();
-}
-
-} // namespace std
-
-#endif // #ifdef NDEBUG*/
 
 using namespace luabind;
 
