@@ -28,35 +28,25 @@ XRCORE_API CRandom Random;
 #ifdef _M_AMD64
 
 namespace FPU {
-XRCORE_API void m24(void) {
-    _control87(_PC_24, MCW_PC);
+XRCORE_API void m24() {
     _control87(_RC_CHOP, MCW_RC);
 }
-XRCORE_API void m24r(void) {
-    _control87(_PC_24, MCW_PC);
+XRCORE_API void m24r() {
     _control87(_RC_NEAR, MCW_RC);
 }
-XRCORE_API void m53(void) {
-    _control87(_PC_53, MCW_PC);
+XRCORE_API void m53() {
     _control87(_RC_CHOP, MCW_RC);
 }
-XRCORE_API void m53r(void) {
-    _control87(_PC_53, MCW_PC);
+XRCORE_API void m53r() {
     _control87(_RC_NEAR, MCW_RC);
 }
-XRCORE_API void m64(void) {
-    _control87(_PC_64, MCW_PC);
+XRCORE_API void m64() {
     _control87(_RC_CHOP, MCW_RC);
 }
-XRCORE_API void m64r(void) {
-    _control87(_PC_64, MCW_PC);
+XRCORE_API void m64r() {
     _control87(_RC_NEAR, MCW_RC);
 }
 
-void initialize() {
-    ::Random.seed(u32(CPU::GetCLK() % (1i64 << 32i64)));
-}
-} // namespace FPU
 #else
 u16 getFPUsw() {
     u16 SW;
@@ -65,12 +55,12 @@ u16 getFPUsw() {
 }
 
 namespace FPU {
-u16 _24 = 0;
-u16 _24r = 0;
-u16 _53 = 0;
-u16 _53r = 0;
-u16 _64 = 0;
-u16 _64r = 0;
+static u16 _24 = 0;
+static u16 _24r = 0;
+static u16 _53 = 0;
+static u16 _53r = 0;
+static u16 _64 = 0;
+static u16 _64r = 0;
 
 XRCORE_API void m24() {
     u16 p = _24;
@@ -97,9 +87,12 @@ XRCORE_API void m64r() {
     __asm fldcw p;
 }
 
+#endif
+
 void initialize() {
     _clear87();
 
+#ifdef _M_IX86
     _control87(_PC_24, MCW_PC);
     _control87(_RC_CHOP, MCW_RC);
     _24 = getFPUsw(); // 24, chop
@@ -108,6 +101,7 @@ void initialize() {
 
     _control87(_PC_53, MCW_PC);
     _control87(_RC_CHOP, MCW_RC);
+
     _53 = getFPUsw(); // 53, chop
     _control87(_RC_NEAR, MCW_RC);
     _53r = getFPUsw(); // 53, rounding
@@ -115,19 +109,16 @@ void initialize() {
     _control87(_PC_64, MCW_PC);
     _control87(_RC_CHOP, MCW_RC);
     _64 = getFPUsw(); // 64, chop
+
     _control87(_RC_NEAR, MCW_RC);
     _64r = getFPUsw(); // 64, rounding
-
-#ifndef XRCORE_STATIC
+#endif
 
     m24r();
 
-#endif // XRCORE_STATIC
-
     ::Random.seed(u32(CPU::GetCLK() % (1i64 << 32i64)));
 }
-}; // namespace FPU
-#endif
+} // namespace FPU
 
 namespace CPU {
 XRCORE_API u64 qpc_freq = []{ 
