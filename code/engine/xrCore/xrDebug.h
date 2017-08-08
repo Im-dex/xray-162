@@ -1,8 +1,6 @@
-#ifndef xrDebugH
-#define xrDebugH
 #pragma once
 
-typedef void crashhandler(void);
+typedef void crashhandler();
 typedef void on_dialog(bool before);
 
 class XRCORE_API xrDebug {
@@ -57,13 +55,11 @@ public:
 
 // warning
 // this function can be used for debug purposes only
-IC std::string __cdecl make_string(LPCSTR format, ...) {
-    va_list args;
-    va_start(args, format);
-
-    char temp[4096];
-    vsprintf(temp, format, args);
-
+template <typename... Args>
+std::string make_string(const char* format, const Args&... args) {
+    static constexpr size_t bufferSize = 4096;
+    char temp[bufferSize];
+    snprintf(temp, bufferSize, format, args...);
     return std::string(temp);
 }
 
@@ -72,5 +68,3 @@ extern XRCORE_API xrDebug Debug;
 XRCORE_API void LogStackTrace(LPCSTR header);
 
 #include "xrDebug_macros.h"
-
-#endif // xrDebugH

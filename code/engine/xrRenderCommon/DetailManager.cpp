@@ -3,22 +3,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "DetailManager.h"
 #include "cl_intersect.h"
-
-#ifdef _EDITOR
-#include "ESceneClassList.h"
-#include "Scene.h"
-#include "SceneObject.h"
-#include "igame_persistent.h"
-#include "environment.h"
-#else
 #include "xrEngine/igame_persistent.h"
 #include "xrEngine/environment.h"
 #include <xmmintrin.h>
-#endif
 
 const float dbgOffset = 0.f;
 const int dbgItems = 128;
@@ -254,9 +244,9 @@ void CDetailManager::UpdateVisibleM() {
                         if (sp.id == DetailSlot::ID_Empty)
                             continue;
 
-                        sp.r_items[0].clear_not_free();
-                        sp.r_items[1].clear_not_free();
-                        sp.r_items[2].clear_not_free();
+                        sp.r_items[0].clear();
+                        sp.r_items[1].clear();
+                        sp.r_items[2].clear();
 
                         float R = objects[sp.id]->bv_sphere.R;
                         float Rq_drcp = R * R * dist_sq_rcp; // reordered expression for 'ssa' calc

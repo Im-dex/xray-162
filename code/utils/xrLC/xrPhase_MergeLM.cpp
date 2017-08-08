@@ -188,7 +188,7 @@ void CBuild::xrPhase_MergeLM() {
     Status("Destroying deflectors...");
     for (u32 it = 0; it < lc_global_data()->g_deflectors().size(); it++)
         xr_delete(lc_global_data()->g_deflectors()[it]);
-    lc_global_data()->g_deflectors().clear_and_free();
+    lc_global_data()->g_deflectors().clear();
 }
 
 /*
@@ -499,7 +499,7 @@ _max(D->layer.Area(),materials()[D->GetBaseMaterial()].internal_max_area);
         Status		("Destroying deflectors...");
         for (u32 it=0; it<lc_global_data()->g_deflectors().size(); it++)
                 xr_delete(lc_global_data()->g_deflectors()[it]);
-        lc_global_data()->g_deflectors().clear_and_free	();
+        lc_global_data()->g_deflectors().clear();
 
         // Destroy helper threads
         DoneMergeThreads();

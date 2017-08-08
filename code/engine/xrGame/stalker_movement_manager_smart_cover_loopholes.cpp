@@ -76,7 +76,7 @@ void stalker_movement_manager_smart_cover::build_enter_path() {
     VERIFY(m_target.cover());
     smart_cover::cover const& target_cover = *m_target.cover();
 
-    m_path.clear_not_free();
+    m_path.clear();
 
     shared_str target_loophole_id = smart_cover::transform_vertex(
         m_target.cover_loophole() ? m_target.cover_loophole()->id() : "", false);
@@ -237,7 +237,7 @@ stalker_movement_manager_smart_cover::action(smart_cover::cover const& cover,
 }
 
 void stalker_movement_manager_smart_cover::build_exit_path() {
-    m_path.clear_not_free();
+    m_path.clear();
 
     float value = flt_max;
 
@@ -301,7 +301,7 @@ void stalker_movement_manager_smart_cover::build_exit_path() {
 }
 
 void stalker_movement_manager_smart_cover::build_exit_path_to_cover() {
-    m_path.clear_not_free();
+    m_path.clear();
 
     float value = flt_max;
     smart_cover::transitions::action const* selected_action = 0;

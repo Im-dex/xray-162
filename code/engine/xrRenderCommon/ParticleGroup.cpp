@@ -1,11 +1,7 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "xrParticles/psystem.h"
-
-#ifndef _EDITOR
 #include "xrServerEntities/smart_cast.h"
-#endif
 
 #include "ParticleGroup.h"
 #include "PSLibrary.h"
@@ -183,8 +179,8 @@ void CParticleGroup::SItem::Clear() {
     //	Igor: zero all pointers! Previous code didn't zero _source_ pointers,
     //	just temporary ones.
     _effect = 0;
-    _children_related.clear_not_free();
-    _children_free.clear_not_free();
+    _children_related.clear();
+    _children_free.clear();
 }
 void CParticleGroup::SItem::StartRelatedChild(CParticleEffect* emitter, LPCSTR eff_name,
                                               PAPI::Particle& m) {

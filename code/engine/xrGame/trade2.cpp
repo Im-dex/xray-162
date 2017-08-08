@@ -17,7 +17,7 @@
 bool CTrade::CanTrade() {
     CEntity* pEntity;
 
-    m_nearest.clear_not_free();
+    m_nearest.clear();
     Level().ObjectSpace.GetNearest(m_nearest, pThis.base->Position(), 2.f, NULL);
     if (!m_nearest.empty()) {
         for (u32 i = 0, n = m_nearest.size(); i < n; ++i) {

@@ -351,7 +351,7 @@ XML_NODE CXml::SearchForAttribute(XML_NODE start_node, const char* tag_name, con
 #ifdef DEBUG // debug & mixed
 
 const char* CXml::CheckUniqueAttrib(XML_NODE start_node, const char* tag_name, const char* attrib_name) {
-    m_AttribValues.clear_not_free();
+    m_AttribValues.clear();
 
     int tags_num = GetNodesNum(start_node, tag_name);
 

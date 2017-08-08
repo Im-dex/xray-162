@@ -1,16 +1,8 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "detailmanager.h"
-
-#ifdef _EDITOR
-#include "igame_persistent.h"
-#include "environment.h"
-#else
 #include "xrEngine/igame_persistent.h"
 #include "xrEngine/environment.h"
-#endif
-
 #include "../xrRenderDX10/dx10BufferUtils.h"
 
 const int quant = 16384;
@@ -317,7 +309,7 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
                 RCache.stat.r.s_details.add(dwCNT_verts);
             }
             // Clean up
-            vis.clear_not_free();
+            vis.clear();
         }
         vOffset += hw_BatchSize * Object.number_vertices;
         iOffset += hw_BatchSize * Object.number_indices;

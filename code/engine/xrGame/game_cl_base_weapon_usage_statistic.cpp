@@ -246,7 +246,7 @@ Player_Statistic::Player_Statistic(LPCSTR Name) {
     std::memset(m_dwSpecialKills, 0, sizeof(m_dwSpecialKills));
 };
 
-Player_Statistic::~Player_Statistic() { aWeaponStats.clear_and_free(); };
+Player_Statistic::~Player_Statistic() { aWeaponStats.clear(); };
 
 u32 Player_Statistic::create_victims_table(victims_table& victims_table) {
     u32 result_size = victims_table::header_count_size;

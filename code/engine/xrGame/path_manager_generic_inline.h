@@ -60,7 +60,7 @@ IC _dist_type CGenericPathManager::estimate(const _index_type& vertex_id) const 
 TEMPLATE_SPECIALIZATION
 IC void CGenericPathManager::init_path() {
     if (path)
-        path->clear_not_free();
+        path->clear();
 }
 
 TEMPLATE_SPECIALIZATION

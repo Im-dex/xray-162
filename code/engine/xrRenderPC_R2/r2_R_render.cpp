@@ -314,7 +314,7 @@ void CRender::Render() {
     LP_pending.clear();
     {
         // perform tests
-        u32 count = 0;
+        size_t count = 0;
         light_Package& LP = Lights.package;
 
         // stats
@@ -359,7 +359,7 @@ void CRender::Render() {
     //******* Main render :: PART-1 (second)
     if (split_the_scene_to_minimize_wait) {
         // skybox can be drawn here
-        if (0) {
+#if 0
             Target->u_setrt(Target->rt_Generic_0, Target->rt_Generic_1, 0, HW.pBaseZB);
             RCache.set_CullMode(CULL_NONE);
             RCache.set_Stencil(FALSE);
@@ -369,7 +369,7 @@ void CRender::Render() {
             CHK_DX(HW.pDevice->SetRenderState(D3DRS_ZENABLE, FALSE));
             g_pGamePersistent->Environment().RenderSky();
             CHK_DX(HW.pDevice->SetRenderState(D3DRS_ZENABLE, TRUE));
-        }
+#endif
 
         // level
         Target->phase_scene_begin();

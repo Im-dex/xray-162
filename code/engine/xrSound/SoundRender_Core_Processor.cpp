@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "cl_intersect.h"
 #include "SoundRender_Core.h"
@@ -126,7 +125,7 @@ void CSoundRender_Core::update_events() {
         event& E = s_events[it];
         Handler(E.first, E.second);
     }
-    s_events.clear_not_free();
+    s_events.clear();
 }
 
 void CSoundRender_Core::statistic(CSound_stats* dest, CSound_stats_ext* ext) {

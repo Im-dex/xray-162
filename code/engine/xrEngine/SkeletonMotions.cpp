@@ -42,7 +42,7 @@ void CPartition::load(IKinematics* V, LPCSTR model_name) {
         auto it = S.Data.cbegin();
         auto it_e = S.Data.cend();
         if (S.Data.size()) {
-            P[i].bones.clear_not_free();
+            P[i].bones.clear();
         }
         for (; it != it_e; ++it) {
             const CInifile::Item& I = *it;

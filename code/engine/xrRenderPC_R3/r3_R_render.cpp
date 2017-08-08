@@ -334,7 +334,7 @@ void CRender::Render() {
     {
         PIX_EVENT(DEFER_TEST_LIGHT_VIS);
         // perform tests
-        u32 count = 0;
+        size_t count = 0;
         light_Package& LP = Lights.package;
 
         // stats
@@ -380,8 +380,7 @@ void CRender::Render() {
     if (split_the_scene_to_minimize_wait) {
         PIX_EVENT(DEFER_PART1_SPLIT);
         // skybox can be drawn here
-        if (0) {
-
+#if 0
             if (!RImplementation.o.dx10_msaa)
                 Target->u_setrt(Target->rt_Generic_0, Target->rt_Generic_1, 0, HW.pBaseZB);
             else
@@ -399,7 +398,7 @@ void CRender::Render() {
             // CHK_DX(HW.pDevice->SetRenderState			( D3DRS_ZENABLE,	TRUE
             // ));
             RCache.set_Z(TRUE);
-        }
+#endif
 
         // level
         Target->phase_scene_begin();
