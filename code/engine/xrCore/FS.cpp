@@ -271,7 +271,10 @@ IReader* IReader::open_chunk(const u32 ID) {
 }
 
 // TODO: imdex note: pay attention!
-void IReader::close() { xr_delete((IReader*)this); }
+void IReader::close() {
+    auto* self = this;
+    xr_delete(self);
+}
 
 IReader* IReader::open_chunk_iterator(u32& ID, IReader* _prev) {
     if (!_prev) {

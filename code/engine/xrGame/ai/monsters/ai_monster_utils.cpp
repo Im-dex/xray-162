@@ -2,6 +2,7 @@
 #include "ai_monster_utils.h"
 #include "../../entity.h"
 #include "../../ai_object_location.h"
+#include "../../ai_object_location_impl.h"
 #include "../../ai_space.h"
 #include "../../level_graph.h"
 #include "xrRender/Kinematics.h"

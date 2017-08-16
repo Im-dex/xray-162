@@ -494,7 +494,8 @@ include_directories(${DXSDK_INCLUDE_DIR})
 link_directories(${DXSDK_LIB_DIR})
 add_definitions(-DATIMGPUD_DLL -DXRRENDER_R4_EXPORTS -DUSE_DX11 -D_SECURE_SCL=0)
 
-add_compile_options(/fp:fast /GR "/Yustdafx.h")
+# TODO: change precise to fast after msvc bug fix
+add_compile_options(/fp:precise /GR "/Yustdafx.h")
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 
 add_library(xrRender_R4 SHARED ${REFACTORED_EXECUTION__AND__3D_SHADERS_RESOURCES_DX10_R_SHADER}

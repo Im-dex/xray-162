@@ -122,14 +122,14 @@ using xr_set = std::set<K, P, allocator>;
 template <typename K, class P = std::less<K>, typename allocator = xalloc<K>>
 using xr_multiset = std::multiset<K, P, allocator>;
 
-template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<K, V>>>
+template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<const K, V>>>
 using xr_map = std::map<K, V, P, allocator>;
 
-template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<K, V>>>
+template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<const K, V>>>
 using xr_multimap = std::multimap<K, V, P, allocator>;
 
 template <typename K, class V, class Traits = std::equal_to<K>,
-          typename allocator = xalloc<std::pair<K, V>>>
+          typename allocator = xalloc<std::pair<const K, V>>>
 using xr_hash_map = std::unordered_map<K, V, std::hash<K>, Traits, allocator>;
 
 struct pred_str {

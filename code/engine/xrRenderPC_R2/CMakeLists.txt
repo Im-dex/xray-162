@@ -423,7 +423,8 @@ include_directories(${DXSDK_INCLUDE_DIR})
 link_directories(${DXSDK_LIB_DIR})
 add_definitions(-DATIMGPUD_DLL -DXRRENDER_R2_EXPORTS -D_SECURE_SCL=0)
 
-add_compile_options(/fp:fast /GR "/Yustdafx.h")
+# TODO: change precise to fast after msvc bug fix
+add_compile_options(/fp:precise /GR "/Yustdafx.h")
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 
 add_library(xrRender_R2 SHARED ${ROOT_SPECIAL_CONV}
