@@ -245,7 +245,8 @@ IC static int CollideIntoGroup(dGeomID o1, dGeomID o2, dJointGroupID jointGroup,
         }
 
         if (pushing_neg)
-            surface.mu = dInfinity;
+            //surface.mu = dInfinity;
+            surface.mu = flt_max;
         if (do_collide && collided_contacts < MAX_CONTACTS) {
             ++collided_contacts;
 #ifdef DEBUG
