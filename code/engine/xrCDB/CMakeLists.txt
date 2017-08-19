@@ -22,4 +22,5 @@ add_compile_options("/Yustdafx.h" /fp:fast /GR)
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 
 add_library(xrCDB SHARED ${ENGINE_SRC} ${KERNEL_SRC} ${OPCODE_SRC})
+target_include_directories(xrCDB PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrCDB xrAPI xrCore winmm)

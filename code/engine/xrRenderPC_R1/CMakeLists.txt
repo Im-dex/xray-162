@@ -374,7 +374,6 @@ source_group("Interfase implementations\\Debug\\DebugRender" FILES ${INTERFASE_I
 source_group("Refactored\\Execution &amp; 3D\\Gamma" FILES ${REFACTORED_EXECUTION__AND__3D_GAMMA})
 source_group("Shading templates" FILES ${SHADING_TEMPLATES})
 
-include_directories(${DXSDK_INCLUDE_DIR})
 link_directories(${DXSDK_LIB_DIR})
 add_definitions(-DATIMGPUD_DLL -DXRRENDER_R1_EXPORTS -D_SECURE_SCL=0)
 
@@ -426,4 +425,6 @@ add_library(xrRender_R1 SHARED ${INTERFASE_IMPLEMENTATIONS_LENSFLARE}
                                ${INTERFASE_IMPLEMENTATIONS_UI_UISEQUENCEVIDEOITEM}
                                ${REFACTORED_EXECUTION__AND__3D_SHADERS_RESOURCES_DX9_R_SHADER}
                                ${REFACTORED_STATS_MANAGER})
+target_include_directories(xrRender_R1 PUBLIC ${DXSDK_INCLUDE_DIR}
+                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrRender_R1 nvapi d3dx9 xrEngine xrCPU_Pipe xrParticles xrAPI)

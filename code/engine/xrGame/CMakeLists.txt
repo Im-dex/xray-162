@@ -3866,7 +3866,6 @@ source_group("Core\\Client\\Objects\\base\\GameObject\\ai_obstacle\\min_obb\\mag
 source_group("AI\\AScript\\ScriptClasses" FILES ${AI_ASCRIPT_SCRIPTCLASSES})
 source_group("AI\\AMonsters\\monsters\\Rats\\states" FILES ${AI_AMONSTERS_MONSTERS_RATS_STATES})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ../xrServerEntities ../../3rd-party/luajit/include)
 link_directories(${DXSDK_LIB_DIR} ../../lib)
 add_definitions(-DXRGAME_EXPORTS -DdSINGLE -DMSVC -D_SECURE_SCL=0)
 
@@ -4917,4 +4916,5 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_DUMMYARTIFACT}
                           ${CORE_SERVER_SERVERENTITIES_OBJECTS}
                           ${CORE_SERVER_SERVERENTITIES_OBJECTS_ALIFE_SMARTCOVER})
+target_include_directories(xrGame PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ../xrServerEntities ../../3rd-party/luajit/include)
 target_link_libraries(xrGame shell32 Shlwapi xrEngine luabind cs xrXMLParser xrPhysics)

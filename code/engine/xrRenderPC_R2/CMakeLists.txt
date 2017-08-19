@@ -419,7 +419,6 @@ source_group("Interfase implementations\\Debug\\DebugRender" FILES ${INTERFASE_I
 source_group("Shading templates" FILES ${SHADING_TEMPLATES})
 source_group("Refactored\\Execution &amp; 3D\\Gamma" FILES ${REFACTORED_EXECUTION__AND__3D_GAMMA})
 
-include_directories(${DXSDK_INCLUDE_DIR})
 link_directories(${DXSDK_LIB_DIR})
 add_definitions(-DATIMGPUD_DLL -DXRRENDER_R2_EXPORTS -D_SECURE_SCL=0)
 
@@ -474,4 +473,6 @@ add_library(xrRender_R2 SHARED ${ROOT_SPECIAL_CONV}
                                ${REFACTORED_EXECUTION__AND__3D_SHADERS_SHADERMANAGER}
                                ${REFACTORED_EXECUTION__AND__3D_VISUALS}
                                ${REFACTORED_HW})
+target_include_directories(xrRender_R2 PUBLIC ${DXSDK_INCLUDE_DIR}
+                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrRender_R2 nvapi d3dx9 xrEngine xrCPU_Pipe xrParticles)
