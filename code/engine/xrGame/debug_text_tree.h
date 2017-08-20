@@ -96,6 +96,8 @@ IC xr_string __cdecl make_xrstr(bool b) { return b ? "+" : "-"; }
 IC xr_string __cdecl make_xrstr(float f) { return make_xrstr("%f", f); }
 IC xr_string __cdecl make_xrstr(s32 d) { return make_xrstr("%i", d); }
 IC xr_string __cdecl make_xrstr(u32 d) { return make_xrstr("%u", d); }
+inline xr_string __cdecl make_xrstr(s64 d) { return make_xrstr("%" PRIi64, d); }
+inline xr_string __cdecl make_xrstr(u64 d) { return make_xrstr("%" PRIu64, d); }
 IC xr_string __cdecl make_xrstr(Fvector3 v) { return make_xrstr("[%f][%f][%f]", v.x, v.y, v.z); }
 IC xr_string __cdecl make_xrstr(const xr_string& s) { return s; }
 
