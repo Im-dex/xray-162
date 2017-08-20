@@ -13,7 +13,7 @@ XRay engine 1.7
 * CMake 3.8 or later
 
 ### Supported compilers
-* Visual C++ 15.2 (2017) and higher
+* Visual C++ 15.3 (2017) and higher
 
 ### Visual Studio solution generation
 Open command line at the root of repository and execute the following commands:
