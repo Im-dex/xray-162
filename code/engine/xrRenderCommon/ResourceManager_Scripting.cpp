@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "xrEngine/Render.h"
 #include "ResourceManager.h"
@@ -13,20 +12,6 @@
 #include "dxRenderDeviceRender.h"
 
 using namespace luabind;
-
-/*#ifdef NDEBUG
-
-namespace std
-{
-
-void terminate	()
-{
-        abort();
-}
-
-} // namespace std
-
-#endif // #ifdef NDEBUG*/
 
 #ifdef DEBUG
 #define MDB Memory.dbg_check()
@@ -244,7 +229,7 @@ static const u32 s_arena_size = 8 * 1024 * 1024;
 static char s_fake_array[s_arena_size];
 doug_lea_allocator g_render_lua_allocator(s_fake_array, s_arena_size, "render:lua");
 #else // #ifdef USE_ARENA_ALLOCATOR
-doug_lea_allocator g_render_lua_allocator(0, 0, "render:lua");
+
 #endif // #ifdef USE_ARENA_ALLOCATOR
 
 static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
@@ -252,29 +237,29 @@ static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
     (void)ud;
     (void)osize;
     if (!nsize) {
-        g_render_lua_allocator.free_impl(ptr);
-        return 0;
+        RenderAllocHolder::get().free_impl(ptr);
+        return nullptr;
     }
 
     if (!ptr)
-        return g_render_lua_allocator.malloc_impl((u32)nsize);
+        return RenderAllocHolder::get().malloc_impl((u32)nsize);
 
-    return g_render_lua_allocator.realloc_impl(ptr, (u32)nsize);
+    return RenderAllocHolder::get().realloc_impl(ptr, (u32)nsize);
 #else  // #ifndef USE_MEMORY_MONITOR
     if (!nsize) {
         memory_monitor::monitor_free(ptr);
-        g_render_lua_allocator.free_impl(ptr);
-        return NULL;
+        RenderAllocHolder::get().free_impl(ptr);
+        return nullptr;
     }
 
     if (!ptr) {
-        void* const result = g_render_lua_allocator.malloc_impl((u32)nsize);
+        void* const result = RenderAllocHolder::get().malloc_impl((u32)nsize);
         memory_monitor::monitor_alloc(result, nsize, "render:LUA");
         return result;
     }
 
     memory_monitor::monitor_free(ptr);
-    void* const result = g_render_lua_allocator.realloc_impl(ptr, (u32)nsize);
+    void* const result = RenderAllocHolder::get().realloc_impl(ptr, (u32)nsize);
     memory_monitor::monitor_alloc(result, nsize, "render:LUA");
     return result;
 #endif // #ifndef USE_MEMORY_MONITOR

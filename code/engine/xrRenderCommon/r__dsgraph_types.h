@@ -8,7 +8,13 @@
 
 #ifdef USE_DOUG_LEA_ALLOCATOR_FOR_RENDER
 #include "xrCore/doug_lea_allocator.h"
-extern doug_lea_allocator g_render_lua_allocator;
+
+struct RenderAllocHolder {
+    static doug_lea_allocator& get() {
+        static doug_lea_allocator allocator(nullptr, 0, "render:lua");
+        return allocator;
+    }
+};
 
 template <class T>
 class doug_lea_alloc {
@@ -39,10 +45,10 @@ public:
         return (*this);
     }
     pointer allocate(size_type n, const void* p = 0) const {
-        return (T*)g_render_lua_allocator.malloc_impl(sizeof(T) * (u32)n);
+        return (T*)RenderAllocHolder::get().malloc_impl(sizeof(T) * (u32)n);
     }
-    void deallocate(pointer p, size_type n) const { g_render_lua_allocator.free_impl((void*&)p); }
-    void deallocate(void* p, size_type n) const { g_render_lua_allocator.free_impl(p); }
+    void deallocate(pointer p, size_type n) const { RenderAllocHolder::get().free_impl((void*&)p); }
+    void deallocate(void* p, size_type n) const { RenderAllocHolder::get().free_impl(p); }
     char* __charalloc(size_type n) { return (char*)allocate(n); }
     void construct(pointer p, const T& _Val) { new (p) T(_Val); }
     void destroy(pointer p) { p->~T(); }
@@ -67,10 +73,10 @@ struct doug_lea_allocator_wrapper {
         typedef doug_lea_alloc<T> result;
     };
 
-    static void* alloc(const u32& n) { return g_render_lua_allocator.malloc_impl((u32)n); }
+    static void* alloc(const u32 n) { return RenderAllocHolder::get().malloc_impl(n); }
     template <typename T>
     static void dealloc(T*& p) {
-        g_render_lua_allocator.free_impl((void*&)p);
+        RenderAllocHolder::get().free_impl((void*&)p);
     }
 };
 
