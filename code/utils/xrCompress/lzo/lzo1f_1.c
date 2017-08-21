@@ -50,9 +50,9 @@
 static int do_compress(const lzo_byte* in, lzo_uint in_len, lzo_byte* out, lzo_uintp out_len,
                        lzo_voidp wrkmem) {
 #if 0 && defined(__GNUC__) && defined(__i386__)
-	register const lzo_byte *ip __asm__("%esi");
+	const lzo_byte *ip __asm__("%esi");
 #else
-    register const lzo_byte* ip;
+    const lzo_byte* ip;
 #endif
     lzo_byte* op;
     const lzo_byte* const in_end = in + in_len;
@@ -67,9 +67,9 @@ static int do_compress(const lzo_byte* in, lzo_uint in_len, lzo_byte* out, lzo_u
     ip++;
     for (;;) {
 #if 0 && defined(__GNUC__) && defined(__i386__)
-		register const lzo_byte *m_pos __asm__("%edi");
+		const lzo_byte *m_pos __asm__("%edi");
 #else
-        register const lzo_byte* m_pos;
+        const lzo_byte* m_pos;
 #endif
         lzo_moff_t m_off;
         lzo_uint m_len;
@@ -133,14 +133,14 @@ static int do_compress(const lzo_byte* in, lzo_uint in_len, lzo_byte* out, lzo_u
         /* store current literal run */
         lit = pd(ip, ii);
         if (lit > 0) {
-            register lzo_uint t = lit;
+            lzo_uint t = lit;
 
             if (t < 4 && op > out)
                 op[-2] |= LZO_BYTE(t);
             else if (t <= 31)
                 *op++ = LZO_BYTE(t);
             else {
-                register lzo_uint tt = t - 31;
+                lzo_uint tt = t - 31;
 
                 *op++ = 0;
                 while (tt > 255) {
@@ -212,14 +212,14 @@ static int do_compress(const lzo_byte* in, lzo_uint in_len, lzo_byte* out, lzo_u
 
     /* store final literal run */
     if (pd(in_end, ii) > 0) {
-        register lzo_uint t = pd(in_end, ii);
+        lzo_uint t = pd(in_end, ii);
 
         if (t < 4 && op > out)
             op[-2] |= LZO_BYTE(t);
         else if (t <= 31)
             *op++ = LZO_BYTE(t);
         else {
-            register lzo_uint tt = t - 31;
+            lzo_uint tt = t - 31;
 
             *op++ = 0;
             while (tt > 255) {

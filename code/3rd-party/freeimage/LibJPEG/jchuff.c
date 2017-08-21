@@ -308,8 +308,8 @@ emit_bits_s (working_state * state, unsigned int code, int size)
 /* Emit some bits; return TRUE if successful, FALSE if must suspend */
 {
   /* This routine is heavily used, so it's worth coding tightly. */
-  register INT32 put_buffer;
-  register int put_bits;
+  INT32 put_buffer;
+  int put_bits;
 
   /* if size is 0, caller used an invalid Huffman table entry */
   if (size == 0)
@@ -350,8 +350,8 @@ emit_bits_e (huff_entropy_ptr entropy, unsigned int code, int size)
 /* Emit some bits, unless we are in gather mode */
 {
   /* This routine is heavily used, so it's worth coding tightly. */
-  register INT32 put_buffer;
-  register int put_bits;
+  INT32 put_buffer;
+  int put_bits;
 
   /* if size is 0, caller used an invalid Huffman table entry */
   if (size == 0)
@@ -463,7 +463,7 @@ emit_buffered_bits (huff_entropy_ptr entropy, char * bufstart,
 LOCAL(void)
 emit_eobrun (huff_entropy_ptr entropy)
 {
-  register int temp, nbits;
+  int temp, nbits;
 
   if (entropy->EOBRUN > 0) {	/* if there is any pending EOBRUN */
     temp = entropy->EOBRUN;
@@ -546,8 +546,8 @@ METHODDEF(boolean)
 encode_mcu_DC_first (j_compress_ptr cinfo, JBLOCKROW *MCU_data)
 {
   huff_entropy_ptr entropy = (huff_entropy_ptr) cinfo->entropy;
-  register int temp, temp2;
-  register int nbits;
+  int temp, temp2;
+  int nbits;
   int blkn, ci, tbl;
   ISHIFT_TEMPS
 
@@ -631,9 +631,9 @@ encode_mcu_AC_first (j_compress_ptr cinfo, JBLOCKROW *MCU_data)
   huff_entropy_ptr entropy = (huff_entropy_ptr) cinfo->entropy;
   const int * natural_order;
   JBLOCKROW block;
-  register int temp, temp2;
-  register int nbits;
-  register int r, k;
+  int temp, temp2;
+  int nbits;
+  int r, k;
   int Se, Al;
 
   entropy->next_output_byte = cinfo->dest->next_output_byte;
@@ -785,8 +785,8 @@ encode_mcu_AC_refine (j_compress_ptr cinfo, JBLOCKROW *MCU_data)
   huff_entropy_ptr entropy = (huff_entropy_ptr) cinfo->entropy;
   const int * natural_order;
   JBLOCKROW block;
-  register int temp;
-  register int r, k;
+  int temp;
+  int r, k;
   int Se, Al;
   int EOB;
   char *BR_buffer;
@@ -913,9 +913,9 @@ LOCAL(boolean)
 encode_one_block (working_state * state, JCOEFPTR block, int last_dc_val,
 		  c_derived_tbl *dctbl, c_derived_tbl *actbl)
 {
-  register int temp, temp2;
-  register int nbits;
-  register int r, k;
+  int temp, temp2;
+  int nbits;
+  int r, k;
   int Se = state->cinfo->lim_Se;
   const int * natural_order = state->cinfo->natural_order;
 
@@ -1119,9 +1119,9 @@ LOCAL(void)
 htest_one_block (j_compress_ptr cinfo, JCOEFPTR block, int last_dc_val,
 		 long dc_counts[], long ac_counts[])
 {
-  register int temp;
-  register int nbits;
-  register int r, k;
+  int temp;
+  int nbits;
+  int r, k;
   int Se = cinfo->lim_Se;
   const int * natural_order = cinfo->natural_order;
 
