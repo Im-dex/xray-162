@@ -5,13 +5,11 @@
 //	Description : Smart cover animation planner class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_ANIMATION_PLANNER_H_INCLUDED
-#define SMART_COVER_ANIMATION_PLANNER_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "action_planner_script.h"
 #include "stalker_decision_space.h"
-#include "debug_make_final.hpp"
 
 class CAI_Stalker;
 struct SHit;
@@ -22,12 +20,9 @@ namespace smart_cover {
 class cover;
 class target_selector;
 
-class animation_planner : public CActionPlannerScript<CAI_Stalker>,
-                          private debug::make_final<animation_planner> {
-private:
+class animation_planner final : public CActionPlannerScript<CAI_Stalker> {
     typedef CActionPlannerScript<CAI_Stalker> inherited;
 
-private:
     CWorldState m_target;
     u32 m_time_object_hit;
     u32 m_loophole_value;
@@ -44,7 +39,6 @@ private:
     u32 m_last_idle_time;
     u32 m_last_lookout_time;
 
-private:
     void add_evaluators();
     void add_actions();
     bool xr_stdcall hit_callback(SHit const* hit);
@@ -89,5 +83,3 @@ public:
 } // namespace smart_cover
 
 #include "smart_cover_animation_planner_inline.h"
-
-#endif // SMART_COVER_ANIMATION_PLANNER_H_INCLUDED

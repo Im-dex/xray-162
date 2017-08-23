@@ -6,8 +6,7 @@
 //	Description : inventory upgrade manager class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef INVENTORY_UPGRADE_MANAGER_H_INCLUDED
-#define INVENTORY_UPGRADE_MANAGER_H_INCLUDED
+#pragma once
 
 #include "associative_vector.h"
 #include "inventory_item_object.h"
@@ -23,12 +22,12 @@ class Group;
 class Property;
 
 struct shared_str_predicate {
-    IC bool operator()(const shared_str& a, const shared_str& b) const {
+    bool operator()(const shared_str& a, const shared_str& b) const {
         return (a._get() < b._get());
     }
 };
 
-class Manager {
+class Manager final {
 public:
     typedef associative_vector<shared_str, Property*, shared_str_predicate> Properties_type;
 
@@ -42,9 +41,8 @@ public:
 
     Manager(const Manager& other) = delete;
     Manager& operator=(const Manager& other) = delete;
-    virtual ~Manager(); // change this to debug_make_final<Manager>();
+    virtual ~Manager();
 
-public:
     Root* get_root(shared_str const& root_id);
     Group* get_group(shared_str const& group_id);
     Upgrade* get_upgrade(shared_str const& upgrade_id);
@@ -100,5 +98,3 @@ public:
 } // namespace inventory
 
 #include "inventory_upgrade_manager_inline.h"
-
-#endif // INVENTORY_UPGRADE_MANAGER_H_INCLUDED

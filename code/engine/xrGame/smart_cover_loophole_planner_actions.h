@@ -5,8 +5,7 @@
 //	Description	: Smart cover loophole planner action classes
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_LOOPHOLE_PLANNER_ACTIONS_H_INCLUDED
-#define SMART_COVER_LOOPHOLE_PLANNER_ACTIONS_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "smart_cover_planner_actions.h"
@@ -73,8 +72,7 @@ public:
     virtual void finalize();
 }; // class loophole_action_no_sight
 
-class loophole_lookout : public loophole_action, private debug::make_final<loophole_lookout> {
-private:
+class loophole_lookout final : public loophole_action {
     typedef loophole_action inherited;
 
 public:
@@ -84,11 +82,9 @@ public:
     virtual void finalize();
 };
 
-class loophole_fire : public loophole_action, private debug::make_final<loophole_fire> {
-private:
+class loophole_fire final : public loophole_action {
     typedef loophole_action inherited;
 
-private:
     float m_previous_time;
     bool m_firing;
 
@@ -103,9 +99,7 @@ public:
     virtual void on_no_mark();
 };
 
-class loophole_reload : public loophole_action_no_sight,
-                        private debug::make_final<loophole_reload> {
-private:
+class loophole_reload final : public loophole_action_no_sight {
     typedef loophole_action_no_sight inherited;
 
 public:
@@ -114,10 +108,8 @@ public:
 };
 
 class transition : public loophole_action_base {
-private:
     typedef loophole_action_base inherited;
 
-private:
     shared_str m_action_from;
     shared_str m_action_to;
     CRandom m_random;
@@ -139,7 +131,6 @@ public:
 };
 
 class idle_2_fire_transition : public transition {
-private:
     typedef transition inherited;
 
 public:
@@ -152,7 +143,6 @@ public:
 }; // class idle_2_fire_transition
 
 class fire_2_idle_transition : public transition {
-private:
     typedef transition inherited;
 
 public:
@@ -165,7 +155,6 @@ public:
 }; // class idle_2_fire_transition
 
 class idle_2_lookout_transition : public transition {
-private:
     typedef transition inherited;
 
 public:
@@ -178,7 +167,6 @@ public:
 }; // class idle_2_fire_transition
 
 class lookout_2_idle_transition : public transition {
-private:
     typedef transition inherited;
 
 public:
@@ -193,5 +181,3 @@ public:
 } // namespace smart_cover
 
 #include "smart_cover_loophole_planner_actions_inline.h"
-
-#endif // SMART_COVER_LOOPHOLE_PLANNER_ACTIONS_H_INCLUDED

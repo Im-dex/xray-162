@@ -6,11 +6,9 @@
 //	Description : smart cover manager class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_MANAGER_H_INCLUDED
-#define SMART_COVER_MANAGER_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
-#include <boost/noncopyable.hpp>
 
 class CAI_Stalker;
 
@@ -24,13 +22,15 @@ class action;
 class processor;
 } // namespace transitions
 
-class manager : private boost::noncopyable, private detail::make_final_debug<manager> {
+class manager final {
 public:
     typedef transitions::action transition_action;
     typedef transitions::processor transition_processor;
 
 public:
     manager(CAI_Stalker* object);
+    manager(const manager&) = delete;
+    manager& operator= (const manager&) = delete;
     ~manager();
     loophole const& enter_loophole();
     IC shared_str const& cover_id() const;
@@ -79,5 +79,3 @@ private:
 } // namespace smart_cover
 
 #include "smart_cover_manager_inline.h"
-
-#endif // SMART_COVER_MANAGER_H_INCLUDED

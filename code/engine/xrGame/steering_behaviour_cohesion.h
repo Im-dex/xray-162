@@ -6,8 +6,7 @@
 //	Description : steering behaviour cohesion class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef STEERING_BEHAVIOUR_COHESION_H_INCLUDED
-#define STEERING_BEHAVIOUR_COHESION_H_INCLUDED
+#pragma once
 
 #include "steering_behaviour_base.h"
 #include "smart_cover_detail.h"
@@ -16,7 +15,7 @@ class CAI_Rat;
 
 namespace steering_behaviour {
 
-class cohesion : public base, private debug::make_final<cohesion> {
+class cohesion final : public base {
 public:
     cohesion(CAI_Rat const* object);
 
@@ -29,5 +28,3 @@ private:
 };
 
 } // namespace steering_behaviour
-
-#endif // STEERING_BEHAVIOUR_COHESION_H_INCLUDED

@@ -5,21 +5,17 @@
 //	Description : Animation offsets class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef STALKER_ANIMATION_OFFSETS_HPP_INCLUDED
-#define STALKER_ANIMATION_OFFSETS_HPP_INCLUDED
+#pragma once
 
-#include "debug_make_final.hpp"
 #include "associative_vector.h"
 #include "xrServer_Objects.h"
 
 struct SRotation;
 
-class animation_offsets : private debug::make_final<animation_offsets> {
-private:
+class animation_offsets final {
     class anim_id_predicate {
-
     public:
-        IC bool operator()(shared_str const& lhs, shared_str const& rhs) const {
+        bool operator()(shared_str const& lhs, shared_str const& rhs) const {
             return (lhs._get() < rhs._get());
         }
     };
@@ -34,5 +30,3 @@ public:
     SRotation const offsets(shared_str const& animation_id) const;
     void load(LPCSTR section);
 };
-
-#endif // STALKER_ANIMATION_OFFSETS_HPP_INCLUDED

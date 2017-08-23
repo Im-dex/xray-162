@@ -5,23 +5,18 @@
 //	Description : Default behaviour planner for target selector
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_DEFAULT_BEHAVIOUR_PLANNER_HPP_INCLUDED
-#define SMART_COVER_DEFAULT_BEHAVIOUR_PLANNER_HPP_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "action_planner_action.h"
-#include "debug_make_final.hpp"
 
 namespace smart_cover {
 
 class animation_planner;
 
-class default_behaviour_planner : public CActionPlannerAction<animation_planner>,
-                                  private debug::make_final<default_behaviour_planner> {
-private:
+class default_behaviour_planner final : public CActionPlannerAction<animation_planner> {
     typedef CActionPlannerAction<animation_planner> inherited;
 
-private:
     void add_evaluators();
     void add_actions();
 
@@ -48,5 +43,3 @@ private:
 } // namespace smart_cover
 
 #include "smart_cover_default_behaviour_planner_inline.hpp"
-
-#endif // SMART_COVER_DEFAULT_BEHAVIOUR_PLANNER_HPP_INCLUDED

@@ -5,8 +5,7 @@
 //	Description : Target provider for target selector
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_PLANNER_TARGET_PROVIDER_H_INCLUDED
-#define SMART_COVER_PLANNER_TARGET_PROVIDER_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "action_base.h"
@@ -39,8 +38,7 @@ private:
 //	class target_idle
 ////////////////////////////////////////////////////////////////////////////
 
-class target_idle : public target_provider, private debug::make_final<target_idle> {
-private:
+class target_idle final : public target_provider {
     typedef target_provider inherited;
 
 public:
@@ -54,8 +52,7 @@ public:
 //	class target_fire
 ////////////////////////////////////////////////////////////////////////////
 
-class target_fire : public target_provider, private debug::make_final<target_fire> {
-private:
+class target_fire final : public target_provider {
     typedef target_provider inherited;
 
 public:
@@ -70,9 +67,7 @@ public:
 //	class target_fire_no_lookout
 ////////////////////////////////////////////////////////////////////////////
 
-class target_fire_no_lookout : public target_provider,
-                               private debug::make_final<target_fire_no_lookout> {
-private:
+class target_fire_no_lookout final : public target_provider {
     typedef target_provider inherited;
 
 public:
@@ -87,5 +82,3 @@ private:
 };
 
 } // namespace smart_cover
-
-#endif // SMART_COVER_PLANNER_TARGET_PROVIDER_H_INCLUDED

@@ -5,12 +5,10 @@
 //	Description : Smart cover description class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_DESCRIPTION_H_INCLUDED
-#define SMART_COVER_DESCRIPTION_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "graph_abstract.h"
-#include "debug_make_final.hpp"
 
 namespace smart_cover {
 
@@ -21,7 +19,7 @@ namespace transitions {
 class action;
 }
 
-class description : private debug::make_final<description>, public detail::intrusive_base_time {
+class description final : public detail::intrusive_base_time {
 public:
     typedef xr_vector<loophole*> Loopholes;
     typedef smart_cover::transitions::action Action;
@@ -54,5 +52,3 @@ private:
 } // namespace smart_cover
 
 #include "smart_cover_description_inline.h"
-
-#endif // SMART_COVER_DESCRIPTION_H_INCLUDED

@@ -5,19 +5,16 @@
 //	Description : Action class for smart cover
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_ACTION_H_INCLUDED
-#define SMART_COVER_ACTION_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "script_space_forward.h"
 #include "ai_monster_space.h"
 #include "associative_vector.h"
-#include "debug_make_final.hpp"
 
 namespace smart_cover {
 
-class action : debug::make_final<action> {
-private:
+class action final {
     class animation_predicate {
 
     public:
@@ -53,5 +50,3 @@ private:
 } // namespace smart_cover
 
 #include "smart_cover_action_inline.h"
-
-#endif // SMART_COVER_ACTION_H_INCLUDED

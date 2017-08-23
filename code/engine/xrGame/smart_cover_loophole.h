@@ -5,8 +5,7 @@
 //	Description : Loophole class for smart cover
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_LOOPHOLE_H_INCLUDED
-#define SMART_COVER_LOOPHOLE_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "script_space_forward.h"
@@ -18,12 +17,11 @@ namespace smart_cover {
 
 class object;
 
-class loophole : private debug::make_final<loophole> {
+class loophole final {
 private:
     class action_predicate {
-
     public:
-        IC bool operator()(shared_str const& lhs, shared_str const& rhs) const {
+        bool operator()(shared_str const& lhs, shared_str const& rhs) const {
             return (lhs._get() < rhs._get());
         }
     };
@@ -84,5 +82,3 @@ private:
 } // namespace smart_cover
 
 #include "smart_cover_loophole_inline.h"
-
-#endif // SMART_COVER_LOOPHOLE_H_INCLUDED

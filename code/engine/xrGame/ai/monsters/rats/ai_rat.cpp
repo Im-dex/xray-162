@@ -40,7 +40,6 @@
 
 using namespace RatSpace;
 
-// #include "../../../steering_behaviour_manager.h"
 // #include "../../../steering_behaviour_cohesion.h"
 // #include "../../../steering_behaviour_alignment.h"
 // #include "../../../steering_behaviour_separation.h"

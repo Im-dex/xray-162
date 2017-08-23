@@ -5,10 +5,7 @@
 //	Description : Transition class for smart_cover
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_TRANSITION_HPP_INCLUDED
-#define SMART_COVER_TRANSITION_HPP_INCLUDED
-
-#include "debug_make_final.hpp"
+#pragma once
 
 namespace MonsterSpace {
 enum EBodyState;
@@ -19,8 +16,7 @@ namespace transitions {
 
 class animation_action;
 
-class action : private debug::make_final<action> {
-
+class action final {
 public:
     typedef xr_vector<animation_action*> Animations;
 
@@ -46,5 +42,3 @@ private:
 
 } // namespace transitions
 } // namespace smart_cover
-
-#endif // SMART_COVER_TRANSITION_HPP_INCLUDED

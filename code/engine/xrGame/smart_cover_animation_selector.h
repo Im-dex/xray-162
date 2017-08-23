@@ -5,8 +5,7 @@
 //	Description : Animation selector for smart covers
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_ANIMATION_SELECTOR_H_INCLUDED
-#define SMART_COVER_ANIMATION_SELECTOR_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "xrRender/KinematicsAnimated.h"
@@ -23,8 +22,7 @@ namespace smart_cover {
 class action_base;
 class wait_after_exit;
 
-class animation_selector : private debug::make_final<animation_selector> {
-private:
+class animation_selector final {
     CPropertyStorage* m_storage;
     CAI_Stalker* m_object;
     animation_planner* m_planner;
@@ -34,7 +32,6 @@ private:
     bool m_first_time;
     bool m_callback_called;
 
-private:
     action_base* current_operator() const;
 
 public:
@@ -59,5 +56,3 @@ public:
 } // namespace smart_cover
 
 #include "smart_cover_animation_selector_inline.h"
-
-#endif // SMART_COVER_ANIMATION_SELECTOR_H_INCLUDED

@@ -1532,8 +1532,6 @@ set(AI_AMONSTERS_COMMON_COMPONENTS ai/Monsters/ai_monster_defs.h
                                    ai/Monsters/monster_corpse_manager.cpp
                                    ai/Monsters/monster_enemy_manager.cpp)
 
-set(AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_MANAGER steering_behaviour_manager.h)
-
 set(AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_SCROLLBAR ui/UIFixedScrollBar.h
                                                     ui/UIScrollBar.h
                                                     ui/UIScrollBox.h
@@ -3124,9 +3122,6 @@ set(AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_PDA_TASKS ui/UIMapLegend.h
                                                  ui/UISecondTaskWnd.cpp
                                                  ui/UITaskWnd.cpp)
 
-set(CORE_COMMON_DEBUG_MAKE_FINAL debug_make_final.hpp
-                                 debug_make_final_test.cpp)
-
 set(AI_AMONSTERS_COMMON_MONSTER_STATES_FIND_ENEMY ai/Monsters/States/monster_state_find_enemy.h
                                                   ai/Monsters/States/monster_state_find_enemy_angry.h
                                                   ai/Monsters/States/monster_state_find_enemy_angry_inline.h
@@ -3492,7 +3487,6 @@ source_group("Core\\Client\\Objects\\base\\GameObject\\ai_obstacle\\min_obb\\min
 source_group("AI\\AScript\\ScriptClasses\\ScriptIniFile" FILES ${AI_ASCRIPT_SCRIPTCLASSES_SCRIPTINIFILE})
 source_group("Core\\Client\\Objects\\vehicles\\Car\\CarWeapon" FILES ${CORE_CLIENT_OBJECTS_VEHICLES_CAR_CARWEAPON})
 source_group("AI\\AMonsters\\common\\components" FILES ${AI_AMONSTERS_COMMON_COMPONENTS})
-source_group("AI\\AMonsters\\common\\steering behaviours\\manager" FILES ${AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_MANAGER})
 source_group("AI\\AScript\\ScriptClasses\\UI\\UIWindows\\ScrollBar" FILES ${AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_SCROLLBAR})
 source_group("AI\\AMonsters\\common\\components\\Control Manager\\Base Controllers\\Animation" FILES ${AI_AMONSTERS_COMMON_COMPONENTS_CONTROL_MANAGER_BASE_CONTROLLERS_ANIMATION})
 source_group("Core\\Client\\Level\\Bullet Manager" FILES ${CORE_CLIENT_LEVEL_BULLET_MANAGER})
@@ -3857,7 +3851,6 @@ source_group("AI\\ACover\\smart_cover\\storage\\description\\loophole" FILES ${A
 source_group("Core\\Client\\Objects\\inventory\\InventoryOwner\\trade_parameters\\trade_factors" FILES ${CORE_CLIENT_OBJECTS_INVENTORY_INVENTORYOWNER_TRADE_PARAMETERS_TRADE_FACTORS})
 source_group("AI\\AMonsters\\monsters\\Cat\\Script" FILES ${AI_AMONSTERS_MONSTERS_CAT_SCRIPT})
 source_group("AI\\AScript\\ScriptClasses\\UI\\Common\\PDA\\Tasks" FILES ${AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_PDA_TASKS})
-source_group("Core\\Common\\debug\\make_final" FILES ${CORE_COMMON_DEBUG_MAKE_FINAL})
 source_group("AI\\AMonsters\\common\\monster states\\Find Enemy" FILES ${AI_AMONSTERS_COMMON_MONSTER_STATES_FIND_ENEMY})
 source_group("Core\\Client\\Objects\\physics\\CharacterSupport" FILES ${CORE_CLIENT_OBJECTS_PHYSICS_CHARACTERSUPPORT})
 source_group("AI\\AMonsters\\humans\\stalker\\MovementManager\\obstacles\\refreshable_obstacles_query" FILES ${AI_AMONSTERS_HUMANS_STALKER_MOVEMENTMANAGER_OBSTACLES_REFRESHABLE_OBSTACLES_QUERY})
@@ -4623,7 +4616,6 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_VARIOUS_WEAPONS_WEAPON_WALTHER_99}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_CUSTOM_WEAPON_ADDONS_SILENCER}
                           ${AI_AMONSTERS_HUMANS_STALKER_DECISIONMAKER_ACTIONS_ANOMALY}
-                          ${CORE_COMMON_DEBUG_MAKE_FINAL}
                           ${AI_ALIFE}
                           ${AI_ACOMPONENTS_MEMORYMANAGER_CLSUTERIZED_DATA_MANAGERS_ITEMMANAGER}
                           ${AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_MAINMENU}
@@ -4653,7 +4645,6 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${AI_ANAVIGATION_PATHFINDING_DATASTORAGES_CONSTRUCTORS_BUILDER_ALLOCATOR}
                           ${AI_ANAVIGATION_PATHFINDING_DATASTORAGES_CONSTRUCTORS_MANAGER_BUILDER_ALLOCATOR}
                           ${CORE_SERVER_EDITOR}
-                          ${AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_MANAGER}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_FADED_BALL}
                           ${AI_ALIFE_SERVER_ENTITIES_ONLINE_OFFLINE_GROUP_BRAIN}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_VARIOUS_WEAPONS_FN2000}

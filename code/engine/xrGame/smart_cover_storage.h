@@ -5,14 +5,13 @@
 //	Description : Smart cover storage class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_STORAGE_H_INCLUDED
-#define SMART_COVER_STORAGE_H_INCLUDED
+#pragma once
 
 #include "smart_cover.h"
 
 namespace smart_cover {
 
-class storage : private debug::make_final<storage> {
+class storage final {
 public:
     typedef xr_vector<smart_cover::description*> Descriptions;
     typedef cover::DescriptionPtr DescriptionPtr;
@@ -31,5 +30,3 @@ public:
 };
 
 } // namespace smart_cover
-
-#endif // SMART_COVER_STORAGE_H_INCLUDED

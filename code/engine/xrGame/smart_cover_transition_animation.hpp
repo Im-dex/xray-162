@@ -5,18 +5,15 @@
 //	Description : Animation transition class for smart_cover
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_TRANSITION_ANIMATION_HPP_INCLUDED
-#define SMART_COVER_TRANSITION_ANIMATION_HPP_INCLUDED
+#pragma once
 
-#include "debug_make_final.hpp"
 #include "ai_monster_space.h"
 
 namespace smart_cover {
 
 namespace transitions {
 
-class animation_action : private debug::make_final<animation_action> {
-private:
+class animation_action final {
     Fvector m_position;
     shared_str m_animation_id;
     MonsterSpace::EBodyState m_body_state;
@@ -37,9 +34,6 @@ public:
 };
 
 } // namespace transitions
-
 } // namespace smart_cover
 
 #include "smart_cover_transition_animation_inline.hpp"
-
-#endif // SMART_COVER_TRANSITION_ANIMATION_HPP_INCLUDED

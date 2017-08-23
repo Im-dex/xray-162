@@ -5,12 +5,10 @@
 //	Description : Smart cover planner action classes
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef SMART_COVER_PLANNER_ACTIONS_H_INCLUDED
-#define SMART_COVER_PLANNER_ACTIONS_H_INCLUDED
+#pragma once
 
 #include "smart_cover_detail.h"
 #include "stalker_combat_action_base.h"
-#include "debug_make_final.hpp"
 
 class CAI_Stalker;
 
@@ -43,8 +41,7 @@ public:
 // change_loophole
 ////////////////////////////////////////////////////////////////////////////
 
-class change_loophole : public action_base, private debug::make_final<change_loophole> {
-private:
+class change_loophole final : public action_base {
     typedef action_base inherited;
 
 public:
@@ -60,9 +57,7 @@ public:
 // non_animated_change_loophole
 ////////////////////////////////////////////////////////////////////////////
 
-class non_animated_change_loophole : public action_base,
-                                     private debug::make_final<non_animated_change_loophole> {
-private:
+class non_animated_change_loophole final : public action_base {
     typedef action_base inherited;
 
 public:
@@ -79,8 +74,7 @@ public:
 // exit
 ////////////////////////////////////////////////////////////////////////////
 
-class exit : public action_base, private debug::make_final<exit> {
-private:
+class exit final : public action_base {
     typedef action_base inherited;
 
 public:
@@ -96,5 +90,3 @@ public:
 } // namespace smart_cover
 
 #include "smart_cover_planner_actions_inline.h"
-
-#endif // SMART_COVER_PLANNER_ACTIONS_H_INCLUDED
