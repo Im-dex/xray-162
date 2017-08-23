@@ -37,20 +37,20 @@ namespace luabind { namespace detail
 	{
         template<typename R, typename T, typename... Args, typename... Policies>
         overload_rep(R(T::*)(Args...), const policy_cons<Policies...> policies)
-            : overload_rep(false, imdexlib::typelist<Args...>(), std::integral_constant<int, 1>(), policies)
+            : overload_rep(false, imdex::typelist<Args...>(), std::integral_constant<int, 1>(), policies)
         {
             
         }
 
         template<typename R, typename T, typename... Args, typename... Policies>
         overload_rep(R(T::*)(Args...) const, const policy_cons<Policies...> policies)
-            : overload_rep(true, imdexlib::typelist<Args...>(), std::integral_constant<int, 1>(), policies)
+            : overload_rep(true, imdex::typelist<Args...>(), std::integral_constant<int, 1>(), policies)
         {
         }
 
         template<typename R, typename... Args, typename... Policies>
         overload_rep(R(*)(Args...), const policy_cons<Policies...> policies)
-            : overload_rep(false, imdexlib::typelist<Args...>(), std::integral_constant<int, 0>(), policies)
+            : overload_rep(false, imdex::typelist<Args...>(), std::integral_constant<int, 0>(), policies)
         {
         }
 
@@ -88,7 +88,7 @@ namespace luabind { namespace detail
 	private:
 
         template <int ResInit, typename... Args, typename... Policies>
-        overload_rep(const bool isConst, const imdexlib::typelist<Args...>, const std::integral_constant<int, ResInit>, const policy_cons<Policies...>)
+        overload_rep(const bool isConst, const imdex::typelist<Args...>, const std::integral_constant<int, ResInit>, const policy_cons<Policies...>)
             : allocator(),
               call_fun(std::allocator_arg_t(), allocator),
               call_fun_static(std::allocator_arg_t(), allocator),

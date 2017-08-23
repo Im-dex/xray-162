@@ -6,15 +6,15 @@
 #include "uncaught_exceptions_counter.hpp"
 
 #define IMDEXLIB_SCOPE_EXIT\
-    const auto IMDEXLIB_ANONYMOUS_VAR(scope_exit) = ::imdexlib::ScopeExit() + [&]()
+    const auto IMDEXLIB_ANONYMOUS_VAR(scope_exit) = ::imdex::ScopeExit() + [&]()
 
 #define IMDEXLIB_SCOPE_SUCCESS\
-    const auto IMDEXLIB_ANONYMOUS_VAR(scope_success) = ::imdexlib::ScopeSuccess() + [&]()
+    const auto IMDEXLIB_ANONYMOUS_VAR(scope_success) = ::imdex::ScopeSuccess() + [&]()
 
 #define IMDEXLIB_SCOPE_FAIL\
-    const auto IMDEXLIB_ANONYMOUS_VAR(scope_fail) = ::imdexlib::ScopeFailure() + [&]() noexcept
+    const auto IMDEXLIB_ANONYMOUS_VAR(scope_fail) = ::imdex::ScopeFailure() + [&]() noexcept
 
-namespace imdexlib {
+namespace imdex {
 
 enum class ScopeExit;
 enum class ScopeSuccess;
@@ -127,4 +127,4 @@ scope_guard_for_new_exception<std::decay_t<Function>, false> operator+ (ScopeSuc
     return scope_guard_for_new_exception<std::decay_t<Function>, false>(std::forward<Function>(function));
 }
 
-} // imdexlib namespace
+} // imdex namespace

@@ -58,7 +58,7 @@ namespace luabind { namespace detail
 	template<class T>
 	void convert_to_lua(lua_State* L, const T& v)
 	{
-        using unwrap = unwrap_ref<imdexlib::is_reference_wrapper_v<T>>;
+        using unwrap = unwrap_ref<imdex::is_reference_wrapper_v<T>>;
 	    using value_type = typename unwrap::template apply<T>::type;
 		typename default_policy::generate_converter<value_type, Direction::cpp_to_lua>::type converter;
 
@@ -68,7 +68,7 @@ namespace luabind { namespace detail
 	template<int Index, class T, typename... Policies>
 	void convert_to_lua_p(lua_State* L, const T& v, const policy_cons<Policies...>)
 	{
-        using unwrap = unwrap_ref<imdexlib::is_reference_wrapper_v<T>>;
+        using unwrap = unwrap_ref<imdex::is_reference_wrapper_v<T>>;
 	    using value_type = typename unwrap::template apply<T>::type;
 	    using converter_policy = typename find_conversion_policy<Index, Policies...>::type;
 		typename converter_policy::template generate_converter<value_type, Direction::cpp_to_lua>::type converter;

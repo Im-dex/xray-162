@@ -88,10 +88,10 @@ namespace luabind { namespace detail {
     {
         using type = std::conditional_t<
             std::is_same_v<T, self_type>,
-            imdexlib::identity_t<W&>,
+            imdex::identity_t<W&>,
             std::conditional_t<
                 std::is_same_v<T, const_self_type>,
-                imdexlib::identity_t<W const&>,
+                imdex::identity_t<W const&>,
                 typename unwrap_other<T>::type
             >
         >;

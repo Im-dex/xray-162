@@ -1,6 +1,6 @@
 #pragma once
 
-namespace imdexlib {
+namespace imdex {
 
 template <typename... Ts>
 struct typelist
@@ -11,4 +11,4 @@ struct typelist
     }
 };
 
-} // imdexlib
+} // imdex namespace

@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <numeric>
 
-namespace imdexlib {
+namespace imdex {
 
 template <typename T>
 class FlagSet final {
@@ -88,4 +88,4 @@ private:
     Type value;
 };
 
-} // imdexlib namespace
+} // imdex namespace

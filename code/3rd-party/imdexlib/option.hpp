@@ -5,7 +5,7 @@
 #include "utility.hpp"
 #include "traits.hpp"
 
-namespace imdexlib {
+namespace imdex {
 
 struct none_t final {};
 
@@ -390,32 +390,32 @@ option<T> make_option(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, 
     return option<T>(in_place{}, std::forward<Ts>(args)...);
 }
 
-} // imdexlib namespace
-
-namespace std {
-
 template <typename T>
-void swap(imdexlib::option<T>& a, imdexlib::option<T>& b) noexcept(noexcept(a.swap(b)))
+void swap(option<T>& a, option<T>& b) noexcept(noexcept(a.swap(b)))
 {
     a.swap(b);
 }
 
 template <typename T>
-void swap(imdexlib::option<T>& option, T& value) noexcept(noexcept(option.swap(value)))
+void swap(option<T>& option, T& value) noexcept(noexcept(option.swap(value)))
 {
     option.swap(value);
 }
 
 template <typename T>
-void swap(T& value, imdexlib::option<T>& option) noexcept(noexcept(option.swap(value)))
+void swap(T& value, option<T>& option) noexcept(noexcept(option.swap(value)))
 {
     option.swap(value);
 }
 
+} // imdex namespace
+
+namespace std {
+
 template <typename T>
-struct hash<imdexlib::option<T>>
+struct hash<imdex::option<T>>
 {
-    size_t operator()(const imdexlib::option<T>& option) const noexcept
+    size_t operator()(const imdex::option<T>& option) const noexcept
     {
         if (option.is_empty()) return 0;
 

@@ -119,7 +119,7 @@ namespace luabind { namespace detail
 
         template <int ResInitWithOffset, typename WrappedClass, typename Fn, typename... Converters, typename... Ts, size_t... Indices, typename... Policies>
         static void callApply(Fn&& fn, lua_State* L, std::tuple<Converters...>& converters, const std::index_sequence<Indices...>,
-                              const imdexlib::typelist<Ts...>, const policy_cons<Policies...> policies, std::false_type /*is_void<T>*/)
+                              const imdex::typelist<Ts...>, const policy_cons<Policies...> policies, std::false_type /*is_void<T>*/)
         {
             using converter_policy_ret = typename find_conversion_policy<0, Policies...>::type;
             typename converter_policy_ret::template generate_converter<T, Direction::cpp_to_lua>::type converter_ret;
@@ -129,7 +129,7 @@ namespace luabind { namespace detail
 
         template <int ResInitWithOffset, typename WrappedClass, typename Fn, typename... Converters, typename... Ts, size_t... Indices, typename... Policies>
         static void callApply(Fn&& fn, lua_State* L, std::tuple<Converters...>& converters, const std::index_sequence<Indices...>,
-                              const imdexlib::typelist<Ts...>, const policy_cons<Policies...> policies, std::true_type /*is_void<T>*/)
+                              const imdex::typelist<Ts...>, const policy_cons<Policies...> policies, std::true_type /*is_void<T>*/)
         {
             callApply<WrappedClass>(std::forward<Fn>(fn), L, apply<ResInitWithOffset, Ts, Indices>(L, std::get<Indices>(converters), policies)...);
         }
@@ -159,13 +159,13 @@ namespace luabind { namespace detail
                   typename Fn,
 	              typename... Args,
 	              typename... Policies>
-        static int call(Fn&& fn, lua_State* L, const imdexlib::typelist<Args...>, const policy_cons<Policies...> policies)
+        static int call(Fn&& fn, lua_State* L, const imdex::typelist<Args...>, const policy_cons<Policies...> policies)
         {
             const int nargs = lua_gettop(L);
             const auto indices = std::make_index_sequence<sizeof...(Args)>();
             auto converters = generateConverters<ResInitWithOffset, Args...>(indices, policies);
 
-            callApply<ResInitWithOffset, WrappedClass>(std::forward<Fn>(fn), L, converters, indices, imdexlib::typelist<Args...>(), policies, std::is_void<T>());
+            callApply<ResInitWithOffset, WrappedClass>(std::forward<Fn>(fn), L, converters, indices, imdex::typelist<Args...>(), policies, std::is_void<T>());
             callPostcall<ResInitWithOffset, Args...>(L, converters, indices, policies);
 
             const int nret = lua_gettop(L) - nargs;
@@ -183,7 +183,7 @@ namespace luabind { namespace detail
                  typename... Policies>
         static int call(T(C::*f)(Args...), WrappedClass*, lua_State* L, const policy_cons<Policies...> policies)
         {
-            return call<WrappedClass, 2>(f, L, imdexlib::typelist<Args...>(), policies);
+            return call<WrappedClass, 2>(f, L, imdex::typelist<Args...>(), policies);
         }
 
         template<typename C,
@@ -192,7 +192,7 @@ namespace luabind { namespace detail
 	             typename... Policies>
         static int call(T(C::*f)(Args...) const, WrappedClass*, lua_State* L, const policy_cons<Policies...> policies)
         {
-            return call<WrappedClass, 2>(f, L, imdexlib::typelist<Args...>(), policies);
+            return call<WrappedClass, 2>(f, L, imdex::typelist<Args...>(), policies);
         }
 
         template<typename WrappedClass,
@@ -200,7 +200,7 @@ namespace luabind { namespace detail
                  typename... Policies>
         static int call(T(*f)(Args...), WrappedClass*, lua_State* L, const policy_cons<Policies...> policies)
         {
-            return call<WrappedClass, 1>(f, L, imdexlib::typelist<Args...>(), policies);
+            return call<WrappedClass, 1>(f, L, imdex::typelist<Args...>(), policies);
         }
 	};
 
