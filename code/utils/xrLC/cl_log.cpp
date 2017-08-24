@@ -169,9 +169,7 @@ void logThread(void* dummy) {
             if (LogSize != LogFile->size()) {
                 bWasChanges = TRUE;
                 for (; LogSize < LogFile->size(); LogSize++) {
-                    const char* S = *(*LogFile)[LogSize];
-                    if (0 == S)
-                        S = "";
+                    const char* S = (*LogFile)[LogSize].c_str();
                     SendMessage(hwLog, LB_ADDSTRING, 0, (LPARAM)S);
                 }
                 SendMessage(hwLog, LB_SETTOPINDEX, LogSize - 1, 0);

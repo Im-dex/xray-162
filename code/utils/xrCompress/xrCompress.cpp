@@ -92,8 +92,8 @@ bool xrCompressor::testSKIP(LPCSTR path) {
     if (0 == stricmp(p_ext, ".rc"))
         return true;
 
-    for (xr_vector<shared_str>::iterator it = exclude_exts.begin(); it != exclude_exts.end(); ++it)
-        if (PatternMatch(p_ext, it->c_str()))
+    for (const auto& ext : exclude_exts)
+        if (PatternMatch(p_ext, ext.c_str()))
             return true;
 
     return false;

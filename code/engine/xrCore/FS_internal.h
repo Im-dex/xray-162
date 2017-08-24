@@ -16,14 +16,14 @@ public:
     CFileWriter(const char* name, const bool exclusive) {
         R_ASSERT(name && name[0]);
         fName = name;
-        createPath(*fName);
+        createPath(fName);
         if (exclusive) {
-            int handle = _sopen(*fName, _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, SH_DENYWR);
+            int handle = _sopen(fName.c_str(), _O_WRONLY | _O_TRUNC | _O_CREAT | _O_BINARY, SH_DENYWR);
             hf = _fdopen(handle, "wb");
         } else {
-            hf = fopen(*fName, "wb");
+            hf = fopen(fName.c_str(), "wb");
             if (!hf)
-                Msg("!Can't write file: '%s'. Error: '%s'.", *fName, _sys_errlist[errno]);
+                Msg("!Can't write file: '%s'. Error: '%s'.", fName.c_str(), _sys_errlist[errno]);
         }
     }
 
@@ -31,10 +31,10 @@ public:
         if (hf) {
             fclose(hf);
             // release RO attrib
-            auto dwAttr = GetFileAttributes(*fName);
+            auto dwAttr = GetFileAttributes(fName.c_str());
             if ((dwAttr != DWORD(-1)) && (dwAttr & FILE_ATTRIBUTE_READONLY)) {
                 dwAttr &= ~FILE_ATTRIBUTE_READONLY;
-                SetFileAttributes(*fName, dwAttr);
+                SetFileAttributes(fName.c_str(), dwAttr);
             }
         }
     }

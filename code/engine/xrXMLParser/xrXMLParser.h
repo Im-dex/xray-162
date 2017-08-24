@@ -17,6 +17,7 @@
 #define PUGIXML_HAS_LONG_LONG
 #include "pugixml.hpp"
 
+// TODO: [imdex] replace by string_view
 static constexpr const char* CONFIG_PATH = "$game_config$";
 static constexpr const char* UI_PATH = "ui";
 
@@ -165,7 +166,7 @@ public:
     //проверка того, что аттрибуты у тегов уникальны
     //(если не NULL, то уникальность нарушена и возврашается имя
     //повторяющегося атрибута)
-    const char* CheckUniqueAttrib(XML_NODE start_node, const char* tag_name, const char* attrib_name);
+    std::string_view CheckUniqueAttrib(XML_NODE start_node, const char* tag_name, const char* attrib_name) const;
 #endif
 
     //переместиться по XML дереву
@@ -184,12 +185,10 @@ protected:
     XML_NODE m_root;
     XML_NODE m_pLocalRoot;
 
-#ifdef DEBUG // debug & mixed
-    //буфферный вектор для проверки уникальность аттрибутов
-    xr_vector<shared_str> m_AttribValues;
-#endif
 public:
-    virtual shared_str correct_file_name(const char* path, const char* fn) { return fn; }
+    virtual std::string correct_file_name(const std::string_view path, const std::string_view fn) {
+        return std::string(fn);
+    }
 
 private:
     CXml(const CXml& copy);

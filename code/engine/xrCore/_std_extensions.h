@@ -158,13 +158,21 @@ IC s32 _abs(s32 x) { return (x >= 0) ? x : s32(-x); }
 // int64
 IC s64 _abs(s64 x) { return (x >= 0) ? x : s64(-x); }
 
-IC u32 xr_strlen(const char* S);
-
 // string management
 
 // return pointer to ".ext"
-IC char* strext(const char* S) { return (char*)strrchr(S, '.'); }
+[[deprecated]]
+inline char* strext(const char* S) { return (char*)strrchr(S, '.'); }
 
+inline bool hasExtension(const std::string_view str) {
+    return str.find_last_of('.') != std::string_view::npos;
+}
+
+inline std::string_view::size_type findExtPos(const std::string_view str) {
+    return str.find_last_of('.');
+}
+
+[[deprecated]]
 IC u32 xr_strlen(const char* S) { return (u32)strlen(S); }
 
 IC char* xr_strlwr(char* S) { return strlwr(S); }

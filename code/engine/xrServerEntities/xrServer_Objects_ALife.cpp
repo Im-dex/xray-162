@@ -62,7 +62,7 @@ struct logical_string_predicate {
         return (StrCmpLogicalW(buffer0, buffer1) < 0);
     }
 
-    bool operator()(shared_str const& first, shared_str const& second) const {
+    bool operator()(std::string const& first, std::string const& second) const {
         u32 buffer_size0 = (first.size() + 1) * 2;
         LPCWSTR buffer0 = (LPCWSTR)_alloca(buffer_size0);
         AnsiToUnicode(first.c_str(), (LPVOID)buffer0, buffer_size0);
@@ -77,19 +77,11 @@ struct logical_string_predicate {
 
 #endif // XRSE_FACTORY_EXPORTS
 
-bool SortStringsByAlphabetPred(const shared_str& s1, const shared_str& s2) {
-    R_ASSERT(s1.size());
-    R_ASSERT(s2.size());
-
-    return (xr_strcmp(s1, s2) < 0);
-};
-
 struct story_name_predicate {
     IC bool operator()(const xr_rtoken& _1, const xr_rtoken& _2) const {
         VERIFY(_1.name.size());
         VERIFY(_2.name.size());
-
-        return (xr_strcmp(_1.name, _2.name) < 0);
+        return _1.name < _2.name;
     }
 };
 
@@ -132,7 +124,8 @@ void SFillPropData::load() {
     // level names/ids
     VERIFY(level_ids.empty());
     for (k = 0; Ini->r_line("levels", k, &N, &V); ++k)
-        level_ids.push_back(Ini->r_string_wb(N, "caption"));
+        // TODO: [imdex] fix this after shared_str remove
+        level_ids.push_back(*Ini->r_string_wb(N, "caption"));
 
     // story names
     {
@@ -163,10 +156,14 @@ void SFillPropData::load() {
     // character profiles indexes
     VERIFY(character_profiles.empty());
     for (int i = 0; i <= CCharacterInfo::GetMaxIndex(); i++) {
-        character_profiles.push_back(CCharacterInfo::IndexToId(i));
+        // TODO: [imdex] fix this after shared_str remove
+        character_profiles.push_back(*CCharacterInfo::IndexToId(i));
     }
 
-    std::sort(character_profiles.begin(), character_profiles.end(), SortStringsByAlphabetPred);
+    std::sort(character_profiles.begin(), character_profiles.end(),
+              [](const auto& lhs, const auto& rhs) {
+        return lhs < rhs;
+    });
 #endif // AI_COMPILER
 
 // destroy ini
@@ -219,9 +216,12 @@ void CSE_ALifeTraderAbstract::FillProps(LPCSTR pref, PropItemVec& items) {
     PHelper().CreateU32(items, PrepareKey(pref, *base()->s_name, "Money"), &m_dwMoney, 0, u32(-1));
     PHelper().CreateFlag32(items, PrepareKey(pref, *base()->s_name, "Trader\\Infinite ammo"),
                            &m_trader_flags, eTraderFlagInfiniteAmmo);
+    // TODO: [imdex] fix this after shared_str remove
+    shared_str tmp(fp_data.character_profiles.begin()->c_str());
     RListValue* value = PHelper().CreateRList(
         items, PrepareKey(pref, *base()->s_name, "npc profile"), &m_sCharacterProfile,
-        &*fp_data.character_profiles.begin(), fp_data.character_profiles.size());
+        &tmp, fp_data.character_profiles.size());
+    *fp_data.character_profiles.begin() = *tmp;
 
     value->OnChangeEvent.bind(this, &CSE_ALifeTraderAbstract::OnChangeProfile);
 #endif // #ifdef XRSE_FACTORY_EXPORTS
@@ -283,9 +283,12 @@ void CSE_ALifeGraphPoint::FillProps(LPCSTR pref, PropItemVec& items) {
                             &*fp_data.locations[2].begin(), fp_data.locations[2].size());
     PHelper().CreateRToken8(items, PrepareKey(pref, *s_name, "Location\\4"), &m_tLocations[3],
                             &*fp_data.locations[3].begin(), fp_data.locations[3].size());
+    // TODO: [imdex] fix this after shared_str remove
+    shared_str tmp(fp_data.level_ids.begin()->c_str());
     PHelper().CreateRList(items, PrepareKey(pref, *s_name, "Connection\\Level name"),
-                          &m_caConnectionLevelName, &*fp_data.level_ids.begin(),
+                          &m_caConnectionLevelName, &tmp,
                           fp_data.level_ids.size());
+    *fp_data.level_ids.begin() = *tmp;
     PHelper().CreateRText(items, PrepareKey(pref, *s_name, "Connection\\Point name"),
                           &m_caConnectionPointName);
 #endif // #ifdef XRSE_FACTORY_EXPORTS
@@ -837,8 +840,11 @@ void CSE_ALifeLevelChanger::FillProps(LPCSTR pref, PropItemVec& items) {
 #ifdef XRSE_FACTORY_EXPORTS
     inherited::FillProps(pref, items);
 
+    // TODO: [imdex] fix this after shared_str remove
+    shared_str tmp(fp_data.level_ids.begin()->c_str());
     PHelper().CreateRList(items, PrepareKey(pref, *s_name, "Level to change"), &m_caLevelToChange,
-                          &*fp_data.level_ids.begin(), fp_data.level_ids.size());
+                          &tmp, fp_data.level_ids.size());
+    *fp_data.level_ids.begin() = *tmp;
     PHelper().CreateRText(items, PrepareKey(pref, *s_name, "Level point to change"),
                           &m_caLevelPointToChange);
 

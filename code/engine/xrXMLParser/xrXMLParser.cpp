@@ -20,7 +20,7 @@ void ParseFile(const char* path, CMemoryWriter& W, IReader* F, CXml* xml) {
             if (_GetItem(str, 1, inc_name, '"')) {
                 IReader* I = nullptr;
                 if (inc_name == strstr(inc_name, "ui\\")) {
-                    shared_str fn = xml->correct_file_name("ui", strchr(inc_name, '\\') + 1);
+                    const auto fn = xml->correct_file_name("ui", strchr(inc_name, '\\') + 1);
                     string_path buff;
                     strconcat(sizeof(buff), buff, "ui\\", fn.c_str());
                     I = FS.r_open(path, buff);
@@ -44,10 +44,10 @@ void ParseFile(const char* path, CMemoryWriter& W, IReader* F, CXml* xml) {
 }
 
 void CXml::Load(const char* path_alias, const char* path, const char* _xml_filename) {
-    shared_str fn = correct_file_name(path, _xml_filename);
+    const auto fn = correct_file_name(path, _xml_filename);
 
     string_path str;
-    xr_sprintf(str, "%s\\%s", path, *fn);
+    xr_sprintf(str, "%s\\%s", path, fn.c_str());
     return Load(path_alias, str);
 }
 
@@ -350,23 +350,21 @@ XML_NODE CXml::SearchForAttribute(XML_NODE start_node, const char* tag_name, con
 
 #ifdef DEBUG // debug & mixed
 
-const char* CXml::CheckUniqueAttrib(XML_NODE start_node, const char* tag_name, const char* attrib_name) {
-    m_AttribValues.clear();
+std::string_view CXml::CheckUniqueAttrib(XML_NODE start_node, const char* tag_name, const char* attrib_name) const {
+    std::set<std::string_view> attribs;
 
-    int tags_num = GetNodesNum(start_node, tag_name);
+    const auto tags_num = GetNodesNum(start_node, tag_name);
 
     for (int i = 0; i < tags_num; i++) {
-        const char* attrib = ReadAttrib(start_node, tag_name, i, attrib_name, nullptr);
+        const std::string_view attrib = ReadAttrib(start_node, tag_name, i, attrib_name, nullptr);
 
-        xr_vector<shared_str>::iterator it =
-            std::find(m_AttribValues.begin(), m_AttribValues.end(), attrib);
+        const auto iter = attribs.find(attrib);
+        if (iter != attribs.end())
+            return *iter;
 
-        if (m_AttribValues.end() != it)
-            return attrib;
-
-        m_AttribValues.push_back(attrib);
+        attribs.insert(attrib);
     }
-    return nullptr;
+    return std::string_view();
 }
 #endif
 

@@ -22,7 +22,7 @@ void InitLog();
 void CloseLog();
 void XRCORE_API FlushLog();
 
-extern XRCORE_API xr_vector<shared_str>* LogFile;
+extern XRCORE_API xr_vector<std::string>* LogFile;
 extern XRCORE_API BOOL LogExecCB;
 
 #endif

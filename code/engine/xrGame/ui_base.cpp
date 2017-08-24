@@ -231,37 +231,42 @@ bool ui_core::is_widescreen() {
 }
 
 float ui_core::get_current_kx() {
-    float h = float(Device.dwHeight);
-    float w = float(Device.dwWidth);
+    const float h = float(Device.dwHeight);
+    const float w = float(Device.dwWidth);
 
-    float res = (h / w) / (UI_BASE_HEIGHT / UI_BASE_WIDTH);
-    return res;
+    return (h / w) / (UI_BASE_HEIGHT / UI_BASE_WIDTH);
 }
 
-shared_str ui_core::get_xml_name(LPCSTR fn) {
-    string_path str;
+// Note by imdex: function make choice of UI config file depends on screen aspect ratio
+// *_16.xml file should be chosen for widescreen
+std::string ui_core::get_xml_name(const std::string_view fn) {
+    fmt::StringWriter writer;
+
     if (!is_widescreen()) {
-        xr_sprintf(str, "%s", fn);
-        if (NULL == strext(fn))
-            xr_strcat(str, ".xml");
+        writer.write("{}", fn);
+        if (!hasExtension(fn)) {
+            writer.write(".xml");
+        }
     } else {
+        const auto extPos = findExtPos(fn);
+        if (extPos != std::string_view::npos) {
+            writer.write("{}_16.xml", fn.substr(0, extPos + 1));
+        } else {
+            writer.write("{}_16", fn);
+        }
 
-        string_path str_;
-        if (strext(fn)) {
-            xr_strcpy(str, fn);
-            *strext(str) = 0;
-            xr_strcat(str, "_16.xml");
-        } else
-            xr_sprintf(str, "%s_16", fn);
-
-        if (NULL == FS.exist(str_, "$game_config$", "ui\\", str)) {
-            xr_sprintf(str, "%s", fn);
-            if (NULL == strext(fn))
-                xr_strcat(str, ".xml");
+        string_path dummy; // TODO: [imdex] remove this after refactoring
+        if (nullptr == FS.exist(dummy, "$game_config$", "ui\\", writer.c_str())) {
+            writer.clear();
+            writer.write("{}", fn);
+            if (!hasExtension(fn)) {
+                writer.write(".xml");
+            }
         }
 #ifdef DEBUG
         Msg("[16-9] get_xml_name for[%s] returns [%s]", fn, str);
 #endif // #ifdef DEBUG
     }
-    return str;
+
+    return writer.str();
 }

@@ -25,10 +25,12 @@ class XRCORE_API IWriter {
     xr_stack<size_t> chunk_pos;
 
 public:
-    shared_str fName;
+    std::string fName;
 
     IWriter() = default;
-    virtual ~IWriter() { R_ASSERT3(chunk_pos.empty(), "Opened chunk not closed.", *fName); }
+    virtual ~IWriter() {
+        R_ASSERT3(chunk_pos.empty(), "Opened chunk not closed.", fName.c_str());
+    }
 
     // kernel
     virtual void seek(const size_t pos) = 0;

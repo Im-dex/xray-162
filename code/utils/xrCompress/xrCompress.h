@@ -22,7 +22,7 @@ class xrCompressor {
     };
     xr_multimap<u32, ALIAS> aliases;
 
-    xr_vector<shared_str> exclude_exts;
+    xr_vector<std::string> exclude_exts;
     bool testSKIP(LPCSTR path);
     ALIAS* testALIAS(IReader* base, u32 crc, u32& a_tests);
     bool testEqual(LPCSTR path, IReader* base);

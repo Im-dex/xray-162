@@ -231,8 +231,8 @@ void CPhraseDialog::load_shared(LPCSTR) {
     pXML->SetLocalRoot(phrase_list_node);
 
 #ifdef DEBUG // debug & mixed
-    LPCSTR wrong_phrase_id = pXML->CheckUniqueAttrib(phrase_list_node, "phrase", "id");
-    THROW3(wrong_phrase_id == NULL, *item_data.id, wrong_phrase_id);
+    const auto wrong_phrase_id = pXML->CheckUniqueAttrib(phrase_list_node, "phrase", "id");
+    THROW3(wrong_phrase_id.empty(), *item_data.id, wrong_phrase_id);
 #endif
 
     //ищем стартовую фразу

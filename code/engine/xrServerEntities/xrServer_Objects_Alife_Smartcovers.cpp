@@ -138,9 +138,12 @@ void CSE_SmartCover::FillProps(LPCSTR pref, PropItemVec& items) {
 #ifdef XRSE_FACTORY_EXPORTS
     PHelper().CreateFloat(items, PrepareKey(pref, *s_name, "hold position time"),
                           &m_hold_position_time, 0.f, 60.f);
+    // TODO: [imdex] fix this after shared_str remove
+    shared_str tmp(fp_data.smart_covers.begin()->c_str());
     RListValue* value =
         PHelper().CreateRList(items, PrepareKey(pref, *s_name, "description"), &m_description,
-                              &*fp_data.smart_covers.begin(), fp_data.smart_covers.size());
+                              &tmp, fp_data.smart_covers.size());
+    *fp_data.smart_covers.begin() = tmp.c_str();
     value->OnChangeEvent.bind(this, &CSE_SmartCover::OnChangeDescription);
 
     PHelper().CreateFloat(items, PrepareKey(pref, *s_name, "enter min enemy distance"),

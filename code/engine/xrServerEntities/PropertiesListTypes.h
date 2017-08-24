@@ -327,8 +327,7 @@ public:
             value.push_back(_GetItem(val.c_str(), k, v));
     }
     virtual xr_string GetDrawText(TOnDrawTextEvent) {
-        shared_str t = _ListToSequence(value);
-        return t.c_str() ? t.c_str() : "";
+        return xr_string(_ListToSequence(value));
     }
     virtual void ResetValue() { ; }
     virtual bool Equal(PropValue* val) { return true; }

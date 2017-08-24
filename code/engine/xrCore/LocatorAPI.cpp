@@ -38,7 +38,7 @@ struct _open_file {
         IReader* _reader;
         CStreamReader* _stream_reader;
     };
-    shared_str _fn;
+    std::string _fn;
     u32 _used;
 };
 
@@ -51,39 +51,34 @@ struct eq_pointer<IReader> {
     eq_pointer(IReader* p) : _val(p) {}
     bool operator()(_open_file& itm) { return (_val == itm._reader); }
 };
+
 template <>
 struct eq_pointer<CStreamReader> {
     CStreamReader* _val;
     eq_pointer(CStreamReader* p) : _val(p) {}
     bool operator()(_open_file& itm) { return (_val == itm._stream_reader); }
 };
-struct eq_fname_free {
-    shared_str _val;
-    eq_fname_free(shared_str s) { _val = s; }
-    bool operator()(_open_file& itm) { return (_val == itm._fn && itm._reader == NULL); }
-};
-struct eq_fname_check {
-    shared_str _val;
-    eq_fname_check(shared_str s) { _val = s; }
-    bool operator()(_open_file& itm) { return (_val == itm._fn && itm._reader != NULL); }
-};
 
 XRCORE_API xr_vector<_open_file> g_open_files;
 
-void _check_open_file(const shared_str& _fname) {
-    xr_vector<_open_file>::iterator it =
-        std::find_if(g_open_files.begin(), g_open_files.end(), eq_fname_check(_fname));
+static void _check_open_file(const char* fname) {
+    const auto it = std::find_if(g_open_files.begin(), g_open_files.end(),
+                                 [&](const _open_file& item) {
+        return item._fn == fname && item._reader;
+    });
     if (it != g_open_files.end())
-        Log("file opened at least twice", _fname.c_str());
+        Log("file opened at least twice", fname);
 }
 
-_open_file& find_free_item(const shared_str& _fname) {
-    xr_vector<_open_file>::iterator it =
-        std::find_if(g_open_files.begin(), g_open_files.end(), eq_fname_free(_fname));
+static _open_file& find_free_item(const std::string_view fname) {
+    const auto it = std::find_if(g_open_files.begin(), g_open_files.end(),
+                                 [&](const _open_file& item) {
+        return item._fn == fname && !item._reader;
+    });
     if (it == g_open_files.end()) {
         g_open_files.resize(g_open_files.size() + 1);
         _open_file& _of = g_open_files.back();
-        _of._fn = _fname;
+        _of._fn = fname;
         _of._used = 0;
         return _of;
     }
@@ -95,14 +90,13 @@ void setup_reader(CStreamReader* _r, _open_file& _of) { _of._stream_reader = _r;
 void setup_reader(IReader* _r, _open_file& _of) { _of._reader = _r; }
 
 template <typename T>
-void _register_open_file(T* _r, LPCSTR _fname) {
+void _register_open_file(T* _r, LPCSTR fname) {
     // xrCriticalSection		_lock; TODO: useless lock
     //_lock.Enter				();
 
-    shared_str f = _fname;
-    _check_open_file(f);
+    _check_open_file(fname);
 
-    _open_file& _of = find_free_item(_fname);
+    _open_file& _of = find_free_item(fname);
     setup_reader(_r, _of);
     _of._used += 1;
 
@@ -255,10 +249,10 @@ IReader* open_chunk(void* ptr, u32 ID) {
         } else {
             pt = SetFilePointer(ptr, dwSize, 0, FILE_CURRENT);
             if (pt == INVALID_SET_FILE_POINTER)
-                return 0;
+                return nullptr;
         }
     }
-    return 0;
+    return nullptr;
 };
 
 void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint) {
@@ -266,10 +260,10 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint) {
     string_path fs_entry_point;
     fs_entry_point[0] = 0;
     if (A.header) {
-        shared_str read_path = A.header->r_string("header", "entry_point");
-        if (0 == stricmp(read_path.c_str(), "gamedata")) {
+        std::string read_path = A.header->r_string("header", "entry_point");
+        if (0 == _stricmp(read_path.c_str(), "gamedata")) {
             read_path = "$fs_root$";
-            auto P = pathes.find(read_path.c_str());
+            const auto P = pathes.find(read_path.c_str());
             if (P != pathes.end()) {
                 FS_Path* root = P->second;
                 //				R_ASSERT3				(root, "path not found ",
@@ -285,8 +279,7 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint) {
             int count = sscanf(read_path.c_str(), "%[^\\]s", alias_name);
             R_ASSERT2(count == 1, read_path.c_str());
 
-            auto P = pathes.find(alias_name);
-
+            const auto P = pathes.find(alias_name);
             if (P != pathes.end()) {
                 FS_Path* root = P->second;
                 //			R_ASSERT3			(root, "path not found ",
@@ -310,7 +303,6 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint) {
     A.open();
     IReader* hdr = open_chunk(A.hSrcFile, 1);
     R_ASSERT(hdr);
-    RStringVec fv;
     while (!hdr->eof()) {
         string_path name, full;
         string1024 buffer_start;
@@ -353,7 +345,7 @@ void CLocatorAPI::archive::open() {
         return;
 
     hSrcFile =
-        CreateFile(*path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
+        CreateFile(path.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
     R_ASSERT(hSrcFile != INVALID_HANDLE_VALUE);
     hSrcMap = CreateFileMapping(hSrcFile, 0, PAGE_READONLY, 0, 0, 0);
     R_ASSERT(hSrcMap != INVALID_HANDLE_VALUE);
@@ -368,10 +360,8 @@ void CLocatorAPI::archive::close() {
     hSrcFile = NULL;
 }
 
-void CLocatorAPI::ProcessArchive(LPCSTR _path) {
+void CLocatorAPI::ProcessArchive(const std::string_view path) {
     // find existing archive
-    shared_str path = _path;
-
     for (const auto& it : m_archives)
         if (it.path == path)
             return;
@@ -1050,7 +1040,7 @@ void CLocatorAPI::file_from_archive(IReader*& R, LPCSTR fname, const file& desc)
     VERIFY3(ptr, "cannot create file mapping on file", fname);
 
     string512 temp;
-    xr_sprintf(temp, sizeof(temp), "%s:%s", *A.path, fname);
+    xr_sprintf(temp, sizeof(temp), "%s:%s", A.path.c_str(), fname);
 
 #ifdef FS_DEBUG
     register_file_mapping(ptr, sz, temp);
@@ -1267,17 +1257,17 @@ IWriter* CLocatorAPI::w_open_ex(LPCSTR path, LPCSTR _fname) {
 
 void CLocatorAPI::w_close(IWriter*& S) {
     if (S) {
-        R_ASSERT(S->fName.size());
-        string_path fname;
-        xr_strcpy(fname, sizeof(fname), *S->fName);
-        bool bReg = S->valid();
-        xr_delete(S);
+        const auto& fName = S->fName;
+        R_ASSERT(!fName.empty());
+        const bool bReg = S->valid();
 
         if (bReg) {
             struct _stat st;
-            _stat(fname, &st);
-            Register(fname, 0xffffffff, 0, 0, st.st_size, st.st_size, (u32)st.st_mtime);
+            _stat(fName.c_str(), &st);
+            Register(fName.c_str(), 0xffffffff, 0, 0, st.st_size, st.st_size, (u32)st.st_mtime);
         }
+
+        xr_delete(S);
     }
 }
 

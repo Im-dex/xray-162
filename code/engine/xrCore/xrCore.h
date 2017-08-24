@@ -168,15 +168,12 @@ using namespace std::string_view_literals;
 
 // stl ext
 struct XRCORE_API xr_rtoken {
-    shared_str name;
+    std::string name;
     int id;
-    xr_rtoken(const char* _nm, int _id) {
-        name = _nm;
-        id = _id;
-    }
+    xr_rtoken(const std::string_view nm, const int id) : name(nm), id(id) {}
 
-    void rename(const char* _nm) { name = _nm; }
-    bool equal(const char* _nm) { return (0 == xr_strcmp(*name, _nm)); }
+    void rename(const std::string_view nm) { name = nm; }
+    bool equal(const std::string_view nm) const { return name == nm; }
 };
 
 #pragma pack(push, 1)
@@ -204,7 +201,7 @@ struct XRCORE_API xr_shortcut {
 };
 #pragma pack(pop)
 
-using RStringVec = xr_vector<shared_str>;
+using RStringVec = xr_vector<std::string>;
 using RStringSet = xr_set<shared_str>;
 using RTokenVec = xr_vector<xr_rtoken>;
 
@@ -228,6 +225,7 @@ using RTokenVec = xr_vector<xr_rtoken>;
 
 #define FMT_THROW(x) R_ASSERT2(false, "format failed")
 #include <fmtlib/fmt/format.h>
+#include <fmtlib/fmt/string.h>
 
 // destructor
 template <class T>

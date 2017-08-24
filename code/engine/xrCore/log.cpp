@@ -12,16 +12,16 @@ static string_path log_file_name = "engine.log";
 static BOOL no_log = TRUE;
 static std::recursive_mutex logCS;
 
-xr_vector<shared_str>* LogFile = NULL;
-static LogCallback LogCB = 0;
+xr_vector<std::string>* LogFile = nullptr;
+static LogCallback LogCB = nullptr;
 
 void FlushLog() {
     if (!no_log) {
         std::lock_guard<decltype(logCS)> lock(logCS);
         IWriter* f = FS.w_open(logFName);
         if (f) {
-            for (u32 it = 0; it < LogFile->size(); it++) {
-                LPCSTR s = *((*LogFile)[it]);
+            for (size_t it = 0; it < LogFile->size(); it++) {
+                const char* s = (*LogFile)[it].c_str();
                 f->w_string(s ? s : "");
             }
             FS.w_close(f);
@@ -41,12 +41,7 @@ void AddOne(const char* split) {
         OutputDebugString("\n");
 #endif
 
-        //	DUMP_PHASE;
-        {
-            shared_str temp = shared_str(split);
-            //		DUMP_PHASE;
-            LogFile->push_back(temp);
-        }
+        LogFile->push_back(split);
 
         // exec CallBack
         if (LogExecCB && LogCB)
@@ -169,7 +164,7 @@ LPCSTR log_name() { return (log_file_name); }
 
 void InitLog() {
     R_ASSERT(LogFile == NULL);
-    LogFile = xr_new<xr_vector<shared_str>>();
+    LogFile = xr_new<xr_vector<std::string>>();
     LogFile->reserve(1000);
 }
 

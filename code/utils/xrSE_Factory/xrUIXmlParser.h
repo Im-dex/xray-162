@@ -9,5 +9,5 @@ public:
     CUIXml();
     virtual ~CUIXml();
 
-    virtual shared_str correct_file_name(LPCSTR path, LPCSTR fn);
+    std::string correct_file_name(const std::string_view path, const std::string_view fn) override;
 };

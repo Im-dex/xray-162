@@ -26,7 +26,7 @@ public:
         u32 modif;           // for editor
     };
     struct archive {
-        shared_str path;
+        std::string path;
         void *hSrcFile, *hSrcMap;
         u32 size;
         CInifile* header;
@@ -45,7 +45,7 @@ private:
             return xr_strcmp(x.name, y.name) < 0;
         }
     };
-    using PathMap = xr_map<LPCSTR, FS_Path*, pred_str>;
+    using PathMap = xr_map<const char*, FS_Path*, pred_str>;
     PathMap pathes;
 
     using files_set = xr_set<file, file_pred>;
@@ -62,7 +62,7 @@ private:
 
     void Register(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real, u32 size_compressed,
                   u32 modif);
-    void ProcessArchive(LPCSTR path);
+    void ProcessArchive(const std::string_view path);
     void ProcessOne(LPCSTR path, void* F);
     bool Recurse(LPCSTR path);
 
