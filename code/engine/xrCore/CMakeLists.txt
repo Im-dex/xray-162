@@ -12,10 +12,6 @@ set(COMPRESSOR_RT rt_compressor.cpp rt_compressor.h rt_compressor9.cpp)
 
 set(DEBUG_CORE xrDebug.h xrDebug_macros.h xrDebugNew.cpp)
 set_source_files_properties(xrDebug.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
-file(GLOB DEBUG_CORE_BLACKBOX_H blackbox/*.h)
-file(GLOB DEBUG_CORE_BLACKBOX_CPP blackbox/*.cpp)
-set_source_files_properties(${DEBUG_CORE_BLACKBOX_CPP} PROPERTIES COMPILE_FLAGS /Y-)
-set(DEBUG_CORE_BLACKBOX ${DEBUG_CORE_BLACKBOX_H} ${DEBUG_CORE_BLACKBOX_CPP})
 
 set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp
        FS_internal.h LocatorAPI.h LocatorAPI.cpp LocatorAPI_defs.h
@@ -60,7 +56,6 @@ source_group("Compression\\lzo" FILES ${COMPRESSOR_LZO})
 source_group("Compression\\rt" FILES ${COMPRESSOR_RT})
 
 source_group("Debug core" FILES ${DEBUG_CORE})
-source_group("Debug core\\BlackBox" FILES ${DEBUG_CORE_BLACKBOX})
 
 source_group("FS" FILES ${FS})
 source_group("FS\\file stream reader" FILES ${FS_FILE_STREAM_READER})
@@ -93,7 +88,7 @@ set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/stdafx.cpp PROPERTIES CO
 
 add_library(xrCore SHARED ${COMPRESSOR_LZ} ${COMPRESSOR_LZO} ${COMPRESSOR_RT}
                           
-                          ${DEBUG_CORE} ${DEBUG_CORE_BLACKBOX}
+                          ${DEBUG_CORE}
                           
                           ${FS} ${FS_STREAM_READER} ${FS_FILE_STREAM_READER}
                           

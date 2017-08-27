@@ -67,9 +67,9 @@ XRCORE_API void dump_file_mappings() {
 //---------------------------------------------------
 void createPath(const std::string_view path) {
     const auto lastSepPos = path.find_last_of('\\');
-    // TODO [imdex]: remove in 15.3
     const auto foldersPath = (lastSepPos != std::string_view::npos) ? path.substr(0, lastSepPos) : path;
     std::error_code e;
+    // TODO [imdex]: await string_view in stdfs support
     stdfs::create_directories(stdfs::path(foldersPath.begin(), foldersPath.end()), e);
     (void)e;
 }

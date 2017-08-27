@@ -31,11 +31,7 @@ XRCORE_API xrDebug Debug;
 
 static bool error_after_dialog = false;
 
-#if XR_USE_BLACKBOX
-#include "blackbox\build_stacktrace.h"
-#else
 #include "stacktrace_collector.h"
-#endif
 
 static thread_local StackTraceInfo stackTrace;
 
