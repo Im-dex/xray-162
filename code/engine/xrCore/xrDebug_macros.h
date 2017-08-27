@@ -1,64 +1,50 @@
-#ifndef xrDebug_macrosH
-#define xrDebug_macrosH
 #pragma once
 
-//#define ANONYMOUS_BUILD
-
-#ifndef ANONYMOUS_BUILD
 #define DEBUG_INFO __FILE__, __LINE__, __FUNCTION__
-#else // ANONYMOUS_BUILD
-#define DEBUG_INFO "", __LINE__, ""
-#endif // ANONYMOUS_BUILD
-
-#ifdef ANONYMOUS_BUILD
-#define _TRE(arg) ""
-#else
-#define _TRE(arg) arg
-#endif
 
 #define CHECK_OR_EXIT(expr, message)  \
     do {                              \
         if (!(expr))                  \
-            ::Debug.do_exit(message); \
+            xrDebug::do_exit(message); \
     } while (0)
 
 #define R_ASSERT(expr)                                            \
     do {                                                          \
         static bool ignore_always = false;                        \
         if (!ignore_always && !(expr))                            \
-            ::Debug.fail(_TRE(#expr), DEBUG_INFO, ignore_always); \
+            ::Debug.fail(#expr, DEBUG_INFO, ignore_always); \
     } while (0)
 #define R_ASSERT2(expr, e2)                                                 \
     do {                                                                    \
         static bool ignore_always = false;                                  \
         if (!ignore_always && !(expr))                                      \
-            ::Debug.fail(_TRE(#expr), _TRE(e2), DEBUG_INFO, ignore_always); \
+            ::Debug.fail(#expr, e2, DEBUG_INFO, ignore_always); \
     } while (0)
 #define R_ASSERT3(expr, e2, e3)                                                       \
     do {                                                                              \
         static bool ignore_always = false;                                            \
         if (!ignore_always && !(expr))                                                \
-            ::Debug.fail(_TRE(#expr), _TRE(e2), _TRE(e3), DEBUG_INFO, ignore_always); \
+            ::Debug.fail(#expr, e2, { e3 }, DEBUG_INFO, ignore_always); \
     } while (0)
 #define R_ASSERT4(expr, e2, e3, e4)                                                             \
     do {                                                                                        \
         static bool ignore_always = false;                                                      \
         if (!ignore_always && !(expr))                                                          \
-            ::Debug.fail(_TRE(#expr), _TRE(e2), _TRE(e3), _TRE(e4), DEBUG_INFO, ignore_always); \
+            ::Debug.fail(#expr, e2, { e3, e4 }, DEBUG_INFO, ignore_always); \
     } while (0)
 #define R_CHK(expr)                                                    \
     do {                                                               \
         static bool ignore_always = false;                             \
         HRESULT hr = expr;                                             \
         if (!ignore_always && FAILED(hr))                              \
-            ::Debug.error(hr, _TRE(#expr), DEBUG_INFO, ignore_always); \
+            ::Debug.error(hr, #expr, {}, DEBUG_INFO, ignore_always); \
     } while (0)
 #define R_CHK2(expr, e2)                                                         \
     do {                                                                         \
         static bool ignore_always = false;                                       \
         HRESULT hr = expr;                                                       \
         if (!ignore_always && FAILED(hr))                                        \
-            ::Debug.error(hr, _TRE(#expr), _TRE(e2), DEBUG_INFO, ignore_always); \
+            ::Debug.error(hr, #expr, { e2 }, DEBUG_INFO, ignore_always); \
     } while (0)
 #define FATAL(description) Debug.fatal(DEBUG_INFO, description)
 
@@ -84,20 +70,20 @@
     do {                                                            \
         static bool ignore_always = false;                          \
         if (!ignore_always && !(expr))                              \
-            ::Debug.fail(#expr, e2, e3, DEBUG_INFO, ignore_always); \
+            ::Debug.fail(#expr, e2, { e3 }, DEBUG_INFO, ignore_always); \
     } while (0)
 #define VERIFY4(expr, e2, e3, e4)                                       \
     do {                                                                \
         static bool ignore_always = false;                              \
         if (!ignore_always && !(expr))                                  \
-            ::Debug.fail(#expr, e2, e3, e4, DEBUG_INFO, ignore_always); \
+            ::Debug.fail(#expr, e2, { e3, e4 }, DEBUG_INFO, ignore_always); \
     } while (0)
 #define CHK_DX(expr)                                             \
     do {                                                         \
         static bool ignore_always = false;                       \
         HRESULT hr = expr;                                       \
         if (!ignore_always && FAILED(hr))                        \
-            ::Debug.error(hr, #expr, DEBUG_INFO, ignore_always); \
+            ::Debug.error(hr, #expr, {}, DEBUG_INFO, ignore_always); \
     } while (0)
 #else // DEBUG
 #define NODEFAULT __assume(0)
@@ -115,27 +101,7 @@
     } while (0)
 #define CHK_DX(a) a
 #endif // DEBUG
-//---------------------------------------------------------------------------------------------
-// FIXMEs / TODOs / NOTE macros
-//---------------------------------------------------------------------------------------------
-#define _QUOTE(x) #x
-#define QUOTE(x) _QUOTE(x)
+
+#define QUOTE_IMPL(x) #x
+#define QUOTE(x) QUOTE_IMPL(x)
 #define __FILE__LINE__ __FILE__ "(" QUOTE(__LINE__) ") : "
-
-#define NOTE(x) message(x)
-#define FILE_LINE message(__FILE__LINE__)
-
-#define TODO(x)                                                                  \
-    message(__FILE__LINE__ "\n"                                                  \
-                           " ------------------------------------------------\n" \
-                           "|  TODO :   " #x "\n"                                \
-                           " -------------------------------------------------\n")
-#define FIXME(x)                                                                 \
-    message(__FILE__LINE__ "\n"                                                  \
-                           " ------------------------------------------------\n" \
-                           "|  FIXME :  " #x "\n"                                \
-                           " -------------------------------------------------\n")
-#define todo(x) message(__FILE__LINE__ " TODO :   " #x "\n")
-#define fixme(x) message(__FILE__LINE__ " FIXME:   " #x "\n")
-
-#endif // xrDebug_macrosH

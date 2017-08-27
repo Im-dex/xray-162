@@ -37,7 +37,7 @@ IC xr_string string2xr_string(LPCSTR s) { return s ? s : ""; }
     do {                                                                           \
         if (!(expr)) {                                                             \
             string4096 assertion_info;                                             \
-            ::Debug.gather_info(_TRE(#expr), 0, 0, 0, DEBUG_INFO, assertion_info); \
+            ::Debug.gather_info(#expr, nullptr, DEBUG_INFO, assertion_info, {});   \
             throw assertion_info;                                                  \
         }                                                                          \
     } while (0)
@@ -45,7 +45,7 @@ IC xr_string string2xr_string(LPCSTR s) { return s ? s : ""; }
     do {                                                                              \
         if (!(expr)) {                                                                \
             string4096 assertion_info;                                                \
-            ::Debug.gather_info(_TRE(#expr), msg0, 0, 0, DEBUG_INFO, assertion_info); \
+            ::Debug.gather_info(#expr, msg0, DEBUG_INFO, assertion_info, {});         \
             throw assertion_info;                                                     \
         }                                                                             \
     } while (0)
@@ -53,7 +53,7 @@ IC xr_string string2xr_string(LPCSTR s) { return s ? s : ""; }
     do {                                                                                 \
         if (!(expr)) {                                                                   \
             string4096 assertion_info;                                                   \
-            ::Debug.gather_info(_TRE(#expr), msg0, msg1, 0, DEBUG_INFO, assertion_info); \
+            ::Debug.gather_info(#expr, msg0, DEBUG_INFO, assertion_info, { msg1 });      \
             throw assertion_info;                                                        \
         }                                                                                \
     } while (0)
