@@ -23,45 +23,40 @@ namespace effects {
 
 class manager;
 
-class effect :
-	public CEnvAmbient::SEffect,
-	public editor::property_holder_holder
-{
+class effect : public CEnvAmbient::SEffect, public editor::property_holder_holder {
 public:
-							effect		(manager const& manager, shared_str const& id);
-                            effect(const effect&) = delete;
-                            effect& operator= (const effect&) = delete;
-	virtual					~effect		();
-			void			load		(CInifile& config);
-			void			save		(CInifile& config);
-			void			fill		(editor::property_holder_collection* collection);
-	inline	LPCSTR			id			() const { return m_id.c_str(); }
-
+    effect(manager const& manager, shared_str const& id);
+    effect(const effect&) = delete;
+    effect& operator=(const effect&) = delete;
+    virtual ~effect();
+    void load(CInifile& config);
+    void save(CInifile& config);
+    void fill(editor::property_holder_collection* collection);
+    inline LPCSTR id() const { return m_id.c_str(); }
 
 private:
-	LPCSTR xr_stdcall		id_getter	() const;
-	void   xr_stdcall		id_setter	(LPCSTR value);
+    LPCSTR xr_stdcall id_getter() const;
+    void xr_stdcall id_setter(LPCSTR value);
 
-	float xr_stdcall		wind_blast_longitude_getter	() const;
-	void  xr_stdcall		wind_blast_longitude_setter	(float value);
+    float xr_stdcall wind_blast_longitude_getter() const;
+    void xr_stdcall wind_blast_longitude_setter(float value);
 
-
-	LPCSTR xr_stdcall sound_getter		();
-	void xr_stdcall	  sound_setter		(LPCSTR value);
-
-private:
-	typedef editor::property_holder	property_holder_type;
-
-public:
-	virtual	property_holder_type*object	();
+    LPCSTR xr_stdcall sound_getter();
+    void xr_stdcall sound_setter(LPCSTR value);
 
 private:
-	shared_str				m_id;
-	property_holder_type*	m_property_holder;
-	shared_str				m_sound;
+    typedef editor::property_holder property_holder_type;
 
 public:
-	manager const&			m_manager;
+    virtual property_holder_type* object();
+
+private:
+    shared_str m_id;
+    property_holder_type* m_property_holder;
+    shared_str m_sound;
+
+public:
+    manager const& m_manager;
 }; // class effect
 
 } // namespace effects

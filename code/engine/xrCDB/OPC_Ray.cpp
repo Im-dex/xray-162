@@ -22,7 +22,8 @@
  *	Segment class.
  *	A segment is defined by S(t) = mP0 * (1 - t) + mP1 * t, with 0 <= t <= 1
  *	Alternatively, a segment is S(t) = Origin + t * Direction for 0 <= t <= 1.
- *	Direction is not necessarily unit length. The end points are Origin = mP0 and Origin + Direction = mP1.
+ *	Direction is not necessarily unit length. The end points are Origin = mP0 and Origin +
+ *Direction = mP1.
  *
  *	\class		Segment
  *	\author		Pierre Terdiman
@@ -32,7 +33,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Precompiled Header
-#include	"stdafx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 using namespace IceMaths;

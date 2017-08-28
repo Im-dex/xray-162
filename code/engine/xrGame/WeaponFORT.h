@@ -3,16 +3,16 @@
 #include "WeaponPistol.h"
 #include "script_export_space.h"
 
-class CWeaponFORT: public CWeaponPistol
-{
+class CWeaponFORT : public CWeaponPistol {
 private:
-	typedef CWeaponPistol inherited;
+    typedef CWeaponPistol inherited;
+
 protected:
 public:
-					CWeaponFORT			();
-	virtual			~CWeaponFORT		();
+    CWeaponFORT();
+    virtual ~CWeaponFORT();
 
-	DECLARE_SCRIPT_REGISTER_FUNCTION
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 add_to_type_list(CWeaponFORT)
 #undef script_type_list

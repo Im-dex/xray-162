@@ -2,7 +2,7 @@
 
 #include <exception>
 
-namespace imdexlib {
+namespace imdex {
 
 class uncaught_exceptions_counter final
 {
@@ -34,4 +34,4 @@ private:
     int counter;
 };
 
-} // imdexlib namespace
+} // imdex namespace

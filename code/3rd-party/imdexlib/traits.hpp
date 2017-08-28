@@ -1,8 +1,9 @@
 #pragma once
 
 #include <type_traits>
+#include <iterator>
 
-namespace imdexlib {
+namespace imdex {
 
 template <typename T>
 using remove_cvr = std::remove_cv<std::remove_reference_t<T>>;
@@ -64,4 +65,27 @@ using is_nothrow_comparable = is_nothrow_comparable_to<T, T>;
 template <typename T>
 constexpr bool is_nothrow_comparable_v = is_nothrow_comparable<T>::value;
 
-} // imdexlib namespace
+namespace detail {
+
+using std::begin;
+using std::end;
+
+template <typename T>
+class is_sequence {
+    template <typename U>
+    static auto check(U&& v) -> decltype(begin(v), end(v), std::true_type{});
+
+    static std::false_type check(...);
+public:
+    static constexpr bool value = decltype(check(std::declval<T>()))::value;
+};
+
+} // detail namespace
+
+template <typename T>
+using is_sequence = detail::is_sequence<T>;
+
+template <typename T>
+constexpr bool is_sequence_v = is_sequence<T>::value;
+
+} // imdex namespace

@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace imdexlib {
+namespace imdex {
 
 class end_t {};
 
@@ -44,4 +44,4 @@ struct find_if<Predicate>
 template <typename Predicate, typename... Ts>
 using find_if_t = typename find_if<Predicate, Ts...>::type;
 
-} // imdexlib namespace
+} // imdex namespace

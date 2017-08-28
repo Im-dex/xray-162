@@ -9,10 +9,9 @@
 #include "stdafx.h"
 #include "script_token_list.h"
 
-CScriptTokenList::~CScriptTokenList	()
-{
-	iterator	I = tokens().begin();
-	iterator	E = tokens().end();
-	for ( ; I != E; ++I)
-		xr_free	((*I).name);
+CScriptTokenList::~CScriptTokenList() {
+    iterator I = tokens().begin();
+    iterator E = tokens().end();
+    for (; I != E; ++I)
+        xr_free((*I).name);
 }

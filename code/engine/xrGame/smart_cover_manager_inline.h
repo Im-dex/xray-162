@@ -6,10 +6,10 @@
 //	Description : smart cover manager class
 ////////////////////////////////////////////////////////////////////////////
 
-#if 0//ndef SMART_COVER_MANAGER_INLINE_H_INCLUDED
+#if 0 // ndef SMART_COVER_MANAGER_INLINE_H_INCLUDED
 #define SMART_COVER_MANAGER_INLINE_H_INCLUDED
 
-#define Manager	smart_cover::manager
+#define Manager smart_cover::manager
 
 IC	smart_cover::cover const *Manager::current_cover				() const
 {

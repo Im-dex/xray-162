@@ -1,40 +1,21 @@
 #include "stdafx.h"
 #include "file_stream_reader.h"
 
-void CFileStreamReader::construct	(LPCSTR file_name, const u32 &window_size)
-{
-	m_file_handle			=
-		CreateFile(
-			file_name,
-			GENERIC_READ,
-			FILE_SHARE_READ,
-			0,
-			OPEN_EXISTING,
-			0,
-			0
-		);
+void CFileStreamReader::construct(const char* file_name, const size_t window_size) {
+    m_file_handle = CreateFile(file_name, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);
 
-	VERIFY					(m_file_handle != INVALID_HANDLE_VALUE);
-	u32						file_size = (u32)GetFileSize(m_file_handle,NULL);
+    VERIFY(m_file_handle != INVALID_HANDLE_VALUE);
+    const auto file_size = size_t(GetFileSize(m_file_handle, nullptr));
 
-	HANDLE					file_mapping_handle =
-		CreateFileMapping(
-			m_file_handle,
-			0,
-			PAGE_READONLY,
-			0,
-			0,
-			0
-		);
-	VERIFY					(file_mapping_handle != INVALID_HANDLE_VALUE);
+    auto file_mapping_handle = CreateFileMapping(m_file_handle, nullptr, PAGE_READONLY, 0, 0, nullptr);
+    VERIFY(file_mapping_handle != INVALID_HANDLE_VALUE);
 
-	inherited::construct	(file_mapping_handle,0,file_size,file_size,window_size);
+    __super::construct(file_mapping_handle, 0, file_size, file_size, window_size);
 }
 
-void CFileStreamReader::destroy		()
-{
-	HANDLE					file_mapping_handle = this->file_mapping_handle();
-	inherited::destroy		();
-	CloseHandle				(file_mapping_handle);
-	CloseHandle				(m_file_handle);
+void CFileStreamReader::destroy() {
+    auto file_mapping_handle = this->file_mapping_handle();
+    __super::destroy();
+    CloseHandle(file_mapping_handle);
+    CloseHandle(m_file_handle);
 }

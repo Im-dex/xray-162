@@ -14,3 +14,4 @@ add_compile_options("/Yustdafx.h" /fp:fast)
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 
 add_library(xrAPI SHARED ${HEADERS} ${SRC})
+target_include_directories(xrAPI PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

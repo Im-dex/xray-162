@@ -6,8 +6,7 @@
 //	Description : steering behaviour alignment class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef STEERING_BEHAVIOUR_ALIGNMENT_H_INCLUDED
-#define STEERING_BEHAVIOUR_ALIGNMENT_H_INCLUDED
+#pragma once
 
 #include "steering_behaviour_base.h"
 #include "smart_cover_detail.h"
@@ -16,21 +15,16 @@ class CAI_Rat;
 
 namespace steering_behaviour {
 
-class alignment : 
-	public base,
-	private debug::make_final<alignment>
-{
+class alignment final : public base {
 public:
-						alignment	(CAI_Rat const *object);
+    alignment(CAI_Rat const* object);
 
     alignment(const alignment& other) = delete;
     alignment& operator=(const alignment& other) = delete;
-	virtual	Fvector		direction	();
+    virtual Fvector direction();
 
 private:
-	typedef base		inherited;
+    typedef base inherited;
 };
 
 } // namespace steering_behaviour
-
-#endif // STEERING_BEHAVIOUR_ALIGNMENT_H_INCLUDED

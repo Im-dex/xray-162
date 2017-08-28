@@ -15,51 +15,43 @@
 #include "object_item_single.h"
 
 #ifndef NO_XR_GAME
-#	include "object_type_traits.h"
-#	include "object_item_client_server.h"
+#include "object_type_traits.h"
+#include "object_item_client_server.h"
 #endif // NO_XR_GAME
 
 #ifndef NO_XR_GAME
 
 template <typename _client_type, typename _server_type>
-IC	void CObjectFactory::add	(const CLASS_ID &clsid, LPCSTR script_clsid)
-{
-	{
-		typedef object_type_traits::is_base_and_derived<CLIENT_BASE_CLASS,_client_type> a;
+IC void CObjectFactory::add(const CLASS_ID& clsid, LPCSTR script_clsid) {
+    {
+        typedef object_type_traits::is_base_and_derived<CLIENT_BASE_CLASS, _client_type> a;
         static_assert(a::value, "Client class must be derived from the CLIENT_BASE_CLASS");
-	}
-	{
-		typedef object_type_traits::is_base_and_derived<SERVER_BASE_CLASS,_server_type> a;
+    }
+    {
+        typedef object_type_traits::is_base_and_derived<SERVER_BASE_CLASS, _server_type> a;
         static_assert(a::value, "Server class must be derived from the SERVER_BASE_CLASS");
-	}
-	add					(xr_new<CObjectItemClientServer<_client_type,_server_type> >(clsid,script_clsid));
+    }
+    add(xr_new<CObjectItemClientServer<_client_type, _server_type>>(clsid, script_clsid));
 }
 
 template <typename _unknown_type>
-IC	void CObjectFactory::add	(const CLASS_ID &clsid, LPCSTR script_clsid)
-{
-	{
-		typedef object_type_traits::is_base_and_derived<CLIENT_BASE_CLASS,_unknown_type> a;
-		typedef object_type_traits::is_base_and_derived<SERVER_BASE_CLASS,_unknown_type> b;
-        static_assert(a::value || b::value, "Class must be derived from the CLIENT_BASE_CLASS or SERVER_BASE_CLASS");
-	}
-	add					(
-		xr_new<
-			CObjectItemSingle<
-				_unknown_type,
-				object_type_traits::is_base_and_derived<CLIENT_BASE_CLASS,_unknown_type>::value
-			>
-		>
-		(clsid,script_clsid)
-	);
+IC void CObjectFactory::add(const CLASS_ID& clsid, LPCSTR script_clsid) {
+    {
+        typedef object_type_traits::is_base_and_derived<CLIENT_BASE_CLASS, _unknown_type> a;
+        typedef object_type_traits::is_base_and_derived<SERVER_BASE_CLASS, _unknown_type> b;
+        static_assert(a::value || b::value,
+                      "Class must be derived from the CLIENT_BASE_CLASS or SERVER_BASE_CLASS");
+    }
+    add(xr_new<CObjectItemSingle<_unknown_type, object_type_traits::is_base_and_derived<
+                                                    CLIENT_BASE_CLASS, _unknown_type>::value>>(
+        clsid, script_clsid));
 }
 
 #else // NO_XR_GAME
 
 template <typename _unknown_type>
-IC	void CObjectFactory::add	(const CLASS_ID &clsid, LPCSTR script_clsid)
-{
-	add					(xr_new<CObjectItemSingle<_unknown_type,false> >(clsid,script_clsid));
+IC void CObjectFactory::add(const CLASS_ID& clsid, LPCSTR script_clsid) {
+    add(xr_new<CObjectItemSingle<_unknown_type, false>>(clsid, script_clsid));
 }
 
 #endif // NO_XR_GAME

@@ -631,11 +631,7 @@ set(AI_AGROUP_AGENT_MANAGER agent_manager.h
 set(CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_BLACKDROPS BlackDrops.h
                                                                  BlackDrops.cpp)
 
-set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTCALLBACKEX script_callback_ex.h
-                                              script_callback_ex_generators.h
-                                              script_callback_ex_inline.h
-                                              script_callback_ex_nonvoid.h
-                                              script_callback_ex_void.h)
+set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTCALLBACKEX script_callback_ex.h)
 
 set(AI_AMONSTERS_MONSTERS_SNORK_SCRIPT ai/Monsters/Snork/snork_script.cpp)
 
@@ -1535,8 +1531,6 @@ set(AI_AMONSTERS_COMMON_COMPONENTS ai/Monsters/ai_monster_defs.h
                                    ai/monsters/monster_aura.cpp
                                    ai/Monsters/monster_corpse_manager.cpp
                                    ai/Monsters/monster_enemy_manager.cpp)
-
-set(AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_MANAGER steering_behaviour_manager.h)
 
 set(AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_SCROLLBAR ui/UIFixedScrollBar.h
                                                     ui/UIScrollBar.h
@@ -3128,9 +3122,6 @@ set(AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_PDA_TASKS ui/UIMapLegend.h
                                                  ui/UISecondTaskWnd.cpp
                                                  ui/UITaskWnd.cpp)
 
-set(CORE_COMMON_DEBUG_MAKE_FINAL debug_make_final.hpp
-                                 debug_make_final_test.cpp)
-
 set(AI_AMONSTERS_COMMON_MONSTER_STATES_FIND_ENEMY ai/Monsters/States/monster_state_find_enemy.h
                                                   ai/Monsters/States/monster_state_find_enemy_angry.h
                                                   ai/Monsters/States/monster_state_find_enemy_angry_inline.h
@@ -3496,7 +3487,6 @@ source_group("Core\\Client\\Objects\\base\\GameObject\\ai_obstacle\\min_obb\\min
 source_group("AI\\AScript\\ScriptClasses\\ScriptIniFile" FILES ${AI_ASCRIPT_SCRIPTCLASSES_SCRIPTINIFILE})
 source_group("Core\\Client\\Objects\\vehicles\\Car\\CarWeapon" FILES ${CORE_CLIENT_OBJECTS_VEHICLES_CAR_CARWEAPON})
 source_group("AI\\AMonsters\\common\\components" FILES ${AI_AMONSTERS_COMMON_COMPONENTS})
-source_group("AI\\AMonsters\\common\\steering behaviours\\manager" FILES ${AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_MANAGER})
 source_group("AI\\AScript\\ScriptClasses\\UI\\UIWindows\\ScrollBar" FILES ${AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_SCROLLBAR})
 source_group("AI\\AMonsters\\common\\components\\Control Manager\\Base Controllers\\Animation" FILES ${AI_AMONSTERS_COMMON_COMPONENTS_CONTROL_MANAGER_BASE_CONTROLLERS_ANIMATION})
 source_group("Core\\Client\\Level\\Bullet Manager" FILES ${CORE_CLIENT_LEVEL_BULLET_MANAGER})
@@ -3861,7 +3851,6 @@ source_group("AI\\ACover\\smart_cover\\storage\\description\\loophole" FILES ${A
 source_group("Core\\Client\\Objects\\inventory\\InventoryOwner\\trade_parameters\\trade_factors" FILES ${CORE_CLIENT_OBJECTS_INVENTORY_INVENTORYOWNER_TRADE_PARAMETERS_TRADE_FACTORS})
 source_group("AI\\AMonsters\\monsters\\Cat\\Script" FILES ${AI_AMONSTERS_MONSTERS_CAT_SCRIPT})
 source_group("AI\\AScript\\ScriptClasses\\UI\\Common\\PDA\\Tasks" FILES ${AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_PDA_TASKS})
-source_group("Core\\Common\\debug\\make_final" FILES ${CORE_COMMON_DEBUG_MAKE_FINAL})
 source_group("AI\\AMonsters\\common\\monster states\\Find Enemy" FILES ${AI_AMONSTERS_COMMON_MONSTER_STATES_FIND_ENEMY})
 source_group("Core\\Client\\Objects\\physics\\CharacterSupport" FILES ${CORE_CLIENT_OBJECTS_PHYSICS_CHARACTERSUPPORT})
 source_group("AI\\AMonsters\\humans\\stalker\\MovementManager\\obstacles\\refreshable_obstacles_query" FILES ${AI_AMONSTERS_HUMANS_STALKER_MOVEMENTMANAGER_OBSTACLES_REFRESHABLE_OBSTACLES_QUERY})
@@ -3870,14 +3859,13 @@ source_group("Core\\Client\\Objects\\base\\GameObject\\ai_obstacle\\min_obb\\mag
 source_group("AI\\AScript\\ScriptClasses" FILES ${AI_ASCRIPT_SCRIPTCLASSES})
 source_group("AI\\AMonsters\\monsters\\Rats\\states" FILES ${AI_AMONSTERS_MONSTERS_RATS_STATES})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ../xrServerEntities ../../3rd-party/luajit/include)
 link_directories(${DXSDK_LIB_DIR} ../../lib)
 add_definitions(-DXRGAME_EXPORTS -DdSINGLE -DMSVC -D_SECURE_SCL=0)
 
 add_compile_options(/fp:fast /GR "/Yustdafx.h" /wd4237)
 
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS "/Ycstdafx.h")
-set(SCRIPT_PCH_FILE ${CMAKE_CURRENT_BINARY_DIR}/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>/xrGame_script.pch)
+set(SCRIPT_PCH_FILE ${CMAKE_CURRENT_BINARY_DIR}/$<$<CONFIG:Debug>:DEBUG>$<$<CONFIG:RELWITHDEBINFO>:RelWithDebInfo>/xrGame_script.pch)
 set_source_files_properties(../xrServerEntities/pch_script.cpp PROPERTIES COMPILE_FLAGS "/Ycpch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 set_source_files_properties(actor.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 set_source_files_properties(animation_script_callback.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
@@ -4218,6 +4206,8 @@ set_source_files_properties(../xrServerEntities/xrServer_Objects_Alife_Smartcove
 set_source_files_properties(../xrServerEntities/xrServer_Objects_Alife_Smartcovers_script.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 set_source_files_properties(../xrServerEntities/xrServer_Objects_script.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
 set_source_files_properties(../xrServerEntities/xrServer_Objects_script2.cpp PROPERTIES COMPILE_FLAGS "/Yupch_script.h /Fp\"${SCRIPT_PCH_FILE}\"")
+
+set_property(SOURCE script_game_object_script3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " /bigobj")
 
 add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${AI_AMONSTERS_COMMON_COMPONENTS_CONTROL_MANAGER_PURE_COMS_PATH_BUILDER}
@@ -4626,7 +4616,6 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_VARIOUS_WEAPONS_WEAPON_WALTHER_99}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_CUSTOM_WEAPON_ADDONS_SILENCER}
                           ${AI_AMONSTERS_HUMANS_STALKER_DECISIONMAKER_ACTIONS_ANOMALY}
-                          ${CORE_COMMON_DEBUG_MAKE_FINAL}
                           ${AI_ALIFE}
                           ${AI_ACOMPONENTS_MEMORYMANAGER_CLSUTERIZED_DATA_MANAGERS_ITEMMANAGER}
                           ${AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_MAINMENU}
@@ -4656,7 +4645,6 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${AI_ANAVIGATION_PATHFINDING_DATASTORAGES_CONSTRUCTORS_BUILDER_ALLOCATOR}
                           ${AI_ANAVIGATION_PATHFINDING_DATASTORAGES_CONSTRUCTORS_MANAGER_BUILDER_ALLOCATOR}
                           ${CORE_SERVER_EDITOR}
-                          ${AI_AMONSTERS_COMMON_STEERING_BEHAVIOURS_MANAGER}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_FADED_BALL}
                           ${AI_ALIFE_SERVER_ENTITIES_ONLINE_OFFLINE_GROUP_BRAIN}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_VARIOUS_WEAPONS_FN2000}
@@ -4919,4 +4907,5 @@ add_library(xrGame SHARED ${CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE}
                           ${CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_ARTIFACTS_DUMMYARTIFACT}
                           ${CORE_SERVER_SERVERENTITIES_OBJECTS}
                           ${CORE_SERVER_SERVERENTITIES_OBJECTS_ALIFE_SMARTCOVER})
+target_include_directories(xrGame PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ../xrServerEntities ../../3rd-party/luajit/include)
 target_link_libraries(xrGame shell32 Shlwapi xrEngine luabind cs xrXMLParser xrPhysics)

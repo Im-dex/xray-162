@@ -9,12 +9,8 @@
 #ifndef INVENTORY_UPGRADE_MANAGER_INLINE_H_INCLUDED
 #define INVENTORY_UPGRADE_MANAGER_INLINE_H_INCLUDED
 
-namespace inventory
-{
-namespace upgrade
-{
-
-} // namespace upgrade
+namespace inventory {
+namespace upgrade {} // namespace upgrade
 } // namespace inventory
 
 #endif // INVENTORY_UPGRADE_MANAGER_INLINE_H_INCLUDED

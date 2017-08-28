@@ -4,12 +4,12 @@
 class CZombie;
 
 class CStateManagerZombie : public CMonsterStateManager<CZombie> {
-	typedef CMonsterStateManager<CZombie> inherited;
+    typedef CMonsterStateManager<CZombie> inherited;
 
 public:
-						CStateManagerZombie		(CZombie *obj);
-	virtual				~CStateManagerZombie	();
+    CStateManagerZombie(CZombie* obj);
+    virtual ~CStateManagerZombie();
 
-	virtual	void		execute					();
-	virtual void		remove_links			(CObject* object) { inherited::remove_links(object);}
+    virtual void execute();
+    virtual void remove_links(CObject* object) { inherited::remove_links(object); }
 };

@@ -22,11 +22,8 @@ namespace Mgc {
 // Normal.Dot(X - Offset) = 0.  The return value of the function is the
 // associated minimum in the function that was minimized.
 
-Real OrthogonalPlaneFit (int iQuantity, Vector3* akPoint,
-    Vector3& rkOffset, Vector3& rkNormal);
+Real OrthogonalPlaneFit(int iQuantity, Vector3* akPoint, Vector3& rkOffset, Vector3& rkNormal);
 
 } // namespace Mgc
 
 #endif
-
-

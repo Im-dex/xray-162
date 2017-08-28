@@ -6,41 +6,29 @@ struct ENGINE_API SPPInfo {
     struct SColor {
         float r, g, b;
         SColor() {}
-        SColor(float _r, float _g, float _b)
-            : r(_r)
-            , g(_g)
-            , b(_b)
-        {
-        }
-        IC operator u32()
-        {
+        SColor(float _r, float _g, float _b) : r(_r), g(_g), b(_b) {}
+        IC operator u32() {
             int _r = clampr(iFloor(r * 255.f + .5f), 0, 255);
             int _g = clampr(iFloor(g * 255.f + .5f), 0, 255);
             int _b = clampr(iFloor(b * 255.f + .5f), 0, 255);
             return color_rgba(_r, _g, _b, 0);
         }
 
-        IC operator const Fvector&()
-        {
-            return *((Fvector*)this);
-        }
+        IC operator const Fvector&() { return *((Fvector*)this); }
 
-        IC SColor& operator+=(const SColor& ppi)
-        {
+        IC SColor& operator+=(const SColor& ppi) {
             r += ppi.r;
             g += ppi.g;
             b += ppi.b;
             return *this;
         }
-        IC SColor& operator-=(const SColor& ppi)
-        {
+        IC SColor& operator-=(const SColor& ppi) {
             r -= ppi.r;
             g -= ppi.g;
             b -= ppi.b;
             return *this;
         }
-        IC SColor& set(float _r, float _g, float _b)
-        {
+        IC SColor& set(float _r, float _g, float _b) {
             r = _r;
             g = _g;
             b = _b;
@@ -51,13 +39,8 @@ struct ENGINE_API SPPInfo {
     struct SDuality {
         float h, v;
         SDuality() {}
-        SDuality(float _h, float _v)
-            : h(_h)
-            , v(_v)
-        {
-        }
-        IC SDuality& set(float _h, float _v)
-        {
+        SDuality(float _h, float _v) : h(_h), v(_v) {}
+        IC SDuality& set(float _h, float _v) {
             h = _h;
             v = _v;
             return *this;
@@ -67,14 +50,8 @@ struct ENGINE_API SPPInfo {
         float intensity, grain;
         float fps;
         SNoise() {}
-        SNoise(float _i, float _g, float _f)
-            : intensity(_i)
-            , grain(_g)
-            , fps(_f)
-        {
-        }
-        IC SNoise& set(float _i, float _g, float _f)
-        {
+        SNoise(float _i, float _g, float _f) : intensity(_i), grain(_g), fps(_f) {}
+        IC SNoise& set(float _i, float _g, float _f) {
             intensity = _i;
             grain = _g;
             fps = _f;
@@ -150,8 +127,11 @@ public:
     IC float Fov() const { return m_cam_info.fFov; }
     IC float Aspect() const { return m_cam_info.fAspect; }
 
-    IC void camera_Matrix(Fmatrix& M) const { M.set(m_cam_info.r, m_cam_info.n, m_cam_info.d, m_cam_info.p); }
-    void Update(const Fvector& P, const Fvector& D, const Fvector& N, float fFOV_Dest, float fASPECT_Dest, float fFAR_Dest, u32 flags);
+    IC void camera_Matrix(Fmatrix& M) const {
+        M.set(m_cam_info.r, m_cam_info.n, m_cam_info.d, m_cam_info.p);
+    }
+    void Update(const Fvector& P, const Fvector& D, const Fvector& N, float fFOV_Dest,
+                float fASPECT_Dest, float fFAR_Dest, u32 flags);
     void UpdateFromCamera(const CCameraBase* C);
 
     void ApplyDevice(float _viewport_near);

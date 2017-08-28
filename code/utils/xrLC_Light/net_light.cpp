@@ -12,182 +12,145 @@
 // function RunTask(): boolean;
 //==============================================================================
 
+static std::recursive_mutex block;
+LPCSTR dataDesc = "global_data";
 
-static std::recursive_mutex	block;
-LPCSTR dataDesc  = "global_data";
-
-xr_vector<u32>	net_pool;
+xr_vector<u32> net_pool;
 /*
 static struct unload
 {
-	IAgent* agent;
-	~unload()
-	{
-		if(!agent)
-			return;
-		LPCRITICAL_SECTION gcs;
-		agent->GetGlobalCriticalSection( &gcs );
-		LeaveCriticalSection( gcs );
-	}
+        IAgent* agent;
+        ~unload()
+        {
+                if(!agent)
+                        return;
+                LPCRITICAL_SECTION gcs;
+                agent->GetGlobalCriticalSection( &gcs );
+                LeaveCriticalSection( gcs );
+        }
 } _unload;
 */
-#pragma warning(disable:4995)
+#pragma warning(disable : 4995)
 DWORD g_sessionId = DWORD(-1);
 
-//bool  GetGlobalData( IAgent* agent,
+// bool  GetGlobalData( IAgent* agent,
 //				    DWORD sessionId );
-bool  TaskReceive( net_task &task,IAgent* agent,
-					DWORD sessionId, 
-					IGenericStream* inStream );
+bool TaskReceive(net_task& task, IAgent* agent, DWORD sessionId, IGenericStream* inStream);
 
+bool GetGlobalData(IAgent* agent, DWORD sessionId) {
 
+    if (!inlc_global_data()) {
 
+        VERIFY(agent);
+        net_pool.clear();
 
+        /*
+                          IGenericStream* globalDataStream=0;
+                          HRESULT rz = agent->GetData(sessionId, dataDesc, &globalDataStream);
+                         
+                          if (rz!=S_OK)
+                                          return false;
+        */
+        string_path cache_dir;
+        HRESULT rz = agent->GetSessionCacheDirectory(sessionId, cache_dir);
+        if (rz != S_OK)
+            return false;
+        strconcat(sizeof(cache_dir), cache_dir, cache_dir, gl_data_net_file_name);
 
-bool  GetGlobalData( IAgent* agent,
-				    DWORD sessionId )
- {
-	 
-	 if(!inlc_global_data())
-	 {
+        /*
+                        IWriter* file = FS.w_open( cache_dir );
+                        R_ASSERT(file);
+                        file->w( globalDataStream->GetCurPointer(), globalDataStream->GetLength() );
 
-		  VERIFY( agent );
-		  net_pool.clear();
-		  
-/*
-		  IGenericStream* globalDataStream=0;
-		  HRESULT rz = agent->GetData(sessionId, dataDesc, &globalDataStream);
-		 
-		  if (rz!=S_OK) 
-				  return false;
-*/		  
-		  string_path cache_dir;
-		  HRESULT rz = agent->GetSessionCacheDirectory( sessionId, cache_dir );
-		  if (rz!=S_OK) 
-				  return false;
-		  strconcat(sizeof(cache_dir),cache_dir,cache_dir,gl_data_net_file_name);
+                        free(globalDataStream->GetCurPointer());
+                        FS.w_close(file);
+                       
+                        agent->FreeCachedData(sessionId, dataDesc);
+                        ULONG r =globalDataStream->AddRef();
+                        r = globalDataStream->Release();
+                        if(r>0)
+                                       globalDataStream->Release();
+                        agent->FreeCachedData(sessionId, dataDesc);
+                        Memory.mem_compact	();
+       */
 
- /*
-		 IWriter* file = FS.w_open( cache_dir );
-		 R_ASSERT(file);
-		 file->w( globalDataStream->GetCurPointer(), globalDataStream->GetLength() );
+        DataReadCreate(cache_dir);
 
-		 free(globalDataStream->GetCurPointer());
-		 FS.w_close(file);
-		
-		 agent->FreeCachedData(sessionId, dataDesc);
-		 ULONG r =globalDataStream->AddRef();
-		 r = globalDataStream->Release();
-		 if(r>0)
-				globalDataStream->Release();
-		 agent->FreeCachedData(sessionId, dataDesc);
-		 Memory.mem_compact	();
-*/
-
-		 DataReadCreate( cache_dir );
-
-
-			 return true;
-
-
-		
-
-	 }
-	 return true;
-
- }
-
- bool  TaskReceive( net_task &task,IAgent* agent,
-					DWORD sessionId, 
-					IGenericStream* inStream )
- {
-	
-	 bool ret = false;
-	 __try{
-		ret = GetGlobalData( agent, sessionId ) && task.receive( inStream ) ;
-	 }
-	 __except( EXCEPTION_EXECUTE_HANDLER )
-	 {
-		 Msg( "accept!" );
-		 return ret;
-	 }
-	FPU::m64r();
-	return ret;
- }
-
-
-
-class net_task_interface_impl : public net_task_interface
-{
- 
-
-
- bool  TaskReceive( net_task &task,IAgent* agent,
-					DWORD sessionId, 
-					IGenericStream* inStream )
- {
-	 return ::TaskReceive(task,agent,sessionId,inStream);
- }
- /*bool  GetGlobalData( IAgent* agent,
-				    DWORD sessionId )
- {
-		GetGlobalData()
- }*/
- bool TaskSendResult( net_task &task,  IGenericStream* outStream )
- {
-	
-	bool ret = false;
-	__try{
-		ret = task.send( outStream ) ;
-	}
-	__except( EXCEPTION_EXECUTE_HANDLER )
-	{
-		Msg( "accept!" );
-		return ret;
-	}
-	return ret;
+        return true;
+    }
+    return true;
 }
 
-bool  RunTask ( IAgent* agent,
-                 DWORD sessionId,
-                 IGenericStream* inStream,
-                 IGenericStream* outStream )
-{
- 
- block.lock();
+bool TaskReceive(net_task& task, IAgent* agent, DWORD sessionId, IGenericStream* inStream) {
 
- g_sessionId = sessionId;
- net_task task( agent, sessionId );
-
- if(!TaskReceive( task, agent, sessionId, inStream ))
- {
-	 block.unlock();
-	 return false;
- }
- block.unlock();
-
- task.run	();
-
- block.lock();
- 
- if(!TaskSendResult( task, outStream ))
- {
-	 block.unlock();
-	 return false;
- }
- block.unlock();
- return true;
+    bool ret = false;
+    __try {
+        ret = GetGlobalData(agent, sessionId) && task.receive(inStream);
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        Msg("accept!");
+        return ret;
+    }
+    FPU::m64r();
+    return ret;
 }
+
+class net_task_interface_impl : public net_task_interface {
+
+    bool TaskReceive(net_task& task, IAgent* agent, DWORD sessionId, IGenericStream* inStream) {
+        return ::TaskReceive(task, agent, sessionId, inStream);
+    }
+    /*bool  GetGlobalData( IAgent* agent,
+                                       DWORD sessionId )
+    {
+                   GetGlobalData()
+    }*/
+    bool TaskSendResult(net_task& task, IGenericStream* outStream) {
+
+        bool ret = false;
+        __try {
+            ret = task.send(outStream);
+        } __except (EXCEPTION_EXECUTE_HANDLER) {
+            Msg("accept!");
+            return ret;
+        }
+        return ret;
+    }
+
+    bool RunTask(IAgent* agent, DWORD sessionId, IGenericStream* inStream,
+                 IGenericStream* outStream) {
+
+        block.lock();
+
+        g_sessionId = sessionId;
+        net_task task(agent, sessionId);
+
+        if (!TaskReceive(task, agent, sessionId, inStream)) {
+            block.unlock();
+            return false;
+        }
+        block.unlock();
+
+        task.run();
+
+        block.lock();
+
+        if (!TaskSendResult(task, outStream)) {
+            block.unlock();
+            return false;
+        }
+        block.unlock();
+        return true;
+    }
 } g_net_task_interface_impl;
-#pragma warning(default:4995)
+#pragma warning(default : 4995)
 
-XRLC_LIGHT_API net_task_interface *g_net_task_interface = &g_net_task_interface_impl;
+XRLC_LIGHT_API net_task_interface* g_net_task_interface = &g_net_task_interface_impl;
 /*
 XRLC_LIGHT_API  void __cdecl  EndSession(IAgent* agent, DWORD sessionId)
 {
-	LPCRITICAL_SECTION gcs;
-	  agent->GetGlobalCriticalSection( &gcs );
-	  //LeaveCriticalSection( gcs );
+        LPCRITICAL_SECTION gcs;
+          agent->GetGlobalCriticalSection( &gcs );
+          //LeaveCriticalSection( gcs );
 
 
 */

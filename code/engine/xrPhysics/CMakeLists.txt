@@ -275,4 +275,5 @@ add_library(xrPhysics SHARED ${PHYSICS_BASE_OBJECTS_BASESHELL_PHYSICSSHELLANIMAT
                              ${PHYSICS_BASE_OBJECTS_UTILS_INTERPOLATION}
                              ${PHYSICS_BASE_OBJECTS_PHOBJECT}
                              ${PHYSICS_BASE_OBJECTS_PHNET})
+target_include_directories(xrPhysics PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrPhysics xrCore xrAPI xrSound xrCDB ode)

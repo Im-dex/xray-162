@@ -18,36 +18,35 @@ namespace editor {
 class property_holder_collection;
 
 namespace environment {
-	namespace effects {
-		class manager;
-	} // namespace effects
+namespace effects {
+class manager;
+} // namespace effects
 
 namespace ambients {
 
-class effect_id :
-	public editor::property_holder_holder {
+class effect_id : public editor::property_holder_holder {
 public:
-							effect_id		(effects::manager const& manager, shared_str const& id);
-                            effect_id(const effect_id&) = delete;
-                            effect_id& operator= (const effect_id&) = delete;
-	virtual					~effect_id		();
-			void			fill			(editor::property_holder_collection* collection);
-	inline	shared_str const& id			() const { return m_id; }
+    effect_id(effects::manager const& manager, shared_str const& id);
+    effect_id(const effect_id&) = delete;
+    effect_id& operator=(const effect_id&) = delete;
+    virtual ~effect_id();
+    void fill(editor::property_holder_collection* collection);
+    inline shared_str const& id() const { return m_id; }
 
 private:
-	typedef editor::property_holder			property_holder_type;
+    typedef editor::property_holder property_holder_type;
 
 public:
-	virtual	property_holder_type* object	();
+    virtual property_holder_type* object();
 
 private:
-	LPCSTR const* xr_stdcall collection		();
-	u32  xr_stdcall			collection_size	();
+    LPCSTR const* xr_stdcall collection();
+    u32 xr_stdcall collection_size();
 
 private:
-	property_holder_type*	m_property_holder;
-	effects::manager const&	m_manager;
-	shared_str				m_id;
+    property_holder_type* m_property_holder;
+    effects::manager const& m_manager;
+    shared_str m_id;
 }; // class effect_id
 } // namespace ambients
 } // namespace environment

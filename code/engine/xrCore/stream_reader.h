@@ -1,70 +1,75 @@
-#ifndef STREAM_READER_H
-#define STREAM_READER_H
+#pragma once
 
 class XRCORE_API CStreamReader : public IReaderBase<CStreamReader> {
-private:
-	HANDLE	m_file_mapping_handle;
-	u32		m_start_offset;
-	u32		m_file_size;
-	u32		m_archive_size;
-	u32		m_window_size;
+    HANDLE m_file_mapping_handle;
+    size_t m_start_offset;
+    size_t m_file_size;
+    size_t m_archive_size;
+    size_t m_window_size;
 
-private:
-	u32		m_current_offset_from_start;
-	u32		m_current_window_size;
-	u8		*m_current_map_view_of_file;
-	u8		*m_start_pointer;
-	u8		*m_current_pointer;
+    size_t m_current_offset_from_start;
+    size_t m_current_window_size;
+    u8* m_current_map_view_of_file;
+    u8* m_start_pointer;
+    u8* m_current_pointer;
 
-private:
-			void			map					(const u32 &new_offset);
-	IC		void			unmap				();
-	IC		void			remap				(const u32 &new_offset);
+    void map(const size_t new_offset);
+    void unmap() {
+        UnmapViewOfFile(m_current_map_view_of_file);
+    }
 
-private:
-	// should not be called
-	IC						CStreamReader		(const CStreamReader &object);
-	IC		CStreamReader	&operator=			(const CStreamReader &);
+    void remap(const size_t new_offset) {
+        unmap();
+        map(new_offset);
+    }
 
-public:
-	IC						CStreamReader		();
-
-public:
-	virtual	void			construct			(
-								const HANDLE &file_mapping_handle,
-								const u32 &start_offset,
-								const u32 &file_size,
-								const u32 &archive_size,
-								const u32 &window_size
-							);
-	virtual	void			destroy				();
+    // should not be called
+    CStreamReader(const CStreamReader&) = delete;
+    CStreamReader& operator=(const CStreamReader&) = delete;
 
 public:
-	IC		const HANDLE	&file_mapping_handle() const;
-	IC		u32				elapsed				() const;
-	IC		const u32		&length				() const;
-	IC		void			seek				(const int &offset);
-	IC		u32				tell				() const;
-	IC		void			close				();
+    CStreamReader() = default;
 
-public:
-			void			advance				(const int &offset);
-			void			r					(void *buffer, u32 buffer_size);
-			CStreamReader	*open_chunk			(const u32 &chunk_id);
-			u32				find_chunk			(u32 ID, BOOL* bCompressed = 0);
-//.			CStreamReader*open_chunk_iterator(const u32 &chunk_id, CStreamReader *previous = 0);	// 0 means first
+    virtual void construct(const HANDLE file_mapping_handle, const size_t start_offset,
+                           const size_t file_size, const size_t archive_size, const size_t window_size);
+    virtual void destroy() {
+        unmap();
+    }
 
-public:
-//.			void			r_string			(char *dest, u32 tgt_sz);
-//.			void			r_string			(xr_string& dest);
-//.			void			skip_stringZ		();
-//.			void			r_stringZ			(char *dest, u32 tgt_sz);
-			void			r_stringZ			(shared_str& dest);
-//.			void			r_stringZ			(xr_string& dest);
-private:
-	typedef IReaderBase<CStreamReader>			inherited;
+    HANDLE file_mapping_handle() const {
+        return m_file_mapping_handle;
+    }
+
+    size_t elapsed() const {
+        const auto offset_from_file_start = tell();
+        VERIFY(m_file_size >= offset_from_file_start);
+        return m_file_size - offset_from_file_start;
+    }
+
+    size_t length() const {
+        return m_file_size;
+    }
+
+    void seek(const int offset) {
+        advance(offset - tell());
+    }
+
+    size_t tell() const {
+        VERIFY(m_current_pointer >= m_start_pointer);
+        VERIFY(size_t(m_current_pointer - m_start_pointer) <= m_current_window_size);
+        return m_current_offset_from_start + (m_current_pointer - m_start_pointer);
+    }
+
+    // TODO: imdex note: pay attention!
+    void close() {
+        destroy();
+        CStreamReader* self = this;
+        xr_delete(self);
+    }
+
+    void advance(const int offset);
+    void r(void* buffer, size_t buffer_size);
+    CStreamReader* open_chunk(const size_t chunk_id);
+
+    void r_stringZ(shared_str& dest);
 };
-
-#include "stream_reader_inline.h"
-
-#endif // STREAM_READER_H

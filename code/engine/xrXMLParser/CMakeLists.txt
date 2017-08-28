@@ -14,4 +14,5 @@ add_compile_options(/fp:fast "/Yustdafx.h" /GR)
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 
 add_library(xrXMLParser SHARED ${HEADERS} ${SRC})
+target_include_directories(xrXMLParser PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrXMLParser xrCore)

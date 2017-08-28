@@ -36,10 +36,9 @@
    http://www.oberhumer.com/opensource/lzo/
  */
 
-
 #include "rt_config1x.h"
 
 #define LZO_TEST_OVERRUN
-#define DO_DECOMPRESS       lzo1x_decompress_safe
+#define DO_DECOMPRESS lzo1x_decompress_safe
 
 #include "rt_lzo1x_d.ch"

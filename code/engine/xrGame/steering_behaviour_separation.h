@@ -6,8 +6,7 @@
 //	Description : steering behaviour separation class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef STEERING_BEHAVIOUR_SEPARATION_H_INCLUDED
-#define STEERING_BEHAVIOUR_SEPARATION_H_INCLUDED
+#pragma once
 
 #include "steering_behaviour_base.h"
 #include "smart_cover_detail.h"
@@ -16,21 +15,16 @@ class CAI_Rat;
 
 namespace steering_behaviour {
 
-class separation :
-	public base,
-	private debug::make_final<separation>
-{
+class separation final : public base {
 public:
-						separation	(CAI_Rat const *object);
+    separation(CAI_Rat const* object);
 
     separation(const separation& other) = delete;
     separation& operator=(const separation& other) = delete;
-	virtual	Fvector		direction	();
+    virtual Fvector direction();
 
 private:
-	typedef base		inherited;
+    typedef base inherited;
 };
 
 } // namespace steering_behaviour
-
-#endif // STEERING_BEHAVIOUR_SEPARATION_H_INCLUDED

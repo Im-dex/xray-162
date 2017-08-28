@@ -33,12 +33,10 @@
    http://www.oberhumer.com/opensource/lzo/
  */
 
-
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the library and is subject
    to change.
  */
-
 
 #ifndef __LZO_PTR_H
 #define __LZO_PTR_H
@@ -47,22 +45,20 @@
 extern "C" {
 #endif
 
-
 /***********************************************************************
 // Integral types
 ************************************************************************/
 
 #if !defined(lzo_uintptr_t)
-#  if defined(__LZO_MMODEL_HUGE)
-#    define lzo_uintptr_t   unsigned long
-#  else
-#    define lzo_uintptr_t   acc_uintptr_t
-#    ifdef __ACC_INTPTR_T_IS_POINTER
-#      define __LZO_UINTPTR_T_IS_POINTER 1
-#    endif
-#  endif
+#if defined(__LZO_MMODEL_HUGE)
+#define lzo_uintptr_t unsigned long
+#else
+#define lzo_uintptr_t acc_uintptr_t
+#ifdef __ACC_INTPTR_T_IS_POINTER
+#define __LZO_UINTPTR_T_IS_POINTER 1
 #endif
-
+#endif
+#endif
 
 /***********************************************************************
 //
@@ -80,59 +76,53 @@ extern "C" {
  */
 
 #if (LZO_ARCH_I086)
-#define PTR(a)              ((lzo_bytep) (a))
+#define PTR(a) ((lzo_bytep)(a))
 /* only need the low bits of the pointer -> offset is ok */
-#define PTR_ALIGNED_4(a)    ((ACC_PTR_FP_OFF(a) & 3) == 0)
-#define PTR_ALIGNED2_4(a,b) (((ACC_PTR_FP_OFF(a) | ACC_PTR_FP_OFF(b)) & 3) == 0)
+#define PTR_ALIGNED_4(a) ((ACC_PTR_FP_OFF(a) & 3) == 0)
+#define PTR_ALIGNED2_4(a, b) (((ACC_PTR_FP_OFF(a) | ACC_PTR_FP_OFF(b)) & 3) == 0)
 #else
-#define PTR(a)              ((lzo_uintptr_t) (a))
-#define PTR_LINEAR(a)       PTR(a)
-#define PTR_ALIGNED_4(a)    ((PTR_LINEAR(a) & 3) == 0)
-#define PTR_ALIGNED_8(a)    ((PTR_LINEAR(a) & 7) == 0)
-#define PTR_ALIGNED2_4(a,b) (((PTR_LINEAR(a) | PTR_LINEAR(b)) & 3) == 0)
-#define PTR_ALIGNED2_8(a,b) (((PTR_LINEAR(a) | PTR_LINEAR(b)) & 7) == 0)
+#define PTR(a) ((lzo_uintptr_t)(a))
+#define PTR_LINEAR(a) PTR(a)
+#define PTR_ALIGNED_4(a) ((PTR_LINEAR(a) & 3) == 0)
+#define PTR_ALIGNED_8(a) ((PTR_LINEAR(a) & 7) == 0)
+#define PTR_ALIGNED2_4(a, b) (((PTR_LINEAR(a) | PTR_LINEAR(b)) & 3) == 0)
+#define PTR_ALIGNED2_8(a, b) (((PTR_LINEAR(a) | PTR_LINEAR(b)) & 7) == 0)
 #endif
 
-#define PTR_LT(a,b)         (PTR(a) < PTR(b))
-#define PTR_GE(a,b)         (PTR(a) >= PTR(b))
-#define PTR_DIFF(a,b)       (PTR(a) - PTR(b))
-#define pd(a,b)             ((lzo_uint) ((a)-(b)))
-
+#define PTR_LT(a, b) (PTR(a) < PTR(b))
+#define PTR_GE(a, b) (PTR(a) >= PTR(b))
+#define PTR_DIFF(a, b) (PTR(a) - PTR(b))
+#define pd(a, b) ((lzo_uint)((a) - (b)))
 
 LZO_EXTERN(lzo_uintptr_t)
 __lzo_ptr_linear(const lzo_voidp ptr);
 
-
-typedef union
-{
-    char            a_char;
-    unsigned char   a_uchar;
-    short           a_short;
-    unsigned short  a_ushort;
-    int             a_int;
-    unsigned int    a_uint;
-    long            a_long;
-    unsigned long   a_ulong;
-    lzo_int         a_lzo_int;
-    lzo_uint        a_lzo_uint;
-    lzo_int32       a_lzo_int32;
-    lzo_uint32      a_lzo_uint32;
-    ptrdiff_t       a_ptrdiff_t;
-    lzo_uintptr_t   a_lzo_uintptr_t;
-    lzo_voidp       a_lzo_voidp;
-    void *          a_void_p;
-    lzo_bytep       a_lzo_bytep;
-    lzo_bytepp      a_lzo_bytepp;
-    lzo_uintp       a_lzo_uintp;
-    lzo_uint *      a_lzo_uint_p;
-    lzo_uint32p     a_lzo_uint32p;
-    lzo_uint32 *    a_lzo_uint32_p;
-    unsigned char * a_uchar_p;
-    char *          a_char_p;
-}
-lzo_full_align_t;
-
-
+typedef union {
+    char a_char;
+    unsigned char a_uchar;
+    short a_short;
+    unsigned short a_ushort;
+    int a_int;
+    unsigned int a_uint;
+    long a_long;
+    unsigned long a_ulong;
+    lzo_int a_lzo_int;
+    lzo_uint a_lzo_uint;
+    lzo_int32 a_lzo_int32;
+    lzo_uint32 a_lzo_uint32;
+    ptrdiff_t a_ptrdiff_t;
+    lzo_uintptr_t a_lzo_uintptr_t;
+    lzo_voidp a_lzo_voidp;
+    void* a_void_p;
+    lzo_bytep a_lzo_bytep;
+    lzo_bytepp a_lzo_bytepp;
+    lzo_uintp a_lzo_uintp;
+    lzo_uint* a_lzo_uint_p;
+    lzo_uint32p a_lzo_uint32p;
+    lzo_uint32* a_lzo_uint32_p;
+    unsigned char* a_uchar_p;
+    char* a_char_p;
+} lzo_full_align_t;
 
 #ifdef __cplusplus
 } /* extern "C" */
@@ -143,4 +133,3 @@ lzo_full_align_t;
 /*
 vi:ts=4:et
 */
-

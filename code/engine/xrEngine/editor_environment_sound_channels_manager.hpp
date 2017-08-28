@@ -24,35 +24,32 @@ class channel;
 
 class manager {
 public:
-							manager		();
-                            manager(const manager&) = delete;
-                            manager& operator= (const manager&) = delete;
-							~manager	();
-			void			load		();
-			void			save		();
-			void			fill		(editor::property_holder* holder);
-			shared_str		unique_id	(shared_str const& id) const;
+    manager();
+    manager(const manager&) = delete;
+    manager& operator=(const manager&) = delete;
+    ~manager();
+    void load();
+    void save();
+    void fill(editor::property_holder* holder);
+    shared_str unique_id(shared_str const& id) const;
 
 public:
-	typedef xr_vector<channel*>			channel_container_type;
-	typedef xr_vector<LPSTR>			channels_ids_type;
+    typedef xr_vector<channel*> channel_container_type;
+    typedef xr_vector<LPSTR> channels_ids_type;
 
 public:
-	channels_ids_type const&channels_ids() const;
+    channels_ids_type const& channels_ids() const;
 
 private:
-	typedef editor::property_holder		property_holder_type;
-	typedef property_collection<
-				channel_container_type,
-				manager
-			>							collection_type;
+    typedef editor::property_holder property_holder_type;
+    typedef property_collection<channel_container_type, manager> collection_type;
 
 private:
-	channel_container_type				m_channels;
-	mutable channels_ids_type			m_channels_ids;
-	property_holder_type*				m_property_holder;
-	collection_type*					m_collection;
-	mutable bool						m_changed;
+    channel_container_type m_channels;
+    mutable channels_ids_type m_channels_ids;
+    property_holder_type* m_property_holder;
+    collection_type* m_collection;
+    mutable bool m_changed;
 }; // class manager
 } // namespace sound_channels
 } // namespace environment

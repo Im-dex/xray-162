@@ -1,5 +1,4 @@
 #pragma once
-namespace HitImmunity
-{
-	typedef	svector<float,ALife::eHitTypeMax> HitTypeSVec;
+namespace HitImmunity {
+typedef svector<float, ALife::eHitTypeMax> HitTypeSVec;
 };

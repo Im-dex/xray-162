@@ -17,30 +17,28 @@ namespace editor {
 namespace environment {
 namespace suns {
 
-class flare :
-	public editor::property_holder_holder
-{
+class flare : public editor::property_holder_holder {
 public:
-						flare		();
-                        flare(const flare&) = delete;
-                        flare& operator= (const flare&) = delete;
-	virtual				~flare		();
-			void		fill		(editor::property_holder_collection* collection);
+    flare();
+    flare(const flare&) = delete;
+    flare& operator=(const flare&) = delete;
+    virtual ~flare();
+    void fill(editor::property_holder_collection* collection);
 
 public:
-	typedef editor::property_holder	property_holder;
+    typedef editor::property_holder property_holder;
 
 public:
-	virtual	property_holder*object	();
+    virtual property_holder* object();
 
 private:
-	property_holder*	m_property_holder;
+    property_holder* m_property_holder;
 
 public:
-	shared_str			m_texture;
-    float				m_opacity;
-    float				m_position;
-    float				m_radius;
+    shared_str m_texture;
+    float m_opacity;
+    float m_position;
+    float m_radius;
 }; // class flare
 
 } // namespace suns

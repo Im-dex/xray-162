@@ -5,19 +5,18 @@
 class CStateManagerFracture;
 
 class CFracture : public CBaseMonster {
-	typedef		CBaseMonster		inherited;
-	
+    typedef CBaseMonster inherited;
+
 public:
-					CFracture 			();
-	virtual			~CFracture 			();	
+    CFracture();
+    virtual ~CFracture();
 
-	virtual void	Load				(LPCSTR section);
-	virtual void	CheckSpecParams		(u32 spec_params);
+    virtual void Load(LPCSTR section);
+    virtual void CheckSpecParams(u32 spec_params);
 
-	virtual	char*	get_monster_class_name () { return "fracture"; }
+    virtual char* get_monster_class_name() { return "fracture"; }
 
-
-	DECLARE_SCRIPT_REGISTER_FUNCTION
+    DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 
 add_to_type_list(CFracture)

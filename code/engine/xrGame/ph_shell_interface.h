@@ -2,6 +2,5 @@
 
 interface IPhysicShellCreator {
 public:
-	virtual void CreatePhysicsShell() = 0;
+    virtual void CreatePhysicsShell() = 0;
 };
-

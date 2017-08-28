@@ -32,4 +32,5 @@ set_source_files_properties(guids.cpp PROPERTIES COMPILE_FLAGS /Y-)
 
 add_library(xrSound SHARED ${CACHE_SRC} ${CORE_SRC} ${CORE_OPENAL_SRC} ${EMITTER_SRC} ${ENV_SRC} ${KERNEL_SRC}
                            ${SOURCE_SRC} ${TARGET_SRC} ${TARGET_OPENAL_SRC})
+target_include_directories(xrSound PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrSound libogg libvorbis libvorbisfile openal32 dsound xrCore xrAPI xrCDB)

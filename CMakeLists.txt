@@ -10,37 +10,23 @@ endif()
 
 set(BIN_PATH "" CACHE STRING "engine bin output directory path")
 option(BUILD_UTILS "enable utils projects build" OFF)
+option(REL_DEVELOP "switch RelWithDebInfo configuration into development mode" OFF)
 
 if ("${BIN_PATH}" STREQUAL "")
     message(FATAL_ERROR "Invalid bin path")
 endif()
 
-if(NOT EXISTS "$ENV{DXSDK_DIR}")
-    message(FATAL_ERROR "DirectX SDK not found")
-endif()
-
-set(DXSDK_DIR $ENV{DXSDK_DIR})
-set(DXSDK_INCLUDE_DIR ${DXSDK_DIR}/include)
-if (ARCH_X86)
-    set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x86)
-else()
-    set(DXSDK_LIB_DIR ${DXSDK_DIR}/lib/x64)
-endif()
-
 if (MSVC)
-    if (MSVC_VERSION EQUAL 1900) #MSVS 2015
-        set(VS_TOOLS_PATH $ENV{VS140COMNTOOLS})
-        set(VC_ENV_BAT ${VS_TOOLS_PATH}../../VC/vcvarsall.bat)
-    elseif(MSVC_VERSION EQUAL 1910) # MSVS 2017
-        execute_process(COMMAND "vswhere" "-version" "15.0" "-property" "installationPath"
+    if(MSVC_VERSION EQUAL 1911) # MSVS 2017.3
+        execute_process(COMMAND "vswhere" "-version" "15.3" "-property" "installationPath"
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extras
                         OUTPUT_VARIABLE VS_TOOLS_PATH
                         OUTPUT_STRIP_TRAILING_WHITESPACE)
         set(VC_ENV_BAT ${VS_TOOLS_PATH}/VC/Auxiliary/Build/vcvarsall.bat)
-        add_compile_options(/std:c++latest)
+        add_compile_options(/std:c++latest /await)
         add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/Oi>")
     else()
-        message(FATAL_ERROR "Only MSVC 14.x (MSVS 2015) and MSVC 15.x (MSVS 2017) is supported")
+        message(FATAL_ERROR "Only MSVC 15.3 (MSVS 2017) and higher is supported")
     endif()
 else()
     message(FATAL_ERROR "Only MSVC compiler is supported")
@@ -50,9 +36,12 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo" CACHE STRING "" FORCE)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-add_compile_options(/MP "$<$<CONFIG:RELWITHDEBINFO>:/GL>" "$<$<CONFIG:RELWITHDEBINFO>:/Ob2>"
-                    "$<$<CONFIG:DEBUG>:/EHsc>" "$<$<CONFIG:RELWITHDEBINFO>:/Ot>"
-                    "$<$<CONFIG:RELWITHDEBINFO>:/wd4577>")
+add_compile_options(/MP "$<$<CONFIG:RELWITHDEBINFO>:/Ob2>" "$<$<CONFIG:DEBUG>:/EHsc>"
+                    "$<$<CONFIG:RELWITHDEBINFO>:/Ot>" "$<$<CONFIG:RELWITHDEBINFO>:/wd4577>")
+if (NOT REL_DEVELOP)
+    add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/GL>")
+endif()
+
 if (ARCH_X86)
     add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/arch:SSE2>")
 endif()
@@ -65,7 +54,11 @@ if (ARCH_X86)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
 endif()
 
-set(SHARED_RELEASE_LINKER_FLAGS "/LTCG /OPT:REF /INCREMENTAL:NO")
+if (REL_DEVELOP)
+    set(SHARED_RELEASE_LINKER_FLAGS "")
+else()
+    set(SHARED_RELEASE_LINKER_FLAGS "/LTCG /OPT:REF /INCREMENTAL:NO")
+endif()
 set(STATIC_RELEASE_LINKER_FLAGS "/LTCG")
 set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} ${SHARED_RELEASE_LINKER_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} ${SHARED_RELEASE_LINKER_FLAGS}")
@@ -91,9 +84,9 @@ set(CMAKE_PDB_OUTPUT_DIRECTORY ${PDB_OUT_PATH})
 include_directories(code/3rd-party code/engine code/utils)
 
 # 3d-party
+add_subdirectory(code/3rd-party/dxsdk)
 add_subdirectory(code/3rd-party/zlib)
 add_subdirectory(code/3rd-party/minizip)
-add_subdirectory(code/3rd-party/bugtrap)
 add_subdirectory(code/3rd-party/dxerr2015)
 add_subdirectory(code/3rd-party/oalib)
 add_subdirectory(code/3rd-party/ode)
@@ -114,7 +107,6 @@ add_subdirectory(code/3rd-party/cs)
 
 set_target_properties(zlib PROPERTIES FOLDER 3rd-party)
 set_target_properties(minizip PROPERTIES FOLDER 3rd-party)
-set_target_properties(bugtrap PROPERTIES FOLDER 3rd-party)
 set_target_properties(dxerr2015 PROPERTIES FOLDER 3rd-party)
 set_target_properties(oalib PROPERTIES FOLDER 3rd-party)
 set_target_properties(ode PROPERTIES FOLDER 3rd-party)

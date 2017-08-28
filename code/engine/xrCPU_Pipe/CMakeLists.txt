@@ -38,4 +38,5 @@ add_library(xrCPU_Pipe SHARED ${SKINNING}
                               ${KERNEL}
                               ${TTAPI}
                               ${PLC})
+target_include_directories(xrCPU_Pipe PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrCPU_Pipe xrCore)

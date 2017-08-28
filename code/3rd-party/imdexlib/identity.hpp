@@ -1,6 +1,6 @@
 #pragma once
 
-namespace imdexlib {
+namespace imdex {
 
 template <typename T>
 struct identity
@@ -11,4 +11,4 @@ struct identity
 template <typename T>
 using identity_t = typename identity<T>::type;
 
-} // imdexlib namespace
+} // imdex namespace

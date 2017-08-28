@@ -12,13 +12,25 @@
 #include "../xrCore/xrCore.h"
 
 #pragma warning(push)
-#pragma warning(disable:4995)
+#pragma warning(disable : 4995)
 #include <DPlay/dplay8.h>
 #pragma warning(pop)
 
-#include "NET_Shared.h"	
+#include "NET_Shared.h"
 
-#define _RELEASE(x)			{ if(x) { (x)->Release();       (x)=NULL; } }
-#define _SHOW_REF(msg, x)   { if(x) { x->AddRef(); Log(msg,u32(x->Release()));}}
+#define _RELEASE(x)         \
+    {                       \
+        if (x) {            \
+            (x)->Release(); \
+            (x) = NULL;     \
+        }                   \
+    }
+#define _SHOW_REF(msg, x)                \
+    {                                    \
+        if (x) {                         \
+            x->AddRef();                 \
+            Log(msg, u32(x->Release())); \
+        }                                \
+    }
 
-#endif //stdafxH
+#endif // stdafxH

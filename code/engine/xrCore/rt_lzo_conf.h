@@ -33,183 +33,175 @@
    http://www.oberhumer.com/opensource/lzo/
  */
 
-
 /* WARNING: this file should *not* be used by applications. It is
    part of the implementation of the library and is subject
    to change.
  */
-
 
 #ifndef __LZO_CONF_H
 #define __LZO_CONF_H
 
 #if !defined(__LZO_IN_MINILZO)
 #if defined(LZO_CFG_FREESTANDING)
-#  define LZO_LIBC_FREESTANDING 1
-#  define LZO_OS_FREESTANDING 1
-#  define ACC_LIBC_FREESTANDING 1
-#  define ACC_OS_FREESTANDING 1
+#define LZO_LIBC_FREESTANDING 1
+#define LZO_OS_FREESTANDING 1
+#define ACC_LIBC_FREESTANDING 1
+#define ACC_OS_FREESTANDING 1
 #endif
 #if defined(LZO_CFG_NO_UNALIGNED)
-#  define ACC_CFG_NO_UNALIGNED 1
+#define ACC_CFG_NO_UNALIGNED 1
 #endif
 #if defined(LZO_HAVE_CONFIG_H)
-#  define ACC_CONFIG_NO_HEADER 1
+#define ACC_CONFIG_NO_HEADER 1
 #endif
 #if defined(__LZOCONF_H) || defined(__LZOCONF_H_INCLUDED)
-#  error "include this file first"
+#error "include this file first"
 #endif
 #include "rt_lzoconf.h"
 #endif
 
 #if (LZO_VERSION < 0x02000) || !defined(__LZOCONF_H_INCLUDED)
-#  error "version mismatch"
+#error "version mismatch"
 #endif
-
 
 /***********************************************************************
 // pragmas
 ************************************************************************/
 
 #if (LZO_CC_BORLANDC && LZO_ARCH_I086)
-#  pragma option -h         /* enable fast huge pointers */
+#pragma option -h /* enable fast huge pointers */
 #endif
 
 #if (LZO_CC_MSC && (_MSC_VER >= 1000))
-#  pragma warning(disable: 4127 4701)
+#pragma warning(disable : 4127 4701)
 #endif
 #if (LZO_CC_MSC && (_MSC_VER >= 1300))
-   /* avoid `-Wall' warnings in system header files */
-#  pragma warning(disable: 4820)
-   /* avoid warnings about inlining */
-#  pragma warning(disable: 4514 4710 4711)
+/* avoid `-Wall' warnings in system header files */
+#pragma warning(disable : 4820)
+/* avoid warnings about inlining */
+#pragma warning(disable : 4514 4710 4711)
 #endif
-
 
 /***********************************************************************
 //
 ************************************************************************/
 
 #if defined(__LZO_MMODEL_HUGE) && (!LZO_HAVE_MM_HUGE_PTR)
-#  error "this should not happen - check defines for __huge"
+#error "this should not happen - check defines for __huge"
 #endif
 
 #if defined(__LZO_IN_MINILZO) || defined(LZO_CFG_FREESTANDING)
 #elif (LZO_OS_DOS16 || LZO_OS_OS216 || LZO_OS_WIN16)
-#  define ACC_WANT_ACC_INCD_H 1
-#  define ACC_WANT_ACC_INCE_H 1
-#  define ACC_WANT_ACC_INCI_H 1
+#define ACC_WANT_ACC_INCD_H 1
+#define ACC_WANT_ACC_INCE_H 1
+#define ACC_WANT_ACC_INCI_H 1
 #elif 1
-#  include <string.h>
+#include <string.h>
 #else
-#  define ACC_WANT_ACC_INCD_H 1
+#define ACC_WANT_ACC_INCD_H 1
 #endif
 #include "rt_miniacc.h"
 
-
 #if defined(LZO_CFG_FREESTANDING)
-#  undef HAVE_MEMCMP
-#  undef HAVE_MEMCPY
-#  undef HAVE_MEMMOVE
-#  undef HAVE_MEMSET
+#undef HAVE_MEMCMP
+#undef HAVE_MEMCPY
+#undef HAVE_MEMMOVE
+#undef HAVE_MEMSET
 #endif
 
 #if !defined(HAVE_MEMCMP)
-#  undef memcmp
-#  define memcmp(a,b,c)         lzo_memcmp(a,b,c)
+#undef memcmp
+#define memcmp(a, b, c) lzo_memcmp(a, b, c)
 #elif !defined(__LZO_MMODEL_HUGE)
-#  define lzo_memcmp(a,b,c)     memcmp(a,b,c)
+#define lzo_memcmp(a, b, c) memcmp(a, b, c)
 #endif
 #if !defined(HAVE_MEMCPY)
-#  undef memcpy
-#  define memcpy(a,b,c)         lzo_memcpy(a,b,c)
+#undef memcpy
+#define memcpy(a, b, c) lzo_memcpy(a, b, c)
 #elif !defined(__LZO_MMODEL_HUGE)
-#  define lzo_memcpy(a,b,c)     memcpy(a,b,c)
+#define lzo_memcpy(a, b, c) memcpy(a, b, c)
 #endif
 #if !defined(HAVE_MEMMOVE)
-#  undef memmove
-#  define memmove(a,b,c)        lzo_memmove(a,b,c)
+#undef memmove
+#define memmove(a, b, c) lzo_memmove(a, b, c)
 #elif !defined(__LZO_MMODEL_HUGE)
-#  define lzo_memmove(a,b,c)    memmove(a,b,c)
+#define lzo_memmove(a, b, c) memmove(a, b, c)
 #endif
 #if !defined(HAVE_MEMSET)
-#  undef memset
-#  define memset(a,b,c)         lzo_memset(a,b,c)
+#undef memset
+#define memset(a, b, c) lzo_memset(a, b, c)
 #elif !defined(__LZO_MMODEL_HUGE)
-#  define lzo_memset(a,b,c)     memset(a,b,c)
+#define lzo_memset(a, b, c) memset(a, b, c)
 #endif
-
 
 #undef NDEBUG
 #if defined(LZO_CFG_FREESTANDING)
-#  undef LZO_DEBUG
-#  define NDEBUG 1
-#  undef assert
-#  define assert(e) ((void)0)
+#undef LZO_DEBUG
+#define NDEBUG 1
+#undef assert
+#define assert(e) ((void)0)
 #else
-#  if !defined(LZO_DEBUG)
-#    define NDEBUG 1
-#  endif
-#  include <assert.h>
+#if !defined(LZO_DEBUG)
+#define NDEBUG 1
+#endif
+#include <assert.h>
 #endif
 
 #if 0 && defined(__BOUNDS_CHECKING_ON)
-#  include <unchecked.h>
+#include <unchecked.h>
 #else
-#  define BOUNDS_CHECKING_OFF_DURING(stmt)      stmt
-#  define BOUNDS_CHECKING_OFF_IN_EXPR(expr)     (expr)
+#define BOUNDS_CHECKING_OFF_DURING(stmt) stmt
+#define BOUNDS_CHECKING_OFF_IN_EXPR(expr) (expr)
 #endif
 
 #if !defined(__lzo_inline)
-#  define __lzo_inline
+#define __lzo_inline
 #endif
 #if !defined(__lzo_forceinline)
-#  define __lzo_forceinline
+#define __lzo_forceinline
 #endif
 #if !defined(__lzo_noinline)
-#  define __lzo_noinline
+#define __lzo_noinline
 #endif
-
 
 /***********************************************************************
 //
 ************************************************************************/
 
 #if 1
-#  define LZO_BYTE(x)       ((unsigned char) (x))
+#define LZO_BYTE(x) ((unsigned char)(x))
 #else
-#  define LZO_BYTE(x)       ((unsigned char) ((x) & 0xff))
+#define LZO_BYTE(x) ((unsigned char)((x)&0xff))
 #endif
 
-#define LZO_MAX(a,b)        ((a) >= (b) ? (a) : (b))
-#define LZO_MIN(a,b)        ((a) <= (b) ? (a) : (b))
-#define LZO_MAX3(a,b,c)     ((a) >= (b) ? LZO_MAX(a,c) : LZO_MAX(b,c))
-#define LZO_MIN3(a,b,c)     ((a) <= (b) ? LZO_MIN(a,c) : LZO_MIN(b,c))
+#define LZO_MAX(a, b) ((a) >= (b) ? (a) : (b))
+#define LZO_MIN(a, b) ((a) <= (b) ? (a) : (b))
+#define LZO_MAX3(a, b, c) ((a) >= (b) ? LZO_MAX(a, c) : LZO_MAX(b, c))
+#define LZO_MIN3(a, b, c) ((a) <= (b) ? LZO_MIN(a, c) : LZO_MIN(b, c))
 
-#define lzo_sizeof(type)    ((lzo_uint) (sizeof(type)))
+#define lzo_sizeof(type) ((lzo_uint)(sizeof(type)))
 
-#define LZO_HIGH(array)     ((lzo_uint) (sizeof(array)/sizeof(*(array))))
+#define LZO_HIGH(array) ((lzo_uint)(sizeof(array) / sizeof(*(array))))
 
 /* this always fits into 16 bits */
-#define LZO_SIZE(bits)      (1u << (bits))
-#define LZO_MASK(bits)      (LZO_SIZE(bits) - 1)
+#define LZO_SIZE(bits) (1u << (bits))
+#define LZO_MASK(bits) (LZO_SIZE(bits) - 1)
 
-#define LZO_LSIZE(bits)     (1ul << (bits))
-#define LZO_LMASK(bits)     (LZO_LSIZE(bits) - 1)
+#define LZO_LSIZE(bits) (1ul << (bits))
+#define LZO_LMASK(bits) (LZO_LSIZE(bits) - 1)
 
-#define LZO_USIZE(bits)     ((lzo_uint) 1 << (bits))
-#define LZO_UMASK(bits)     (LZO_USIZE(bits) - 1)
+#define LZO_USIZE(bits) ((lzo_uint)1 << (bits))
+#define LZO_UMASK(bits) (LZO_USIZE(bits) - 1)
 
 #if !defined(DMUL)
 #if 0
    /* 32*32 multiplies may be faster than 64*64 on some 64-bit machines,
     * but then we need extra casts from unsigned<->size_t */
-#  define DMUL(a,b) ((lzo_xint) ((lzo_uint32)(a) * (lzo_uint32)(b)))
+#define DMUL(a, b) ((lzo_xint)((lzo_uint32)(a) * (lzo_uint32)(b)))
 #else
-#  define DMUL(a,b) ((lzo_xint) ((a) * (b)))
+#define DMUL(a, b) ((lzo_xint)((a) * (b)))
 #endif
 #endif
-
 
 /***********************************************************************
 // compiler and architecture specific stuff
@@ -222,24 +214,23 @@
 
 #if 1 && !defined(LZO_CFG_NO_UNALIGNED)
 #if 1 && (LZO_ARCH_AMD64 || LZO_ARCH_I386)
-#  if (LZO_SIZEOF_SHORT == 2)
-#    define LZO_UNALIGNED_OK_2
-#  endif
-#  if (LZO_SIZEOF_INT == 4)
-#    define LZO_UNALIGNED_OK_4
-#  endif
+#if (LZO_SIZEOF_SHORT == 2)
+#define LZO_UNALIGNED_OK_2
+#endif
+#if (LZO_SIZEOF_INT == 4)
+#define LZO_UNALIGNED_OK_4
+#endif
 #endif
 #endif
 
 #if defined(LZO_UNALIGNED_OK_2)
-  LZO_COMPILE_TIME_ASSERT_HEADER(sizeof(short) == 2)
+LZO_COMPILE_TIME_ASSERT_HEADER(sizeof(short) == 2)
 #endif
 #if defined(LZO_UNALIGNED_OK_4)
-  LZO_COMPILE_TIME_ASSERT_HEADER(sizeof(lzo_uint32) == 4)
+LZO_COMPILE_TIME_ASSERT_HEADER(sizeof(lzo_uint32) == 4)
 #elif defined(LZO_ALIGNED_OK_4)
-  LZO_COMPILE_TIME_ASSERT_HEADER(sizeof(lzo_uint32) == 4)
+LZO_COMPILE_TIME_ASSERT_HEADER(sizeof(lzo_uint32) == 4)
 #endif
-
 
 /* Fast memcpy that copies multiples of 8 byte chunks.
  * len is the number of bytes.
@@ -247,15 +238,17 @@
  *       dest and src advance, len is undefined afterwards
  */
 
-#define MEMCPY8_DS(dest,src,len) \
-    lzo_memcpy(dest,src,len); dest += len; src += len
+#define MEMCPY8_DS(dest, src, len) \
+    lzo_memcpy(dest, src, len);    \
+    dest += len;                   \
+    src += len
 
-#define BZERO8_PTR(s,l,n) \
-    lzo_memset((lzo_voidp)(s),0,(lzo_uint)(l)*(n))
+#define BZERO8_PTR(s, l, n) lzo_memset((lzo_voidp)(s), 0, (lzo_uint)(l) * (n))
 
-#define MEMCPY_DS(dest,src,len) \
-    do *dest++ = *src++; while (--len > 0)
-
+#define MEMCPY_DS(dest, src, len) \
+    do                            \
+        *dest++ = *src++;         \
+    while (--len > 0)
 
 /***********************************************************************
 // some globals
@@ -265,13 +258,11 @@ __LZO_EXTERN_C int __lzo_init_done;
 __LZO_EXTERN_C const char __lzo_copyright[];
 LZO_EXTERN(const lzo_bytep) lzo_copyright(void);
 
-
 /***********************************************************************
 //
 ************************************************************************/
 
 #include "rt_lzo_ptr.h"
-
 
 /* Generate compressed data in a deterministic way.
  * This is fully portable, and compression can be faster as well.
@@ -282,24 +273,21 @@ LZO_EXTERN(const lzo_bytep) lzo_copyright(void);
  */
 #define LZO_DETERMINISTIC
 
-
 #define LZO_DICT_USE_PTR
 #if 0 && (LZO_ARCH_I086)
-#  undef LZO_DICT_USE_PTR
+#undef LZO_DICT_USE_PTR
 #endif
 
 #if defined(LZO_DICT_USE_PTR)
-#  define lzo_dict_t    const lzo_bytep
-#  define lzo_dict_p    lzo_dict_t __LZO_MMODEL *
+#define lzo_dict_t const lzo_bytep
+#define lzo_dict_p lzo_dict_t __LZO_MMODEL*
 #else
-#  define lzo_dict_t    lzo_uint
-#  define lzo_dict_p    lzo_dict_t __LZO_MMODEL *
+#define lzo_dict_t lzo_uint
+#define lzo_dict_p lzo_dict_t __LZO_MMODEL*
 #endif
-
 
 #endif /* already included */
 
 /*
 vi:ts=4:et
 */
-

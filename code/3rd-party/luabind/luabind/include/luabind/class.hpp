@@ -120,7 +120,7 @@ namespace luabind
 /*    template <typename... Ts>
     detail::null_type* get_const_holder(Ts&&...)
     {
-        static_assert(imdexlib::false_v<Ts...>, "this function will only be invoked if the user hasn't defined a correct overload");
+        static_assert(imdex::false_v<Ts...>, "this function will only be invoked if the user hasn't defined a correct overload");
         return nullptr;
     }*/
     // TODO: this function will only be invoked if the user hasn't defined a correct overload
@@ -153,10 +153,10 @@ namespace luabind
         struct extract_parameter
         {
             using pred = get_predicate<Pred>;
-            using iterator = imdexlib::find_if_t<pred, Parameters...>;
+            using iterator = imdex::find_if_t<pred, Parameters...>;
 
             using type = std::conditional_t<
-                std::is_same_v<iterator, imdexlib::end_t>,
+                std::is_same_v<iterator, imdex::end_t>,
                 DefaultValue,
                 iterator
             >;

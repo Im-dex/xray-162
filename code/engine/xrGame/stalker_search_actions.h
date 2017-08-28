@@ -19,17 +19,18 @@ class CCoverPoint;
 
 class CStalkerActionReachEnemyLocation : public CStalkerActionCombatBase {
 private:
-	CPropertyStorage	*m_combat_storage;
-	u32					m_last_hit_time;
+    CPropertyStorage* m_combat_storage;
+    u32 m_last_hit_time;
 
 protected:
-	typedef CStalkerActionCombatBase inherited;
+    typedef CStalkerActionCombatBase inherited;
 
 public:
-					CStalkerActionReachEnemyLocation(CAI_Stalker *object, CPropertyStorage *combat_storage, LPCSTR action_name = "");
-	virtual void	initialize						();
-	virtual void	execute							();
-	virtual void	finalize						();
+    CStalkerActionReachEnemyLocation(CAI_Stalker* object, CPropertyStorage* combat_storage,
+                                     LPCSTR action_name = "");
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -38,17 +39,18 @@ public:
 
 class CStalkerActionReachAmbushLocation : public CStalkerActionCombatBase {
 private:
-	CPropertyStorage	*m_combat_storage;
-	u32					m_last_hit_time;
+    CPropertyStorage* m_combat_storage;
+    u32 m_last_hit_time;
 
 protected:
-	typedef CStalkerActionCombatBase inherited;
+    typedef CStalkerActionCombatBase inherited;
 
 public:
-					CStalkerActionReachAmbushLocation	(CAI_Stalker *object, CPropertyStorage *combat_storage, LPCSTR action_name = "");
-	virtual void	initialize						();
-	virtual void	execute							();
-	virtual void	finalize						();
+    CStalkerActionReachAmbushLocation(CAI_Stalker* object, CPropertyStorage* combat_storage,
+                                      LPCSTR action_name = "");
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,17 +59,18 @@ public:
 
 class CStalkerActionHoldAmbushLocation : public CStalkerActionCombatBase {
 private:
-	CPropertyStorage	*m_combat_storage;
-	u32					m_last_hit_time;
+    CPropertyStorage* m_combat_storage;
+    u32 m_last_hit_time;
 
 protected:
-	typedef CStalkerActionCombatBase inherited;
+    typedef CStalkerActionCombatBase inherited;
 
 public:
-					CStalkerActionHoldAmbushLocation(CAI_Stalker *object, CPropertyStorage *combat_storage, LPCSTR action_name = "");
-	virtual void	initialize						();
-	virtual void	execute							();
-	virtual void	finalize						();
+    CStalkerActionHoldAmbushLocation(CAI_Stalker* object, CPropertyStorage* combat_storage,
+                                     LPCSTR action_name = "");
+    virtual void initialize();
+    virtual void execute();
+    virtual void finalize();
 };
 
 #endif // STALKER_SEARCH_ACTIONS_H_INCLUDED

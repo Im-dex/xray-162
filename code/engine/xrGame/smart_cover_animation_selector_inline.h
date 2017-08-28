@@ -10,15 +10,9 @@
 
 namespace smart_cover {
 
-IC	CPropertyStorage *animation_selector::property_storage	()
-{
-	return				(m_storage);
-}
+IC CPropertyStorage* animation_selector::property_storage() { return (m_storage); }
 
-IC	animation_planner &animation_selector::planner			()
-{
-	return				(*m_planner);
-}
+IC animation_planner& animation_selector::planner() { return (*m_planner); }
 
 } // namespace smart_cover
 

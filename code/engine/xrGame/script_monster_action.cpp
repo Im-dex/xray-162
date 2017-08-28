@@ -10,11 +10,8 @@
 #include "script_monster_action.h"
 #include "script_game_object.h"
 
-CScriptMonsterAction::~CScriptMonsterAction	()
-{
-}
+CScriptMonsterAction::~CScriptMonsterAction() {}
 
-void CScriptMonsterAction::SetObject	(CScriptGameObject *tObj)
-{
-	m_tObject	= tObj->operator CObject*();
+void CScriptMonsterAction::SetObject(CScriptGameObject* tObj) {
+    m_tObject = tObj->operator CObject*();
 }

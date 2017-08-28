@@ -28,6 +28,6 @@ add_definitions(-DXR_PARTICLES_EXPORTS -D_SECURE_SCL=0)
 add_compile_options(/fp:fast /GR "/Yustdafx.h")
 set_source_files_properties(stdafx.cpp PROPERTIES COMPILE_FLAGS /Yc)
 
-add_library(xrParticles SHARED ${KERNEL}
-                               ${PAPI})
+add_library(xrParticles SHARED ${KERNEL} ${PAPI})
+target_include_directories(xrParticles PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(xrParticles xrCore xrCPU_Pipe)

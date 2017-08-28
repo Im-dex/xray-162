@@ -9,25 +9,14 @@
 #ifndef INVENTORY_UPGRADE_BASE_INLINE_H_INCLUDED
 #define INVENTORY_UPGRADE_BASE_INLINE_H_INCLUDED
 
-namespace inventory
-{
-namespace upgrade
-{
+namespace inventory {
+namespace upgrade {
 
-IC const shared_str& UpgradeBase::id() const
-{
-	return	( m_id );
-}
+IC const shared_str& UpgradeBase::id() const { return (m_id); }
 
-IC LPCSTR UpgradeBase::id_str() const
-{
-	return	( m_id.c_str() );
-}
+IC LPCSTR UpgradeBase::id_str() const { return (m_id.c_str()); }
 
-IC	bool UpgradeBase::is_known() const
-{
-	return	( m_known ); 
-}
+IC bool UpgradeBase::is_known() const { return (m_known); }
 
 } // namespace upgrade
 } // namespace inventory

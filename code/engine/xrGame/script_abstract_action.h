@@ -10,12 +10,12 @@
 
 class CScriptAbstractAction {
 public:
-	bool			m_bCompleted;
+    bool m_bCompleted;
 
 public:
-	IC				CScriptAbstractAction	();
-	virtual			~CScriptAbstractAction	();
-	virtual	bool	completed				();
+    IC CScriptAbstractAction();
+    virtual ~CScriptAbstractAction();
+    virtual bool completed();
 };
 
 #include "script_abstract_action_inline.h"

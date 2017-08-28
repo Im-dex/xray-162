@@ -21,7 +21,7 @@
 
 namespace Mgc {
 
-Sphere MinSphere (int iQuantity, const Vector3* akPoint);
+Sphere MinSphere(int iQuantity, const Vector3* akPoint);
 
 } // namespace Mgc
 

@@ -9,224 +9,184 @@
 
 #include "net_exec_pool.h"
 
-namespace	lc_net{
+namespace lc_net {
 
-	task_manager g_task_manager;
+task_manager g_task_manager;
 
-	task_manager & get_task_manager()
-	{
-		return g_task_manager;
-	}
+task_manager& get_task_manager() { return g_task_manager; }
 
+XRLC_LIGHT_API net_task_interface* g_net_task_interface = &g_task_manager;
 
-	XRLC_LIGHT_API net_task_interface *g_net_task_interface = &g_task_manager;
+void __cdecl Finalize(IGenericStream* inStream) {
 
-	void __cdecl Finalize(IGenericStream* inStream)
-	{
-	
-		get_task_manager().receive_result( inStream );
-		//inStream->Clear();
-	 }
+    get_task_manager().receive_result(inStream);
+    // inStream->Clear();
+}
 
-	task_manager:: task_manager( ):
-	 _user(0), tasks_completed( 0 ), current_pool( 0 ), 
-	start( 0 ), session_id( DWORD(-1) ), _release( false )
-	{
-		for(u8 i = 0; i < num_pools; ++i )
-			 pools[i] = 0;
-		//create_global_data_write("");
-	}
+task_manager::task_manager()
+    : _user(0), tasks_completed(0), current_pool(0), start(0), session_id(DWORD(-1)),
+      _release(false) {
+    for (u8 i = 0; i < num_pools; ++i)
+        pools[i] = 0;
+    // create_global_data_write("");
+}
 
-	bool	task_manager::initialize_session( DWORD _session_id )
-	{
-        std::lock_guard<decltype(init_lock)> lock(init_lock);
-		bool ret = false;
-		if( session_id == DWORD(-1) )
-		{
-			session_id = _session_id;
-			ret = true;
-		} else
-			ret = (session_id == _session_id);
-		return ret;
-	}
-	void	task_manager::		receive_result( IGenericStream* inStream )
-	{
-		u8 pool_id  ( u8(-1) );
-		//u32 task_id ( u32(-1) ), type_id ( u32(-1)  );
+bool task_manager::initialize_session(DWORD _session_id) {
+    std::lock_guard<decltype(init_lock)> lock(init_lock);
+    bool ret = false;
+    if (session_id == DWORD(-1)) {
+        session_id = _session_id;
+        ret = true;
+    } else
+        ret = (session_id == _session_id);
+    return ret;
+}
+void task_manager::receive_result(IGenericStream* inStream) {
+    u8 pool_id(u8(-1));
+    // u32 task_id ( u32(-1) ), type_id ( u32(-1)  );
 
-		read_task_pool( inStream, pool_id );
-		pools[pool_id]->receive_result( inStream );
-		
-	}
+    read_task_pool(inStream, pool_id);
+    pools[pool_id]->receive_result(inStream);
+}
 
+void task_manager::send_task(IGridUser& user, u32 id) {}
 
-	void		task_manager::	send_task		( IGridUser& user, u32 id  )
-	{
-		
-	}
+void task_manager::send_result(u8 pool_id, IGenericStream* outStream, net_execution& e) {
+    write_task_pool(outStream, pool_id);
+    pools[pool_id]->send_result(outStream, e);
+}
 
-	void		task_manager::	send_result		( u8 pool_id, IGenericStream* outStream,  net_execution &e )
-	{
-		write_task_pool( outStream, pool_id );
-		pools[pool_id]->send_result( outStream, e );
-	}
+net_execution* task_manager::receive_task(u8& pool_id, IAgent* agent, DWORD sessionId,
+                                          IGenericStream* inStream) {
+    // u8 pool_id  ( u8(-1) );
+    read_task_pool(inStream, pool_id);
+    R_ASSERT(pool_id >= 0);
+    R_ASSERT(pool_id < num_pools);
 
-	net_execution* task_manager::	receive_task	( u8 &pool_id, IAgent* agent, DWORD sessionId, IGenericStream* inStream  )
-	{
-		//u8 pool_id  ( u8(-1) );
-		read_task_pool( inStream, pool_id );
-		R_ASSERT(pool_id >= 0 );
-		R_ASSERT(pool_id < num_pools );
+    pool_lock.lock();
+    if (pools[pool_id] == 0)
+        pools[pool_id] = xr_new<exec_pool>(this);
+    pool_lock.unlock();
+    return pools[pool_id]->receive_task(agent, sessionId, inStream);
+}
 
-		pool_lock.lock( );
-		if( pools[pool_id] == 0 )
-			pools[pool_id] = xr_new<exec_pool>( this );
-		pool_lock.unlock( );
-		return pools[pool_id]->receive_task( agent, sessionId, inStream );
+void __cdecl data_cleanup_callback(const char* dataDesc, IGenericStream** stream);
+void task_manager::startup() {
+    start_time.Start();
+    tasks_completed = 0;
+    // create_user( );
+    thread_spawn(task_manager::user_thread_proc, "release-user", 1024 * 1024, this);
+    for (;;) {
+        Sleep(1);
+        bool user_inited = false;
+        init_lock.lock();
+        user_inited = !!_user;
+        init_lock.unlock();
+        if (user_inited)
+            break;
+    }
 
-	}
+    R_ASSERT(_user);
+    FPU::m64r();
+    Memory.mem_compact();
+}
+void task_manager::create_user() {
+    std::lock_guard<decltype(init_lock)> lock(init_lock);
+    R_ASSERT(!_user);
+    R_ASSERT(!_release);
+    _user = CreateGridUserObject(IGridUser::VERSION);
+    VERIFY(_user);
+    _user->BindGetDataCallback(data_cleanup_callback);
+}
+void task_manager::user_init_thread() {
+    create_user();
+    for (;;) {
+        bool release = false;
+        Sleep(1000);
+        init_lock.lock();
+        release = _release;
+        init_lock.unlock();
+        if (release)
+            break;
+    }
+    release_user();
+}
+void task_manager::wait_all() {
+    for (;;) {
+        Sleep(1000);
+        u32 num_running = 0;
+        for (u8 i = 0; i < num_pools; ++i)
+            if (pools[i] && pools[i]->is_running())
+                ++num_running;
+        if (num_running == 0)
+            break;
+    }
+    // R_ASSERT(_user);
+    //_user->WaitForCompletion();
+    // release();
+}
+exec_pool* task_manager::run(LPCSTR name_pool) {
+    pool_lock.lock();
 
+    if (!pools[current_pool]) {
+        pool_lock.unlock();
+        return nullptr;
+    }
+    pools[current_pool]->set_name(name_pool);
+    start = pools[current_pool]->end();
+    u8 lrun = current_pool;
+    ++current_pool;
+    R_ASSERT(current_pool < num_pools);
 
-	void __cdecl data_cleanup_callback( const char* dataDesc, IGenericStream** stream );
-	void	task_manager::startup()
-	{
-		start_time.Start();
-		tasks_completed  = 0;
-		//create_user( );
-		thread_spawn	(task_manager::user_thread_proc,"release-user",1024*1024,this);
-		for(;;)
-		{
-			Sleep(1);
-			bool user_inited = false;
-			init_lock.lock();
-			user_inited = !!_user;
-			init_lock.unlock();
-			if( user_inited )
-				break;
-		}
+    pool_lock.unlock();
 
-		R_ASSERT( _user );
-		FPU::m64r		();
-		Memory.mem_compact	();
-	}
-	void	task_manager::create_user( )
-	{
-        std::lock_guard<decltype(init_lock)> lock(init_lock);
-		R_ASSERT( !_user );
-		R_ASSERT( !_release );
-		_user = CreateGridUserObject(IGridUser::VERSION);
-		VERIFY( _user );
-		_user->BindGetDataCallback( data_cleanup_callback );
-	}
-	void	task_manager::user_init_thread( )
-	{
-		create_user( );
-		for(;;)
-		{
-			bool release = false;
-			Sleep( 1000 );
-			init_lock.lock();
-			release = _release;
-			init_lock.unlock();
-			if( release )
-				break;
-		}
-		release_user();
-	}
-	void	task_manager::wait_all()
-	{
-		for(;;)
-		{
-			Sleep( 1000 );
-			u32 num_running = 0;
-			for(u8 i = 0; i < num_pools; ++i )
-				if( pools[i] && pools[i]->is_running() )
-					++num_running;
-			if( num_running == 0 )
-				break;
-					
-		}
-		//R_ASSERT(_user);
-		//_user->WaitForCompletion();
-		//release();
-	}
-	exec_pool	*task_manager::run( LPCSTR name_pool )
-	{
-		pool_lock.lock();
-
-		if( !pools[current_pool] )
-		{
-			pool_lock.unlock();
-			return nullptr;
-		}
-		pools[current_pool]->set_name( name_pool );
-		start = pools[current_pool]->end();
-		u8 lrun = current_pool;
-		++current_pool;
-		R_ASSERT( current_pool < num_pools );
-
-		pool_lock.unlock();
-
-		R_ASSERT( _user );
-		pools[lrun]->run(  *_user,  lrun );
-		return pools[lrun]; 
-		
-	}
-	void task_manager::progress( u32 task )
-	{
-		u32 l_completed = 0;
-		log_lock.lock();
-		++tasks_completed;
-		l_completed = tasks_completed;
-		log_lock.unlock();
-		Progress(float(l_completed)/float(start));
-	}
+    R_ASSERT(_user);
+    pools[lrun]->run(*_user, lrun);
+    return pools[lrun];
+}
+void task_manager::progress(u32 task) {
+    u32 l_completed = 0;
+    log_lock.lock();
+    ++tasks_completed;
+    l_completed = tasks_completed;
+    log_lock.unlock();
+    Progress(float(l_completed) / float(start));
+}
 
 //	void task_manager::release_user_thread_proc(void *_this )
 //	{
 //		((task_manager*)_this)->release_user();
 //	}
-	void	task_manager::user_thread_proc( void *_this )
-	{
-		((task_manager*)_this)->user_init_thread( );
-	}
+void task_manager::user_thread_proc(void* _this) { ((task_manager*)_this)->user_init_thread(); }
 
-	void task_manager::release_user( )
-	{
-        std::lock_guard<decltype(init_lock)> lock(init_lock);
-		if(!_user)
-			return;
+void task_manager::release_user() {
+    std::lock_guard<decltype(init_lock)> lock(init_lock);
+    if (!_user)
+        return;
 
-		R_ASSERT( _user );
-		//_user->CancelTasks();
-		//_user->Release();
-		_user = 0;
-		for(u8 i = 0; i < num_pools; ++i )
-			xr_delete( pools[i] );
-	}
+    R_ASSERT(_user);
+    //_user->CancelTasks();
+    //_user->Release();
+    _user = 0;
+    for (u8 i = 0; i < num_pools; ++i)
+        xr_delete(pools[i]);
+}
 
-	void task_manager::release()
-	{
-		for(u8 i = 0; i < num_pools; ++i )
-				R_ASSERT( !(pools[i]) || !(pools[i]->is_running()) );
-        std::lock_guard<decltype(init_lock)> lock(init_lock);
-		_release = true;
-	//	thread_spawn	(task_manager::release_user_thread_proc,"release-user",1024*1024,this);
+void task_manager::release() {
+    for (u8 i = 0; i < num_pools; ++i)
+        R_ASSERT(!(pools[i]) || !(pools[i]->is_running()));
+    std::lock_guard<decltype(init_lock)> lock(init_lock);
+    _release = true;
+    //	thread_spawn	(task_manager::release_user_thread_proc,"release-user",1024*1024,this);
+}
 
+void task_manager::add_task(net_execution* task) {
+    std::lock_guard<decltype(pool_lock)> lock(pool_lock);
 
-	}
+    if (!pools[current_pool])
+        pools[current_pool] = xr_new<exec_pool>(start, this);
 
-	void	task_manager::add_task( net_execution* task )
-	{
-        std::lock_guard<decltype(pool_lock)> lock(pool_lock);
+    pools[current_pool]->add_task(task);
+}
 
-		if( !pools[current_pool] )
-			pools[current_pool] = xr_new<exec_pool>( start, this );
-		
-		pools[current_pool]->add_task(task);
-	}
-
-	
-
-
-};
+}; // namespace lc_net

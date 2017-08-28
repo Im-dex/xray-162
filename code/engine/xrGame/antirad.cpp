@@ -8,10 +8,6 @@
 #include "antirad.h"
 #include "../xrphysics/PhysicsShell.h"
 
-CAntirad::CAntirad(void) 
-{
-}
+CAntirad::CAntirad(void) {}
 
-CAntirad::~CAntirad(void) 
-{
-}
+CAntirad::~CAntirad(void) {}

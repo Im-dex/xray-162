@@ -29,41 +29,37 @@ class sun;
 
 class manager {
 public:
-					manager			(environment::manager* environment);
-                    manager(const manager&) = delete;
-                    manager& operator= (const manager&) = delete;
-					~manager		();
-			void	load			();
-			void	save			();
-			void	fill			(editor::property_holder* holder);
-			shared_str	unique_id	(shared_str const& id) const;
-	CLensFlareDescriptor* get_flare	(shared_str const& id) const;
+    manager(environment::manager* environment);
+    manager(const manager&) = delete;
+    manager& operator=(const manager&) = delete;
+    ~manager();
+    void load();
+    void save();
+    void fill(editor::property_holder* holder);
+    shared_str unique_id(shared_str const& id) const;
+    CLensFlareDescriptor* get_flare(shared_str const& id) const;
 
 private:
-			void	add				(CInifile& config, shared_str const& sun);
+    void add(CInifile& config, shared_str const& sun);
 
 public:
-	typedef	xr_vector<sun*>			container_type;
-	typedef xr_vector<LPSTR>		suns_ids_type;
+    typedef xr_vector<sun*> container_type;
+    typedef xr_vector<LPSTR> suns_ids_type;
 
 public:
-	suns_ids_type const&	suns_ids() const;
+    suns_ids_type const& suns_ids() const;
 
 private:
-	typedef property_collection<
-				container_type,
-				manager
-			>						collection_type;
-
+    typedef property_collection<container_type, manager> collection_type;
 
 private:
-	container_type					m_suns;
-	mutable suns_ids_type			m_suns_ids;
-	collection_type*				m_collection;
-	mutable bool					m_changed;
+    container_type m_suns;
+    mutable suns_ids_type m_suns_ids;
+    collection_type* m_collection;
+    mutable bool m_changed;
 
 public:
-	environment::manager const&		m_environment;
+    environment::manager const& m_environment;
 }; // class suns_manager
 
 } // namespace suns

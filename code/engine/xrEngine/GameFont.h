@@ -6,109 +6,105 @@
 
 #include "xrRender/FontRender.h"
 
-class ENGINE_API CGameFont
-{
-	friend class dxFontRender;
+class ENGINE_API CGameFont {
+    friend class dxFontRender;
+
 public:
-	enum EAligment{
-		alLeft				= 0,
-		alRight,
-		alCenter
-	};
+    enum EAligment { alLeft = 0, alRight, alCenter };
+
 private:
-	struct String
-	{
-		string1024	string;
-		float		x,y;
-		float		height;
-		u32			c;
-		EAligment	align;
-	};
-protected:
-	Fvector2				vHalfPixel;
-	Ivector2				vTS;
-
-	EAligment				eCurrentAlignment;
-	u32						dwCurrentColor;
-	float					fCurrentHeight;
-	float					fCurrentX, fCurrentY;
-	Fvector2				vInterval;
-
-	Fvector 				*TCMap;
-	float					fHeight;
-	float					fXStep;
-	float					fYStep;
-	float					fTCHeight;
-	xr_vector<String>		strings;
-
-	IFontRender				*pFontRender;
-
-	u32						nNumChars;
-
-	u32						uFlags;
-
-public:
-	enum
-	{
-		fsGradient			= (1<<0),
-		fsDeviceIndependent	= (1<<1),
-		fsValid 			= (1<<2),
-
-		fsMultibyte			= (1<<3),
-
-		fsForceDWORD		= u32(-1)
-	};
+    struct String {
+        string1024 string;
+        float x, y;
+        float height;
+        u32 c;
+        EAligment align;
+    };
 
 protected:
-	IC const Fvector&		GetCharTC		(u16 c)		{return TCMap[c];}
+    Fvector2 vHalfPixel;
+    Ivector2 vTS;
+
+    EAligment eCurrentAlignment;
+    u32 dwCurrentColor;
+    float fCurrentHeight;
+    float fCurrentX, fCurrentY;
+    Fvector2 vInterval;
+
+    Fvector* TCMap;
+    float fHeight;
+    float fXStep;
+    float fYStep;
+    float fTCHeight;
+    xr_vector<String> strings;
+
+    IFontRender* pFontRender;
+
+    u32 nNumChars;
+
+    u32 uFlags;
 
 public:
-							CGameFont		(LPCSTR section, u32 flags=0);
-							CGameFont		(LPCSTR shader, LPCSTR texture, u32 flags=0);
-							~CGameFont		();
+    enum {
+        fsGradient = (1 << 0),
+        fsDeviceIndependent = (1 << 1),
+        fsValid = (1 << 2),
 
-	void					Initialize		(LPCSTR shader, LPCSTR texture);
+        fsMultibyte = (1 << 3),
 
-	IC void					SetColor		(u32 C)		{dwCurrentColor=C;};
+        fsForceDWORD = u32(-1)
+    };
 
-	IC void					SetHeightI		(float S);
-	IC void					SetHeight		(float S);
+protected:
+    IC const Fvector& GetCharTC(u16 c) { return TCMap[c]; }
 
-	IC float				GetHeight		(){return fCurrentHeight;};
-	IC void					SetInterval		(float x, float y) {vInterval.set(x,y);};
-	IC void					SetInterval		(const Fvector2& v) {vInterval.set(v);};
-	IC void					SetAligment		(EAligment aligment){ eCurrentAlignment=aligment; }
+public:
+    CGameFont(LPCSTR section, u32 flags = 0);
+    CGameFont(LPCSTR shader, LPCSTR texture, u32 flags = 0);
+    ~CGameFont();
 
-	float					SizeOf_			( LPCSTR s );
-	float					SizeOf_			( const wide_char *wsStr );
+    void Initialize(LPCSTR shader, LPCSTR texture);
 
-	float					SizeOf_			( const char cChar );  // only ANSII 
+    IC void SetColor(u32 C) { dwCurrentColor = C; };
 
-	float					CurrentHeight_	();
+    IC void SetHeightI(float S);
+    IC void SetHeight(float S);
 
-	void					OutSetI			(float x, float y);
-	void					OutSet			(float x, float y);
+    IC float GetHeight() { return fCurrentHeight; };
+    IC void SetInterval(float x, float y) { vInterval.set(x, y); };
+    IC void SetInterval(const Fvector2& v) { vInterval.set(v); };
+    IC void SetAligment(EAligment aligment) { eCurrentAlignment = aligment; }
 
-	void 					MasterOut( 	BOOL bCheckDevice , BOOL bUseCoords , BOOL bScaleCoords , BOOL bUseSkip ,
-										float _x , float _y , float _skip , LPCSTR fmt , va_list p );
+    float SizeOf_(LPCSTR s);
+    float SizeOf_(const wide_char* wsStr);
 
-	u32						smart_strlen( const char* S );
-	BOOL					IsMultibyte() { return ( uFlags & fsMultibyte ); };
-	u16						SplitByWidth( u16 * puBuffer , u16 uBufferSize , float fTargetWidth , const char * pszText );
-	u16						GetCutLengthPos( float fTargetWidth , const char * pszText );
+    float SizeOf_(const char cChar); // only ANSII
 
-	void  					OutI			( float _x , float _y , LPCSTR fmt , ... );
-	void  					Out				( float _x , float _y , LPCSTR fmt , ... );
-	void             		OutNext			( LPCSTR fmt , ... );
+    float CurrentHeight_();
 
-	void					OutSkip			(float val=1.f);
+    void OutSetI(float x, float y);
+    void OutSet(float x, float y);
 
-	void					OnRender		();
+    void MasterOut(BOOL bCheckDevice, BOOL bUseCoords, BOOL bScaleCoords, BOOL bUseSkip, float _x,
+                   float _y, float _skip, LPCSTR fmt, va_list p);
 
-	IC	void				Clear			()  { strings.clear(); };
+    u32 smart_strlen(const char* S);
+    BOOL IsMultibyte() { return (uFlags & fsMultibyte); };
+    u16 SplitByWidth(u16* puBuffer, u16 uBufferSize, float fTargetWidth, const char* pszText);
+    u16 GetCutLengthPos(float fTargetWidth, const char* pszText);
+
+    void OutI(float _x, float _y, LPCSTR fmt, ...);
+    void Out(float _x, float _y, LPCSTR fmt, ...);
+    void OutNext(LPCSTR fmt, ...);
+
+    void OutSkip(float val = 1.f);
+
+    void OnRender();
+
+    IC void Clear() { strings.clear(); };
 
 #ifdef DEBUG
-	shared_str				m_font_name;
+    shared_str m_font_name;
 #endif
 };
 

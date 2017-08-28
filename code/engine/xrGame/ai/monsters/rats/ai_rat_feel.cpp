@@ -12,44 +12,42 @@
 #include "../../../enemy_manager.h"
 #include "../../../../xrServerEntities/ai_sounds.h"
 
-BOOL CAI_Rat::feel_vision_isRelevant(CObject* O)
-{
-	CEntityAlive* E = smart_cast<CEntityAlive*> (O);
-	if (!E) return FALSE;
-	if ((E->g_Team() == g_Team()) && (E->g_Alive())) return FALSE;
-	return TRUE;
+BOOL CAI_Rat::feel_vision_isRelevant(CObject* O) {
+    CEntityAlive* E = smart_cast<CEntityAlive*>(O);
+    if (!E)
+        return FALSE;
+    if ((E->g_Team() == g_Team()) && (E->g_Alive()))
+        return FALSE;
+    return TRUE;
 }
 
-void CAI_Rat::feel_sound_new(CObject* who, int eType, CSound_UserDataPtr user_data, const Fvector &Position, float power)
-{
-	if (!g_Alive())
-		return;
+void CAI_Rat::feel_sound_new(CObject* who, int eType, CSound_UserDataPtr user_data,
+                             const Fvector& Position, float power) {
+    if (!g_Alive())
+        return;
 
-	if ((eType & SOUND_TYPE_WEAPON_SHOOTING) == SOUND_TYPE_WEAPON_SHOOTING)
-		power = 1.f;
+    if ((eType & SOUND_TYPE_WEAPON_SHOOTING) == SOUND_TYPE_WEAPON_SHOOTING)
+        power = 1.f;
 
-	if (power >= m_fSoundThreshold) {
-		if ((this != who) && ((m_tLastSound.dwTime <= m_dwLastUpdateTime) || (m_tLastSound.fPower <= power))) {
-			m_tLastSound.eSoundType		= ESoundTypes(eType);
-			m_tLastSound.dwTime			= Device.dwTimeGlobal;
-			m_tLastSound.fPower			= power;
-			m_tLastSound.tSavedPosition = Position;
-			m_tLastSound.tpEntity		= smart_cast<CEntityAlive*>(who);
-			if ((eType & SOUND_TYPE_MONSTER_DYING) == SOUND_TYPE_MONSTER_DYING)
-				m_fMorale += m_fMoraleDeathQuant;
-			else
-				if (((eType & SOUND_TYPE_WEAPON_SHOOTING) == SOUND_TYPE_WEAPON_SHOOTING) && !memory().enemy().selected())
-					m_fMorale += m_fMoraleFearQuant;///fDistance;
-				else
-					if ((eType & SOUND_TYPE_MONSTER_ATTACKING) == SOUND_TYPE_MONSTER_ATTACKING)
-						m_fMorale += m_fMoraleSuccessAttackQuant;///fDistance;
-		}
-	}
+    if (power >= m_fSoundThreshold) {
+        if ((this != who) &&
+            ((m_tLastSound.dwTime <= m_dwLastUpdateTime) || (m_tLastSound.fPower <= power))) {
+            m_tLastSound.eSoundType = ESoundTypes(eType);
+            m_tLastSound.dwTime = Device.dwTimeGlobal;
+            m_tLastSound.fPower = power;
+            m_tLastSound.tSavedPosition = Position;
+            m_tLastSound.tpEntity = smart_cast<CEntityAlive*>(who);
+            if ((eType & SOUND_TYPE_MONSTER_DYING) == SOUND_TYPE_MONSTER_DYING)
+                m_fMorale += m_fMoraleDeathQuant;
+            else if (((eType & SOUND_TYPE_WEAPON_SHOOTING) == SOUND_TYPE_WEAPON_SHOOTING) &&
+                     !memory().enemy().selected())
+                m_fMorale += m_fMoraleFearQuant; /// fDistance;
+            else if ((eType & SOUND_TYPE_MONSTER_ATTACKING) == SOUND_TYPE_MONSTER_ATTACKING)
+                m_fMorale += m_fMoraleSuccessAttackQuant; /// fDistance;
+        }
+    }
 
-	inherited::feel_sound_new	(who,eType,user_data,Position,power);
+    inherited::feel_sound_new(who, eType, user_data, Position, power);
 }
 
-BOOL CAI_Rat::feel_touch_on_contact	(CObject *O)
-{
-	return		(inherited::feel_touch_on_contact(O));
-}
+BOOL CAI_Rat::feel_touch_on_contact(CObject* O) { return (inherited::feel_touch_on_contact(O)); }

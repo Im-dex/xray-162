@@ -13,24 +13,21 @@
 
 using namespace luabind;
 
-#pragma optimize("s",on)
-void CUIComboBox::script_register(lua_State *L)
-{
-	module(L)
-	[
-		class_<CUIComboBox, CUIWindow>("CUIComboBox")
-		.def(						constructor<>())
-		.def("SetVertScroll",		&CUIComboBox::SetVertScroll)
-		.def("SetListLength",		&CUIComboBox::SetListLength)
-		.def("CurrentID",			&CUIComboBox::CurrentID)
-		.def("disable_id",			&CUIComboBox::disable_id)
-		.def("enable_id",			&CUIComboBox::enable_id)
-		.def("AddItem",				&CUIComboBox::AddItem_)
-		.def("GetText",				&CUIComboBox::GetText)
-		.def("GetTextOf",			&CUIComboBox::GetTextOf)
-		.def("SetText",				&CUIComboBox::SetText)
-		.def("ClearList",			&CUIComboBox::ClearList)
-		.def("SetCurrentOptValue",	&CUIComboBox::SetCurrentOptValue)
+#pragma optimize("s", on)
+void CUIComboBox::script_register(lua_State* L) {
+    module(L)[class_<CUIComboBox, CUIWindow>("CUIComboBox")
+                  .def(constructor<>())
+                  .def("SetVertScroll", &CUIComboBox::SetVertScroll)
+                  .def("SetListLength", &CUIComboBox::SetListLength)
+                  .def("CurrentID", &CUIComboBox::CurrentID)
+                  .def("disable_id", &CUIComboBox::disable_id)
+                  .def("enable_id", &CUIComboBox::enable_id)
+                  .def("AddItem", &CUIComboBox::AddItem_)
+                  .def("GetText", &CUIComboBox::GetText)
+                  .def("GetTextOf", &CUIComboBox::GetTextOf)
+                  .def("SetText", &CUIComboBox::SetText)
+                  .def("ClearList", &CUIComboBox::ClearList)
+                  .def("SetCurrentOptValue", &CUIComboBox::SetCurrentOptValue)
 
-	];
+    ];
 }

@@ -6,7 +6,7 @@
 #pragma hdrstop
 
 #ifdef __BORLANDC__
-	#pragma comment(lib,"xrCoreB.lib")
+#pragma comment(lib, "xrCoreB.lib")
 #endif
 
 // TODO: reference any additional headers you need in STDAFX.H
