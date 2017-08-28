@@ -188,7 +188,8 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC) {
 
     bool b_r2 = !!psDeviceFlags.test(rsR2);
     b_r2 |= !!psDeviceFlags.test(rsR3);
-
+    b_r2 |= !!psDeviceFlags.test(rsR4);
+    
     IKinematics* K = smart_cast<IKinematics*>(Visual());
     CInifile* pUserData = K->LL_UserData();
     R_ASSERT3(pUserData, "Empty Torch user data!", torch->get_visual());
