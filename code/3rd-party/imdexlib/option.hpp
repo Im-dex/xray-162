@@ -24,12 +24,12 @@ public:
     {
     }
 
-    explicit option(const none_t&) noexcept
+    option(const none_t&) noexcept
         : option()
     {
     }
 
-    explicit option(const T& that) noexcept(std::is_nothrow_copy_constructible_v<T>)
+    option(const T& that) noexcept(std::is_nothrow_copy_constructible_v<T>)
         : storage(),
           empty(false)
     {
@@ -37,7 +37,7 @@ public:
         construct(that);
     }
 
-    explicit option(T&& that) noexcept(std::is_nothrow_move_constructible_v<T>)
+    option(T&& that) noexcept(std::is_nothrow_move_constructible_v<T>)
         : storage(),
           empty(false)
     {
