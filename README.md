@@ -36,4 +36,7 @@ Switch the following useful options for development using RelWithDebInfo build c
 * Disable LTCG
 * Disable unreferenced function elimination by linker
 
+#### BUILD_TESTS (boolean)
+Enable tests projects build
+
 If you have issues with openal when the game is starting, install extras\oalinst.exe.
