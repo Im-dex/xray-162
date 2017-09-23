@@ -107,6 +107,9 @@ add_subdirectory(code/3rd-party/DPlay)
 add_subdirectory(code/3rd-party/eax)
 add_subdirectory(code/3rd-party/cs)
 
+set(FMT_USE_CPP11 ON)
+add_subdirectory(code/3rd-party/fmtlib EXCLUDE_FROM_ALL)
+
 if (BUILD_TESTS)
     set_target_properties(gmock PROPERTIES FOLDER "3rd-party/gtest")
     set_target_properties(gmock_main PROPERTIES FOLDER "3rd-party/gtest")
