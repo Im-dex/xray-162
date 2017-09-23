@@ -19,44 +19,44 @@ public:
 
     const char* error2string(const DWORD code) const;
 
-    void gather_info(const char* expression, const char* description, const char* file,
-                     const int line, const char* function, char* assertion_info,
-                     const size_t assertion_info_size, std::initializer_list<const char*> args);
+    void gather_info(const std::string_view expression, const std::string_view description,
+                     const std::string_view file, const int line, const std::string_view function,
+                     char* assertion_info, const size_t assertion_info_size,
+                     std::initializer_list<const std::string_view> args);
 
     template <size_t count>
-    void gather_info(const char* expression, const char* description, const char* file,
-                     const int line, const char* function, char (&assertion_info)[count],
-                     std::initializer_list<const char*> args) {
+    void gather_info(const std::string_view expression, const std::string_view description,
+                     const std::string_view file, const int line, const std::string_view function,
+                     char (&assertion_info)[count], std::initializer_list<const std::string_view> args) {
         gather_info(expression, description, file, line, function,
                     assertion_info, count, args);
     }
 
-    void fail(const char* expr, const char* file, const int line, const char* function,
-              bool& ignore_always);
-    void fail(const char* reason, const std::string& expr, const char* file, const int line,
-              const char* function, bool& ignore_always);
-    void fail(const char* reason, const char* expr, const char* file, const int line,
-              const char* function, bool& ignore_always);
-    void fail(const char* reason, const char* expr, std::initializer_list<const char*> args,
-              const char* file, const int line, const char* function, bool& ignore_always);
-    void error(const DWORD code, const char* expr, std::initializer_list<const char*> args,
-               const char* file, const int line, const char* function, bool& ignore_always);
+    void fail(const std::string_view expr, const std::string_view file, const int line,
+              const std::string_view function, bool& ignore_always);
+    void fail(const std::string_view reason, const std::string_view expr, const std::string_view file,
+              const int line, const std::string_view function, bool& ignore_always);
+    void fail(const std::string_view reason, const std::string_view expr,
+              std::initializer_list<const std::string_view> args, const std::string_view file,
+              const int line, const std::string_view function, bool& ignore_always);
+    void error(const DWORD code, const std::string_view expr, std::initializer_list<const std::string_view> args,
+               const std::string_view file, const int line, const std::string_view function, bool& ignore_always);
 
     template <typename... Args>
-    void fatal(const char* file, const int line, const char* function, const char* format,
-               const Args&... args) {
-        static constexpr size_t kBufferSize = 1024;
-        char buffer[kBufferSize];
-
-        std::snprintf(buffer, kBufferSize, format, args...);
+    void fatal(const std::string_view file, const int line, const std::string_view function,
+               const char* format, const Args&... args) {
+        std::array<char, 2048> buffer;
+        std::snprintf(buffer.data(), buffer.size(), format, args...);
         bool ignore_always = true;
 
-        backend("fatal error", "<no expression>", { buffer }, file, line, function, ignore_always);
+        backend("fatal error", "<no expression>", { buffer.data() }, file, line, function, ignore_always);
     }
 
-    void backend(const char* reason, const char* expression, std::initializer_list<const char*> args,
-                 const char* file, const int line, const char* function, bool& ignore_always);
-    __declspec(noreturn) static void do_exit(const std::string& message);
+    void backend(const std::string_view reason, const std::string_view expression,
+                 std::initializer_list<const std::string_view> args,
+                 const std::string_view file, const int line, const std::string_view function,
+                 bool& ignore_always);
+    [[noreturn]] static void do_exit(const std::string& message);
 };
 
 // warning

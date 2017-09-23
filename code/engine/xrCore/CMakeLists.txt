@@ -107,5 +107,5 @@ add_library(xrCore SHARED ${COMPRESSOR_LZ} ${COMPRESSOR_LZO} ${COMPRESSOR_RT}
                           
                           ${SMEM_STR_LIB})
 target_include_directories(xrCore PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(xrCore PUBLIC dxerr2015 version dbghelp winmm faultrep psapi
+target_link_libraries(xrCore PUBLIC dxerr2015 version dbghelp winmm faultrep psapi fmt::fmt-header-only
                              PRIVATE PowrProf)
