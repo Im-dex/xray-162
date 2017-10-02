@@ -229,6 +229,22 @@ public:
         return value();
     }
 
+    reference operator* () noexcept {
+        return get();
+    }
+
+    const_reference operator* () const noexcept {
+        return get();
+    }
+
+    T* operator-> () noexcept {
+        return std::addressof(get());
+    }
+
+    const T* operator-> () const noexcept {
+        return std::addressof(get());
+    }
+
     void swap(option& that) noexcept(std::is_nothrow_swappable_v<T&>         &&
                                      std::is_nothrow_move_constructible_v<T> &&
                                      std::is_nothrow_destructible_v<T>) {
@@ -305,7 +321,7 @@ private:
 
     void destroy() noexcept(std::is_nothrow_destructible_v<T>) {
         if constexpr(!std::is_trivially_destructible_v<T>) {
-            if (non_empty()) pointer()->~U();
+            if (non_empty()) pointer()->~T();
         }
     }
 
@@ -323,7 +339,7 @@ public:
     option() = default;
     option(const option& that) : ref(that.ref) {}
     option(none_t) : option() {}
-    explicit option(std::reference_wrapper<T> ref) : ref(&(ref.get())) {}
+    option(std::reference_wrapper<T> ref) : ref(&(ref.get())) {}
 
     option& operator= (const option& that) {
         ref = that.ref;
@@ -401,6 +417,14 @@ public:
     reference get_or_throw(E&& exception) {
         if (empty()) throw std::forward<E>(exception);
         return *ref;
+    }
+
+    reference operator* () noexcept {
+        return get();
+    }
+
+    const_reference operator* () const noexcept {
+        return get();
     }
 
     void swap(option& that) noexcept {

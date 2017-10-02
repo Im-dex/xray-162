@@ -7,6 +7,11 @@
 
 namespace imdex {
 
+enum class InsertResult {
+    New,
+    Update
+};
+
 template <typename Key,
           typename Value,
           typename Comp = std::less<Key>,
@@ -142,7 +147,7 @@ public:
 
     void insert(std::initializer_list<value_type> list) {
         storage.reserve(list.size());
-        insert(list.begin(), list.end());
+        insertImpl(list.begin(), list.end());
     }
 
     template <typename Sequence>
@@ -157,18 +162,41 @@ public:
             }
 
             if constexpr (std::is_rvalue_reference_v<Sequence&&>) {
-                insert(std::make_move_iterator(seq.begin()),
-                       std::make_move_iterator(seq.end()));
+                insertImpl(std::make_move_iterator(seq.begin()),
+                           std::make_move_iterator(seq.end()));
             } else {
-                insert(seq.begin(), seq.end());
+                insertImpl(seq.begin(), seq.end());
             }
         } else {
             static_assert(false, "Argument is not a sequence");
         }
     }
 
+    InsertResult insert(value_type value) {
+        return insert(std::move(value.first), std::move(value.second));
+    }
+
+    InsertResult insert(Key key, Value value) {
+        const auto iter = lower_bound(key, Comp());
+        if (iter != end() && iter->first == key) {
+            iter->second = std::move(value);
+            return InsertResult::Update;
+        } else {
+            storage.insert(iter, std::make_pair(std::move(key), std::move(value)));
+            return InsertResult::New;
+        }
+    }
+
+    void erase(const iterator elem) {
+        storage.erase(elem);
+    }
+
     void clear() {
         storage.clear();
+    }
+
+    void reserve(const size_t capacity) {
+        storage.reserve(capacity);
     }
 
     void swap(FlatMap& that) {
@@ -192,7 +220,7 @@ private:
     }
 
     template <typename BeginIter, typename EndIter>
-    void insert(BeginIter iter, EndIter endIter) {
+    void insertImpl(BeginIter iter, EndIter endIter) {
         for (; iter != endIter; ++iter) {
             const auto elementIter = find(iter->first);
             if (elementIter != end()) {

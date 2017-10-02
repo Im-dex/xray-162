@@ -7,7 +7,28 @@ using namespace imdex;
 using namespace testing;
 using namespace std::string_literals;
 
-TEST(FlatMapTest, FillTest) {
+TEST(FlatMapTest, InsertTest) {
+    using Map = FlatMap<int, int, std::greater<int>>;
+    Map map;
+
+    EXPECT_EQ(map.insert(0, 1), InsertResult::New);
+    EXPECT_EQ(map.insert(2, 2), InsertResult::New);
+    EXPECT_EQ(map.insert(4, 3), InsertResult::New);
+    EXPECT_EQ(map.insert(3, 4), InsertResult::New);
+    EXPECT_EQ(map.insert(1, 5), InsertResult::New);
+
+    const auto keyPred = [](const auto& lhs, const auto& rhs) {
+        return lhs.first > rhs.first;
+    };
+
+    EXPECT_THAT(map, SizeIs(5));
+    EXPECT_THAT(map, Not(IsEmpty()));
+    EXPECT_TRUE(std::is_sorted(map.begin(), map.end(), keyPred));
+
+    EXPECT_EQ(map.insert({ 0, 42 }), InsertResult::Update);
+}
+
+TEST(FlatMapTest, BulkInsertTest) {
     using Map = FlatMap<int, std::string>;
     Map map = {
         { 0,  ""s   },
