@@ -80,10 +80,16 @@ void HUD_SOUND_ITEM::PlaySound(HUD_SOUND_ITEM& hud_snd, const Fvector& position,
         index = (u8)Random.randI(hud_snd.sounds.size());
 
     hud_snd.m_activeSnd = &hud_snd.sounds[index];
-
-    hud_snd.m_activeSnd->snd.play_at_pos(const_cast<CObject*>(parent),
-                                         flags & sm_2D ? Fvector().set(0, 0, 0) : position, flags,
-                                         hud_snd.m_activeSnd->delay);
+	if (hud_snd.m_b_exclusive) {
+		hud_snd.m_activeSnd->snd.play_at_pos(const_cast<CObject*>(parent), flags&sm_2D ? Fvector().set(0, 0, 0) : position, flags, hud_snd.m_activeSnd->delay);
+	}
+	else {
+		hud_snd.m_activeSnd->snd.play_no_feedback(const_cast<CObject*>(parent),
+			flags,
+			hud_snd.m_activeSnd->delay,
+			flags&sm_2D ? &Fvector().set(0, 0, 0) : &Fvector().set(position.x, position.y, position.z),
+			0, 0, 0);
+	}
 
     hud_snd.m_activeSnd->snd.set_volume(hud_snd.m_activeSnd->volume * b_hud_mode ? psHUDSoundVolume
                                                                                  : 1.0f);

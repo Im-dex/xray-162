@@ -7,7 +7,7 @@
 *.ipch
 *.db
 *.opendb
-
+*.bak
 build*/
 code/lib/
 code/pdb/

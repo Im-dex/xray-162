@@ -51,7 +51,6 @@
 #define OGL_FORCE_STEREO_STRING                    L"Force Stereo shuttering"
 #define OGL_IMPLICIT_GPU_AFFINITY_STRING           L"Preferred OpenGL GPU"
 #define OGL_MAX_FRAMES_ALLOWED_STRING              L"Maximum frames allowed"
-#define OGL_MULTIMON_STRING                        L"Multi-display/mixed-GPU acceleration"
 #define OGL_OVERLAY_PIXEL_TYPE_STRING              L"Exported Overlay pixel types"
 #define OGL_OVERLAY_SUPPORT_STRING                 L"Enable overlay"
 #define OGL_QUALITY_ENHANCEMENTS_STRING            L"High level control of the rendering quality on OpenGL"
@@ -125,8 +124,6 @@
 #define ICAFE_LOGO_CONFIG_STRING                   L"ICafe Settings"
 #define LODBIASADJUST_STRING                       L"Texture filtering - LOD Bias"
 #define MAXWELL_B_SAMPLE_INTERLEAVE_STRING         L"Enable sample interleaving (MFAA)"
-#define NLS_ALLOW_STRING                           L"NVIDIA Predefined Nonlinear Scale Usage"
-#define NLS_ENABLE_STRING                          L"Enable Nonlinear Scale"
 #define PRERENDERLIMIT_STRING                      L"Maximum pre-rendered frames"
 #define PS_SHADERDISKCACHE_STRING                  L"Shader Cache"
 #define PS_TEXFILTER_ANISO_OPTS2_STRING            L"Texture filtering - Anisotropic sample optimization"
@@ -152,7 +149,6 @@ enum ESetting {
     OGL_FORCE_STEREO_ID                           = 0x204D9A0C,
     OGL_IMPLICIT_GPU_AFFINITY_ID                  = 0x20D0F3E6,
     OGL_MAX_FRAMES_ALLOWED_ID                     = 0x208E55E3,
-    OGL_MULTIMON_ID                               = 0x200AEBFC,
     OGL_OVERLAY_PIXEL_TYPE_ID                     = 0x209AE66F,
     OGL_OVERLAY_SUPPORT_ID                        = 0x206C28C4,
     OGL_QUALITY_ENHANCEMENTS_ID                   = 0x20797D6C,
@@ -226,8 +222,6 @@ enum ESetting {
     ICAFE_LOGO_CONFIG_ID                          = 0x00DB1337,
     LODBIASADJUST_ID                              = 0x00738E8F,
     MAXWELL_B_SAMPLE_INTERLEAVE_ID                = 0x0098C1AC,
-    NLS_ALLOW_ID                                  = 0x00041806,
-    NLS_ENABLE_ID                                 = 0x00120618,
     PRERENDERLIMIT_ID                             = 0x007BA09E,
     PS_SHADERDISKCACHE_ID                         = 0x00198FFF,
     PS_TEXFILTER_ANISO_OPTS2_ID                   = 0x00E73211,
@@ -240,9 +234,9 @@ enum ESetting {
     SET_VAB_DATA_ID                               = 0x00AB8687,
     VSYNCMODE_ID                                  = 0x00A879CF,
     VSYNCTEARCONTROL_ID                           = 0x005A375C,
-    TOTAL_DWORD_SETTING_NUM = 95,
+    TOTAL_DWORD_SETTING_NUM = 92,
     TOTAL_WSTRING_SETTING_NUM = 4,
-    TOTAL_SETTING_NUM = 99,
+    TOTAL_SETTING_NUM = 96,
     INVALID_SETTING_ID = 0xFFFFFFFF
 };
 
@@ -318,19 +312,6 @@ enum EValues_OGL_FORCE_STEREO {
 #define    OGL_IMPLICIT_GPU_AFFINITY_AUTOSELECT                 L"autoselect"
 #define    OGL_IMPLICIT_GPU_AFFINITY_NUM_VALUES 1
 #define    OGL_IMPLICIT_GPU_AFFINITY_DEFAULT OGL_IMPLICIT_GPU_AFFINITY_AUTOSELECT
-
-enum EValues_OGL_MULTIMON {
-    OGL_MULTIMON_SINGLE_MONITOR                          = 0,
-    OGL_MULTIMON_COMPATIBILITY_LCD                       = 1,
-    OGL_MULTIMON_COMPATIBILITY_GCD                       = 2,
-    OGL_MULTIMON_PERFORMANCE_LCD                         = 3,
-    OGL_MULTIMON_PERFORMANCE_GCD                         = 4,
-    OGL_MULTIMON_EXTENDED_SINGLE_MONITOR                 = 5,
-    OGL_MULTIMON_PERFORMANCE_QUADRO                      = 6,
-    OGL_MULTIMON_MULTIMON_BUFFER                         = 7,
-    OGL_MULTIMON_NUM_VALUES = 8,
-    OGL_MULTIMON_DEFAULT = OGL_MULTIMON_PERFORMANCE_LCD
-};
 
 enum EValues_OGL_OVERLAY_PIXEL_TYPE {
     OGL_OVERLAY_PIXEL_TYPE_NONE                          = 0x0,
@@ -696,19 +677,22 @@ enum EValues_PS_FRAMERATE_LIMITER {
     PS_FRAMERATE_LIMITER_FPS_30                          = 0x0000001e,
     PS_FRAMERATE_LIMITER_FPS_40                          = 0x00000028,
     PS_FRAMERATE_LIMITER_FPSMASK                         = 0x000000ff,
+    PS_FRAMERATE_LIMITER_NO_ALIGN                        = 0x00004000,
+    PS_FRAMERATE_LIMITER_BB_QM                           = 0x00008000,
     PS_FRAMERATE_LIMITER_FRL2                            = 0x00010000,
     PS_FRAMERATE_LIMITER_LOWER_FPS_TO_ALIGN              = 0x00020000,
     PS_FRAMERATE_LIMITER_FORCE_VSYNC_OFF                 = 0x00040000,
     PS_FRAMERATE_LIMITER_GPS_WEB                         = 0x00080000,
     PS_FRAMERATE_LIMITER_DISALLOWED                      = 0x00200000,
     PS_FRAMERATE_LIMITER_USE_CPU_WAIT                    = 0x00400000,
+    PS_FRAMERATE_LIMITER_NO_LAG_OFFSET                   = 0x00800000,
     PS_FRAMERATE_LIMITER_ACCURATE                        = 0x10000000,
     PS_FRAMERATE_LIMITER_ALLOW_WINDOWED                  = 0x20000000,
     PS_FRAMERATE_LIMITER_FORCEON                         = 0x40000000,
     PS_FRAMERATE_LIMITER_ENABLED                         = 0x80000000,
     PS_FRAMERATE_LIMITER_OPENGL_REMOTE_DESKTOP           = 0xe000003c,
-    PS_FRAMERATE_LIMITER_MASK                            = 0xf06f00ff,
-    PS_FRAMERATE_LIMITER_NUM_VALUES = 17,
+    PS_FRAMERATE_LIMITER_MASK                            = 0xf0efc0ff,
+    PS_FRAMERATE_LIMITER_NUM_VALUES = 20,
     PS_FRAMERATE_LIMITER_DEFAULT = PS_FRAMERATE_LIMITER_DISABLED
 };
 
@@ -1072,20 +1056,6 @@ enum EValues_MAXWELL_B_SAMPLE_INTERLEAVE {
     MAXWELL_B_SAMPLE_INTERLEAVE_ON                       = 1,
     MAXWELL_B_SAMPLE_INTERLEAVE_NUM_VALUES = 2,
     MAXWELL_B_SAMPLE_INTERLEAVE_DEFAULT = MAXWELL_B_SAMPLE_INTERLEAVE_OFF
-};
-
-enum EValues_NLS_ALLOW {
-    NLS_ALLOW_DISALLOWED                                 = 0,
-    NLS_ALLOW_ALLOWED                                    = 1,
-    NLS_ALLOW_NUM_VALUES = 2,
-    NLS_ALLOW_DEFAULT = NLS_ALLOW_ALLOWED
-};
-
-enum EValues_NLS_ENABLE {
-    NLS_ENABLE_OFF                                       = 0,
-    NLS_ENABLE_ON                                        = 1,
-    NLS_ENABLE_NUM_VALUES = 2,
-    NLS_ENABLE_DEFAULT = NLS_ENABLE_OFF
 };
 
 enum EValues_PRERENDERLIMIT {
