@@ -10,417 +10,501 @@ namespace imdex {
 struct none_t final {};
 
 template <typename T>
-class option final
-{
+class option final {
     static_assert(!std::is_const_v<T>, "Optional type shouldn't be const. Use 'const option<T>' declaration instead.");
-    static_assert(!std::is_reference_v<T>, "Optional type shouldn't be reference.");
-    static_assert(!std::is_pointer_v<T>, "Optional type shouldn't be pointer.");
     static_assert(std::is_destructible_v<T>, "Optional type should be destructible");
+    static_assert(!std::is_rvalue_reference_v<T>, "Optional type shouldn't be a rvalue reference type");
 public:
+    using value_type = T;
+    using reference = T&;
+    using const_reference = std::add_const_t<T>&;
 
     option() noexcept
         : storage(),
-          empty(true)
-    {
-    }
+          empty_(true)
+    {}
 
-    option(const none_t&) noexcept
+    option(none_t) noexcept
         : option()
-    {
+    {}
+
+    template <typename U>
+    option(U&& value) noexcept(std::is_nothrow_constructible_v<T, U&&>)
+        : storage(),
+          empty_(false) {
+        if constexpr(std::is_constructible_v<T, U&&>) {
+            construct(std::forward<U>(value));
+        } else {
+            static_assert(false, "Optional type needs to be constructible from argument type");
+        }
     }
 
-    option(const T& that) noexcept(std::is_nothrow_copy_constructible_v<T>)
+    template <typename U>
+    option(const option<U>& that) noexcept(std::is_nothrow_constructible_v<T, const U&>)
         : storage(),
-          empty(false)
-    {
-        static_assert(std::is_copy_constructible_v<T>, "Optional type should be copy constructible");
-        construct(that);
+          empty_(that.empty_) {
+        if constexpr(std::is_constructible_v<T, const U&>) {
+            if (that.non_empty()) construct(that.value());
+        } else {
+            static_assert(false, "Optional type needs to be constructible from optinal argument type");
+        }
     }
 
-    option(T&& that) noexcept(std::is_nothrow_move_constructible_v<T>)
+    template <typename U>
+    option(option<U>&& that) noexcept(std::is_nothrow_constructible_v<T, U&&>)
         : storage(),
-          empty(false)
-    {
-        static_assert(std::is_move_constructible_v<T>, "Optional type should be move constructible");
-        construct(std::move(that));
-    }
-
-    option(const option& that) noexcept(std::is_nothrow_copy_constructible_v<T>)
-        : storage(),
-          empty(that.empty)
-    {
-        static_assert(std::is_copy_constructible_v<T>, "Optional type should be copy constructible");
-        if (that.non_empty()) construct(that.value());
-    }
-
-    option(option&& that) noexcept(std::is_nothrow_move_constructible_v<T>)
-        : storage(),
-          empty(that.empty)
-    {
-        static_assert(std::is_move_constructible_v<T>, "Optional type should be move constructible");
-        if (that.non_empty()) construct(std::move(that.value()));
+          empty_(that.empty_) {
+        if constexpr(std::is_constructible_v<T, U&&>) {
+            if (that.non_empty()) construct(std::move(that.value()));
+        } else {
+            static_assert(false, "Optional type needs to be constructible from optional argument type");
+        }
     }
 
     template <typename... Ts>
     explicit option(const in_place&, Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>)
         : storage(),
-          empty(false)
-    {
-        static_assert(std::is_constructible_v<T, Ts&&...>, "Optional type should be constructible from 'Ts&&...'");
-        construct(std::forward<Ts>(args)...);
+          empty_(false) {
+        if constexpr (std::is_constructible_v<T, Ts&&...>) {
+            construct(std::forward<Ts>(args)...);
+        } else {
+            static_assert(false, "Optional type needs to be constructible from passed arguments");
+        }
     }
 
-    ~option() noexcept(std::is_nothrow_destructible_v<T>)
-    {
+    ~option() noexcept(std::is_nothrow_destructible_v<T>) {
         destroy();
     }
 
-    option& operator= (const none_t&) noexcept(std::is_nothrow_destructible_v<T>)
-    {
+    option& operator= (none_t) noexcept(std::is_nothrow_destructible_v<T>) {
         reset();
         return *this;
     }
 
-    option& operator= (const option& that) noexcept(std::is_nothrow_copy_assignable_v<T>    &&
-                                                    std::is_nothrow_copy_constructible_v<T> &&
-                                                    std::is_nothrow_destructible_v<T>)
+    template <typename U>
+    option& operator= (const option<U>& that) noexcept(std::is_nothrow_assignable_v<T, const U&>    &&
+                                                       std::is_nothrow_constructible_v<T, const U&> &&
+                                                       std::is_nothrow_destructible_v<T>)
     {
-        static_assert(std::is_copy_constructible_v<T> && std::is_copy_assignable_v<T>, "Optional type should be copy constructible and copy assignable");
-
-        if (!(is_empty() && that.empty))
-        {
-            if (non_empty() && that.non_empty())      assign(that.value());
-            else if (is_empty() && that.non_empty())  initialize(that.value());
-            else                                      reset();
+        if constexpr(std::is_constructible_v<T, const U&> && std::is_assignable_v<T, const U&>) {
+            if (non_empty() || that.non_empty()) {
+                if (non_empty() && that.non_empty())  assign(that.value());
+                else if (empty() && that.non_empty()) initialize(that.value());
+                else                                  reset();
+            }
+        } else {
+            static_assert(false, "Optional type needs to be constructible and assignable from the argument optional type");
         }
 
         return *this;
     }
 
-    option& operator= (option&& that) noexcept(std::is_nothrow_move_assignable_v<T>    &&
-                                               std::is_nothrow_move_constructible_v<T> &&
-                                               std::is_nothrow_destructible_v<T>)
+    template <typename U>
+    option& operator= (option<U>&& that) noexcept(std::is_nothrow_assignable_v<T&, U&&>    &&
+                                                  std::is_nothrow_constructible_v<T, U&&> &&
+                                                  std::is_nothrow_destructible_v<T>)
     {
-        static_assert(std::is_move_constructible_v<T> && std::is_move_assignable_v<T>, "Optional type should be move constructible and move assignable");
-
-        if (!(is_empty() && that.empty))
-        {
-            if (non_empty() && that.non_empty())      assign(std::move(that).value());
-            else if (is_empty() && that.non_empty())  initialize(std::move(that).value());
-            else                                      reset();
+        if constexpr (std::is_constructible_v<T, U&&> && std::is_assignable_v<T&, U&&>) {
+            if (non_empty() || that.non_empty()) {
+                if (non_empty() && that.non_empty())  assign(std::move(that.value()));
+                else if (empty() && that.non_empty()) initialize(std::move(that.value()));
+                else                                  reset();
+            }
+        } else {
+            static_assert(false, "Optional type needs to be constructible and assignable from the argument optional type");
         }
 
         return *this;
     }
 
-    option& operator= (const T& that) noexcept(std::is_nothrow_copy_assignable_v<T> && std::is_nothrow_copy_constructible_v<T>)
-    {
-        static_assert(std::is_copy_constructible_v<T> && std::is_copy_assignable_v<T>, "Optional type should be copy constructible and copy assignable");
-
-        if (is_empty()) initialize(that);
-        else            assign(that);
-
-        return *this;
-    }
-
-    option& operator= (T&& that) noexcept(std::is_nothrow_move_assignable_v<T> && std::is_nothrow_move_constructible_v<T>)
-    {
-        static_assert(std::is_move_constructible_v<T> && std::is_move_assignable_v<T>, "Optional type should be move constructible and move assignable");
-
-        if (is_empty()) initialize(std::move(that));
-        else            assign(std::move(that));
+    template <typename U>
+    option& operator= (U&& value) noexcept(std::is_nothrow_assignable_v<T&, U&&> && std::is_nothrow_constructible_v<T, U&&>) {
+        if constexpr (std::is_constructible_v<T, U&&> && std::is_assignable_v<T&, U&&>) {
+            if (empty()) initialize(std::forward<U>(value));
+            else         assign(std::forward<U>(value));
+        } else {
+            static_assert(false, "Optional type needs to be constructible and assignable from the argument type");
+        }
 
         return *this;
     }
 
-    void reset() noexcept(std::is_nothrow_destructible_v<T>)
-    {
-        if (non_empty())
-        {
+    void reset() noexcept(std::is_nothrow_destructible_v<T>) {
+        if (non_empty()) {
             destroy();
-            empty = true;
+            empty_ = true;
         }
     }
 
-    bool operator== (const none_t&) const noexcept
-    {
-        return is_empty();
+    template <typename... Ts>
+    void emplace(Ts&&... args) noexcept(noexcept(reset()) && std::is_nothrow_constructible_v<T, Ts&&...>) {
+        reset();
+        initialize(std::forward<Ts>(args)...);
     }
 
-    bool operator!= (const none_t&) const noexcept
-    {
+    bool operator== (none_t) const noexcept {
+        return empty();
+    }
+
+    bool operator!= (none_t) const noexcept {
         return non_empty();
     }
 
-    bool operator== (const option& that) const noexcept(is_nothrow_comparable_v<const T>)
-    {
-        static_assert(is_comparable_v<const T>, "Optional type should be comparable");
-        return (is_empty() == that.empty) && (is_empty() ? true : (value() == that.value()));
+    template <typename U>
+    bool operator== (const option<U>& that) const noexcept {
+        if constexpr (is_comparable_to_v<const T&, const U&>) {
+            return (empty() == that.empty()) && (empty() ? true : (value() == that.value()));
+        } else {
+            static_assert(false, "Types not comparable");
+        }
     }
 
-    bool operator!= (const option& that) const noexcept(is_nothrow_comparable_v<const T>)
-    {
+    template <typename U>
+    bool operator!= (const option<U>& that) const noexcept {
         return !(*this == that);
     }
 
-    bool operator== (const T& that) const noexcept(is_nothrow_comparable_v<const T>)
-    {
-        static_assert(is_comparable_v<const T>, "Optional type should be comparable");
-        return empty ? false : (value() == that);
+    template <typename U>
+    bool operator== (const U& that) const noexcept {
+        if constexpr (is_comparable_to_v<const T&, const U&>) {
+            return empty() ? false : (value() == that);
+        } else {
+            static_assert(false, "Types not comparable");
+            return false;
+        }
     }
 
-    bool operator!= (const T& that) const noexcept(is_nothrow_comparable_v<const T>)
-    {
+    bool operator!= (const T& that) const noexcept {
         return !(*this == that);
     }
 
-    size_t size() const noexcept
-    {
-        return empty ? size_t(0) : size_t(1);
+    size_t size() const noexcept {
+        return empty() ? size_t(0) : size_t(1);
     }
 
-    bool is_empty() const noexcept { return empty; }
-    bool non_empty() const noexcept { return !empty; }
+    bool empty() const noexcept { return empty_; }
+    bool non_empty() const noexcept { return !empty_; }
 
-    const T& get() const & noexcept
-    {
+    const_reference get() const noexcept {
         assert(non_empty());
         return value();
     }
 
-    T& get() & noexcept
-    {
+    reference get() noexcept {
         assert(non_empty());
         return value();
     }
 
-    T get() && noexcept
-    {
-        assert(non_empty());
-        return value();
+    const_reference get_or_else(const T& $default) const noexcept {
+        return empty() ? $default : value();
     }
 
-    const T& get_or_else(const T& $default) const noexcept
-    {
-        return empty ? $default : value();
-    }
-
-    T& get_or_else(T& $default) noexcept
-    {
-        return empty ? $default : value();
-    }
-
-    T get_or_else(T&& $default) && noexcept
-    {
-        return empty ? $default : std::move(value());
+    reference get_or_else(T& $default) noexcept {
+        return empty() ? $default : value();
     }
 
     template <typename E>
-    const T& get_or_throw() const &
-    {
-        static_assert(std::is_default_constructible_v<E>, "Exception type should be default constructible");
-        if (is_empty()) throw E{};
+    const_reference get_or_throw() const {
+        static_assert(std::is_default_constructible_v<E>, "Exception type needs to be default constructible");
+        if (empty()) throw E{};
         return value();
     }
 
     template <typename E>
-    T& get_or_throw() &
-    {
-        static_assert(std::is_default_constructible_v<E>, "Exception type should be default constructible");
-        if (is_empty()) throw E{};
+    reference get_or_throw() {
+        static_assert(std::is_default_constructible_v<E>, "Exception type needs to be default constructible");
+        if (empty()) throw E{};
         return value();
     }
 
     template <typename E>
-    T get_or_throw() &&
-    {
-        static_assert(std::is_default_constructible_v<E>, "Exception type should be default constructible");
-        if (is_empty()) throw E{};
-        return std::move(value());
-    }
-
-    template <typename E>
-    const T& get_or_throw(E&& exception) const &
-    {
-        if (empty) throw std::forward<E>(exception);
+    const_reference get_or_throw(E&& exception) const {
+        if (empty()) throw std::forward<E>(exception);
         return value();
     }
 
     template <typename E>
-    T& get_or_throw(E&& exception) &
-    {
-        if (empty) throw std::forward<E>(exception);
+    reference get_or_throw(E&& exception) {
+        if (empty()) throw std::forward<E>(exception);
         return value();
     }
 
-    template <typename E>
-    T get_or_throw(E&& exception) const &&
-    {
-        if (empty) throw std::forward<E>(exception);
-        return std::move(value());
+    reference operator* () noexcept {
+        return get();
+    }
+
+    const_reference operator* () const noexcept {
+        return get();
+    }
+
+    T* operator-> () noexcept {
+        return std::addressof(get());
+    }
+
+    const T* operator-> () const noexcept {
+        return std::addressof(get());
     }
 
     void swap(option& that) noexcept(std::is_nothrow_swappable_v<T&>         &&
                                      std::is_nothrow_move_constructible_v<T> &&
-                                     std::is_nothrow_destructible_v<T>)
-    {
-        static_assert(std::is_swappable_v<T&> && std::is_move_constructible_v<T>, "Optional type should be swapable and move constructible");
+                                     std::is_nothrow_destructible_v<T>) {
+        if constexpr (std::is_swappable_v<T&> && std::is_move_constructible_v<T>) {
+            using std::swap;
 
-        using std::swap;
-
-        if (!(is_empty() && that.empty))
-        {
-            if (non_empty() && that.non_empty()) swap(value(), that.value());
-            else if (is_empty())
-            {
-                initialize(std::move(that.value()));
-                that.reset();
+            if (!(empty() && that.empty())) {
+                if (non_empty() && that.non_empty()) {
+                    swap(value(), that.value());
+                } else if (empty()) {
+                    initialize(std::move(that.value()));
+                    that.reset();
+                } else {
+                    that.initialize(std::move(value()));
+                    reset();
+                }
             }
-            else
-            {
-                that.initialize(std::move(value()));
-                reset();
-            }
+        } else {
+            static_assert(false, "Optional type needs to be swapable and move constructible");
         }
     }
 
-    void swap(T& that) noexcept(std::is_nothrow_swappable_v<T&> && std::is_nothrow_move_constructible_v<T>)
-    {
-        static_assert(std::is_swappable_v<T&> && std::is_move_constructible_v<T>, "Optional type should be swapable and move constructible");
-
-        using std::swap;
-
-        if (is_empty()) initialize(std::move(that));
-        else            swap(value(), that);
+    void swap(T& that) noexcept(std::is_nothrow_swappable_v<T&> &&
+                                std::is_nothrow_move_constructible_v<T>) {
+        if constexpr (std::is_swappable_v<T&> && std::is_move_constructible_v<T>) {
+            using std::swap;
+            if (empty()) initialize(std::move(that));
+            else         swap(value(), that);
+        } else {
+            static_assert(false, "Optional type needs to be swapable and move constructible");
+        }
     }
 
 private:
-
-    template <typename U>
-    friend struct std::hash;
-
-    const T* pointer() const noexcept
-    {
+    const T* pointer() const noexcept {
         return reinterpret_cast<const T*>(std::addressof(storage));
     }
 
-    T* pointer() noexcept
-    {
+    T* pointer() noexcept {
         return reinterpret_cast<T*>(std::addressof(storage));
     }
 
-    const T* pointer_or_null() const noexcept
-    {
-        return empty ? nullptr : pointer();
+    const T* pointer_or_null() const noexcept {
+        return empty() ? nullptr : pointer();
     }
 
-    T* pointer_or_null() noexcept
-    {
-        return empty ? nullptr : pointer();
+    T* pointer_or_null() noexcept {
+        return empty() ? nullptr : pointer();
     }
 
-    const T& value() const & noexcept
-    {
+    const_reference value() const noexcept {
         return *pointer();
     }
 
-    T& value() & noexcept
-    {
+    reference value() noexcept {
         return *pointer();
-    }
-
-    T value() && noexcept
-    {
-        return std::move(*pointer());
     }
 
     template <typename... Ts>
-    void construct(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>)
-    {
+    void construct(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>) {
         new (pointer()) T(std::forward<Ts>(args)...);
     }
 
     template <typename... Ts>
-    void initialize(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>)
-    {
+    void initialize(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>) {
         construct(std::forward<Ts>(args)...);
-        empty = false;
+        empty_ = false;
     }
 
     template <typename U>
-    void assign(U&& object) noexcept(std::is_nothrow_assignable_v<T, U&&>)
-    {
+    void assign(U&& object) noexcept(std::is_nothrow_assignable_v<T, U&&>) {
         value() = std::forward<U>(object);
     }
 
-    template <typename U>
-    static auto destroy(U*) noexcept -> std::enable_if_t<std::is_trivially_destructible_v<U>>
-    {
-    }
-
-    template <typename U>
-    static auto destroy(U* object) noexcept(std::is_nothrow_destructible_v<U>) -> std::enable_if_t<!std::is_trivially_destructible_v<U>>
-    {
-        object->~U();
-    }
-
-    void destroy() noexcept(noexcept(destroy(pointer())))
-    {
-        if (non_empty()) destroy(pointer());
+    void destroy() noexcept(std::is_nothrow_destructible_v<T>) {
+        if constexpr(!std::is_trivially_destructible_v<T>) {
+            if (non_empty()) pointer()->~T();
+        }
     }
 
     std::aligned_storage_t<sizeof(T), alignof(T)> storage;
-    bool empty;
+    bool empty_;
 };
 
 template <typename T>
-option<remove_cvr_t<T>> some(T&& value) noexcept(std::is_nothrow_constructible_v<remove_cvr_t<T>, T&&>)
-{
-    return option<remove_cvr_t<T>>(std::forward<T>(value));
+class option<T&> final {
+public:
+    using value_type = T;
+    using reference = T&;
+    using const_reference = std::add_const_t<T>&;
+
+    option() = default;
+    option(const option& that) : ref(that.ref) {}
+    option(none_t) : option() {}
+    option(std::reference_wrapper<T> ref) : ref(&(ref.get())) {}
+
+    option& operator= (const option& that) {
+        ref = that.ref;
+        return *this;
+    }
+
+    option& operator= (std::reference_wrapper<T> ref) {
+        this->ref = &(ref.get());
+        return *this;
+    }
+
+    bool operator== (none_t) const noexcept {
+        return empty();
+    }
+
+    bool operator!= (none_t) const noexcept {
+        return non_empty();
+    }
+
+    void reset() {
+        ref = nullptr;
+    }
+
+    size_t size() const noexcept {
+        return ref ? size_t(1) : size_t(0);
+    }
+
+    bool empty() const noexcept {
+        return ref == nullptr;
+    }
+
+    bool non_empty() const noexcept {
+        return ref != nullptr;
+    }
+
+    const_reference get() const noexcept {
+        assert(non_empty());
+        return *ref;
+    }
+
+    reference get() noexcept {
+        assert(non_empty());
+        return *ref;
+    }
+
+    const_reference get_or_else(const std::reference_wrapper<T> $default) const noexcept {
+        return ref ? *ref : $default;
+    }
+
+    reference get_or_else(const std::reference_wrapper<T> $default) noexcept {
+        return ref ? *ref : $default;
+    }
+
+    template <typename E>
+    const_reference get_or_throw() const {
+        static_assert(std::is_default_constructible_v<E>, "Exception type needs to be default constructible");
+        if (empty()) throw E{};
+        return *ref;
+    }
+
+    template <typename E>
+    reference get_or_throw() {
+        static_assert(std::is_default_constructible_v<E>, "Exception type needs to be default constructible");
+        if (empty()) throw E{};
+        return *ref;
+    }
+
+    template <typename E>
+    const_reference get_or_throw(E&& exception) const {
+        if (empty()) throw std::forward<E>(exception);
+        return *ref;
+    }
+
+    template <typename E>
+    reference get_or_throw(E&& exception) {
+        if (empty()) throw std::forward<E>(exception);
+        return *ref;
+    }
+
+    reference operator* () noexcept {
+        return get();
+    }
+
+    const_reference operator* () const noexcept {
+        return get();
+    }
+
+    void swap(option& that) noexcept {
+        std::swap(ref, that.ref);
+    }
+
+private:
+    T* ref = nullptr;
+};
+
+template <typename T>
+option<std::decay_t<T>> some(T&& value) noexcept(std::is_nothrow_constructible_v<std::decay_t<T>, T&&>) {
+    return option<std::decay_t<T>>(std::forward<T>(value));
 }
 
-constexpr none_t none() noexcept
-{
+template <typename T>
+auto someRef(std::reference_wrapper<T> ref) {
+    using type = std::add_lvalue_reference_t<typename std::reference_wrapper<T>::type>;
+    return option<type>(ref);
+}
+
+constexpr none_t none() noexcept {
     return none_t();
 }
 
 template <typename T, typename... Ts>
-option<T> make_option(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>)
-{
+option<T> make_option(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>) {
     return option<T>(in_place{}, std::forward<Ts>(args)...);
 }
 
 template <typename T>
-void swap(option<T>& a, option<T>& b) noexcept(noexcept(a.swap(b)))
-{
+void swap(option<T>& a, option<T>& b) noexcept(noexcept(a.swap(b))) {
     a.swap(b);
 }
 
 template <typename T>
-void swap(option<T>& option, T& value) noexcept(noexcept(option.swap(value)))
-{
+void swap(option<T>& option, T& value) noexcept(noexcept(option.swap(value))) {
     option.swap(value);
 }
 
 template <typename T>
-void swap(T& value, option<T>& option) noexcept(noexcept(option.swap(value)))
-{
+void swap(T& value, option<T>& option) noexcept(noexcept(option.swap(value))) {
     option.swap(value);
 }
+
+template <typename T>
+struct is_option : std::false_type {};
+
+template <typename T>
+struct is_option<option<T>> : std::false_type {};
+
+template <typename T>
+struct is_reference_option : std::false_type {};
+
+template <typename T>
+struct is_reference_option<option<T&>> : std::true_type {};
+
+template <typename T>
+constexpr bool is_option_v = is_option<T>::value;
+
+template <typename T>
+constexpr bool is_reference_option_v = is_reference_option<T>::value;
 
 } // imdex namespace
 
 namespace std {
 
 template <typename T>
-struct hash<imdex::option<T>>
-{
-    size_t operator()(const imdex::option<T>& option) const noexcept
-    {
-        if (option.is_empty()) return 0;
+struct hash<imdex::option<T>> {
+    size_t operator()(const imdex::option<T>& option) const noexcept {
+        if (option.empty()) return 0;
+        return hash<T>()(option.get());
+    }
+};
 
-        hash<T> valueHash;
-        return valueHash(option.value());
+template <typename T>
+struct hash<imdex::option<T&>> {
+    size_t operator()(const imdex::option<T&> option) const noexcept {
+        if (option.empty()) return 0;
+        return hash<const T*>()(std::addressof(option.get()));
     }
 };
 

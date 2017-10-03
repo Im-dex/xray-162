@@ -1,18 +1,16 @@
 #pragma once
 
 #include <type_traits>
-#include <numeric>
 
 namespace imdex {
 
 template <typename T>
 class FlagSet final {
     static_assert(std::is_enum_v<T>, "Flag type needs to be enum");
-    using Type = std::underlying_type<T>;
+    using Type = std::underlying_type_t<T>;
 public:
-    static FlagSet all() {
-        return FlagSet(Type(-1));
-    }
+    using value_type = T;
+    using underlying_type = Type;
 
     FlagSet()
         : value(0)
@@ -20,10 +18,6 @@ public:
 
     explicit FlagSet(const T val)
         : FlagSet(cast(val))
-    {}
-
-    FlagSet(std::initializer_list<T> values)
-        : value(fold(values))
     {}
 
     FlagSet operator| (const T val) const {
@@ -35,17 +29,27 @@ public:
         return *this;
     }
 
-    FlagSet operator| (std::initializer_list<T> values) const {
-        return value | fold(values);
+    FlagSet operator- (const T val) const {
+        return value & ~cast(val);
     }
 
-    FlagSet& operator|= (std::initializer_list<T> values) {
-        value |= fold(values);
+    FlagSet operator-= (const T val) {
+        value &= ~cast(val);
         return *this;
     }
 
-    FlagSet invert() const {
+    FlagSet asInverted() const {
         return ~value;
+    }
+
+    FlagSet& invert() {
+        value = ~value;
+        return *this;
+    }
+
+    FlagSet& reset() {
+        value = Type(0);
+        return *this;
     }
 
     bool empty() const {
@@ -53,24 +57,20 @@ public:
     }
 
     bool has(const T val) const {
-        return (value & cast(val)) != 0;
+        const auto underlyingVal = cast(val);
+        return (value & underlyingVal) == underlyingVal;
     }
 
     bool notHas(const T val) const {
-        return !has(val);
+        return (value & cast(val)) != val;
     }
 
-    bool has(std::initializer_list<T> values) const {
-        for (const auto val : values) {
-            if (notContains(val)) {
-                return false;
-            }
-        }
-        return true;
+    underlying_type underlying() const noexcept {
+        return value;
     }
 
 private:
-    explicit FlagSet(const Type value)
+    FlagSet(const Type value)
         : value(value)
     {}
 
@@ -78,14 +78,12 @@ private:
         return static_cast<Type>(val);
     }
 
-    static Type fold(std::initializer_list<T> values) {
-        return std::accumulate(values.begin(), values.end(), Type(0),
-                               [](const auto accum, const auto val) {
-            return accum | cast(val);
-        });
-    }
-
     Type value;
 };
+
+template <typename T>
+FlagSet<T> flag(const T val) {
+    return FlagSet<T>(val);
+}
 
 } // imdex namespace
