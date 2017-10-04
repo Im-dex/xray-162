@@ -12,10 +12,13 @@ set(GAME_PATH "" CACHE STRING "path to the game folder, used as output directoy 
 option(BUILD_UTILS "enable utils projects build" OFF)
 option(REL_DEVELOP "switch RelWithDebInfo configuration into development mode" OFF)
 option(BUILD_TESTS "enable tests projects build" OFF)
+option(DEBUG_CAPS "enable debug capabilities" OFF)
 
 if ("${GAME_PATH}" STREQUAL "")
     message(FATAL_ERROR "Invalid game path")
 endif()
+
+configure_file(code/engine/xr_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/xr_config.h @ONLY)
 
 if (MSVC)
     if(MSVC_VERSION EQUAL 1911) # MSVS 2017.3
@@ -79,7 +82,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUT_PATH})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_OUT_PATH})
 set(CMAKE_PDB_OUTPUT_DIRECTORY ${PDB_OUT_PATH})
 
-include_directories(code/3rd-party code/engine code/utils)
+include_directories(code/3rd-party code/engine code/utils ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 # 3d-party
 if (BUILD_TESTS)

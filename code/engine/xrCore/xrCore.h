@@ -1,6 +1,6 @@
 #pragma once
 
-#include "xr_build_config.h"
+#include <xr_config.h>
 
 #ifndef DEBUG
 #define MASTER_GOLD

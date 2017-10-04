@@ -39,4 +39,7 @@ Switch the following useful options for development using RelWithDebInfo build c
 #### BUILD_TESTS (boolean)
 Enable tests projects build
 
+#### DEBUG_CAPS (boolean)
+Enable some debug console commands and cheats
+
 If you have issues with openal when the game is starting, install extras\oalinst.exe.
