@@ -26,8 +26,6 @@
         Console->AddCommand(&x##cls);      \
     }
 
-#include "xrSASH.h"
-
 class ENGINE_API IConsole_Command {
 public:
     friend class CConsole;
@@ -67,9 +65,6 @@ public:
         Info(I);
         Msg("~ Invalid syntax in call to '%s'", cName);
         Msg("~ Valid arguments: %s", I);
-
-        g_SASH.OnConsoleInvalidSyntax("~ Invalid syntax in call to '%s'", cName, false);
-        g_SASH.OnConsoleInvalidSyntax("~ Valid arguments: %s", I, true);
     }
     virtual void Execute(LPCSTR args) = 0;
     virtual void Status(TStatus& S) { S[0] = 0; }

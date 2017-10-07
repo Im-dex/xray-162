@@ -10,8 +10,6 @@
 #include "Render.h"
 #include "CameraManager.h"
 
-#include "xrSash.h"
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -20,7 +18,7 @@ CDemoPlay::CDemoPlay(const char* name, float ms, u32 cycles, float life_time)
     : CEffectorCam(cefDemo, life_time /*,FALSE*/) {
     Msg("*** Playing demo: %s", name);
     Console->Execute("hud_weapon 0");
-    if (g_bBenchmark || g_SASH.IsRunning())
+    if (g_bBenchmark)
         Console->Execute("hud_draw 0");
 
     fSpeed = ms;
@@ -68,7 +66,7 @@ CDemoPlay::~CDemoPlay() {
     xr_delete(m_pMotion);
     xr_delete(m_MParam);
     Console->Execute("hud_weapon 1");
-    if (g_bBenchmark || g_SASH.IsRunning())
+    if (g_bBenchmark)
         Console->Execute("hud_draw 1");
 }
 
@@ -90,8 +88,6 @@ extern string512 g_sBenchmarkName;
 void CDemoPlay::stat_Stop() {
     if (!stat_started)
         return;
-
-    // g_SASH.EndBenchmark();
 
     stat_started = FALSE;
     float stat_total = stat_Timer_total.GetElapsed_sec();
@@ -208,10 +204,7 @@ BOOL CDemoPlay::ProcessCam(SCamEffectorInfo& info) {
     if (Device.dwPrecacheFrame)
         return TRUE;
 
-    if (stat_started) {
-        // g_SASH.DisplayFrame(Device.fTimeGlobal);
-    } else {
-        // g_SASH.StartBenchmark();
+    if (!stat_started) {
         stat_Start();
     }
 

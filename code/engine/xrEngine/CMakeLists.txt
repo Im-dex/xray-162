@@ -296,9 +296,6 @@ set(GAME_API_FEELERS Feel_Sound.h
                      Feel_Touch.cpp
                      Feel_Vision.cpp)
 
-set(OPENAUTOMATE xrSASH.h
-                 xrSASH.cpp)
-
 set(EDITOR_ENVIRONMENT_SOUND_CHANNELS_MANAGER_CHANNEL editor_environment_sound_channels_channel.hpp
                                                       editor_environment_sound_channels_channel.cpp)
 
@@ -379,7 +376,6 @@ source_group("editor\\environment\\suns_manager" FILES ${EDITOR_ENVIRONMENT_SUNS
 source_group("editor\\environment\\thunderbolts\\thunderbolt\\gradient" FILES ${EDITOR_ENVIRONMENT_THUNDERBOLTS_THUNDERBOLT_GRADIENT})
 source_group("Interfaces\\Render\\Execution &amp; 3D\\Shaders" FILES ${INTERFACES_RENDER_EXECUTION__AND__3D_SHADERS})
 source_group("Game API\\Feelers" FILES ${GAME_API_FEELERS})
-source_group("OpenAutomate" FILES ${OPENAUTOMATE})
 source_group("editor\\environment\\sound_channels_manager\\channel" FILES ${EDITOR_ENVIRONMENT_SOUND_CHANNELS_MANAGER_CHANNEL})
 source_group("editor\\environment\\weathers" FILES ${EDITOR_ENVIRONMENT_WEATHERS})
 source_group("Game API" FILES ${GAME_API})
@@ -451,7 +447,6 @@ add_executable(xrEngine xrEngine.manifest
                         ${RENDERREF_EXECUTION__AND__3D_VISUALS_SKELETON}
                         ${EDITOR_ENVIRONMENT_THUNDERBOLTS_THUNDERBOLT}
                         ${GAME_API}
-                        ${OPENAUTOMATE}
                         ${EDITOR_IDE}
                         ${EDITOR_ENVIRONMENT_SUNS_MANAGER_SUN_FLARES_FLARE}
                         ${EDITOR_ENVIRONMENT_SUNS_MANAGER_SUN_GRADIENT}
@@ -467,5 +462,5 @@ set_target_properties(xrEngine PROPERTIES ENABLE_EXPORTS YES)
 set_target_properties(xrEngine PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
 target_include_directories(xrEngine PUBLIC ${DXSDK_INCLUDE_DIR}
                                     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(xrEngine vfw32 libogg libtheora oalib d3dx9 d3d9 dinput8 dxguid
+target_link_libraries(xrEngine vfw32 libogg libtheora d3dx9 d3d9 dinput8 dxguid
                                shlwapi xrCore xrCDB xrSound xrAPI xrNetServer winmm luabind)

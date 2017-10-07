@@ -20,7 +20,6 @@
 
 #include "UI/UItextureMaster.h"
 
-#include "../xrEngine/xrSASH.h"
 #include "ai_space.h"
 #include "../xrServerEntities/script_engine.h"
 
@@ -390,11 +389,7 @@ void CGamePersistent::WeathersUpdate() {
 }
 
 bool allow_intro() {
-    if ((nullptr != strstr(Core.Params, "-nointro")) || g_SASH.IsRunning())
-    {
-        return false;
-    } else
-        return true;
+    return strstr(Core.Params, "-nointro") == nullptr;
 }
 
 void CGamePersistent::start_logo_intro() {

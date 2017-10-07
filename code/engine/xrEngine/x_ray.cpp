@@ -23,8 +23,6 @@
 #include <process.h>
 #include <locale.h>
 
-#include "xrSash.h"
-
 //---------------------------------------------------------------------
 ENGINE_API CInifile* pGameIni = nullptr;
 BOOL g_bIntroFinished = FALSE;
@@ -256,12 +254,12 @@ void Startup() {
     //.	destroySound();
     destroyInput();
 
-    if (!g_bBenchmark && !g_SASH.IsRunning())
+    if (!g_bBenchmark)
         destroySettings();
 
     LALib.OnDestroy();
 
-    if (!g_bBenchmark && !g_SASH.IsRunning())
+    if (!g_bBenchmark)
         destroyConsole();
     else
         Console->Destroy();
@@ -632,17 +630,6 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
         }
 
         Msg("command line %s", lpCmdLine);
-        LPCSTR sashName = "-openautomate ";
-        if (strstr(lpCmdLine, sashName)) {
-            int sz = xr_strlen(sashName);
-            string512 sash_arg;
-            sscanf(strstr(Core.Params, sashName) + sz, "%[^ ] ", sash_arg);
-            // doBenchmark				(sash_arg);
-            g_SASH.Init(sash_arg);
-            g_SASH.MainLoop();
-            return 0;
-        }
-
         if (strstr(lpCmdLine, "-launcher")) {
             int l_res = doLauncher();
             if (l_res != 0)
@@ -823,8 +810,6 @@ extern CRenderDevice Device;
 
 void CApplication::OnEvent(EVENT E, u64 P1, u64 P2) {
     if (E == eQuit) {
-        g_SASH.EndBenchmark();
-
         PostQuitMessage(0);
 
         for (u32 i = 0; i < Levels.size(); i++) {
@@ -1210,7 +1195,8 @@ int doLauncher() {
 
             if(g_bBenchmark){ //perform benchmark cycle
                     doBenchmark();
-            
+            
+
                     // InitLauncher	();
                     // pLauncher	(2);	//show results
                     // FreeLauncher	();
