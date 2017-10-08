@@ -23,7 +23,7 @@ set(INTRUSIVE_PTR intrusive_ptr.h)
 
 set(KERNEL FTimer.h FTimer.cpp resource.h stdafx.h stdafx.cpp xrCore.h xrCore.cpp
            xrCore_platform.h xrCore.rc stacktrace_collector.h stacktrace_collector.cpp
-           conv.h conv.cpp
+           conv.h conv.cpp xr_writer.h
            ${CMAKE_CURRENT_BINARY_DIR}/../../../generated/xr_config.h)
 
 set(MATH_ _bitwise.h _color.h _compressed_normal.h _compressed_normal.cpp _cylinder.h
