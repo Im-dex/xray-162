@@ -152,7 +152,14 @@ using namespace std::string_view_literals;
 #endif
 
 #include "xrDebug.h"
+#define FMT_THROW(x) R_ASSERT2(false, "format failed")
+#include <fmtlib/fmt/format.h>
+#include <fmtlib/fmt/string.h>
+
+#include "xr_writer.h"
+#include "make_string.h"
 #include "vector.h"
+#include "conv.h"
 
 #include "clsid.h"
 #include "xrMemory.h"
@@ -207,11 +214,6 @@ using RTokenVec = xr_vector<xr_rtoken>;
 
 #define xr_pure_interface __interface
 
-#define FMT_THROW(x) R_ASSERT2(false, "format failed")
-#include <fmtlib/fmt/format.h>
-#include <fmtlib/fmt/string.h>
-
-#include "xr_writer.h"
 #include "FS.h"
 #include "log.h"
 #include "xr_trims.h"

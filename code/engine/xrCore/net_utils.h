@@ -134,6 +134,11 @@ public:
         w(S, xr_strlen(S) + 1);
     }
 
+    void w_stringZ(const std::string_view str) {
+        w(str.data(), str.size());
+        w_u8(0);
+    }
+
     void w_stringZ(const shared_str& p) {
         if (*p)
             w(*p, p.size() + 1);

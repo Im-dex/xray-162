@@ -8,13 +8,11 @@
 
 template <class T>
 struct _vector3 {
-public:
     typedef T TYPE;
     typedef _vector3<T> Self;
     typedef Self& SelfRef;
     typedef const Self& SelfCRef;
 
-public:
     T x, y, z;
 
     // access operators

@@ -10,7 +10,7 @@ set(COMPRESSOR_LZO rt_config1x.h
                    rt_lzodefs.h rt_miniacc.h)
 set(COMPRESSOR_RT rt_compressor.cpp rt_compressor.h rt_compressor9.cpp)
 
-set(DEBUG_CORE xrDebug.h xrDebug_macros.h xrDebugNew.cpp)
+set(DEBUG_CORE xrDebug.h xrDebug_macros.h xrDebugNew.cpp make_string.h)
 set_source_files_properties(xrDebug.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 
 set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp
@@ -23,7 +23,7 @@ set(INTRUSIVE_PTR intrusive_ptr.h)
 
 set(KERNEL FTimer.h FTimer.cpp resource.h stdafx.h stdafx.cpp xrCore.h xrCore.cpp
            xrCore_platform.h xrCore.rc stacktrace_collector.h stacktrace_collector.cpp
-           conv.h conv.cpp xr_writer.h
+           conv.h xr_writer.h
            ${CMAKE_CURRENT_BINARY_DIR}/../../../generated/xr_config.h)
 
 set(MATH_ _bitwise.h _color.h _compressed_normal.h _compressed_normal.cpp _cylinder.h

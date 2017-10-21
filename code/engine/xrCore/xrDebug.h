@@ -59,16 +59,6 @@ public:
     [[noreturn]] static void do_exit(const std::string& message);
 };
 
-// warning
-// this function can be used for debug purposes only
-template <typename... Args>
-std::string make_string(const char* format, const Args&... args) {
-    static constexpr size_t kBufferSize = 4096;
-    char temp[kBufferSize];
-    snprintf(temp, kBufferSize, format, args...);
-    return std::string(temp);
-}
-
 extern XRCORE_API xrDebug Debug;
 
 XRCORE_API void LogStackTrace(const char* header);

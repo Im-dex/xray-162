@@ -66,3 +66,4 @@ add_library(xrQSlim STATIC ${KERNEL}
                            ${MATH}
                            ${MODEL})
 target_include_directories(xrQSlim PUBLIC src)
+target_link_libraries(xrQSlim PUBLIC xrCore)
