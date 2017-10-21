@@ -55,7 +55,7 @@ TEST_F(OptionRefTest, ConstructorTest) {
 
     EXPECT_THAT(OptRef(std::ref(value)), Not(IsEmpty()));
     EXPECT_EQ(std::addressof(OptRef(std::ref(value)).get()), std::addressof(value));
-    EXPECT_EQ(std::addressof(someRef(std::ref(value)).get()), std::addressof(value));
+    EXPECT_EQ(std::addressof(some(std::ref(value)).get()), std::addressof(value));
 }
 
 TEST_F(OptionValueTest, AssignmentTest) {
@@ -78,7 +78,7 @@ TEST_F(OptionRefTest, AssignmentTest) {
     opt = std::ref(value);
     EXPECT_EQ(std::addressof(opt.get()), std::addressof(value));
 
-    opt = someRef(std::ref(value));
+    opt = some(std::ref(value));
     EXPECT_EQ(std::addressof(opt.get()), std::addressof(value));
 
     int number = 0;

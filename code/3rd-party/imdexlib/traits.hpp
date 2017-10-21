@@ -2,6 +2,7 @@
 
 #include <type_traits>
 #include <iterator>
+#include <imdexlib/typelist.hpp>
 
 namespace imdex {
 
@@ -87,5 +88,22 @@ using is_sequence = detail::is_sequence<T>;
 
 template <typename T>
 constexpr bool is_sequence_v = is_sequence<T>::value;
+
+namespace detail {
+
+template <typename Handler, typename Params, typename AlwaysVoid = void>
+struct is_callable : std::false_type {};
+
+template <typename Handler, typename... Args>
+struct is_callable<Handler, typelist<Args...>,
+                   std::void_t<decltype(std::declval<Handler>()(std::declval<Args>()...))>> : std::true_type {};
+
+} // detail namespace
+
+template <typename Handler, typename... Args>
+using is_callable = detail::is_callable<Handler, typelist<Args...>>;
+
+template <typename Handler, typename... Args>
+constexpr bool is_callable_v = is_callable<Handler, Args...>::value;
 
 } // imdex namespace

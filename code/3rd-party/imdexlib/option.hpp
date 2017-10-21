@@ -7,6 +7,18 @@
 
 namespace imdex {
 
+template <typename T>
+class option;
+
+template <typename T>
+struct is_option : std::false_type {};
+
+template <typename T>
+struct is_option<option<T>> : std::true_type {};
+
+template <typename T>
+constexpr bool is_option_v = is_option<T>::value;
+
 struct none_t final {};
 
 template <typename T>
@@ -278,6 +290,54 @@ public:
         }
     }
 
+    template <typename Handler>
+    auto map(Handler&& handler) const & {
+        if constexpr (is_callable_v<Handler&&, const T&>) {
+            using Ret = std::decay_t<std::result_of_t<Handler&&(const T&)>>;
+            return empty() ? option<Ret>() : option<Ret>(get());
+        } else {
+            static_assert(false, "Invalid handler");
+            return option();
+        }
+    }
+
+    template <typename Handler>
+    auto map(Handler&& handler) && {
+        if constexpr (is_callable_v<Handler&&, T&&>) {
+            using Ret = std::decay_t<std::result_of_t<Handler&&(T&&)>>;
+            return empty() ? option<Ret>() : option<Ret>(std::move(get()));
+        } else {
+            static_assert(false, "Invalid handler");
+            return option();
+        }
+    }
+
+    auto flatten() const & {
+        if constexpr (is_option_v<T>) {
+            using Value = typename T::value_type;
+
+            if (empty()) return T();
+            const T& value = get();
+            return value.empty() ? T() : option<Value>(value.get());
+        } else {
+            static_assert(false, "Optional type needs to be an option");
+            return option();
+        }
+    }
+
+    auto flatten() && {
+        if constexpr (is_option_v<T>) {
+            using Value = typename T::value_type;
+
+            if (empty()) return T();
+            T& value = get();
+            return value.empty() ? T() : option<Value>(std::move(value.get()));
+        } else {
+            static_assert(false, "Optional type needs to be an option");
+            return option();
+        }
+    }
+
 private:
     const T* pointer() const noexcept {
         return reinterpret_cast<const T*>(std::addressof(storage));
@@ -441,7 +501,7 @@ option<std::decay_t<T>> some(T&& value) noexcept(std::is_nothrow_constructible_v
 }
 
 template <typename T>
-auto someRef(std::reference_wrapper<T> ref) {
+auto some(std::reference_wrapper<T> ref) {
     using type = std::add_lvalue_reference_t<typename std::reference_wrapper<T>::type>;
     return option<type>(ref);
 }
@@ -471,19 +531,10 @@ void swap(T& value, option<T>& option) noexcept(noexcept(option.swap(value))) {
 }
 
 template <typename T>
-struct is_option : std::false_type {};
-
-template <typename T>
-struct is_option<option<T>> : std::false_type {};
-
-template <typename T>
 struct is_reference_option : std::false_type {};
 
 template <typename T>
 struct is_reference_option<option<T&>> : std::true_type {};
-
-template <typename T>
-constexpr bool is_option_v = is_option<T>::value;
 
 template <typename T>
 constexpr bool is_reference_option_v = is_reference_option<T>::value;
