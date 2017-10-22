@@ -40,5 +40,3 @@ add_to_type_list(CALifeSimulator)
 #define script_type_list save_type_list(CALifeSimulator)
 
 #pragma warning(pop)
-
-#include "alife_simulator_inline.h"

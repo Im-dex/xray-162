@@ -8,56 +8,76 @@
 
 #pragma once
 
-class CScriptGameObject;
+#include "script_game_object.h"
 
-template <typename _object_type, template <typename _base_object_type> class ancestor,
-          typename _base_object_type = CScriptGameObject>
-class CWrapperAbstract : public ancestor<_base_object_type> {
+template <typename ObjectType, template <typename BaseObjectType> class Ancestor,
+          typename BaseObjectType = CScriptGameObject>
+class CWrapperAbstract : public Ancestor<BaseObjectType> {
 protected:
-    typedef ancestor<_base_object_type> inherited;
+    using inherited = Ancestor<BaseObjectType>;
 
-protected:
-    _object_type* m_object;
+    ObjectType* m_object;
 
 public:
-    IC CWrapperAbstract();
-    template <typename T1>
-    IC CWrapperAbstract(T1 t1);
-    template <typename T1, typename T2, typename T3>
-    IC CWrapperAbstract(T1 t1, T2 t2, T3 t3);
-    virtual ~CWrapperAbstract();
-    virtual void setup(_object_type* object);
-    virtual void setup(CScriptGameObject* object);
-    IC _object_type& object() const;
+    template <typename... Ts>
+    CWrapperAbstract(Ts&&... ts)
+        : inherited(std::forward<Ts>(ts)...),
+          m_object(nullptr)
+    {}
+    virtual ~CWrapperAbstract() = default;
+
+    virtual void setup(ObjectType* object) {
+        VERIFY(object);
+        inherited::setup(object->lua_game_object());
+        m_object = object;
+    }
+
+    virtual void setup(CScriptGameObject* object) {
+        VERIFY(object);
+        inherited::setup(object);
+        m_object = smart_cast<ObjectType*>(&object->object());
+        VERIFY(m_object);
+    }
+
+    ObjectType& object() const {
+        VERIFY(m_object);
+        return (*m_object);
+    }
 };
 
 class CPropertyStorage;
 
-template <typename _object_type, template <typename _base_object_type> class ancestor,
-          typename _base_object_type = CScriptGameObject>
-class CWrapperAbstract2 : public ancestor<_base_object_type> {
+template <typename ObjectType, template <typename BaseObjectType> class Ancestor,
+          typename BaseObjectType = CScriptGameObject>
+class CWrapperAbstract2 : public Ancestor<BaseObjectType> {
 protected:
-    typedef ancestor<_base_object_type> inherited;
+    using inherited = Ancestor<BaseObjectType>;
 
-protected:
-    _object_type* m_object;
+    ObjectType* m_object;
 
 public:
-    IC CWrapperAbstract2();
-    template <typename T1>
-    IC CWrapperAbstract2(T1 t1);
-    template <typename T1, typename T2>
-    IC CWrapperAbstract2(T1 t1, T2 t2);
-    template <typename T1, typename T2, typename T3>
-    IC CWrapperAbstract2(T1 t1, T2 t2, T3 t3);
-    template <typename T1, typename T2, typename T3, typename T4>
-    IC CWrapperAbstract2(T1 t1, T2 t2, T3 t3, T4 t4);
-    template <typename T1, typename T2, typename T3, typename T4, typename T5>
-    IC CWrapperAbstract2(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5);
-    virtual ~CWrapperAbstract2();
-    virtual void setup(_object_type* object, CPropertyStorage* storage);
-    virtual void setup(CScriptGameObject* object, CPropertyStorage* storage);
-    IC _object_type& object() const;
-};
+    template <typename... Ts>
+    CWrapperAbstract2(Ts&&... ts)
+        : inherited(std::forward<Ts>(ts)...),
+          m_object(nullptr)
+    {}
+    virtual ~CWrapperAbstract2() = default;
 
-#include "wrapper_abstract_inline.h"
+    virtual void setup(ObjectType* object, CPropertyStorage* storage) {
+        VERIFY(object);
+        inherited::setup(object->lua_game_object(), storage);
+        m_object = object;
+    }
+
+    virtual void setup(CScriptGameObject* object, CPropertyStorage* storage) {
+        VERIFY(object);
+        inherited::setup(object, storage);
+        m_object = smart_cast<ObjectType*>(&object->object());
+        VERIFY(m_object);
+    }
+
+    ObjectType& object() const {
+        VERIFY(m_object);
+        return (*m_object);
+    }
+};

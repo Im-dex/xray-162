@@ -6,53 +6,6 @@
 //	Description : Text tree for onscreen debugging
 ////////////////////////////////////////////////////////////////////////////
 
-template <class Type1>
-void text_tree::add_text(const Type1& a) {
-    strings.push_back(make_xrstr(a));
-}
-
-template <class Type1, class Type2>
-void text_tree::add_text(const Type1& a1, const Type2& a2) {
-    add_text(a1);
-    add_text(a2);
-}
-
-template <class Type1>
-text_tree& text_tree::add_line(const Type1& a1) {
-    text_tree& child = add_line();
-    child.add_text(a1);
-    return child;
-}
-
-template <class Type1, class Type2>
-text_tree& text_tree::add_line(const Type1& a1, const Type2& a2) {
-    text_tree& child = add_line(a1);
-    child.add_text(a2);
-    return child;
-}
-
-template <class Type1, class Type2, class Type3>
-text_tree& text_tree::add_line(const Type1& a1, const Type2& a2, const Type3& a3) {
-    text_tree& child = add_line(a1, a2);
-    child.add_text(a3);
-    return child;
-}
-
-template <class Type1, class Type2, class Type3, class Type4>
-text_tree& text_tree::add_line(const Type1& a1, const Type2& a2, const Type3& a3, const Type4& a4) {
-    text_tree& child = add_line(a1, a2, a3);
-    child.add_text(a4);
-    return child;
-}
-
-template <class Type1, class Type2, class Type3, class Type4, class Type5>
-text_tree& text_tree::add_line(const Type1& a1, const Type2& a2, const Type3& a3, const Type4& a4,
-                               const Type5& a5) {
-    text_tree& child = add_line(a1, a2, a3, a4);
-    child.add_text(a5);
-    return child;
-}
-
 template <class OutFunc>
 void text_tree::output(OutFunc func, int indent) {
     Columns columns;

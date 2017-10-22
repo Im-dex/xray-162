@@ -17,7 +17,6 @@ set(CORE_CLIENT_LEVEL_LEVELNETWORKDEMO DemoInfo.h
                                        Message_Filter.cpp)
 
 set(AI_ALIFE_INTERACTION_MANAGER alife_interaction_manager.h
-                                 alife_interaction_manager_inline.h
                                  alife_interaction_manager.cpp)
 
 set(CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_WEAPONS_VARIOUS_WEAPONS_RPG7 WeaponRPG7.h
@@ -43,7 +42,6 @@ set(AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_TABCONTROL ui/UITabButton.h
                                                      ui/UITabControl_script.cpp)
 
 set(AI_ACOMPONENTS_DAMAGEMANAGER damage_manager.h
-                                 damage_manager_inline.h
                                  damage_manager.cpp)
 
 set(AI_AGROUP_AGENT_MANAGER_AGENT_MEMBER_MANAGER_MEMBER_ORDER member_order.h
@@ -122,8 +120,7 @@ set(AI_AMONSTERS_MONSTERS_DOG ai/Monsters/Dog/dog.h
                               ai/Monsters/Dog/dog.cpp
                               ai/Monsters/Dog/dog_state_manager.cpp)
 
-set(AI_ACOMPONENTS_DECISIONMANAGEMENT wrapper_abstract.h
-                                      wrapper_abstract_inline.h)
+set(AI_ACOMPONENTS_DECISIONMANAGEMENT wrapper_abstract.h)
 
 set(AI_ACOMPONENTS_SOUNDPLAYER sound_player.h
                                sound_player_inline.h
@@ -526,7 +523,6 @@ set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTHIT script_hit.h
                                        script_hit_script.cpp)
 
 set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_WORLDPROPERTYEVALUATOR_SCRIPTPROPERTYEVALUATORWRAPPER script_property_evaluator_wrapper.h
-                                                                                                             script_property_evaluator_wrapper_inline.h
                                                                                                              script_property_evaluator_wrapper.cpp)
 
 set(AI_AMONSTERS_HUMANS_STALKER_MOVEMENTMANAGER_OBSTACLES_OBSTACLE_AVOIDERS_STATIC static_obstacles_avoider.h
@@ -925,7 +921,6 @@ set(CORE_CLIENT_OBJECTS_TASKS_INFO_DIALOGS_NEWS game_news.h
                                                 game_news.cpp)
 
 set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONBASE_SCRIPTACTIONWRAPPER script_action_wrapper.h
-                                                                                      script_action_wrapper_inline.h
                                                                                       script_action_wrapper.cpp)
 
 set(CORE_SERVER_SERVERENTITIES_OBJECTS_ALIFE_ITEMS ../xrServerEntities/xrServer_Objects_ALife_Items.h
@@ -1639,7 +1634,6 @@ set(CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_DEVICES_DETECTORS_SIMPLE_DETECTOR Si
                                                                               SimpleDetector.cpp)
 
 set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONBASE action_base.h
-                                                                  action_base_inline.h
                                                                   action_base_script.cpp)
 
 set(AI_ASCRIPT ../xrServerEntities/script_export_macroses.h
@@ -1853,8 +1847,7 @@ set(CORE_CLIENT_OBJECTS_PHYSICS_PHDESTROYABLE PHDestroyable.h
 set(CORE_CLIENT_OBJECTS_ITEMS__AND__WEAPONS_DEVICES_FLARE flare.h
                                                           flare.cpp)
 
-set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONPLANNERACTION_ACTIONPLANNERACTIONSCRIPT action_planner_action_script.h
-                                                                                                     action_planner_action_script_inline.h)
+set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONPLANNERACTION_ACTIONPLANNERACTIONSCRIPT action_planner_action_script.h)
 
 set(AI_ANAVIGATION_PATHFINDING_DATASTORAGES_PATH_BUILDERS_VERTEX_PATH vertex_path.h
                                                                       vertex_path_inline.h)
@@ -1965,7 +1958,6 @@ set(AI_AMONSTERS_HUMANS_STALKER_MOVEMENTMANAGER_OBSTACLES stalker_movement_manag
 set(AI_AMONSTERS_COMMON_MONSTER_STATES_GENERAL ai/Monsters/States/state_data.h)
 
 set(AI_ALIFE alife_simulator.h
-             alife_simulator_inline.h
              ../xrServerEntities/alife_space.h
              alife_simulator.cpp
              alife_simulator_script.cpp
@@ -2050,8 +2042,7 @@ set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTACTIONS_SCRIPT_MOVEMENT_ACTION_PATROL_PATH_PA
 set(AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_SCROLLVIEW ui/UIScrollView.h
                                                      ui/UIScrollView.cpp)
 
-set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONBASE_ACTIONSCRIPTBASE action_script_base.h
-                                                                                   action_script_base_inline.h)
+set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONBASE_ACTIONSCRIPTBASE action_script_base.h)
 
 set(AI_ANAVIGATION_PATHFINDING_DATASTORAGES_PRIORITY_QUEUES_BINARY_HEAP data_storage_binary_heap.h
                                                                         data_storage_binary_heap_inline.h)
@@ -2513,7 +2504,6 @@ set(AI_AMONSTERS_COMMON_MONSTER_STATES_HOME_POINT ai/Monsters/States/monster_sta
                                                   ai/Monsters/States/monster_state_home_point_rest_inline.h)
 
 set(AI_ALIFE_UPDATE_MANAGER alife_update_manager.h
-                            alife_update_manager_inline.h
                             alife_update_manager.cpp)
 
 set(AI_AMONSTERS_MONSTERS_CHIMERA ai/Monsters/Chimera/chimera.h
@@ -2555,8 +2545,7 @@ set(AI_ANAVIGATION_LEVELGRAPH level_graph.h
                               level_graph_debug2.cpp
                               level_graph_vertex.cpp)
 
-set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONPLANNER_ACTIONPLANNERSCRIPT action_planner_script.h
-                                                                                         action_planner_script_inline.h)
+set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONPLANNER_ACTIONPLANNERSCRIPT action_planner_script.h)
 
 set(AI_AMONSTERS_COMMON_MONSTER_STATES_GENERAL_TEST ai/Monsters/States/state_hit_object.h
                                                     ai/Monsters/States/state_hit_object_inline.h
@@ -2845,7 +2834,6 @@ set(CORE_CLIENT_OBJECTS_INVENTORY Inventory.h
                                   inventory_quickswitch.cpp)
 
 set(AI_ALIFE_INVENTORY_UPGRADE inventory_upgrade_manager.h
-                               inventory_upgrade_manager_inline.h
                                inventory_upgrade_manager.cpp)
 
 set(AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_ARROW ui/ui_arrow.h
@@ -2969,7 +2957,6 @@ set(CORE_CLIENT_OBJECTS_ZONES_NOGRAVITYZONE NoGravityZone.h
                                             NoGravityZone.cpp)
 
 set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONPLANNER_SCRIPTACTIONPLANNERWRAPPER script_action_planner_wrapper.h
-                                                                                                script_action_planner_wrapper_inline.h
                                                                                                 script_action_planner_wrapper.cpp)
 
 set(AI_AMONSTERS_COMMON_MONSTER_STATES_GENERAL_CUSTOM_ACTION ai/Monsters/States/state_custom_action.h
@@ -3099,7 +3086,6 @@ set(AI_AMONSTERS_HUMANS_STALKER_ANIMATIONMANAGER_DATA_STORAGE stalker_animation_
                                                               stalker_animation_data_storage.cpp)
 
 set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_ACTIONPLANNERACTION_SCRIPTACTIONPLANNERACTIONWRAPPER script_action_planner_action_wrapper.h
-                                                                                                            script_action_planner_action_wrapper_inline.h
                                                                                                             script_action_planner_action_wrapper.cpp)
 
 set(AI_ANAVIGATION_PATHFINDING_GRAPHENGINE graph_engine.h

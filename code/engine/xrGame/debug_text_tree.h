@@ -25,21 +25,28 @@ public: // START INTERFACE
 
     // add_text appends text to this node
     // add_line makes child nodes
-    template <class Type1>
-    void add_text(const Type1& t);
-    template <class Type1, class Type2>
-    void add_text(const Type1& t1, const Type2& t2);
-    template <class Type1>
-    text_tree& add_line(const Type1& a1);
-    template <class Type1, class Type2>
-    text_tree& add_line(const Type1& a1, const Type2& a2);
-    template <class Type1, class Type2, class Type3>
-    text_tree& add_line(const Type1& a1, const Type2& a2, const Type3& a3);
-    template <class Type1, class Type2, class Type3, class Type4>
-    text_tree& add_line(const Type1& a1, const Type2& a2, const Type3& a3, const Type4& a4);
-    template <class Type1, class Type2, class Type3, class Type4, class Type5>
-    text_tree& add_line(const Type1& a1, const Type2& a2, const Type3& a3, const Type4& a4,
-                        const Type5& a5);
+    template <typename... Types>
+    void add_text(const Types&... types) {
+        // TODO: [imdex] use fold expression
+        [[maybe_unused]]
+        const int fold[] = { (strings.push_back(make_xrstr(types)), 0)..., 0 };
+    }
+
+    template <class Type>
+    text_tree& add_line(const Type& a1) {
+        text_tree& child = add_line();
+        child.add_text(a1);
+        return child;
+    }
+
+    template <typename Type, typename... Types>
+    text_tree& add_line(const Type& a1, const Types&... as) {
+        text_tree& child = add_line(a1);
+        // TODO: [imdex] use fold expression
+        [[maybe_unused]]
+        const int fold[] = { (child.add_text(as), 0)..., 0 };
+        return child;
+    }
 
     void clear();
 
@@ -82,23 +89,20 @@ void log_text_tree(text_tree& tree);
 
 } // namespace debug
 
-IC xr_string __cdecl make_xrstr(LPCSTR format, ...) {
-    va_list args;
-    va_start(args, format);
-
+template <typename... Args>
+xr_string make_xrstr(const char* format, const Args&... args) {
     char temp[4096];
-    vsprintf(temp, format, args);
-
+    std::snprintf(temp, 4096, format, args...);
     return xr_string(temp);
 }
 
-IC xr_string __cdecl make_xrstr(bool b) { return b ? "+" : "-"; }
-IC xr_string __cdecl make_xrstr(float f) { return make_xrstr("%f", f); }
-IC xr_string __cdecl make_xrstr(s32 d) { return make_xrstr("%i", d); }
-IC xr_string __cdecl make_xrstr(u32 d) { return make_xrstr("%u", d); }
-inline xr_string __cdecl make_xrstr(s64 d) { return make_xrstr("%" PRIi64, d); }
-inline xr_string __cdecl make_xrstr(u64 d) { return make_xrstr("%" PRIu64, d); }
-IC xr_string __cdecl make_xrstr(Fvector3 v) { return make_xrstr("[%f][%f][%f]", v.x, v.y, v.z); }
-IC xr_string __cdecl make_xrstr(const xr_string& s) { return s; }
+inline xr_string make_xrstr(bool b) { return b ? "+" : "-"; }
+inline xr_string make_xrstr(float f) { return make_xrstr("%f", f); }
+inline xr_string make_xrstr(s32 d) { return make_xrstr("%i", d); }
+inline xr_string make_xrstr(u32 d) { return make_xrstr("%u", d); }
+inline xr_string make_xrstr(s64 d) { return make_xrstr("%" PRIi64, d); }
+inline xr_string make_xrstr(u64 d) { return make_xrstr("%" PRIu64, d); }
+inline xr_string make_xrstr(Fvector3 v) { return make_xrstr("[%f][%f][%f]", v.x, v.y, v.z); }
+inline xr_string make_xrstr(const xr_string& s) { return s; }
 
 #endif // defined(AI_DEBUG_TEXT_TREE_H_INCLUDED)

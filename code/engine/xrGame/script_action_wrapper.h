@@ -12,7 +12,9 @@
 
 class CScriptActionWrapper : public CScriptActionBase, public luabind::wrap_base {
 public:
-    IC CScriptActionWrapper(CScriptGameObject* object = 0, LPCSTR action_name = "");
+    CScriptActionWrapper(CScriptGameObject* object = nullptr, LPCSTR action_name = "")
+        : CScriptActionBase(object, action_name)
+    {}
     virtual void setup(CScriptGameObject* object, CPropertyStorage* storage);
     static void setup_static(CScriptActionBase* action, CScriptGameObject* object,
                              CPropertyStorage* storage);
@@ -27,5 +29,3 @@ public:
     //(CScriptActionBase *action, const CSConditionState &condition0, const CSConditionState
     //&condition1);
 };
-
-#include "script_action_wrapper_inline.h"

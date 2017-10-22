@@ -96,5 +96,3 @@ public:
 
 } // namespace upgrade
 } // namespace inventory
-
-#include "inventory_upgrade_manager_inline.h"

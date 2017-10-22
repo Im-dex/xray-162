@@ -15,15 +15,18 @@ class CScriptGameObject;
 template <typename _object_type>
 class CActionPlannerScript : public CScriptActionPlanner {
 protected:
-    typedef CScriptActionPlanner inherited;
+    using inherited = CScriptActionPlanner;
 
 public:
     _object_type* m_object;
 
-public:
-    IC CActionPlannerScript();
-    virtual void setup(_object_type* object);
-    IC _object_type& object() const;
+    CActionPlannerScript() : m_object(nullptr) {}
+    virtual void setup(_object_type* object) {
+        VERIFY(object);
+        inherited::setup(object->lua_game_object());
+        m_object = object;
+    }
+    _object_type& object() const {
+        return *m_object;
+    }
 };
-
-#include "action_planner_script_inline.h"

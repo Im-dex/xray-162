@@ -12,22 +12,36 @@
 
 class CScriptGameObject;
 
-template <typename _object_type>
+template <typename ObjectType>
 class CActionScriptBase : public CScriptActionBase {
 protected:
-    typedef CScriptActionBase inherited;
+    using inherited = CScriptActionBase;
 
 public:
-    _object_type* m_object;
+    ObjectType* m_object;
 
-public:
-    IC CActionScriptBase(const xr_vector<COperatorCondition>& conditions,
-                         const xr_vector<COperatorCondition>& effects, _object_type* object = 0,
-                         LPCSTR action_name = "");
-    IC CActionScriptBase(_object_type* object = 0, LPCSTR action_name = "");
-    virtual ~CActionScriptBase();
-    virtual void setup(_object_type* object, CPropertyStorage* storage);
-    virtual void setup(CScriptGameObject* object, CPropertyStorage* storage);
+    CActionScriptBase(const xr_vector<COperatorCondition>& conditions,
+                      const xr_vector<COperatorCondition>& effects, ObjectType* object = nullptr,
+                      LPCSTR action_name = "")
+        : inherited(conditions, effects, object ? object->lua_game_object() : nullptr, action_name),
+          m_object(object)
+    {}
+
+    CActionScriptBase(ObjectType* object = nullptr, LPCSTR action_name = "")
+        : inherited(object ? object->lua_game_object() : nullptr, action_name),
+          m_object(object)
+    {}
+
+    virtual ~CActionScriptBase() = default;
+
+    virtual void setup(ObjectType* object, CPropertyStorage* storage) {
+        VERIFY(object);
+        m_object = object;
+    }
+
+    virtual void setup(CScriptGameObject* object, CPropertyStorage* storage) {
+        VERIFY(object);
+        inherited::setup(object, storage);
+        setup(smart_cast<ObjectType*>(&object->object()), storage);
+    }
 };
-
-#include "action_script_base_inline.h"

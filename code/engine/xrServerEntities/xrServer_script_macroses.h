@@ -17,7 +17,6 @@
 #include "alife_smart_terrain_task.h"
 #endif //#ifdef XRGAME_EXPORTS
 
-//#define USE_WRITER_READER
 class CSE_Abstract;
 class NET_Packet;
 class CSE_ALifeMonsterAbstract;
@@ -26,18 +25,6 @@ class CALifeSmartTerrainTask;
 #endif //#ifdef XRGAME_EXPORTS
 
 #define INHERIT_PURE
-
-//#ifndef USE_WRITER_READER
-//#	define INHERIT_PURE \
-//	DEFINE_LUA_WRAPPER_METHOD_R2P1_V1	(save,			NET_Packet)\
-//	DEFINE_LUA_WRAPPER_METHOD_R2P1_V1	(load,			NET_Packet)
-//#else
-//#	define INHERIT_PURE \
-//	DEFINE_LUA_WRAPPER_METHOD_R2P1_V1	(save,			NET_Packet)\
-//	DEFINE_LUA_WRAPPER_METHOD_R2P1_V1	(load,			NET_Packet)\
-//	DEFINE_LUA_WRAPPER_METHOD_R2P1_V1	(save,			IWriter)\
-//	DEFINE_LUA_WRAPPER_METHOD_R2P1_V1	(load,			IReader)
-//#endif
 
 #ifndef XRGAME_EXPORTS
 #define INHERIT_ABSTRACT                                              \
@@ -201,20 +188,6 @@ struct CWrapperAbstractItem : public T, public luabind::wrap_base {
 };
 
 #define luabind_virtual_pure(a, b) .def(constructor<LPCSTR>())
-
-//#ifndef USE_WRITER_READER
-//#	define luabind_virtual_pure(a,b) \
-//		.def(	constructor<LPCSTR>()) \
-//		DEFINE_LUABIND_VIRTUAL_FUNCTION_EXPLICIT_1(a,b,save,void,NET_Packet&,NET_Packet*) \
-//		DEFINE_LUABIND_VIRTUAL_FUNCTION_EXPLICIT_1(a,b,load,void,NET_Packet&,NET_Packet*)
-//#else
-//#	define luabind_virtual_pure(a,b) \
-//		.def(	constructor<LPCSTR>()) \
-//		DEFINE_LUABIND_VIRTUAL_FUNCTION_EXPLICIT_1(a,b,save,void,NET_Packet&,NET_Packet*) \
-//		DEFINE_LUABIND_VIRTUAL_FUNCTION_EXPLICIT_1(a,b,load,void,NET_Packet&,NET_Packet*) \
-//		DEFINE_LUABIND_VIRTUAL_FUNCTION_EXPLICIT_1(a,b,save,void,IWriter&,IWriter*) \
-//		DEFINE_LUABIND_VIRTUAL_FUNCTION_EXPLICIT_1(a,b,load,void,IReader&,IReader*)
-//#endif
 
 #ifndef XRGAME_EXPORTS
 #define luabind_virtual_abstract(a, b)                 \

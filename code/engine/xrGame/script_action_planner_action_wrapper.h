@@ -17,7 +17,8 @@ class CScriptActionPlannerActionWrapper : public CScriptActionPlannerAction,
     typedef CScriptActionPlannerAction inherited;
 
 public:
-    IC CScriptActionPlannerActionWrapper(CScriptGameObject* object = 0, LPCSTR action_name = "");
+    CScriptActionPlannerActionWrapper(CScriptGameObject* object = nullptr, LPCSTR action_name = "")
+        : inherited(object, action_name) {}
     virtual void setup(CScriptGameObject* object, CPropertyStorage* storage);
     static void setup_static(CScriptActionPlannerAction* action, CScriptGameObject* object,
                              CPropertyStorage* storage);
@@ -33,5 +34,3 @@ public:
                                           const CSConditionState& condition0,
                                           const CSConditionState& condition1);
 };
-
-#include "script_action_planner_action_wrapper_inline.h"
