@@ -240,7 +240,7 @@ float ui_core::get_current_kx() {
 // Note by imdex: function make choice of UI config file depends on screen aspect ratio
 // *_16.xml file should be chosen for widescreen
 std::string ui_core::get_xml_name(const std::string_view fn) {
-    fmt::StringWriter writer;
+    XrWriterAs<string_path> writer;
 
     if (!is_widescreen()) {
         writer.write("{}", fn);
@@ -264,7 +264,7 @@ std::string ui_core::get_xml_name(const std::string_view fn) {
             }
         }
 #ifdef DEBUG
-        Msg("[16-9] get_xml_name for[%s] returns [%s]", fn, str);
+        LogMsg("[16-9] get_xml_name for[{0}] returns [{1}]", fn, str);
 #endif // #ifdef DEBUG
     }
 

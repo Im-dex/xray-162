@@ -56,7 +56,7 @@ void xrDebug::gather_info(const std::string_view expression, const std::string_v
 
     fmt::ArrayWriter writer{ assertion_info, assertion_info_size };
     const bool extended_description = !description.empty() && (args.size() == 0) &&
-                                      (description.find_first_of('\n') != std::string_view::npos);
+                                      (description.find('\n') != std::string_view::npos);
     for (size_t i = 0; i < 2; ++i) {
         if (!i)
             writer.write("{0}FATAL ERROR{0}{0}", endline);
@@ -78,7 +78,7 @@ void xrDebug::gather_info(const std::string_view expression, const std::string_v
         writer.write("{0}", endline);
         if (!i) {
             if (shared_str_initialized) {
-                Msg("%s", assertion_info);
+                LogMsg("{}", std::string_view(assertion_info, assertion_info_size));
                 FlushLog();
             }
             writer.clear();
@@ -94,7 +94,7 @@ void xrDebug::gather_info(const std::string_view expression, const std::string_v
 
     if (!IsDebuggerPresent() && !strstr(GetCommandLine(), "-no_call_stack_assert")) {
         if (shared_str_initialized)
-            Msg("stack trace:\n");
+            Log("stack trace:\n");
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
         buffer += xr_sprintf(buffer, assertion_info_size - size_t(buffer - buffer_base), "stack trace:%s%s",
@@ -105,7 +105,7 @@ void xrDebug::gather_info(const std::string_view expression, const std::string_v
 
         for (size_t i = 2; i < stackTrace.count; ++i) {
             if (shared_str_initialized)
-                Msg("%s", stackTrace[i]);
+                LogMsg("{}", stackTrace[i]);
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
             writer.write("{0}{1}", stackTrace[i], endline);
@@ -115,7 +115,8 @@ void xrDebug::gather_info(const std::string_view expression, const std::string_v
         if (shared_str_initialized)
             FlushLog();
 
-        os_clipboard::copy_to_clipboard(assertion_info);
+        // TODO: [imdex] use string_view
+        os_clipboard::copy_to_clipboard(writer.c_str());
     }
 }
 
@@ -233,8 +234,8 @@ int out_of_memory_handler(size_t size) {
         u32 process_heap = mem_usage_impl(nullptr, nullptr);
         int eco_strings = (int)g_pStringContainer->stat_economy();
         int eco_smem = (int)g_pSharedMemoryContainer->stat_economy();
-        Msg("* [x-ray]: process heap[%d K]", process_heap / 1024);
-        Msg("* [x-ray]: economy: strings[%d K], smem[%d K]", eco_strings / 1024, eco_smem);
+        LogMsg("* [x-ray]: process heap[{} K]", process_heap / 1024);
+        LogMsg("* [x-ray]: economy: strings[{0} K], smem[{1} K]", eco_strings / 1024, eco_smem);
     }
 
     Debug.fatal(DEBUG_INFO, "Out of memory. Memory request: %d K", size / 1024);
@@ -263,10 +264,10 @@ void save_mini_dump(_EXCEPTION_POINTERS* pExceptionInfo) {
     // firstly see if dbghelp.dll is around and has the function we need
     // look next to the EXE first, as the one in System32 might be old
     // (e.g. Windows 2000)
-    HMODULE hDll = NULL;
+    HMODULE hDll = nullptr;
     string_path szDbgHelpPath;
 
-    if (GetModuleFileName(NULL, szDbgHelpPath, _MAX_PATH)) {
+    if (GetModuleFileName(nullptr, szDbgHelpPath, _MAX_PATH)) {
         char* pSlash = strchr(szDbgHelpPath, '\\');
         if (pSlash) {
             xr_strcpy(pSlash + 1, sizeof(szDbgHelpPath) - (pSlash - szDbgHelpPath), "DBGHELP.DLL");
@@ -274,7 +275,7 @@ void save_mini_dump(_EXCEPTION_POINTERS* pExceptionInfo) {
         }
     }
 
-    if (hDll == NULL) {
+    if (!hDll) {
         // load any version we can
         hDll = ::LoadLibrary("DBGHELP.DLL");
     }
@@ -327,7 +328,7 @@ void save_mini_dump(_EXCEPTION_POINTERS* pExceptionInfo) {
                     MINIDUMP_TYPE(MiniDumpNormal | MiniDumpFilterMemory | MiniDumpScanMemory);
 
                 BOOL bOK = pDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, dump_flags,
-                                 &ExInfo, NULL, NULL);
+                                 &ExInfo, nullptr, nullptr);
                 if (bOK) {
                     xr_sprintf(szScratch, "Saved dump file to '%s'", szDumpPath);
                     szResult = szScratch;
@@ -380,7 +381,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
         *pExceptionInfo->ContextRecord = save;
 
         if (shared_str_initialized)
-            Msg("stack trace:\n");
+            Log("stack trace:\n");
 
         if (!IsDebuggerPresent()) {
             os_clipboard::copy_to_clipboard("stack trace:\r\n\r\n");
@@ -389,7 +390,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
         string4096 buffer;
         for (int i = 0; i < stackTrace.count; ++i) {
             if (shared_str_initialized)
-                Msg("%s", stackTrace[i]);
+                LogMsg("{}", stackTrace[i]);
             xr_sprintf(buffer, sizeof(buffer), "%s\r\n", stackTrace[i]);
 #ifdef DEBUG
             if (!IsDebuggerPresent())
@@ -399,7 +400,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo) {
 
         if (*error_message) {
             if (shared_str_initialized)
-                Msg("\n%s", error_message);
+                LogMsg("\n{}", error_message);
 
             xr_strcat(error_message, sizeof(error_message), "\r\n");
 #ifdef DEBUG
@@ -471,7 +472,7 @@ static void invalid_parameter_handler(const wchar_t* expression, const wchar_t* 
     string4096 function_;
     string4096 file_;
     size_t converted_chars = 0;
-    //		errno_t							err =
+
     if (expression)
         wcstombs_s(&converted_chars, expression_, sizeof(expression_), expression,
                    (wcslen(expression) + 1) * 2 * sizeof(char));
