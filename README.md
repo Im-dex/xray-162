@@ -42,4 +42,7 @@ Enable tests projects build
 #### DEBUG_CAPS (boolean)
 Enable some debug console commands and cheats
 
+#### PNG_SCREENSHOTS (boolean)
+Switch screenshots format from .*jpg to *.png.
+
 If you have issues with openal when the game is starting, install extras\oalinst.exe.

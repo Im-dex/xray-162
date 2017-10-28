@@ -13,6 +13,7 @@ option(BUILD_UTILS "enable utils projects build" OFF)
 option(REL_DEVELOP "switch RelWithDebInfo configuration into development mode" OFF)
 option(BUILD_TESTS "enable tests projects build" OFF)
 option(DEBUG_CAPS "enable debug capabilities" OFF)
+option(PNG_SCREENSHOTS "enable png format for the screenshots" OFF)
 
 if ("${GAME_PATH}" STREQUAL "")
     message(FATAL_ERROR "Invalid game path")

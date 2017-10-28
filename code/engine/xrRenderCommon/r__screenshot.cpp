@@ -1,9 +1,28 @@
 #include "stdafx.h"
-//#include "xrEngine/xr_effgamma.h"
 #include "xr_effgamma.h"
 #include "dxRenderDeviceRender.h"
 #include "xrRenderCommon/tga.h"
 #include "xrEngine/xrImage_Resampler.h"
+
+#ifdef PNG_SCREENSHOTS
+#   define SCREENSHOT_EXT ".png"
+#   ifdef USE_DX10
+#       define SCREENSHOT_FORMAT D3DX10_IFF_PNG
+#   elif defined(USE_DX11)
+#       define SCREENSHOT_FORMAT D3DX11_IFF_PNG
+#   else
+#       define SCREENSHOT_FORMAT D3DXIFF_PNG
+#   endif
+#else
+#   define SCREENSHOT_EXT ".jpg"
+#   ifdef USE_DX10
+#       define SCREENSHOT_FORMAT D3DX10_IFF_JPG
+#   elif defined(USE_DX11)
+#       define SCREENSHOT_FORMAT D3DX11_IFF_JPG
+#   else
+#       define SCREENSHOT_FORMAT D3DXIFF_JPG
+#   endif
+#endif
 
 #if defined(USE_DX10) || defined(USE_DX11)
 #include "d3dx10tex.h"
@@ -146,13 +165,13 @@ void CRender::ScreenshotImpl(ScreenshotMode mode, LPCSTR name, CMemoryWriter* me
     case IRender_interface::SM_NORMAL: {
         string64 t_stemp;
         string_path buf;
-        xr_sprintf(buf, sizeof(buf), "ss_%s_%s_(%s).jpg", Core.UserName, timestamp(t_stemp),
+        xr_sprintf(buf, sizeof(buf), "ss_%s_%s_(%s)" SCREENSHOT_EXT, Core.UserName, timestamp(t_stemp),
                    (g_pGameLevel) ? g_pGameLevel->name().c_str() : "mainmenu");
         ID3DBlob* saved = 0;
 #ifdef USE_DX11
-        CHK_DX(D3DX11SaveTextureToMemory(HW.pContext, pSrcTexture, D3DX11_IFF_JPG, &saved, 0));
+        CHK_DX(D3DX11SaveTextureToMemory(HW.pContext, pSrcTexture, SCREENSHOT_FORMAT, &saved, 0));
 #else
-        CHK_DX(D3DX10SaveTextureToMemory(pSrcTexture, D3DX10_IFF_JPG, &saved, 0));
+        CHK_DX(D3DX10SaveTextureToMemory(pSrcTexture, SCREENSHOT_FORMAT, &saved, 0));
 #endif
         IWriter* fs = FS.w_open("$screenshots$", buf);
         R_ASSERT(fs);
@@ -364,10 +383,10 @@ void CRender::ScreenshotImpl(ScreenshotMode mode, LPCSTR name, CMemoryWriter* me
     case IRender_interface::SM_NORMAL: {
         string64 t_stemp;
         string_path buf;
-        xr_sprintf(buf, sizeof(buf), "ss_%s_%s_(%s).jpg", Core.UserName, timestamp(t_stemp),
+        xr_sprintf(buf, sizeof(buf), "ss_%s_%s_(%s)" SCREENSHOT_EXT, Core.UserName, timestamp(t_stemp),
                    (g_pGameLevel) ? g_pGameLevel->name().c_str() : "mainmenu");
         ID3DBlob* saved = 0;
-        CHK_DX(D3DXSaveSurfaceToFileInMemory(&saved, D3DXIFF_JPG, pFB, 0, 0));
+        CHK_DX(D3DXSaveSurfaceToFileInMemory(&saved, SCREENSHOT_FORMAT, pFB, nullptr, nullptr));
         IWriter* fs = FS.w_open("$screenshots$", buf);
         R_ASSERT(fs);
         fs->w(saved->GetBufferPointer(), saved->GetBufferSize());
