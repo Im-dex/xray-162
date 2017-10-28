@@ -3,7 +3,7 @@
 
 // Inline call
 #ifndef IC
-#define IC __forceinline
+#define IC inline
 #endif
 
 template <class T>

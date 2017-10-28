@@ -61,7 +61,7 @@ void __stdcall PLC_calc3_x86(int& c0, int& c1, int& c2, CRenderDevice& Device, F
 // SSE
 // -----------------------------------------------------------------------------------------------------
 
-__forceinline float PLC_energy_SSE(Fvector& P, Fvector& N, light* L, float E) {
+inline float PLC_energy_SSE(Fvector& P, Fvector& N, light* L, float E) {
     Fvector Ldir;
     if (L->flags.type == IRender_Light::DIRECT) {
         // Cos
@@ -93,7 +93,7 @@ __forceinline float PLC_energy_SSE(Fvector& P, Fvector& N, light* L, float E) {
     }
 }
 
-__forceinline int iCeil_SSE(float const x) { return _mm_cvt_ss2si(_mm_set_ss(x)); }
+inline int iCeil_SSE(float const x) { return _mm_cvt_ss2si(_mm_set_ss(x)); }
 
 void __stdcall PLC_calc3_SSE(int& c0, int& c1, int& c2, CRenderDevice& Device, Fvector* P,
                              Fvector& N, light* L, float energy, Fvector& O) {

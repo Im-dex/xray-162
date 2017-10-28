@@ -723,7 +723,7 @@ struct mallinfo {
   #if defined(__GNUC__)
 #define FORCEINLINE __inline __attribute__ ((always_inline))
   #elif defined(_MSC_VER)
-    #define FORCEINLINE __forceinline
+    #define FORCEINLINE inline
   #endif
 #endif
 #ifndef NOINLINE

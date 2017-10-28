@@ -1472,7 +1472,7 @@ extern void noise3Init();
 #include <xmmintrin.h>
 #include "../xrCPU_Pipe/ttapi.h"
 
-__forceinline __m128 _mm_load_fvector(const Fvector& v) {
+inline __m128 _mm_load_fvector(const Fvector& v) {
     __m128 R1, R2;
 
     R1 = _mm_load_ss((float*)&v.x); // R1 = 0 | 0 | 0 | v.x
@@ -1484,7 +1484,7 @@ __forceinline __m128 _mm_load_fvector(const Fvector& v) {
     return R1;
 }
 
-__forceinline void _mm_store_fvector(Fvector& v, const __m128 R1) {
+inline void _mm_store_fvector(Fvector& v, const __m128 R1) {
     __m128 R2;
 
     _mm_store_ss((float*)&v.x, R1);

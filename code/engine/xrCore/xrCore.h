@@ -87,7 +87,7 @@
 #define _inline inline
 #define __inline inline
 #define IC inline
-#define ICF __forceinline // !!! this should be used only in critical places found by PROFILER
+#define ICF inline
 #define ICN __declspec(noinline)
 
 #ifndef DEBUG
@@ -108,7 +108,6 @@
 //#pragma warning (disable : 4530 )		// C++ exception handler used, but unwind semantics
 //are not enabled
 #pragma warning(disable : 4345)
-#pragma warning(disable : 4714) // __forceinline not inlined
 #ifndef DEBUG
 #pragma warning(disable : 4189) //  local variable is initialized but not refenced
 #endif                          //	frequently in release code due to large amount of VERIFY

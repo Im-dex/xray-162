@@ -222,7 +222,7 @@ extern "C" {
 void dNormalize3_slow	(dVector3 a);
 void dNormalize4		(dVector4 a);
 
-__forceinline void dNormalize3 (dVector3 a)
+inline void dNormalize3 (dVector3 a)
 {
 	dReal	sqr_magnitude	= a[0]*a[0] + a[1]*a[1] + a[2]*a[2];
 	dReal	epsilon			= 1.192092896e-05F;

@@ -6,7 +6,7 @@
 #ifndef _EDITOR
 #include <xmmintrin.h>
 
-__forceinline int iFloor_SSE(float const x) { return _mm_cvtt_ss2si(_mm_set_ss(x)); }
+inline int iFloor_SSE(float const x) { return _mm_cvtt_ss2si(_mm_set_ss(x)); }
 #endif
 
 //==============================================================================

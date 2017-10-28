@@ -257,7 +257,7 @@ IC void FillSprite_fpu(FVF::LIT*& pv, const Fvector& T, const Fvector& R, const 
     pv++;
 }
 
-__forceinline void fsincos(const float angle, float& sine, float& cosine) {
+inline void fsincos(const float angle, float& sine, float& cosine) {
     sine = std::sinf(angle);
     cosine = std::cosf(angle);
 }
@@ -387,7 +387,7 @@ struct PRS_PARAMS {
     CParticleEffect* pPE;
 };
 
-__forceinline void magnitude_sse(Fvector& vec, float& res) {
+inline void magnitude_sse(Fvector& vec, float& res) {
     __m128 tv, tu;
 
     tv = _mm_load_ss((float*)&vec.x);                     // tv = 0 | 0 | 0 | x

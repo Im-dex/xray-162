@@ -15,7 +15,7 @@
 #endif
 
 #ifndef IC
-#define IC __forceinline
+#define IC inline
 #endif
 
 // ************************* P_UV
