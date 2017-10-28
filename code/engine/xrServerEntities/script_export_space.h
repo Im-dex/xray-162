@@ -7,11 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include <imdexlib/typelist.hpp>
+
 struct lua_State;
 
 #ifdef SCRIPT_REGISTRATOR
-#define script_type_list Loki::NullType
-#define add_to_type_list(type) typedef Loki::Typelist<type, script_type_list> TypeList_##type;
+#define script_type_list imdex::typelist<>
+#define add_to_type_list(type) using TypeList_##type = imdex::ts_prepend_t<type, script_type_list>;
 #define save_type_list(type) TypeList_##type
 #else
 #define script_type_list

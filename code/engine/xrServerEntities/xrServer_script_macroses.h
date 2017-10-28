@@ -24,18 +24,14 @@ class CSE_ALifeMonsterAbstract;
 class CALifeSmartTerrainTask;
 #endif //#ifdef XRGAME_EXPORTS
 
-#define INHERIT_PURE
-
 #ifndef XRGAME_EXPORTS
 #define INHERIT_ABSTRACT                                              \
-    INHERIT_PURE                                                      \
     DEFINE_LUA_WRAPPER_METHOD_R2P1_V1(STATE_Write, NET_Packet)        \
     DEFINE_LUA_WRAPPER_METHOD_R2P1_V2(STATE_Read, NET_Packet, u16)    \
     DEFINE_LUA_WRAPPER_METHOD_R2P2_V2(FillProps, LPCSTR, PropItemVec) \
     DEFINE_LUA_WRAPPER_METHOD_0(init, CSE_Abstract*)
 #else // #ifndef XRGAME_EXPORTS
 #define INHERIT_ABSTRACT                                           \
-    INHERIT_PURE                                                   \
     DEFINE_LUA_WRAPPER_METHOD_R2P1_V1(STATE_Write, NET_Packet)     \
     DEFINE_LUA_WRAPPER_METHOD_R2P1_V2(STATE_Read, NET_Packet, u16) \
     DEFINE_LUA_WRAPPER_METHOD_0(init, CSE_Abstract*)
@@ -119,7 +115,6 @@ struct CWrapperPure : public T, public luabind::wrap_base {
     typedef T inherited;
     typedef CWrapperPure<T> self_type;
     CWrapperPure(LPCSTR section) : inherited(section) {}
-    INHERIT_PURE;
 };
 
 template <typename T>
