@@ -18,24 +18,19 @@
 class NET_Packet;
 class CDUInterface;
 
-#ifndef _EDITOR
 #ifndef XRGAME_EXPORTS
 #include "../xrSound/Sound.h"
-#endif
 #endif
 
 #include "xrEProps.h"
 
-#ifndef XRGAME_EXPORTS
 #include "xrRender\DrawUtils.h"
-#else
-#include "xrRender\DrawUtils.h"
-#endif
 #pragma warning(push)
 #pragma warning(disable : 4005)
 
 class ISE_Shape {
 public:
+    virtual ~ISE_Shape() = default;
     virtual void __stdcall assign_shapes(CShapeData::shape_def* shapes, u32 cnt) = 0;
 };
 
@@ -63,18 +58,19 @@ virtual void FillProps(LPCSTR pref, PropItemVec& items);
 #endif // #ifndef XRGAME_EXPORTS
 
 virtual CSE_Visual* __stdcall visual() = 0;
-}
-;
+};
+
 add_to_type_list(CSE_Visual)
 #define script_type_list save_type_list(CSE_Visual)
 
-    SERVER_ENTITY_DECLARE_BEGIN0(CSE_Motion) void __stdcall OnChangeMotion(PropValue* sender);
+SERVER_ENTITY_DECLARE_BEGIN0(CSE_Motion) 
+    void __stdcall OnChangeMotion(PropValue* sender);
 public:
-shared_str motion_name;
+    shared_str motion_name;
 
 public:
-CSE_Motion(LPCSTR name = 0);
-virtual ~CSE_Motion();
+    CSE_Motion(LPCSTR name = 0);
+    virtual ~CSE_Motion();
 
 void motion_read(NET_Packet& P);
 void motion_write(NET_Packet& P);
@@ -87,12 +83,13 @@ virtual void FillProps(LPCSTR pref, PropItemVec& items);
 #endif // #ifndef XRGAME_EXPORTS
 
 virtual CSE_Motion* __stdcall motion() = 0;
-}
-;
+};
+
 add_to_type_list(CSE_Motion)
 #define script_type_list save_type_list(CSE_Motion)
 
-    struct ISE_AbstractLEOwner {
+struct ISE_AbstractLEOwner {
+    virtual ~ISE_AbstractLEOwner() = default;
     virtual void __stdcall get_bone_xform(LPCSTR name, Fmatrix& xform) = 0;
 };
 
@@ -104,7 +101,6 @@ struct visual_data {
 #pragma pack(pop)
 
 struct ISE_Abstract {
-public:
     enum {
         flUpdateProperties = u32(1 << 0),
         flVisualChange = u32(1 << 1),

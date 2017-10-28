@@ -202,7 +202,7 @@ SERVER_ENTITY_DECLARE_END
 add_to_type_list(CSE_Temporary)
 #define script_type_list save_type_list(CSE_Temporary)
 
-    SERVER_ENTITY_DECLARE_BEGIN0(CSE_PHSkeleton) CSE_PHSkeleton(LPCSTR caSection);
+SERVER_ENTITY_DECLARE_BEGIN0(CSE_PHSkeleton) CSE_PHSkeleton(LPCSTR caSection);
 virtual ~CSE_PHSkeleton();
 
 enum { flActive = (1 << 0), flSpawnCopy = (1 << 1), flSavedData = (1 << 2), flNotSave = (1 << 3) };

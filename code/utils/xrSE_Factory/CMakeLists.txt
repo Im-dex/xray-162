@@ -229,12 +229,7 @@ set(COMMON_OBJECTBROKER ../../engine/xrServerEntities/object_broker.h
                         ../../engine/xrServerEntities/object_saver.h
                         ../../engine/xrServerEntities/object_type_traits.h)
 
-set(COMMON_SMARTCAST ../../engine/xrServerEntities/smart_cast.h
-                     ../../engine/xrServerEntities/smart_cast_impl0.h
-                     ../../engine/xrServerEntities/smart_cast_impl1.h
-                     ../../engine/xrServerEntities/smart_cast_impl2.h
-                     ../../engine/xrServerEntities/smart_cast.cpp
-                     ../../engine/xrServerEntities/smart_cast_stats.cpp)
+set(COMMON_SMARTCAST ../../engine/xrServerEntities/smart_cast.h)
 
 set(SCRIPTS_SCRIPTSTORAGE ../../engine/xrServerEntities/script_storage.h
                           ../../engine/xrServerEntities/script_storage_inline.h

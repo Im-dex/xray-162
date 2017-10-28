@@ -952,12 +952,7 @@ set(AI_ASCRIPT_SCRIPTCLASSES_UI_UIWINDOWS_LINES ui/UILine.h
 set(AI_AMONSTERS_HUMANS_STALKER_DECISIONMAKER_ACTIONS_DANGER_ACTIONS_UNKNOWN stalker_danger_unknown_planner.h
                                                                              stalker_danger_unknown_planner.cpp)
 
-set(CORE_COMMON_SMARTCAST ../xrServerEntities/smart_cast.h
-                          ../xrServerEntities/smart_cast_impl0.h
-                          ../xrServerEntities/smart_cast_impl1.h
-                          ../xrServerEntities/smart_cast_impl2.h
-                          ../xrServerEntities/smart_cast.cpp
-                          ../xrServerEntities/smart_cast_stats.cpp)
+set(CORE_COMMON_SMARTCAST ../xrServerEntities/smart_cast.h)
 
 set(AI_ASCRIPT_SCRIPTCLASSES_UI_COMMON_OPTIONSITEM ui/UIOptionsItem.h
                                                    ui/UIOptionsManager.h

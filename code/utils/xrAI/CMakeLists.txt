@@ -46,13 +46,8 @@ set(ALIFE_SPAWN_PATROL_PATHS_PATROL_PATH_STORAGE patrol_path_storage.cpp
                                                  patrol_path_storage.h
                                                  patrol_path_storage_inline.h)
 
-set(ALIFE_SHARED_COMMON ../../engine/xrServerEntities/smart_cast.cpp
-                        ../../engine/xrServerEntities/smart_cast_stats.cpp
-                        ../../engine/xrServerEntities/clsid_game.h
+set(ALIFE_SHARED_COMMON ../../engine/xrServerEntities/clsid_game.h
                         ../../engine/xrServerEntities/smart_cast.h
-                        ../../engine/xrServerEntities/smart_cast_impl0.h
-                        ../../engine/xrServerEntities/smart_cast_impl1.h
-                        ../../engine/xrServerEntities/smart_cast_impl2.h
                         profiler.h)
 
 set(ALIFE_SEARCH_GRAPH_ENGINE graph_engine.h
