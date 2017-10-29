@@ -48,7 +48,8 @@ set(KERNEL stdafx.h
            ../xrRenderCommon/xrRender_console.h
            stdafx.cpp
            ../xrRenderCommon/xrRender_console.cpp
-           xrRender_R3.cpp)
+           xrRender_R3.cpp
+           script_unity_builds.cpp)
 
 set(MODELS_VISUALS ../xrRenderDX10/3DFluid/dx103DFluidVolume.h
                    ../xrRenderCommon/FLOD.h
@@ -310,6 +311,7 @@ set(REFACTORED_EXECUTION__AND__3D_SHADERS_SHADERMANAGER ../xrRenderCommon/ETextu
                                                         ../xrRenderCommon/ResourceManager_Loader.cpp
                                                         ../xrRenderCommon/ResourceManager_Reset.cpp
                                                         ../xrRenderCommon/TextureDescrManager.cpp)
+set_source_files_properties(../xrRenderDX10/dx10ResourceManager_Scripting.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 
 set(UTILS ../xrRenderCommon/Utils/dxHashHelper.h
           ../xrRenderCommon/Utils/dxHashHelper.cpp)
