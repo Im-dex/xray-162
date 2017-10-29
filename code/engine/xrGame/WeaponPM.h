@@ -12,8 +12,8 @@ private:
 
 protected:
 public:
-    CWeaponPM();
-    virtual ~CWeaponPM();
+    CWeaponPM() = default;
+    virtual ~CWeaponPM() = default;
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

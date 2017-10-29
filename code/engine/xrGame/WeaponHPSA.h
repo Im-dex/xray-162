@@ -12,8 +12,8 @@ private:
 
 protected:
 public:
-    CWeaponHPSA();
-    virtual ~CWeaponHPSA();
+    CWeaponHPSA() = default;
+    virtual ~CWeaponHPSA() = default;
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

@@ -16,18 +16,20 @@ using namespace luabind;
 
 LPCSTR get_section_name(const CSE_Abstract* abstract) { return (abstract->name()); }
 
-LPCSTR get_name(const CSE_Abstract* abstract) { return (abstract->name_replace()); }
-
 CScriptIniFile* get_spawn_ini(CSE_Abstract* abstract) {
     return ((CScriptIniFile*)&abstract->spawn_ini());
 }
+
+namespace xrServerObjectsScript {
+
+inline LPCSTR get_name(const CSE_Abstract* abstract) { return abstract->name_replace(); }
 
 template <typename T>
 struct CWrapperBase : public T, public luabind::wrap_base {
     typedef T inherited;
     typedef CWrapperBase<T> self_type;
 
-    IC CWrapperBase(LPCSTR section) : T(section) {}
+    CWrapperBase(LPCSTR section) : T(section) {}
 
     virtual void STATE_Read(NET_Packet& p1) { call<void>("STATE_Read", &p1); }
     static void STATE_Read_static(inherited* ptr, NET_Packet* p1) {
@@ -52,6 +54,8 @@ struct CWrapperBase : public T, public luabind::wrap_base {
     }
 };
 
+} // namespace xrServerObjectsScript
+
 #pragma optimize("s", on)
 void CPureServerObject::script_register(lua_State* L) {
     module(
@@ -67,7 +71,7 @@ void CPureServerObject::script_register(lua_State* L) {
 }
 
 void CSE_Abstract::script_register(lua_State* L) {
-    typedef CWrapperBase<CSE_Abstract> WrapType;
+    typedef xrServerObjectsScript::CWrapperBase<CSE_Abstract> WrapType;
     typedef CSE_Abstract BaseType;
     module(L)[class_<CSE_Abstract, WrapType, CPureServerObject>("cse_abstract")
                   .def_readonly("id", &BaseType::ID)
@@ -76,7 +80,7 @@ void CSE_Abstract::script_register(lua_State* L) {
                   .def_readwrite("position", &BaseType::o_Position)
                   .def_readwrite("angle", &BaseType::o_Angle)
                   .def("section_name", &get_section_name)
-                  .def("name", &get_name)
+                  .def("name", &xrServerObjectsScript::get_name)
                   .def("clsid", &BaseType::script_clsid)
                   .def("spawn_ini", &get_spawn_ini)
                   .def("STATE_Read", &BaseType::STATE_Read, &WrapType::STATE_Read_static)

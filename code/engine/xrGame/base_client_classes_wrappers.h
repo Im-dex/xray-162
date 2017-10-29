@@ -69,7 +69,8 @@ public:
         {
                 call_member<void>(this,"spatial_unregister");
         }
-        
+        
+
         static	void			spatial_unregister_static	(base *self)
         {
                 self->base::spatial_unregister();
@@ -94,7 +95,8 @@ public:
         {
                 return	(self->base::spatial_sector_point());
         }
-        
+        
+
         virtual	CObject*		dcast_CObject				()
         {
                 return	(call_member<CObject*>(this,"dcast_CObject"));
@@ -188,7 +190,8 @@ public:
             {
                     return		(!!	self->IRenderable::renderable_ShadowGenerate());
             }
-            
+            
+
             virtual	BOOL	renderable_ShadowReceive		()
             {
                     return		((BOOL)call_member<bool>(this,"renderable_ShadowReceive"));

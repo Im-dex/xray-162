@@ -171,13 +171,15 @@ LPCSTR		CPda::Name				()
         if(m_sFullName.empty())
         {
                 m_sFullName.assign(inherited::Name());
-                
+                
+
                 CSpecificCharacter spec_char;
                 spec_char.Load(m_SpecificChracterOwner);
                 m_sFullName += " ";
                 m_sFullName += xr_string(spec_char.Name());
         }
-        
+        
+
         return m_sFullName.c_str();
 }
 */

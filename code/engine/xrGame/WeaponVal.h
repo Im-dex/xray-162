@@ -7,8 +7,8 @@ class CWeaponVal : public CWeaponMagazined {
     typedef CWeaponMagazined inherited;
 
 public:
-    CWeaponVal(void);
-    virtual ~CWeaponVal(void);
+    CWeaponVal() : CWeaponMagazined(SOUND_TYPE_WEAPON_SUBMACHINEGUN) {}
+    virtual ~CWeaponVal() = default;
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

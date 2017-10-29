@@ -11,8 +11,8 @@ protected:
     virtual void OnAnimationEnd(u32 state);
 
 public:
-    CWeaponSVD(void);
-    virtual ~CWeaponSVD(void);
+    CWeaponSVD() = default;
+    virtual ~CWeaponSVD() = default;
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

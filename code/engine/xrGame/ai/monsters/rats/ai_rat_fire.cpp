@@ -6,7 +6,7 @@
 //	Description : Fire and enemy parameters for monster "Rat"
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "stdafx.h"
 #include "ai_rat.h"
 #include "ai_rat_impl.h"
 #include "ai_rat_space.h"

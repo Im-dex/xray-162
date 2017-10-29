@@ -7,8 +7,8 @@ class CWeaponVintorez : public CWeaponMagazined {
     typedef CWeaponMagazined inherited;
 
 public:
-    CWeaponVintorez(void);
-    virtual ~CWeaponVintorez(void);
+    CWeaponVintorez() : CWeaponMagazined(SOUND_TYPE_WEAPON_SNIPERRIFLE) {}
+    virtual ~CWeaponVintorez() = default;
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };
