@@ -60,7 +60,8 @@ set(KERNEL stdafx.h
            ../xrRenderCommon/xrRender_console.h
            stdafx.cpp
            ../xrRenderCommon/xrRender_console.cpp
-           xrRender_R2.cpp)
+           xrRender_R2.cpp
+           script_unity_builds.cpp)
 
 set(INTERFASE_IMPLEMENTATIONS_WALLMARKARRAY ../xrRenderCommon/dxWallMarkArray.h
                                             ../xrRender/WallMarkArray.h
@@ -270,6 +271,7 @@ set(REFACTORED_EXECUTION__AND__3D_SHADERS_SHADERMANAGER ../xrRenderCommon/ETextu
                                                         ../xrRenderCommon/ResourceManager_Resources.cpp
                                                         ../xrRenderCommon/ResourceManager_Scripting.cpp
                                                         ../xrRenderCommon/TextureDescrManager.cpp)
+set_source_files_properties(../xrRenderCommon/ResourceManager_Scripting.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 
 set(CORE ../xrRenderCommon/PSLibrary.h
          r2.h
