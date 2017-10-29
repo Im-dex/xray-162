@@ -39,7 +39,8 @@ set(KERNEL ../xrRenderCommon/cl_intersect.h
            ../xrRenderCommon/xrRender_console.h
            stdafx.cpp
            ../xrRenderCommon/xrRender_console.cpp
-           xrRender_R1.cpp)
+           xrRender_R1.cpp
+           script_unity_builds.cpp)
 
 set(INTERFASE_IMPLEMENTATIONS_WALLMARKARRAY ../xrRenderCommon/dxWallMarkArray.h
                                             ../xrRender/WallMarkArray.h
@@ -238,6 +239,7 @@ set(REFACTORED_EXECUTION__AND__3D_SHADERS_SHADERMANAGER ../xrRenderCommon/ETextu
                                                         ../xrRenderCommon/ResourceManager_Resources.cpp
                                                         ../xrRenderCommon/ResourceManager_Scripting.cpp
                                                         ../xrRenderCommon/TextureDescrManager.cpp)
+set_source_files_properties(../xrRenderCommon/ResourceManager_Scripting.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 
 set(CORE FStaticRender.h
          FStaticRender_RenderTarget.h
