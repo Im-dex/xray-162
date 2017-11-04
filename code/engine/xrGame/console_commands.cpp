@@ -1072,11 +1072,11 @@ public:
 #ifdef DEBUG_CAPS
 #include "game_graph.h"
 struct CCC_JumpToLevel : public IConsole_Command {
-    CCC_JumpToLevel(LPCSTR N) : IConsole_Command(N){};
+    CCC_JumpToLevel(LPCSTR N) : IConsole_Command(N){}
 
     virtual void Execute(LPCSTR level) {
         if (!ai().get_alife()) {
-            Msg("! ALife simulator is needed to perform specified command!");
+            Log("! ALife simulator is needed to perform specified command!");
             return;
         }
 
@@ -1090,10 +1090,10 @@ struct CCC_JumpToLevel : public IConsole_Command {
         Msg("! There is no level \"%s\" in the game graph!", level);
     }
 
-    virtual void Save(IWriter* F){};
+    virtual void Save(IWriter* F){}
     virtual void fill_tips(vecTips& tips, u32 mode) {
         if (!ai().get_alife()) {
-            Msg("! ALife simulator is needed to perform specified command!");
+            Log("! ALife simulator is needed to perform specified command!");
             return;
         }
 
@@ -1103,6 +1103,24 @@ struct CCC_JumpToLevel : public IConsole_Command {
             tips.push_back((*itb).second.name());
         }
     }
+};
+
+class CCC_GreedIsGood : public IConsole_Command {
+public:
+    CCC_GreedIsGood(const char* N) : IConsole_Command(N) {}
+
+    void Execute(const char* args) override {
+        if (args) {
+            const u32 amount = std::atol(args);
+            Actor()->set_money(Actor()->get_money() + amount, true);
+        }
+    }
+
+    void Status(TStatus& S) override {
+        std::strcpy(S, "<amount of money> (how much money to add to the actor)");
+    }
+
+    void Save(IWriter*) override {}
 };
 
 //#ifndef MASTER_GOLD
@@ -1763,6 +1781,7 @@ void CCC_RegisterCommands() {
     CMD1(CCC_JumpToLevel, "jump_to_level");
     CMD3(CCC_Mask, "g_god", &psActorFlags, AF_GODMODE);
     CMD3(CCC_Mask, "g_unlimitedammo", &psActorFlags, AF_UNLIMITEDAMMO);
+    CMD1(CCC_GreedIsGood, "g_greedisgood");
     CMD1(CCC_Script, "run_script");
     CMD1(CCC_ScriptCommand, "run_string");
     CMD1(CCC_TimeFactor, "time_factor");

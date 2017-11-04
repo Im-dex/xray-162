@@ -1294,7 +1294,8 @@ ACTOR_DEFS::SMemoryPos*				CActor::FindMemoryPos (u32 Time)
         if (SMemoryPosStack.empty()) return NULL;
 
         if (Time > SMemoryPosStack.back().dwTime1) return NULL;
-        
+        
+
         xr_deque<SMemoryPos>::iterator B = SMemoryPosStack.begin();
         xr_deque<SMemoryPos>::iterator E = SMemoryPosStack.end();
         xr_deque<SMemoryPos>::iterator I = std::lower_bound(B,E,Time);

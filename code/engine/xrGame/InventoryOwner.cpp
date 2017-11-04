@@ -493,7 +493,6 @@ bool CInventoryOwner::AllowItemToTrade(CInventoryItem const* item,
 }
 
 void CInventoryOwner::set_money(u32 amount, bool bSendEvent) {
-
     if (InfinitiveMoney())
         m_money = std::max(m_money, amount);
     else
