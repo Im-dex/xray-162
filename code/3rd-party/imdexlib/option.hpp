@@ -446,11 +446,11 @@ public:
     }
 
     const_reference get_or_else(const std::reference_wrapper<T> $default) const noexcept {
-        return ref ? *ref : $default;
+        return ref ? *ref : $default.get();
     }
 
     reference get_or_else(const std::reference_wrapper<T> $default) noexcept {
-        return ref ? *ref : $default;
+        return ref ? *ref : $default.get();
     }
 
     template <typename E>

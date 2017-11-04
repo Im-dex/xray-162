@@ -2017,8 +2017,7 @@ set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTACTIONS_SCRIPT_ABSTRACT_ACTION script_abstrac
 set(AI_ASCRIPT_SCRIPTCLASSES_SCRIPTFCOLOR ../xrServerEntities/script_fcolor.h
                                           ../xrServerEntities/script_fcolor_script.cpp)
 
-set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_WORLDPROPERTYEVALUATOR_CONST property_evaluator_const.h
-                                                                                    property_evaluator_const_inline.h)
+set(AI_ACOMPONENTS_DECISIONMANAGEMENT_ACTIONMANAGEMENT_WORLDPROPERTYEVALUATOR_CONST property_evaluator_const.h)
 
 set(CORE_CLIENT_OBJECTS_BASE_ENTITYALIVE entity_alive.h
                                          entity_alive_inline.h

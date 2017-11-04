@@ -76,11 +76,11 @@ class CStateMove : public CState<_Object> {
     typedef CState<_Object> inherited;
 
 public:
-    CStateMove(_Object* obj, void* data = 0) : inherited(obj, data) {}
+    CStateMove(_Object* obj, void* data = nullptr) : inherited(obj, data) {}
     virtual ~CStateMove() {}
     virtual void initialize() {
         inherited::initialize();
-        object->path().prepare_builder();
+        this->object->path().prepare_builder();
     }
 };
 

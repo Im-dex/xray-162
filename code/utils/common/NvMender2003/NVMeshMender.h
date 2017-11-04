@@ -21,7 +21,9 @@ Comments:
   per pixel lighting.  Given a set of vertices and normal map texture coordinates,
   MeshMender will return a set of normals, binormals, and tangents taking into
   account texture mirroring.
-  
+  
+
+
         Meshmender also lets you choose a minimum angle between neighboring
   triangles vectors to determine whether or not they can smooth together.
   If they can't smooth together, then MeshMender automagically mends the mesh
@@ -111,7 +113,7 @@ public:
             FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX3 | D3DFVF_TEXCOORDSIZE2(0) |
                   D3DFVF_TEXCOORDSIZE3(1) | D3DFVF_TEXCOORDSIZE3(2)
         };
-        Vertex::Vertex()
+        Vertex()
             : pos(0.0f, 0.0f, 0.0f), normal(0.0f, 0.0f, 0.0f), s(0.0f), t(0.0f),
               tangent(0.0f, 0.0f, 0.0f), binormal(0.0f, 0.0f, 0.0f) {}
     };

@@ -67,7 +67,7 @@ ETOOLS_API int __stdcall ogg_enc(const char* in_fn, const char* out_fn, float qu
 
     in = fopen(in_fn, "rb");
 
-    if (in == NULL)
+    if (!in)
         return 0;
 
     format = open_audio_file(in, &enc_opts);

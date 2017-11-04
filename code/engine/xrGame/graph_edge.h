@@ -37,6 +37,8 @@ private:
     _edge_data_type m_data;
 
 public:
+    using _vertex_id_type = typename inherited::_vertex_id_type;
+
     IC CEdge(const _edge_weight_type& weight, _vertex_type* vertex);
     IC bool operator==(const _vertex_id_type& vertex_id) const;
     IC bool operator==(const CEdge& obj) const;

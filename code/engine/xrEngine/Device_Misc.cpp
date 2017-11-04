@@ -6,13 +6,13 @@
 
 //----------------------------- FLAGS
 static struct _DF {
-    char* name;
+    const char* name;
     u32 mask;
 } DF[] = { { "rsFullscreen", rsFullscreen },
            { "rsClearBB", rsClearBB },
            { "rsVSync", rsVSync },
            { "rsWireframe", rsWireframe },
-           { NULL, 0 } };
+           { nullptr, 0 } };
 
 void CRenderDevice::DumpFlags() {
     Log("- Dumping device flags");

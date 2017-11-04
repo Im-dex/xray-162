@@ -37,7 +37,7 @@ IC bool CGameVertexPathManager::is_accessible(const _index_type& vertex_id) cons
     if (!m_start_is_accessible)
         return (true);
 
-    typedef _Parameters::VERTEX_TYPES::const_iterator const_iterator;
+    typedef typename _Parameters::VERTEX_TYPES::const_iterator const_iterator;
 #ifdef DEBUG
     if (m_evaluator->m_vertex_types->empty()) {
         Msg("! warning : empty vertex types");
@@ -46,7 +46,7 @@ IC bool CGameVertexPathManager::is_accessible(const _index_type& vertex_id) cons
     const_iterator I = m_evaluator->m_vertex_types->begin();
     const_iterator E = m_evaluator->m_vertex_types->end();
     for (; I != E; ++I)
-        if (graph->mask((*I).tMask, graph->vertex(vertex_id)->vertex_type()))
+        if (this->graph->mask((*I).tMask, this->graph->vertex(vertex_id)->vertex_type()))
             return (true);
 
     return (false);

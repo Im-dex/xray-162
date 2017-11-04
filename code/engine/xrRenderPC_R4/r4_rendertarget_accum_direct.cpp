@@ -1173,7 +1173,7 @@ void CRenderTarget::accum_direct_volumetric(u32 sub_phase, const u32 Offset,
     //	Set correct depth surface
     //	It's slow. Make this when shader is created
     {
-        char* pszSMapName;
+        const char* pszSMapName = nullptr;
         BOOL b_HW_smap = RImplementation.o.HW_smap;
         BOOL b_HW_PCF = RImplementation.o.HW_smap_PCF;
         if (b_HW_smap) {
@@ -1289,7 +1289,8 @@ void CRenderTarget::accum_direct_volumetric(u32 sub_phase, const u32 Offset,
      {
                   // per pixel
                   RCache.Render			(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
-               
+               
+
                   // per sample
         if( RImplementation.o.dx10_msaa_opt )
         {

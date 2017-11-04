@@ -10,6 +10,8 @@ namespace lc_net {
 template <execution_types etype>
 class tnet_execution : public tnet_execution_base<etype> {
 private:
+    using inherited = tnet_execution_base<etype>;
+    using net_execution_impl = typename inherited::net_execution_impl;
     typedef tnet_execution<etype> self_type;
     net_execution_impl execution_impl;
 

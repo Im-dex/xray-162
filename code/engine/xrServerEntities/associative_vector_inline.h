@@ -26,8 +26,8 @@ IC _associative_vector::associative_vector(const key_compare& predicate)
 TEMPLATE_SPECIALIZATION
 template <typename _iterator_type>
 IC _associative_vector::associative_vector(_iterator_type first, _iterator_type last,
-                                           const key_compare& predicate = key_compare(),
-                                           const allocator_type& allocator = allocator_type())
+                                           const key_compare& predicate,
+                                           const allocator_type& allocator)
     : //	inherited			(first,last,allocator),
       inherited(first, last),
       value_compare(predicate) {
@@ -183,7 +183,7 @@ _associative_vector::insert(const value_type& value) {
     actualize();
     bool found = true;
     iterator I = lower_bound(value.first);
-    if (I == end() || operator()(value.first, (*I).first)) {
+    if (I == end() || (*this)(value.first, (*I).first)) {
         I = inherited::insert(I, value);
         found = false;
     } else
@@ -194,8 +194,8 @@ _associative_vector::insert(const value_type& value) {
 TEMPLATE_SPECIALIZATION
 IC typename _associative_vector::iterator _associative_vector::insert(iterator where,
                                                                       const value_type& value) {
-    if ((where != end()) && (operator()(*where, value)) && ((where - begin()) == size()) &&
-        (!operator()(value, *(where + 1))) && (operator()(*(where + 1), value)))
+    if ((where != end()) && ((*this)(*where, value)) && ((where - begin()) == size()) &&
+        (!(*this)(value, *(where + 1))) && ((*this)(*(where + 1), value)))
         return (inherited::insert(where, value));
 
     return (insert(val).first);
@@ -222,7 +222,7 @@ IC typename _associative_vector::iterator _associative_vector::find(const key_ty
     if (I == end())
         return (end());
 
-    if (operator()(key, (*I).first))
+    if ((*this)(key, (*I).first))
         return (end());
 
     return (I);
@@ -236,7 +236,7 @@ _associative_vector::find(const key_type& key) const {
     if (I == end())
         return (end());
 
-    if (operator()(key, (*I).first))
+    if ((*this)(key, (*I).first))
         return (end());
 
     return (I);
@@ -256,7 +256,7 @@ _associative_vector::equal_range(const key_type& key) {
     if (I == end())
         return (equal_range_result(end(), end()));
 
-    if (operator()(key, (*I).first))
+    if ((*this)(key, (*I).first))
         return (equal_range_result(I, I));
 
     VERIFY(!operator()(key, (*I).first));
@@ -271,7 +271,7 @@ _associative_vector::equal_range(const key_type& key) const {
     if (I == end())
         return (const_equal_range_result(end(), end()));
 
-    if (operator()(key, (*I).first))
+    if ((*this)(key, (*I).first))
         return (const_equal_range_result(I, I));
 
     VERIFY(!operator()(key, (*I).first));

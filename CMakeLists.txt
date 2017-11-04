@@ -28,7 +28,7 @@ if (MSVC)
                         OUTPUT_VARIABLE VS_TOOLS_PATH
                         OUTPUT_STRIP_TRAILING_WHITESPACE)
         set(VC_ENV_BAT ${VS_TOOLS_PATH}/VC/Auxiliary/Build/vcvarsall.bat)
-        add_compile_options(/std:c++latest /await)
+        add_compile_options(/std:c++latest /await /permissive-)
         add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/Oi>")
     else()
         message(FATAL_ERROR "Only MSVC 15.3 (MSVS 2017) and higher is supported")

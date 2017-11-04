@@ -31,7 +31,7 @@ public:
 
     virtual bool ability_can_drag() { return true; }
 
-    virtual char* get_monster_class_name() { return "boar"; }
+    const char* get_monster_class_name() override { return "boar"; }
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

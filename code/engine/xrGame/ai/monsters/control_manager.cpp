@@ -10,7 +10,7 @@
 
 enum EActiveComAction { eRemove = u32(0), eAdd };
 
-char* make_xrstr(ControlCom::EControlType e) {
+const char* make_xrstr(ControlCom::EControlType e) {
     switch (e) {
     case ControlCom::eControlMovement:
         return "eControlMovement";

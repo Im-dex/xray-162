@@ -24,7 +24,7 @@ public:
     virtual bool ability_can_drag() { return true; }
     virtual u32 get_attack_rebuild_time();
     virtual bool can_use_agressive_jump(const CObject*);
-    virtual char* get_monster_class_name() { return "dog"; }
+    const char* get_monster_class_name() override { return "dog"; }
 
 public:
     void set_current_animation(u32 curr_anim = -1);

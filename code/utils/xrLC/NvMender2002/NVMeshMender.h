@@ -25,7 +25,8 @@ including
 
   Stretched Basis -    When two adjacend faces use wildly different texture mappings, causing
 stretching that can ruin per-pixel lighting.
- 
+ 
+
 
   Here is an example usage scenario :
 
@@ -101,7 +102,8 @@ duplication WeightNormalsByFaceSize // weight vertex normals by the triangle's s
 
 
   if ( !bSuccess ) return false;
-  
+  
+
   vpos = outputAtts[0].floatVector_; // Note that there may be more vertices than you sent in.
   vnor = outputAtts[2].floatVector_;
   xr_vector<float> texCoords = outputAtts[3].floatVector_; // texcoords
@@ -208,13 +210,13 @@ public:
         DontWeightNormalsByFaceSize
     };
 
-    bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVector& output,
+    bool Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVector& output,
                              const float bSmoothCreaseAngleRadians = 3.141592654f / 3.0f,
                              const float* pTextureMatrix = 0,
                              const Option _FixTangents = FixTangents,
                              const Option _FixCylindricalTexGen = FixCylindricalTexGen,
                              const Option _WeightNormalsByFaceSize = WeightNormalsByFaceSize);
-    bool NVMeshMender::MungeD3DX(const NVMeshMender::VAVector& input,
+    bool MungeD3DX(const NVMeshMender::VAVector& input,
                                  NVMeshMender::VAVector& output,
                                  const float bSmoothCreaseAngleRadians = 3.141592654f / 3.0f,
                                  const float* pTextureMatrix = 0,

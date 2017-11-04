@@ -10,7 +10,7 @@ typedef void (*progress_func)(char* fn, long totalsamples, long samples, double 
 typedef void (*enc_end_func)(char* fn, double time, int rate, long samples, long bytes);
 typedef void (*enc_start_func)(char* fn, char* outfn, int bitrate, float quality, int qset,
                                int managed, int min_br, int max_br);
-typedef void (*error_func)(char* errormessage);
+typedef void (*error_func)(const char* errormessage);
 
 void* timer_start(void);
 double timer_time(void*);
@@ -26,7 +26,7 @@ void start_encode_null(char* fn, char* outfn, int bitrate, float quality, int qs
                        int min, int max);
 void final_statistics(char* fn, double time, int rate, long total_samples, long bytes);
 void final_statistics_null(char* fn, double time, int rate, long total_samples, long bytes);
-void encode_error(char* errmsg);
+void encode_error(const char* errmsg);
 
 typedef struct {
     char* arg;
@@ -61,8 +61,8 @@ typedef struct {
     int raw_endianness;
 
     char* namefmt;
-    char* namefmt_remove;
-    char* namefmt_replace;
+    const char* namefmt_remove;
+    const char* namefmt_replace;
     char* outfile;
 
     /* All 3 in kbps */

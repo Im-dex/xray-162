@@ -55,7 +55,7 @@ public:
 
     virtual void HitEntityInJump(const CEntity* pEntity);
     virtual void TranslateActionToPathParams();
-    virtual char* get_monster_class_name() { return "pseudogigant"; }
+    const char* get_monster_class_name() override { return "pseudogigant"; }
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

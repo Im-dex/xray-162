@@ -88,6 +88,8 @@ public:
 
 template <typename _return_type>
 class CScriptCallbackEx : public CScriptCallbackEx_<_return_type> {
+    using return_type = typename CScriptCallbackEx_<_return_type>::return_type;
+
     template <typename T>
     static void do_return(T&& value, std::true_type /*is_void*/) {
         (void) value;
@@ -107,13 +109,13 @@ public:
     return_type operator()(Args&&... args) const {
         try {
             try {
-                if (m_functor) {
-                    VERIFY(m_functor.is_valid());
-                    if (m_object.is_valid()) {
+                if (this->m_functor) {
+                    VERIFY(this->m_functor.is_valid());
+                    if (this->m_object.is_valid()) {
                         VERIFY(m_object.is_valid());
-                        return do_return(m_functor(m_object, std::forward<Args>(args)...));
+                        return do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                     } else
-                        return do_return(m_functor(std::forward<Args>(args)...));
+                        return do_return(this->m_functor(std::forward<Args>(args)...));
                 }
             } catch (std::exception&) {
                 ai().script_engine().print_output(ai().script_engine().lua(), "", 2);
@@ -137,13 +139,13 @@ public:
     return_type operator()(Args&&... args) {
         try {
             try {
-                if (m_functor) {
+                if (this->m_functor) {
                     VERIFY(m_functor.is_valid());
-                    if (m_object.is_valid()) {
+                    if (this->m_object.is_valid()) {
                         VERIFY(m_object.is_valid());
-                        return do_return(m_functor(m_object, std::forward<Args>(args)...));
+                        return do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                     } else
-                        return do_return(m_functor(std::forward<Args>(args)...));
+                        return do_return(this->m_functor(std::forward<Args>(args)...));
                 }
             } catch (std::exception&) {
                 ai().script_engine().print_output(ai().script_engine().lua(), "", 2);

@@ -41,26 +41,26 @@ IC void CLevelStraightLinePathManager::create_path(T& vertex) {
 
     Fvector tPosition = m_parameters->m_start_point;
 
-    xr_vector<_index_type>::iterator I = path->begin();
-    xr_vector<_index_type>::iterator E = path->end();
+    auto I = this->path->begin();
+    auto E = this->path->end();
     _index_type& dwNode = *I;
     for (++I; I != E; ++I) {
         u32 vertex_id =
-            graph->check_position_in_direction(dwNode, tPosition, graph->vertex_position(*I));
-        if (graph->valid_vertex_id(vertex_id))
-            fDirectDistance = tPosition.distance_to(graph->vertex_position(*I));
+            this->graph->check_position_in_direction(dwNode, tPosition, this->graph->vertex_position(*I));
+        if (this->graph->valid_vertex_id(vertex_id))
+            fDirectDistance = tPosition.distance_to(this->graph->vertex_position(*I));
         else
             fDirectDistance = m_parameters->max_range;
         if (fDirectDistance == m_parameters->max_range) {
             if (fLastDirectDistance == 0) {
-                fCumulativeDistance += graph->distance(dwNode, *I);
+                fCumulativeDistance += this->graph->distance(dwNode, *I);
                 dwNode = *I;
             } else {
                 fCumulativeDistance += fLastDirectDistance;
                 fLastDirectDistance = 0;
                 dwNode = *--I;
             }
-            tPosition = graph->vertex_position(dwNode);
+            tPosition = this->graph->vertex_position(dwNode);
         } else
             fLastDirectDistance = fDirectDistance;
         if (fCumulativeDistance + fLastDirectDistance >= m_parameters->max_range) {
@@ -70,15 +70,15 @@ IC void CLevelStraightLinePathManager::create_path(T& vertex) {
     }
 
     u32 vertex_id =
-        graph->check_position_in_direction(dwNode, tPosition, m_parameters->m_dest_point);
-    if (graph->valid_vertex_id(vertex_id))
+        this->graph->check_position_in_direction(dwNode, tPosition, m_parameters->m_dest_point);
+    if (this->graph->valid_vertex_id(vertex_id))
         fDirectDistance = tPosition.distance_to(m_parameters->m_dest_point);
     else
         fDirectDistance = m_parameters->max_range;
     if (fDirectDistance == m_parameters->max_range)
         m_parameters->m_distance = fCumulativeDistance + fLastDirectDistance +
                                    m_parameters->m_dest_point.distance_to(
-                                       graph->vertex_position((*path)[path->size() - 1]));
+                                       this->graph->vertex_position((*this->path)[this->path->size() - 1]));
     else
         m_parameters->m_distance = fCumulativeDistance + fDirectDistance;
 }

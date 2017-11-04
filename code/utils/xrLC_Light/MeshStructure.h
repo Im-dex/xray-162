@@ -153,17 +153,17 @@ public:
         Fvector* v2 = &(v[2]->P);
         t1.sub(*v1, *v0);
         t2.sub(*v2, *v1);
-        N.crossproduct(t1, t2);
-        float mag = N.magnitude();
+        this->N.crossproduct(t1, t2);
+        float mag = this->N.magnitude();
         if (mag < EPS_S) {
-            Fvector3 save_N = N;
+            Fvector3 save_N = this->N;
             if (exact_normalize(save_N))
-                N = save_N;
+                this->N = save_N;
             else
                 CalcNormal2();
         } else {
-            N.div(mag);
-            N.normalize();
+            this->N.div(mag);
+            this->N.normalize();
         }
     }
 
@@ -184,18 +184,18 @@ public:
 
 #define SIGN(a) ((a >= 0.f) ? 1.f : -1.f)
             if (Nabs.x > Nabs.y && Nabs.x > Nabs.z)
-                N.set(SIGN(N.x), 0.f, 0.f);
+                this->N.set(SIGN(this->N.x), 0.f, 0.f);
             else if (Nabs.y > Nabs.x && Nabs.y > Nabs.z)
-                N.set(0.f, SIGN(N.y), 0.f);
+                this->N.set(0.f, SIGN(this->N.y), 0.f);
             else if (Nabs.z > Nabs.x && Nabs.z > Nabs.y)
-                N.set(0.f, 0.f, SIGN(N.z));
+                this->N.set(0.f, 0.f, SIGN(this->N.z));
             else {
-                N.set(0, 1, 0);
+                this->N.set(0, 1, 0);
             }
 #undef SIGN
         } else {
             dN.div(mag);
-            N.set(dN);
+            this->N.set(dN);
         }
     }
 
@@ -256,7 +256,7 @@ struct MESHSTRUCTURE_API Tvertex : public DataVertexType, public vector_item {
     ///////////////////////////////////////////////////////////////
     v_faces m_adjacents;
 
-    IC type_vertex* Tvertex::CreateCopy(v_vertices& vertises_storage) {
+    IC type_vertex* CreateCopy(v_vertices& vertises_storage) {
         type_vertex* V = CreateCopy_NOADJ(vertises_storage);
         V->m_adjacents = m_adjacents;
         return V;
@@ -274,10 +274,10 @@ struct MESHSTRUCTURE_API Tvertex : public DataVertexType, public vector_item {
     }
 
     IC void normalFromAdj() {
-        N.set(0, 0, 0);
+        this->N.set(0, 0, 0);
         for (v_faces_it ad = m_adjacents.begin(); ad != m_adjacents.end(); ++ad)
-            N.add((*ad)->N);
-        exact_normalize(N);
+            this->N.add((*ad)->N);
+        exact_normalize(this->N);
     }
 };
 
@@ -313,14 +313,14 @@ IC void isolate_vertices(BOOL bProgress, xr_vector<typeVertex*>& vertices) {
     }
     VERIFY(verts_old == vertices.size());
 
-    xr_vector<typeVertex*>::iterator _end =
-        std::remove(vertices.begin(), vertices.end(), (typeVertex*)0);
+    const auto _end = std::remove(vertices.begin(), vertices.end(), (typeVertex*)0);
 
     /*
             remove_pred<typeVertex> rp;
             xr_vector<typeVertex*>::iterator	_end	= std::remove_if
        (vertices.begin(),vertices.end(),rp);
-            
+            
+
     */
     vertices.erase(_end, vertices.end());
     // g_bUnregister		= true;

@@ -107,10 +107,10 @@ struct CSaver {
     };
 
     template <typename T, int size>
-    IC static void save_data(const svector<T, size>& data, M& stream, const P& p) {
+    static void save_data(const svector<T, size>& data, M& stream, const P& p) {
         stream.w_u32((u32)data.size());
-        svector<T, size>::const_iterator I = data.begin();
-        svector<T, size>::const_iterator E = data.end();
+        auto I = data.begin();
+        auto E = data.end();
         for (; I != E; ++I)
             if (p(data, *I))
                 CSaver<M, P>::save_data(*I, stream, p);

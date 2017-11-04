@@ -26,21 +26,21 @@ struct functor_base {
 
 template <typename return_type>
 struct functor : public functor_base<return_type> {
-    IC return_type operator()() const { return functr(parameter); }
+    return_type operator()() const { return this->functr(this->parameter); }
 };
 
 template <typename return_type>
 struct functor2 : public functor<return_type> {
     LPCSTR parameter2;
 
-    IC return_type operator()() const { return functr(parameter, parameter2); }
+    return_type operator()() const { return this->functr(this->parameter, parameter2); }
 };
 
 template <typename return_type>
 struct functor3 : public functor2<return_type> {
     int parameter3;
 
-    IC return_type operator()() const { return functr(parameter, parameter2, parameter3); }
+    return_type operator()() const { return this->functr(this->parameter, this->parameter2, parameter3); }
 };
 
 template <>

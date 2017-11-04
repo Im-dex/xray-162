@@ -3,9 +3,7 @@
 //      are changed infrequently
 //
 
-#ifndef stdafxH
-#define stdafxH
-//#pragma once
+#pragma once
 
 #include "../xrCore/xrCore.h"
 
@@ -30,7 +28,7 @@ extern doug_lea_allocator g_collision_allocator;
 
 template <bool _is_pm, typename T>
 struct cspecial_free {
-    IC void operator()(T*& ptr) {
+    void operator()(T*& ptr) {
         void* _real_ptr = dynamic_cast<void*>(ptr);
         ptr->~T();
         CFREE(_real_ptr);
@@ -39,26 +37,19 @@ struct cspecial_free {
 
 template <typename T>
 struct cspecial_free<false, T> {
-    IC void operator()(T*& ptr) {
+    void operator()(T*& ptr) {
         ptr->~T();
         CFREE(ptr);
     }
 };
 
 template <class T>
-IC void cdelete(T*& ptr) {
+void cdelete(T*& ptr) {
     if (ptr) {
-        cspecial_free<is_polymorphic<T>::result, T>()(ptr);
-        ptr = NULL;
+        cspecial_free<std::is_polymorphic_v<T>, T>()(ptr);
+        ptr = nullptr;
     }
 }
 
 #define ENGINE_API
 #include "opcode.h"
-
-// TODO: reference additional headers your program requires here
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // stdafxH

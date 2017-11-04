@@ -69,6 +69,7 @@ public:
     void _clear() { p_ = 0; }
 };
 
+// TODO: [imdex] remove this boolshit
 // resptr_CORE
 template <class T, typename C>
 class resptr_core : public C {
@@ -78,38 +79,36 @@ protected:
 
 public:
     // construction
-    resptr_core() { p_ = 0; }
+    resptr_core() { this->p_ = 0; }
     resptr_core(T* p, bool add_ref = true) {
-        p_ = p;
+        this->p_ = p;
         if (add_ref)
-            _inc();
+            this->_inc();
     }
     resptr_core(const self& rhs) {
-        p_ = rhs.p_;
-        _inc();
+        this->p_ = rhs.p_;
+        this->_inc();
     }
-    ~resptr_core() { _dec(); }
+    ~resptr_core() { this->_dec(); }
 
     // assignment
     self& operator=(const self& rhs) {
-        _set(rhs);
+        this->_set(rhs);
         return (self&)*this;
     }
 
     // accessors
-    T& operator*() const { return *p_; }
-    T* operator->() const { return p_; }
+    T& operator*() const { return *this->p_; }
+    T* operator->() const { return this->p_; }
 
     // unspecified bool type
     typedef T* (resptr_core::*unspecified_bool_type)() const;
-    operator unspecified_bool_type() const { return p_ == 0 ? 0 : &resptr_core::_get; }
-    bool operator!() const { return p_ == 0; }
+    operator unspecified_bool_type() const { return this->p_ == 0 ? 0 : &resptr_core::_get; }
+    bool operator!() const { return this->p_ == 0; }
 
     // fast swapping
     void swap(self& rhs) {
-        T* tmp = p_;
-        p_ = rhs.p_;
-        rhs.p_ = tmp;
+        std::swap(this->p_, rhs.p_);
     }
 };
 

@@ -19,7 +19,6 @@ $Id: MxDynBlock.h,v 1.14.2.1 2004/07/01 18:38:41 garland Exp $
 
 template <class T>
 class MxDynBlock : public MxBlock<T> {
-private:
     int fill;
 
 public:
@@ -34,13 +33,13 @@ public:
 
     void room_for(int len) {
         if (length() < len)
-            resize(len);
+            this->resize(len);
         fill = len;
     }
 
     T& add() {
         if (length() == total_space())
-            resize(total_space() * 2);
+            this->resize(total_space() * 2);
         fill++;
         return last();
     }
@@ -75,7 +74,7 @@ public:
 };
 
 template <class T>
-inline bool varray_find(const MxDynBlock<T>& A, const T& t, unsigned int* index = NULL) {
+bool varray_find(const MxDynBlock<T>& A, const T& t, unsigned int* index = NULL) {
     for (unsigned int i = 0; i < (unsigned int)A.length(); i++)
         if (A[i] == t) {
             if (index)

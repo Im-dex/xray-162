@@ -299,15 +299,17 @@ _DDS : {
 #endif // DEBUG
     img_size = S->length();
     R_ASSERT(S);
-    HRESULT const result = D3DXGetImageInfoFromFileInMemory(S->pointer(), S->length(), &IMG);
-    if (FAILED(result)) {
-        Msg("! Can't get image info for texture '%s'", fn);
-        FS.r_close(S);
-        string_path temp;
-        R_ASSERT(FS.exist(temp, "$game_textures$", "ed\\ed_not_existing_texture", ".dds"));
-        R_ASSERT(xr_strcmp(temp, fn));
-        xr_strcpy(fn, temp);
-        goto _DDS;
+    {
+        HRESULT const result = D3DXGetImageInfoFromFileInMemory(S->pointer(), S->length(), &IMG);
+        if (FAILED(result)) {
+            LogMsg("! Can't get image info for texture '{}'", fn);
+            FS.r_close(S);
+            string_path temp;
+            R_ASSERT(FS.exist(temp, "$game_textures$", "ed\\ed_not_existing_texture", ".dds"));
+            R_ASSERT(xr_strcmp(temp, fn));
+            xr_strcpy(fn, temp);
+            goto _DDS;
+        }
     }
 
     if (IMG.ResourceType == D3DRTYPE_CUBETEXTURE)
@@ -403,7 +405,8 @@ _BUMP:
 TW_LoadTextureFromTexture(T_normal_1,fmt,psTextureLOD,dwWidth,dwHeight);
         //TW_Save
 (T_normal_1C,fname,"debug-3","normal-G-C");
-        
+        
+
 #if RENDER==R_R2
         // Decompress (back)
         fmt								= D3DFMT_A8R8G8B8;

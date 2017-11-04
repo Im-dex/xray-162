@@ -52,7 +52,7 @@ void CObjectActionBase<_item_type>::prevent_weapon_state_switch_ugly() {
 
 template <typename _item_type>
 void CObjectActionBase<_item_type>::stop_hiding_operation_if_any() const {
-    CHudItem* const hud_item = smart_cast<CHudItem*>(object().inventory().ActiveItem());
+    CHudItem* const hud_item = smart_cast<CHudItem*>(this->object().inventory().ActiveItem());
     VERIFY(hud_item);
     if (!hud_item->IsHidden()) {
         hud_item->StopCurrentAnimWithoutCallback();
@@ -75,6 +75,6 @@ IC CObjectActionMember<_item_type>::CObjectActionMember(_item_type* item, CAI_St
 template <typename _item_type>
 void CObjectActionMember<_item_type>::execute() {
     inherited::execute();
-    if (completed())
-        set_property(m_condition_id, m_value);
+    if (this->completed())
+        this->set_property(m_condition_id, m_value);
 }

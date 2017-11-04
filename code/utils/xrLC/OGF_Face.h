@@ -38,7 +38,7 @@ struct x_vertex // "fast" geometry, 16b/vertex
 {
     Fvector P;
     x_vertex(const OGF_Vertex& c) { P = c.P; }
-    BOOL similar(OGF* p, x_vertex& other);
+    BOOL similar(OGF* p, const x_vertex& other);
 };
 typedef xr_vector<x_vertex> vec_XV;
 typedef vec_XV::iterator itXV;
@@ -171,7 +171,7 @@ struct OGF : public OGF_Base {
 
     BOOL dbg_SphereContainsVertex(Fvector& c, float R);
 
-    u16 x_BuildVertex(x_vertex& V);
+    u16 x_BuildVertex(const x_vertex& V);
     void x_BuildFace(OGF_Vertex& V1, OGF_Vertex& V2, OGF_Vertex& V3, bool _tc_);
     u16 _BuildVertex(OGF_Vertex& V1);
     void _BuildFace(OGF_Vertex& V1, OGF_Vertex& V2, OGF_Vertex& V3, bool _tc_ = true);

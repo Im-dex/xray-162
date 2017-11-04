@@ -14,7 +14,7 @@ CStateBurerAttackMeleeAbstract::CStateBurerAttackMelee(_Object* obj) : inherited
 
 TEMPLATE_SPECIALIZATION
 bool CStateBurerAttackMeleeAbstract::check_start_conditions() {
-    float dist = object->Position().distance_to(object->EnemyMan.get_enemy()->Position());
+    float dist = this->object->Position().distance_to(this->object->EnemyMan.get_enemy()->Position());
     if (dist > MIN_DIST_MELEE_ATTACK)
         return false;
 
@@ -23,7 +23,7 @@ bool CStateBurerAttackMeleeAbstract::check_start_conditions() {
 
 TEMPLATE_SPECIALIZATION
 bool CStateBurerAttackMeleeAbstract::check_completion() {
-    float dist = object->Position().distance_to(object->EnemyMan.get_enemy()->Position());
+    float dist = this->object->Position().distance_to(this->object->EnemyMan.get_enemy()->Position());
     if (dist < MAX_DIST_MELEE_ATTACK)
         return false;
 

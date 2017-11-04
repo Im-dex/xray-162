@@ -60,7 +60,7 @@ protected:
                       _manager_builder_allocator_constructor, _data_storage_constructor,
                       _iteration_type>
         inherited;
-    typedef typename CDataStorage::CGraphVertex CGraphVertex;
+    typedef typename inherited::CDataStorage::CGraphVertex CGraphVertex;
     typedef typename CGraphVertex::_dist_type _dist_type;
     typedef typename CGraphVertex::_index_type _index_type;
 

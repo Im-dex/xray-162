@@ -24,7 +24,8 @@ protected:
     typedef typename CPathManagerGeneric<_Graph, _DataStorage, _Parameters, _dist_type, _index_type,
                                          _iteration_type>
         inherited;
-
+public:
+    using const_iterator = typename inherited::const_iterator;
 protected:
     int x1;
     //	float				y1;

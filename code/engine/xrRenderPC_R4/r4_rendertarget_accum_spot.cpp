@@ -436,7 +436,8 @@ void CRenderTarget::accum_volumetric(light* L) {
                             transform.transform(pt);
                             aabb.modify(pt);
                     }
-                    
+                    
+
             }
     */
     // Common constants
@@ -476,7 +477,7 @@ void CRenderTarget::accum_volumetric(light* L) {
         //	Set correct depth surface
         //	It's slow. Make this when shader is created
         {
-            char* pszSMapName;
+            const char* pszSMapName = nullptr;
             BOOL b_HW_smap = RImplementation.o.HW_smap;
             BOOL b_HW_PCF = RImplementation.o.HW_smap_PCF;
             if (b_HW_smap) {

@@ -84,7 +84,7 @@ bool Image_DXTC::LoadFromFile(LPCSTR filename) {
     // only understands .dds files for now
     // return true if success
 
-    char* exts[] = { ".DDS" };
+    const char* exts[] = { ".DDS" };
     int next = 1;
 
     char fileupper[256];
@@ -930,7 +930,8 @@ void Image_DXTC::RunTimingSession()
         case PF_DXT3 :
         case PF_DXT4 :
         case PF_UNKNOWN :
-                
+                
+
                 //TRACE("You must have a DXT5 texture loaded to RunTimingSession()!!\n");
                 //TRACE("Now I will be nasty and VERIFY(false)!\n");
                 VERIFY(false);
@@ -967,7 +968,8 @@ void Image_DXTC::RunTimingSession()
                 return;
         }
 
-        
+        
+
         fprintf( pf,"\n\n");
 
         for( i=0; i < NBATCHES; i++ )
@@ -1021,7 +1023,8 @@ method[n][i].m_interval_sum.LowPart );
 
                         dur = ((double)method[n][i].m_interval_sum.LowPart) /
 ((double)method[n][i].m_nSamples * (double)freq.LowPart );
-                        
+                        
+
                         fprintf( pf, "  avg:   %u\n", method[n][i].m_interval_sum.LowPart /
 method[n][i].m_nSamples ); fprintf( pf, "  avg time:  %f sec\n", dur );
 
@@ -1042,7 +1045,8 @@ method[n][i].m_nSamples );
 //BOOL QueryPerformanceFrequency(
 //  LARGE_INTEGER *lpFrequency   // address of current frequency
 //);
- 
+ 
+
 
 }
 */

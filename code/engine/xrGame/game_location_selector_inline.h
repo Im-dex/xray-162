@@ -45,16 +45,16 @@ IC void CGameLocationSelector::select_location(const _vertex_id_type start_verte
                                                _vertex_id_type& dest_vertex_id) {
     switch (m_selection_type) {
     case eSelectionTypeMask: {
-        if (used())
-            perform_search(start_vertex_id);
+        if (this->used())
+            this->perform_search(start_vertex_id);
         else
-            m_failed = false;
+            this->m_failed = false;
         break;
     }
     case eSelectionTypeRandomBranching: {
-        if (m_graph)
+        if (this->m_graph)
             select_random_location(start_vertex_id, dest_vertex_id);
-        m_failed = m_failed && (start_vertex_id == dest_vertex_id);
+        this->m_failed = this->m_failed && (start_vertex_id == dest_vertex_id);
         break;
     }
     default:
@@ -68,7 +68,7 @@ IC void CGameLocationSelector::select_random_location(const _vertex_id_type star
     VERIFY(m_graph);
     VERIFY(m_graph->valid_vertex_id(start_vertex_id));
 
-    if (!m_graph->valid_vertex_id(m_previous_vertex_id))
+    if (!this->m_graph->valid_vertex_id(m_previous_vertex_id))
         m_previous_vertex_id = GameGraph::_GRAPH_ID(start_vertex_id);
 
     u32 branch_factor = 0;
@@ -78,25 +78,25 @@ IC void CGameLocationSelector::select_random_location(const _vertex_id_type star
     GameGraph::TERRAIN_VECTOR::const_iterator E = vertex_types.end();
 
     _Graph::const_iterator i, e;
-    m_graph->begin(start_vertex_id, i, e);
+    this->m_graph->begin(start_vertex_id, i, e);
     for (; i != e; ++i) {
         // * не соответствует предыдещей вершине
         if ((*i).vertex_id() == m_previous_vertex_id)
             continue;
 
         // * вершина на текущем уровне?
-        if ((m_graph->vertex((*i).vertex_id())->level_id() != ai().level_graph().level_id()))
+        if ((this->m_graph->vertex((*i).vertex_id())->level_id() != ai().level_graph().level_id()))
             continue;
 
         // * accessible
         if (!accessible((*i).vertex_id()))
             continue;
 
-        const u8* curr_types = m_graph->vertex((*i).vertex_id())->vertex_type();
+        const u8* curr_types = this->m_graph->vertex((*i).vertex_id())->vertex_type();
 
         // * подходит по маске
         for (I = B; I != E; ++I)
-            if (m_graph->mask((*I).tMask, curr_types))
+            if (this->m_graph->mask((*I).tMask, curr_types))
                 ++branch_factor;
     }
 
@@ -109,25 +109,25 @@ IC void CGameLocationSelector::select_random_location(const _vertex_id_type star
         u32 choice = ::Random.randI(0, branch_factor);
         branch_factor = 0;
         bool found = false;
-        m_graph->begin(start_vertex_id, i, e);
+        this->m_graph->begin(start_vertex_id, i, e);
         for (; i != e; ++i) {
             // * не соответствует предыдещей вершине
             if ((*i).vertex_id() == m_previous_vertex_id)
                 continue;
 
             // * вершина на текущем уровне?
-            if ((m_graph->vertex((*i).vertex_id())->level_id() != ai().level_graph().level_id()))
+            if ((this->m_graph->vertex((*i).vertex_id())->level_id() != ai().level_graph().level_id()))
                 continue;
 
             // * accessible
             if (!accessible((*i).vertex_id()))
                 continue;
 
-            const u8* curr_types = m_graph->vertex((*i).vertex_id())->vertex_type();
+            const u8* curr_types = this->m_graph->vertex((*i).vertex_id())->vertex_type();
 
             // * подходит по маске
             for (I = B; I != E; ++I)
-                if (m_graph->mask((*I).tMask, curr_types)) {
+                if (this->m_graph->mask((*I).tMask, curr_types)) {
                     if (choice != branch_factor) {
                         ++branch_factor;
                         continue;
@@ -157,8 +157,8 @@ IC bool CGameLocationSelector::actual(const _vertex_id_type start_vertex_id, boo
 
 TEMPLATE_SPECIALIZATION
 IC bool CGameLocationSelector::accessible(const _vertex_id_type vertex_id) const {
-    return (m_restricted_object
-                ? m_restricted_object->accessible(m_graph->vertex(vertex_id)->level_vertex_id())
+    return (this->m_restricted_object
+                ? this->m_restricted_object->accessible(this->m_graph->vertex(vertex_id)->level_vertex_id())
                 : true);
 }
 

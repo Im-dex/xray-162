@@ -17,7 +17,8 @@ static const u32 data_cleanup_callback_read_write_buff_size = 512;
 void __cdecl data_cleanup_callback(const char* dataDesc, IGenericStream** stream) {
     *stream = CreateGenericStream();
     u8 buff[data_cleanup_callback_read_write_buff_size];
-    w_pod_vector(INetMemoryBuffWriter(*stream, sizeof(buff), buff), _cleanup.vec_cleanup);
+    INetMemoryBuffWriter netBlockReader(*stream, sizeof(buff), buff);
+    w_pod_vector(netBlockReader, _cleanup.vec_cleanup);
     // w_pod_vector( INetIWriterGenStream( *stream, 512 ), _cleanup.vec_cleanup );
 }
 
@@ -29,14 +30,15 @@ void global_data_cleanup::on_net_receive(IAgent* agent, DWORD sessionId, IGeneri
     if (state == id_state)
         return;
 
-    IGenericStream* globalDataStream = 0;
+    IGenericStream* globalDataStream = nullptr;
     HRESULT rz = agent->GetData(sessionId, "data_cleanup", &globalDataStream);
     if (rz != S_OK)
         return;
 
     R_ASSERT(globalDataStream);
     u8 buff[data_cleanup_callback_read_write_buff_size];
-    r_pod_vector(INetBlockReader(globalDataStream, buff, sizeof(buff)), vec_cleanup);
+    INetBlockReader netBlockReader(globalDataStream, buff, sizeof(buff));
+    r_pod_vector(netBlockReader, vec_cleanup);
     //  r_pod_vector( INetReaderGenStream( globalDataStream ), vec_cleanup );
 
     free(globalDataStream->GetCurPointer());

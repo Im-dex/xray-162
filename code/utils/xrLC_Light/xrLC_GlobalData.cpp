@@ -426,7 +426,7 @@ std::pair<u32, u32> get_id(const xr_vector<xrMU_Model*>& mu_models, const T* v) 
         }
     } f(v, face_id);
 
-    xr_vector<xrMU_Model*>::const_iterator ii = std::find_if(mu_models.begin(), mu_models.end(), f);
+    const auto ii = std::find_if(mu_models.cbegin(), mu_models.cend(), f);
     if (ii == mu_models.end())
         return std::pair<u32, u32>(u32(-1), u32(-1));
     return std::pair<u32, u32>(u32(ii - mu_models.begin()), face_id);

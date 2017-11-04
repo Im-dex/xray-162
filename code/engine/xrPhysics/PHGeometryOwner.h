@@ -118,7 +118,7 @@ void t_get_extensions(const xr_vector<geometry_type*>& geoms, const Fvector& axi
                       float& lo_ext, float& hi_ext) {
     lo_ext = dInfinity;
     hi_ext = -dInfinity;
-    xr_vector<geometry_type*>::const_iterator i = geoms.begin(), e = geoms.end();
+    auto i = geoms.cbegin(), e = geoms.cend();
     for (; i != e; ++i) {
         float temp_lo_ext, temp_hi_ext;
         (*i)->get_Extensions(axis, center_prg, temp_lo_ext, temp_hi_ext);

@@ -82,7 +82,7 @@ public:
     ICF ERP_Result intersect_full(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const {
         int quantity;
         float afT[2];
-        Fsphere::ERP_Result result = intersect(start, dir, dist, quantity, afT);
+        typename Fsphere::ERP_Result result = intersect(start, dir, dist, quantity, afT);
 
         if (result == Fsphere::rpOriginInside ||
             ((result == Fsphere::rpOriginOutside) && (afT[0] < dist))) {

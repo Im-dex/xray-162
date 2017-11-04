@@ -302,7 +302,7 @@ HRESULT IPureServer::net_Handler(u32 dwMessageType, PVOID pMessage) {
         // connect ;)
         if (SV_Client) {
             msg->dwReplyDataSize = sizeof(NET_NOTFOR_SUBNET_STR);
-            msg->pvReplyData = NET_NOTFOR_SUBNET_STR;
+            msg->pvReplyData = (PVOID)NET_NOTFOR_SUBNET_STR;
             return S_FALSE;
         }
     } break;

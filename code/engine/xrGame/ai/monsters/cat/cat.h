@@ -20,7 +20,7 @@ public:
 
     virtual void HitEntityInJump(const CEntity* pEntity);
 
-    virtual char* get_monster_class_name() { return "cat"; }
+    const char* get_monster_class_name() override { return "cat"; }
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

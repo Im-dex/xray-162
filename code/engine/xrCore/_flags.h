@@ -1,5 +1,4 @@
-#ifndef __FLAGS_H__
-#define __FLAGS_H__
+#pragma once
 
 template <class T>
 struct _flags {
@@ -49,19 +48,19 @@ struct _flags {
     bool is(const T mask) const { return mask == (flags & mask); }
     bool is_any(const T mask) const { return (flags & mask) != 0; }
     bool test(const T mask) const { return (flags & mask) != 0; }
-    SelfRef or (const T mask) {
+    SelfRef or_ (const T mask) {
         flags |= mask;
         return *this;
     }
-    SelfRef or (const Self& f, const T mask) {
+    SelfRef or_ (const Self& f, const T mask) {
         flags = f.flags | mask;
         return *this;
     }
-    SelfRef and (const T mask) {
+    SelfRef and_ (const T mask) {
         flags &= mask;
         return *this;
     }
-    SelfRef and (const Self& f, const T mask) {
+    SelfRef and_ (const Self& f, const T mask) {
         flags = f.flags & mask;
         return *this;
     }
@@ -77,5 +76,3 @@ typedef _flags<u32> Flags32;
 typedef _flags<u32> flags32;
 typedef _flags<u64> Flags64;
 typedef _flags<u64> flags64;
-
-#endif //__FLAGS_H__

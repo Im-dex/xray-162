@@ -91,29 +91,19 @@ void setup_reader(IReader* _r, _open_file& _of) { _of._reader = _r; }
 
 template <typename T>
 void _register_open_file(T* _r, LPCSTR fname) {
-    // xrCriticalSection		_lock; TODO: useless lock
-    //_lock.Enter				();
-
     _check_open_file(fname);
 
     _open_file& _of = find_free_item(fname);
     setup_reader(_r, _of);
     _of._used += 1;
-
-    //_lock.Leave				();
 }
 
 template <typename T>
 void _unregister_open_file(T* _r) {
-    // xrCriticalSection		_lock; TODO: useless lock
-    //_lock.Enter				();
-
-    xr_vector<_open_file>::iterator it =
-        std::find_if(g_open_files.begin(), g_open_files.end(), eq_pointer<T>(_r));
+    auto it = std::find_if(g_open_files.begin(), g_open_files.end(), eq_pointer<T>(_r));
     VERIFY(it != g_open_files.end());
     _open_file& _of = *it;
-    _of._reader = NULL;
-    //_lock.Leave				();
+    _of._reader = nullptr;
 }
 
 XRCORE_API void _dump_open_files(int mode) {

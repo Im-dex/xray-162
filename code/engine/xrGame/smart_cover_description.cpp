@@ -193,18 +193,18 @@ IC void delete_data(
 
     Graph& graph = const_cast<Graph&>(graph_);
 
-    typedef Graph::VERTICES Vertices;
-    typedef Graph::EDGES Edges;
+    typedef typename Graph::VERTICES Vertices;
+    typedef typename Graph::EDGES Edges;
 
     Vertices& verts = graph.vertices();
 
-    for (Vertices::iterator vi = verts.begin(); vi != verts.end(); ++vi) {
-        Graph::CVertex* vert = (*vi).second;
+    for (auto vi = verts.begin(); vi != verts.end(); ++vi) {
+        typename Graph::CVertex* vert = (*vi).second;
         delete_data(vert->data());
 
         Edges& edges = const_cast<Edges&>(vert->edges());
-        for (Edges::iterator ei = edges.begin(); ei != edges.end(); ++ei) {
-            Graph::CEdge& edge = (*ei);
+        for (auto ei = edges.begin(); ei != edges.end(); ++ei) {
+            typename Graph::CEdge& edge = (*ei);
             delete_data(edge.data());
         }
     }

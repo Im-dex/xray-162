@@ -33,7 +33,7 @@ public:
     void vfAssignBones();
 
     virtual bool use_center_to_aim() const { return true; }
-    virtual char* get_monster_class_name() { return "zombie"; }
+    const char* get_monster_class_name() override { return "zombie"; }
 
     CBoneInstance* bone_spine;
     CBoneInstance* bone_head;

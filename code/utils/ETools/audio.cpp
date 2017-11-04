@@ -25,7 +25,6 @@
 #include "resample.h"
 
 #define _(a) a
-#define N_(a) a
 
 #ifdef HAVE_LIBFLAC
 #include "flac.h"
@@ -48,18 +47,18 @@
 
 /* Define the supported formats here */
 input_format formats[] = {
-    { wav_id, 12, wav_open, wav_close, "wav", N_("WAV file reader") },
-    { aiff_id, 12, aiff_open, wav_close, "aiff", N_("AIFF/AIFC file reader") },
+    { wav_id, 12, wav_open, wav_close, "wav", "WAV file reader" },
+    { aiff_id, 12, aiff_open, wav_close, "aiff", "AIFF/AIFC file reader" },
 #ifdef HAVE_LIBFLAC
-    { flac_id, 4, flac_open, flac_close, "flac", N_("FLAC file reader") },
-    { oggflac_id, 32, flac_open, flac_close, "ogg", N_("Ogg FLAC file reader") },
+    { flac_id, 4, flac_open, flac_close, "flac", "FLAC file reader" },
+    { oggflac_id, 32, flac_open, flac_close, "ogg", "Ogg FLAC file reader" },
 #endif
-    { NULL, 0, NULL, NULL, NULL, NULL }
+    { nullptr, 0, nullptr, nullptr, nullptr, nullptr }
 };
 
 input_format* open_audio_file(FILE* in, oe_enc_opt* opt) {
     int j = 0;
-    unsigned char* buf = NULL;
+    unsigned char* buf = nullptr;
     int buf_size = 0, buf_filled = 0;
     int size, ret;
 
@@ -111,7 +110,7 @@ static int seek_forward(FILE* in, int length) {
     return 1;
 }
 
-static int find_wav_chunk(FILE* in, char* type, unsigned int* len) {
+static int find_wav_chunk(FILE* in, const char* type, unsigned int* len) {
     unsigned char buf[8];
 
     while (1) {
@@ -135,7 +134,7 @@ static int find_wav_chunk(FILE* in, char* type, unsigned int* len) {
     }
 }
 
-static int find_aiff_chunk(FILE* in, char* type, unsigned int* len) {
+static int find_aiff_chunk(FILE* in, const char* type, unsigned int* len) {
     unsigned char buf[8];
 
     while (1) {

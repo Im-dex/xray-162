@@ -17,8 +17,8 @@ typedef struct {
     int id_data_len; /* Amount of data needed to id whether this can load the file */
     int (*open_func)(FILE* in, oe_enc_opt* opt, unsigned char* buf, int buflen);
     void (*close_func)(void*);
-    char* format;
-    char* description;
+    const char* format;
+    const char* description;
 } input_format;
 
 typedef struct {

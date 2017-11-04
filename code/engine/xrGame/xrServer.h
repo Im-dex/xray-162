@@ -148,7 +148,7 @@ public:
                                 const u16 id_parent, const u16 id_entity, bool send_message = true);
 
     xrClientData* SelectBestClientToMigrateTo(CSE_Abstract* E, BOOL bForceAnother = FALSE);
-    void SendConnectResult(IClient* CL, u8 res, u8 res1, char* ResultStr);
+    void SendConnectResult(IClient* CL, u8 res, u8 res1, const char* ResultStr);
     void __stdcall SendConfigFinished(ClientID const& clientId);
     void AttachNewClient(IClient* CL);
     virtual void OnBuildVersionRespond(IClient* CL, NET_Packet& P);

@@ -21,34 +21,34 @@ void CStateGroupEatingAbstract::initialize() {
 
 TEMPLATE_SPECIALIZATION
 void CStateGroupEatingAbstract::execute() {
-    if (object->EatedCorpse != corpse)
+    if (this->object->EatedCorpse != corpse)
         return;
 
-    object->set_action(ACT_EAT);
-    object->set_state_sound(MonsterSound::eMonsterSoundEat);
+    this->object->set_action(ACT_EAT);
+    this->object->set_state_sound(MonsterSound::eMonsterSoundEat);
 
     // סתוסעü קאסעü
-    if (time_last_eat + u32(1000 / object->db().m_fEatFreq) < Device.dwTimeGlobal) {
-        object->ChangeSatiety(object->db().m_fEatSlice);
-        corpse->m_fFood -= object->db().m_fEatSliceWeight;
+    if (time_last_eat + u32(1000 / this->object->db().m_fEatFreq) < Device.dwTimeGlobal) {
+        this->object->ChangeSatiety(this->object->db().m_fEatSlice);
+        corpse->m_fFood -= this->object->db().m_fEatSliceWeight;
         time_last_eat = Device.dwTimeGlobal;
     }
 }
 
 TEMPLATE_SPECIALIZATION
 bool CStateGroupEatingAbstract::check_start_conditions() {
-    corpse = const_cast<CEntityAlive*>(object->EatedCorpse);
+    corpse = const_cast<CEntityAlive*>(this->object->EatedCorpse);
     VERIFY(corpse);
 
     Fvector nearest_bone_pos;
-    if ((corpse->m_pPhysicsShell == NULL) || (!corpse->m_pPhysicsShell->isActive())) {
+    if ((corpse->m_pPhysicsShell == nullptr) || (!corpse->m_pPhysicsShell->isActive())) {
         nearest_bone_pos = corpse->Position();
     } else
         nearest_bone_pos =
-            object->character_physics_support()->movement()->PHCaptureGetNearestElemPos(corpse);
+            this->object->character_physics_support()->movement()->PHCaptureGetNearestElemPos(corpse);
 
-    float dist = nearest_bone_pos.distance_to(object->Position());
-    float dist_to_corpse = object->db().m_fDistToCorpse;
+    float dist = nearest_bone_pos.distance_to(this->object->Position());
+    float dist_to_corpse = this->object->db().m_fDistToCorpse;
 
     if (dist + 0.5f < dist_to_corpse)
         return true;
@@ -57,30 +57,30 @@ bool CStateGroupEatingAbstract::check_start_conditions() {
 
 TEMPLATE_SPECIALIZATION
 bool CStateGroupEatingAbstract::check_completion() {
-    CMonsterSquad* squad = monster_squad().get_squad(object);
+    CMonsterSquad* squad = monster_squad().get_squad(this->object);
     if (squad && squad->SquadActive()) {
         const CEntity* squad_leader = squad->GetLeader();
-        if (squad_leader && object != squad_leader) {
-            if (object->Position().distance_to(squad_leader->Position()) < 5.f) {
-                object->set_current_animation(6);
+        if (squad_leader && this->object != squad_leader) {
+            if (this->object->Position().distance_to(squad_leader->Position()) < 5.f) {
+                this->object->set_current_animation(6);
                 return true;
             }
         }
     }
-    if (time_state_started + TIME_TO_EAT < time())
+    if (this->time_state_started + TIME_TO_EAT < time())
         return true;
-    if (object->EatedCorpse != corpse)
+    if (this->object->EatedCorpse != corpse)
         return true;
 
     Fvector nearest_bone_pos;
-    if ((corpse->m_pPhysicsShell == NULL) || (!corpse->m_pPhysicsShell->isActive())) {
+    if ((corpse->m_pPhysicsShell == nullptr) || (!corpse->m_pPhysicsShell->isActive())) {
         nearest_bone_pos = corpse->Position();
     } else
         nearest_bone_pos =
-            object->character_physics_support()->movement()->PHCaptureGetNearestElemPos(corpse);
+            this->object->character_physics_support()->movement()->PHCaptureGetNearestElemPos(corpse);
 
-    float dist = nearest_bone_pos.distance_to(object->Position());
-    float dist_to_corpse = object->db().m_fDistToCorpse;
+    float dist = nearest_bone_pos.distance_to(this->object->Position());
+    float dist_to_corpse = this->object->db().m_fDistToCorpse;
     if (dist > dist_to_corpse + 0.5f)
         return true;
 
@@ -90,7 +90,7 @@ bool CStateGroupEatingAbstract::check_completion() {
 TEMPLATE_SPECIALIZATION
 void CStateGroupEatingAbstract::remove_links(CObject* object) {
     if (corpse == object)
-        corpse = 0;
+        corpse = nullptr;
 }
 
 #undef TEMPLATE_SPECIALIZATION

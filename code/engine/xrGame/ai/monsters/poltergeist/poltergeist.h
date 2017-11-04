@@ -73,7 +73,7 @@ public:
     virtual void on_activate();
     virtual void on_deactivate();
     virtual void Hit(SHit* pHDS);
-    virtual char* get_monster_class_name() { return "poltergeist"; }
+    const char* get_monster_class_name() override { return "poltergeist"; }
 
     bool detected_enemy();
     float get_fly_around_distance() const { return m_fly_around_distance; }
