@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <loki/emptytype.h>
+#include <imdexlib/empty_type.hpp>
 
 template <typename _edge_weight_type, typename _vertex_type>
 class CEdgeBase {
@@ -47,7 +47,7 @@ public:
 };
 
 template <typename _edge_weight_type, typename _vertex_type>
-class CEdge<_edge_weight_type, _vertex_type, Loki::EmptyType>
+class CEdge<_edge_weight_type, _vertex_type, imdex::empty>
     : public CEdgeBase<_edge_weight_type, _vertex_type> {
 private:
     typedef CEdgeBase<_edge_weight_type, _vertex_type> inherited;

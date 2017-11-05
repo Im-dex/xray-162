@@ -5,8 +5,6 @@
 //	Author		: Dmitriy Iassenev
 //	Description : Object type traits
 ////////////////////////////////////////////////////////////////////////////
-#ifndef object_type_traits_h_included
-#define object_type_traits_h_included
 #pragma once
 
 #include <type_traits>
@@ -41,8 +39,9 @@ namespace object_type_traits {
 namespace detail {
 template <typename T>
 struct other {};
-}; // namespace detail
+} // namespace detail
 
+// TODO: [imdex] remove this
 using std::is_pointer;
 using std::is_reference;
 using std::is_same;
@@ -52,14 +51,22 @@ using std::remove_const;
 using std::is_void;
 using std::is_const;
 
-template <typename _T1, typename _T2>
-struct is_base_and_derived {
-    using T1 = std::remove_const_t<_T1>;
-    using T2 = std::remove_const_t<_T2>;
+namespace detail {
 
-    static constexpr auto value =
-        std::is_class<T1>::value && std::is_class<T2>::value && std::is_base_of<T1, T2>::value;
-};
+template <typename T, typename U>
+struct is_base_and_derived : std::conjunction<std::is_class<T>,
+                                              std::is_class<U>,
+                                              std::is_base_of<T, U>> {};
+
+} // detail namespace
+
+template <typename T, typename U>
+struct is_base_and_derived : detail::is_base_and_derived<std::remove_const_t<T>,
+                                                         std::remove_const_t<U>>
+{};
+
+template <typename T, typename U>
+constexpr bool is_base_and_derived_v = is_base_and_derived<T, U>::value;
 
 template <template <typename _1> class T1, typename T2>
 struct is_base_and_derived_or_same_from_template {
@@ -73,28 +80,15 @@ struct is_base_and_derived_or_same_from_template {
 
 declare_has(iterator);
 declare_has(const_iterator);
-//		declare_has(reference);
-//		declare_has(const_reference);
 declare_has(value_type);
 declare_has(size_type);
-//		declare_has(value_compare);
 
 template <typename T>
 struct is_stl_container {
     enum {
         value = has_iterator<T>::value && has_const_iterator<T>::value &&
-                //					has_reference<T>::value &&
-                //					has_const_reference<T>::value &&
                 has_size_type<T>::value && has_value_type<T>::value
     };
 };
 
-//		template <typename _T>
-//		struct is_tree_structure {
-//			enum {
-//				value =
-//					has_value_compare<_T>::value
-//			};
-//		};
-};     // namespace object_type_traits
-#endif //	object_type_traits_h_included
+} // object_type_traits namespace

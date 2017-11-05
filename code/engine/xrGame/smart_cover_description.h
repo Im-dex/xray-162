@@ -24,7 +24,7 @@ public:
     typedef xr_vector<loophole*> Loopholes;
     typedef smart_cover::transitions::action Action;
     typedef xr_vector<Action*> ActionsList;
-    typedef CGraphAbstract<Loki::EmptyType, float, shared_str, ActionsList> TransitionGraph;
+    typedef CGraphAbstract<imdex::empty, float, shared_str, ActionsList> TransitionGraph;
 
 private:
     Loopholes m_loopholes;

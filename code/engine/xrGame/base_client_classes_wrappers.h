@@ -19,39 +19,24 @@
 #include "entity.h"
 #include "ai_space.h"
 #include "script_engine.h"
-#include <loki/typelist.h>
-#include <loki/hierarchygenerators.h>
 #include "xrServer_Object_Base.h"
 
-template <typename _1, typename _2>
-struct heritage {
-    template <typename _type, typename _base>
-    struct linear_registrator : public _base, public _type {};
-
-    template <typename _type>
-    struct linear_registrator<_type, Loki::EmptyType> : public _type {};
-
-    typedef Loki::Typelist<_1, Loki::Typelist<_2, Loki::NullType>> tl;
-    typedef typename Loki::TL::Erase<tl, Loki::EmptyType>::Result pure_tl;
-    typedef typename Loki::GenLinearHierarchy<pure_tl, linear_registrator>::LinBase result;
-};
-
-template <typename base, typename luabind_base = Loki::EmptyType>
-class DLL_PureWrapper : public heritage<base, luabind_base>::result {
+template <typename Base, typename... Ts>
+class DLL_PureWrapper : public Base, public Ts... {
 public:
-    IC DLL_PureWrapper(){};
-    virtual ~DLL_PureWrapper(){};
+    DLL_PureWrapper() = default;
+    virtual ~DLL_PureWrapper() = default;
 
-    virtual DLL_Pure* _construct() { return (call_member<DLL_Pure*>(this, "_construct")); }
+    DLL_Pure* _construct() override { return (call_member<DLL_Pure*>(this, "_construct")); }
 
-    static DLL_Pure* _construct_static(base* self) { return (self->base::_construct()); }
+    static DLL_Pure* _construct_static(Base* self) { return (self->Base::_construct()); }
 };
 
-typedef DLL_PureWrapper<DLL_Pure, luabind::wrap_base> CDLL_PureWrapper;
+using CDLL_PureWrapper = DLL_PureWrapper<DLL_Pure, luabind::wrap_base>;
 
 /*
-template <typename base, typename luabind_base = Loki::EmptyType>
-class ISpatialWrapper : public heritage<base,luabind_base>::result {
+template <typename base, typename... Ts>
+class ISpatialWrapper : public base, public luabind_base {
 public:
         IC						ISpatialWrapper () {};
         virtual					~ISpatialWrapper			() {};
@@ -131,13 +116,13 @@ public:
 typedef ISpatialWrapper<ISpatial,luabind::wrap_base> CISpatialWrapper;
 */
 
-template <typename base, typename luabind_base = Loki::EmptyType>
-class ISheduledWrapper : public heritage<base, luabind_base>::result {
+template <typename Base, typename... Ts>
+class ISheduledWrapper : public Base, public Ts... {
 public:
-    IC ISheduledWrapper(){};
-    virtual ~ISheduledWrapper(){};
+    ISheduledWrapper() = default;
+    virtual ~ISheduledWrapper() = default;
 
-    virtual float shedule_Scale() {
+    float shedule_Scale() override {
         return 1;
         //		return	(call_member<float>(this,"shedule_Scale"));
     }
@@ -149,8 +134,8 @@ public:
        (1000.f);
             }
     */
-    virtual void shedule_Update(u32 dt) {
-        base::shedule_Update(dt);
+    void shedule_Update(u32 dt) override {
+        Base::shedule_Update(dt);
         //		call_member<void>(this,"shedule_Update");
     }
 
@@ -161,13 +146,13 @@ public:
     */
 };
 
-typedef ISheduledWrapper<ISheduled, luabind::wrap_base> CISheduledWrapper;
+using CISheduledWrapper = ISheduledWrapper<ISheduled, luabind::wrap_base>;
 
-template <typename base, typename luabind_base = Loki::EmptyType>
-class IRenderableWrapper : public heritage<base, luabind_base>::result {
+template <typename Base, typename... Ts>
+class IRenderableWrapper : public Base, public Ts... {
 public:
-    IC IRenderableWrapper(){};
-    virtual ~IRenderableWrapper(){};
+    IRenderableWrapper() = default;
+    virtual ~IRenderableWrapper() = default;
 
     /*
             virtual	void	renderable_Render				()
@@ -204,7 +189,7 @@ public:
     */
 };
 
-typedef IRenderableWrapper<IRenderable, luabind::wrap_base> CIRenderableWrapper;
+using CIRenderableWrapper = IRenderableWrapper<IRenderable, luabind::wrap_base>;
 
 // typedef DLL_PureWrapper<CObject,luabind::wrap_base> CObjectDLL_Pure;
 // typedef ISpatialWrapper<CObjectDLL_Pure>			CObjectISpatial;
@@ -242,15 +227,15 @@ typedef IRenderableWrapper<IRenderable, luabind::wrap_base> CIRenderableWrapper;
 ///**/
 //};
 
-typedef DLL_PureWrapper<CGameObject, luabind::wrap_base> CGameObjectDLL_Pure;
+using CGameObjectDLL_Pure = DLL_PureWrapper<CGameObject, luabind::wrap_base>;
 // typedef ISpatialWrapper<CGameObjectDLL_Pure>				CGameObjectISpatial;
-typedef ISheduledWrapper<CGameObjectDLL_Pure> CGameObjectISheduled;
-typedef IRenderableWrapper<CGameObjectISheduled> CGameObjectIRenderable;
+using CGameObjectISheduled = ISheduledWrapper<CGameObjectDLL_Pure>;
+using CGameObjectIRenderable = IRenderableWrapper<CGameObjectISheduled>;
 
 class CGameObjectWrapper : public CGameObjectIRenderable {
 public:
-    IC CGameObjectWrapper(){};
-    virtual ~CGameObjectWrapper(){};
+    CGameObjectWrapper() = default;
+    virtual ~CGameObjectWrapper() = default;
     virtual bool use(CGameObject* who_use) { return call<bool>("use", who_use); }
 
     static bool use_static(CGameObject* self, CGameObject* who_use) {
@@ -280,8 +265,8 @@ public:
 
 class CEntityWrapper : public CEntity, public luabind::wrap_base {
 public:
-    IC CEntityWrapper() {}
-    virtual ~CEntityWrapper() {}
+    CEntityWrapper() = default;
+    virtual ~CEntityWrapper() = default;
 
     virtual void HitSignal(float P, Fvector& local_dir, CObject* who, s16 element) {
         luabind::call_member<void>(this, "HitSignal", P, local_dir, who, element);

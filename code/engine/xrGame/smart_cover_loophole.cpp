@@ -45,14 +45,14 @@ loophole::loophole(luabind::object const& description) : m_fov(0.f), m_range(0.f
 
     m_fov_direction = parse_fvector(description, "fov_direction");
     if (m_fov_direction.square_magnitude() < EPS_L) {
-        Msg("! fov direction for loophole %s is setup incorrectly", m_id.c_str());
+        LogMsg("! fov direction for loophole {} is setup incorrectly", m_id.c_str());
         m_fov_direction.set(0.f, 0.f, 1.f);
     } else
         m_fov_direction.normalize();
 
     m_danger_fov_direction = parse_fvector(description, "danger_fov_direction");
     if (m_danger_fov_direction.square_magnitude() < EPS_L) {
-        Msg("! danger fov direction for loophole %s is setup incorrectly", m_id.c_str());
+        LogMsg("! danger fov direction for loophole {} is setup incorrectly", m_id.c_str());
         m_danger_fov_direction.set(0.f, 0.f, 1.f);
     } else
         m_danger_fov_direction.normalize();
@@ -60,7 +60,7 @@ loophole::loophole(luabind::object const& description) : m_fov(0.f), m_range(0.f
     m_enter_direction = parse_fvector(description, "enter_direction");
 
     if (m_enter_direction.square_magnitude() < EPS_L) {
-        Msg("! enter direction for loophole %s is setup incorrectly", m_id.c_str());
+        LogMsg("! enter direction for loophole {} is setup incorrectly", m_id.c_str());
         m_enter_direction.set(0.f, 0.f, 1.f);
     } else
         m_enter_direction.normalize();
@@ -138,10 +138,10 @@ void loophole::fill_transitions(luabind::object const& transitions_table) {
         float weight = parse_float(table, "weight");
 
         if (!m_transitions.vertex(action_from))
-            m_transitions.add_vertex(Loki::EmptyType(), action_from);
+            m_transitions.add_vertex(imdex::empty(), action_from);
 
         if (!m_transitions.vertex(action_to))
-            m_transitions.add_vertex(Loki::EmptyType(), action_to);
+            m_transitions.add_vertex(imdex::empty(), action_to);
 
         m_transitions.add_edge(action_from, action_to, weight);
         TransitionGraph::CEdge* edge = m_transitions.edge(action_from, action_to);

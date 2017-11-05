@@ -12,7 +12,7 @@
 #include "graph_edge.h"
 #include "object_broker.h"
 
-template <typename _data_type = Loki::EmptyType, typename _edge_weight_type = float,
+template <typename _data_type, typename _edge_weight_type = float,
           typename _vertex_id_type = u32>
 class CGraphAbstract {
 public:
@@ -65,7 +65,7 @@ public:
     IC void begin(const CVertex* vertex, const_iterator& b, const_iterator& e) const;
 };
 
-template <typename _data_type = Loki::EmptyType, typename _edge_weight_type = float,
+template <typename _data_type, typename _edge_weight_type = float,
           typename _vertex_id_type = u32>
 class CGraphAbstractSerialize
     : public CGraphAbstract<_data_type, _edge_weight_type, _vertex_id_type>,

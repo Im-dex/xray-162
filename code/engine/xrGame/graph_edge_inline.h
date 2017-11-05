@@ -72,14 +72,14 @@ IC _edge_data_type& CSGraphEdge::data() { return (m_data); }
 #undef CSGraphEdge
 
 ////////////////////////////////////////////////////////////////////////////
-// class CEdge<..., Loki::EmptyType>
+// class CEdge<..., imdex::empty>
 ////////////////////////////////////////////////////////////////////////////
 
 #define TEMPLATE_SPECIALIZATION \
     template <typename _edge_weight_type, typename _vertex_type\
 >
 
-#define CSGraphEdge CEdge<_edge_weight_type, _vertex_type, Loki::EmptyType>
+#define CSGraphEdge CEdge<_edge_weight_type, _vertex_type, imdex::empty>
 
 TEMPLATE_SPECIALIZATION
 IC CSGraphEdge::CEdge(const _edge_weight_type& weight, _vertex_type* vertex)
