@@ -83,7 +83,7 @@ public:
     IGame_Level();
     virtual ~IGame_Level();
 
-    virtual shared_str name() const = 0;
+    virtual const std::string& name() const = 0;
     virtual void GetLevelInfo(CServerInfo* si) = 0;
 
     virtual BOOL net_Start(LPCSTR op_server, LPCSTR op_client) = 0;

@@ -69,8 +69,8 @@ private:
     string_path m_game_graph_id;
 
 private:
-    IC shared_str actor_level_name();
-    IC shared_str spawn_name(LPCSTR output);
+    IC std::string actor_level_name() const;
+    IC std::string spawn_name(LPCSTR output);
     void save_spawn(LPCSTR name, LPCSTR output);
     void verify_level_changers();
     void verify_spawns(ALife::_SPAWN_ID spawn_id);

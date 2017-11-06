@@ -118,7 +118,7 @@ public:
                              GameGraph::_GRAPH_ID game_vertex_id, u16 parent_id,
                              bool registration = true);
     void append_item_vector(ALife::OBJECT_VECTOR& tObjectVector, ALife::ITEM_P_VECTOR& tItemList);
-    shared_str level_name() const;
+    const std::string& level_name() const;
     void on_death(CSE_Abstract* killed, CSE_Abstract* killer);
 
 public:

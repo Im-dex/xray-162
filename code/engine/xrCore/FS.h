@@ -60,9 +60,15 @@ public:
     }
 
     void w_stringZ(const xr_string& p) {
-        w(p.c_str() ? p.c_str() : "", p.size());
+        w(p.c_str(), p.size());
         w_u8(0);
     }
+
+    void w_stringZ(const std::string& p) {
+        w(p.c_str(), p.size());
+        w_u8(0);
+    }
+
     void w_fcolor(const Fcolor& v) { w(&v, sizeof(Fcolor)); }
     void w_fvector4(const Fvector4& v) { w(&v, sizeof(Fvector4)); }
     void w_fvector3(const Fvector3& v) { w(&v, sizeof(Fvector3)); }
@@ -380,6 +386,7 @@ public:
     void r_stringZ(char* dest, const size_t tgt_sz);
     void r_stringZ(shared_str& dest);
     void r_stringZ(xr_string& dest);
+    void r_stringZ(std::string& dest);
 
     void close();
 

@@ -269,16 +269,16 @@ public:
                 F_entity_Destroy(E);
             }
             if (i != m_tpGraph->header().vertex_count())
-                Msg("Graph for the level %s doesn't correspond to the graph points from Level "
-                    "Editor! (%d : %d)",
-                    *m_tLevel.name(), i, m_tpGraph->header().vertex_count());
+                LogMsg("Graph for the level {0} doesn't correspond to the graph points from Level "
+                    "Editor! ({1} : {2})",
+                    m_tLevel.name(), i, m_tpGraph->header().vertex_count());
 
             VERTEX_MAP::const_iterator I = m_tVertexMap.begin();
             VERTEX_MAP::const_iterator E = m_tVertexMap.end();
             for (; I != E; ++I) {
                 R_ASSERT3(!xr_strlen((*I).second.caConnectName) ||
                               ((*I).second.tGraphID < m_tpVertices.size()),
-                          "Rebuild graph for the level", *m_tLevel.name());
+                          "Rebuild graph for the level", m_tLevel.name());
             }
 
             //			VERIFY3									(i == m_tpGraph->header().vertex_count(), "Rebuild
@@ -458,23 +458,19 @@ void read_levels(CInifile* Ini, xr_set<CLevelInfo>& levels, bool rebuild_graph,
 
         {
             bool ok = true;
-            xr_set<CLevelInfo>::const_iterator I = levels.begin();
-            xr_set<CLevelInfo>::const_iterator E = levels.end();
-            for (; I != E; ++I) {
-                if (!xr_strcmp((*I).m_section, N)) {
-                    Msg("! Duplicated line %s in section \"levels\" in the %s", N, GAME_CONFIG);
+            for (const auto& I : levels) {
+                if (I.m_section == N) {
+                    LogMsg(R"(! Duplicated line {0} in section "levels" in the {1})", N, GAME_CONFIG);
                     ok = false;
                     break;
                 }
-                if (!xr_strcmp((*I).m_name, S)) {
-                    Msg("! Duplicated level name %s in the %s, sections %s, %s", S, GAME_CONFIG,
-                        *(*I).m_section, N);
+                if (I.m_name == S) {
+                    LogMsg("! Duplicated level name {0} in the {1}, sections {2}, {3}", S, GAME_CONFIG, I.m_section, N);
                     ok = false;
                     break;
                 }
-                if ((*I).m_id == id) {
-                    Msg("! Duplicated level id %d in the %s, section %s, level %s", id, GAME_CONFIG,
-                        N, S);
+                if (I.m_id == id) {
+                    LogMsg("! Duplicated level id {0} in the {1}, section {2}, level {3}", id, GAME_CONFIG, N, S);
                     ok = false;
                     break;
                 }
@@ -568,22 +564,23 @@ CGraphMerger::CGraphMerger(LPCSTR game_graph_id, LPCSTR name, bool rebuild) {
 
     read_levels(Ini, levels, rebuild, &needed_levels);
 
-    xr_set<CLevelInfo>::const_iterator I = levels.begin();
-    xr_set<CLevelInfo>::const_iterator E = levels.end();
-    for (; I != E; ++I) {
-        tLevel.m_offset = (*I).m_offset;
-        tLevel.m_name = (*I).m_name;
-        xr_strcpy(S1, sizeof(S1), *(*I).m_name);
+    for (const auto& I : levels) {
+        tLevel.m_offset = I.m_offset;
+        tLevel.m_name = I.m_name;
+        // TODO: [imdex] use string_view
+        xr_strcpy(S1, sizeof(S1), I.m_name.c_str());
         strconcat(sizeof(S2), S2, name, S1);
         strconcat(sizeof(S1), S1, S2, "\\");
-        tLevel.m_id = (*I).m_id;
-        tLevel.m_section = (*I).m_section;
-        Msg("%9s %2d %s", "level", tLevel.id(), *tLevel.m_name);
+        tLevel.m_id = I.m_id;
+        tLevel.m_section = I.m_section;
+        LogMsg("{:9s} {:2d} {}", "level", tLevel.id(), tLevel.m_name);
         string_path _0, _1;
-        generate_temp_file_name("local_graph_", *tLevel.m_name, _0);
-        generate_temp_file_name("raw_cross_table_", *tLevel.m_name, _1);
+        // TODO: [imdex] use string_view
+        generate_temp_file_name("local_graph_", tLevel.m_name.c_str(), _0);
+        generate_temp_file_name("raw_cross_table_", tLevel.m_name.c_str(), _1);
         string_path level_folder;
-        FS.update_path(level_folder, "$game_levels$", *tLevel.m_name);
+        // TODO: [imdex] use string_view
+        FS.update_path(level_folder, "$game_levels$", tLevel.m_name.c_str());
         xr_strcat(level_folder, "\\");
         CGameGraphBuilder().build_graph(_0, _1, level_folder);
         ::CLevelGameGraph* tpLevelGraph =
@@ -617,10 +614,10 @@ CGraphMerger::CGraphMerger(LPCSTR game_graph_id, LPCSTR name, bool rebuild) {
                     R_ASSERT(K != tpGraphs.end());
                     auto M = (*K).second->m_tVertexMap.find(tConnectionVertex.caConnectName);
                     if (M == (*K).second->m_tVertexMap.end()) {
-                        Msg("Level %s with id %d has an INVALID connection point %s,\nwhich "
-                            "references to graph point %s on the level %s with id %d\n",
-                            *(*I).second->m_tLevel.name(), (*I).second->m_tLevel.id(), (*i).first,
-                            tConnectionVertex.caConnectName, *(*K).second->m_tLevel.name(),
+                        LogMsg("Level {0} with id {1} has an INVALID connection point {2},\nwhich "
+                            "references to graph point {3} on the level {4} with id {5}\n",
+                            (*I).second->m_tLevel.name(), (*I).second->m_tLevel.id(), (*i).first,
+                            tConnectionVertex.caConnectName, (*K).second->m_tLevel.name(),
                             (*K).second->m_tLevel.id());
                         R_ASSERT(M != (*K).second->m_tVertexMap.end());
                     }
@@ -629,10 +626,10 @@ CGraphMerger::CGraphMerger(LPCSTR game_graph_id, LPCSTR name, bool rebuild) {
                     //{
                     //						__asm int 3;
                     //					}
-                    Msg("Level %s with id %d has VALID connection point %s,\nwhich references to "
-                        "graph point %s on the level %s with id %d\n",
-                        *(*I).second->m_tLevel.name(), (*I).second->m_tLevel.id(), (*i).first,
-                        tConnectionVertex.caConnectName, *(*K).second->m_tLevel.name(),
+                    LogMsg("Level {0} with id {1} has VALID connection point {2},\nwhich references to "
+                        "graph point {3} on the level {4} with id {5}\n",
+                        (*I).second->m_tLevel.name(), (*I).second->m_tLevel.id(), (*i).first,
+                        tConnectionVertex.caConnectName, (*K).second->m_tLevel.name(),
                         (*K).second->m_tLevel.id());
 
                     VERIFY(((*M).second.tGraphID + (*K).second->m_dwOffset) <

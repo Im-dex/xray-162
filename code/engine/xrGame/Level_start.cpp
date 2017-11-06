@@ -105,7 +105,8 @@ bool CLevel::net_start1() {
 
             map_data.m_name = game_sv_GameState::parse_level_name(m_caServerOptions);
 
-            g_pGamePersistent->LoadTitle(true, map_data.m_name);
+            // TODO: [imdex] remove shared_str
+            g_pGamePersistent->LoadTitle(true, shared_str(map_data.m_name.c_str()));
 
             int id = pApp->Level_ID(map_data.m_name.c_str(), l_ver.c_str(), true);
 
@@ -127,12 +128,12 @@ bool CLevel::net_start2() {
         if ((m_connect_server_err = Server->Connect(m_caServerOptions, game_descr)) !=
             xrServer::ErrNoError) {
             net_start_result_total = false;
-            Msg("! Failed to start server.");
+            Log("! Failed to start server.");
             return true;
         }
         Server->SLS_Default();
         map_data.m_name = Server->level_name(m_caServerOptions);
-        g_pGamePersistent->LoadTitle(true, map_data.m_name);
+        g_pGamePersistent->LoadTitle(true, shared_str(map_data.m_name.c_str()));
     }
     return true;
 }
@@ -229,12 +230,13 @@ bool CLevel::net_start6() {
             m_bConnectResult) // if (map_data.m_name == "") - level not loaded, see
                               // CLevel::net_start_client3
         {
-            LPCSTR level_id_string = NULL;
-            LPCSTR dialog_string = NULL;
-            LPCSTR download_url =
-                !!map_data.m_map_download_url ? map_data.m_map_download_url.c_str() : "";
+            LPCSTR level_id_string = nullptr;
+            LPCSTR dialog_string = nullptr;
+            // TODO: [imdex] use string_view
+            LPCSTR download_url = map_data.m_map_download_url.c_str();
             CStringTable st;
-            LPCSTR tmp_map_ver = !!map_data.m_map_version ? map_data.m_map_version.c_str() : "";
+            // TODO: [imdex] use string_view
+            LPCSTR tmp_map_ver = map_data.m_map_version.c_str();
 
             STRCONCAT(level_id_string, st.translate("st_level"), ":", map_data.m_name.c_str(), "(",
                       tmp_map_ver, "). ");
@@ -246,12 +248,13 @@ bool CLevel::net_start6() {
             MainMenu()->SwitchToMultiplayerMenu();
             MainMenu()->Show_DownloadMPMap(dialog_string, download_url);
         } else if (map_data.IsInvalidClientChecksum()) {
-            LPCSTR level_id_string = NULL;
-            LPCSTR dialog_string = NULL;
-            LPCSTR download_url =
-                !!map_data.m_map_download_url ? map_data.m_map_download_url.c_str() : "";
+            LPCSTR level_id_string = nullptr;
+            LPCSTR dialog_string = nullptr;
+            // TODO: [imdex] use string_view
+            LPCSTR download_url = map_data.m_map_download_url.c_str();
             CStringTable st;
-            LPCSTR tmp_map_ver = !!map_data.m_map_version ? map_data.m_map_version.c_str() : "";
+            // TODO: [imdex] use string_view
+            LPCSTR tmp_map_ver = map_data.m_map_version.c_str();
 
             STRCONCAT(level_id_string, st.translate("st_level"), ":", map_data.m_name.c_str(), "(",
                       tmp_map_ver, "). ");

@@ -871,7 +871,7 @@ void game_sv_GameState::SaveMapList() {
     FS.w_close(fs);
 };
 
-shared_str game_sv_GameState::level_name(const shared_str& server_options) const {
+std::string game_sv_GameState::level_name(const shared_str& server_options) const {
     return parse_level_name(server_options);
 }
 
@@ -893,10 +893,10 @@ shared_str game_sv_GameState::parse_level_version(const shared_str& server_optio
     return shared_str(result_version);
 }
 
-shared_str game_sv_GameState::parse_level_name(const shared_str& server_options) {
+std::string game_sv_GameState::parse_level_name(const shared_str& server_options) {
     string64 l_name = "";
     VERIFY(_GetItemCount(*server_options, '/'));
-    return (_GetItem(*server_options, 0, l_name, '/'));
+    return _GetItem(*server_options, 0, l_name, '/');
 }
 
 void game_sv_GameState::on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src) {

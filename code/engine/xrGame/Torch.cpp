@@ -100,7 +100,8 @@ void CTorch::SwitchNightVision(bool vision_on, bool use_sounds) {
         m_night_vision = xr_new<CNightVisionEffector>(cNameSect());
 
     LPCSTR disabled_names = pSettings->r_string(cNameSect(), "disabled_maps");
-    LPCSTR curr_map = *Level().name();
+    // TODO: [imdex] use string_view
+    LPCSTR curr_map = Level().name().c_str();
     u32 cnt = _GetItemCount(disabled_names);
     bool b_allow = true;
     string512 tmp;

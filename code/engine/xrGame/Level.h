@@ -300,7 +300,7 @@ public:
     virtual ~CLevel();
 
     //названияе текущего уровня
-    virtual shared_str name() const;
+    virtual const std::string& name() const;
     shared_str version() const {
         return map_data.m_map_version.c_str();
     } // this method can be used ONLY from CCC_ChangeGameType

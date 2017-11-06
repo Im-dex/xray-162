@@ -251,11 +251,12 @@ void CALifeUpdateManager::load(LPCSTR game_name, bool no_assert, bool new_only) 
         Level().OnAlifeSimulatorLoaded();
 
 #ifdef DEBUG
-    Msg("* Loading alife simulator is successfully completed (%7.3f Mb)",
+    LogMsg("* Loading alife simulator is successfully completed ({:7.3f} Mb)",
         float(Memory.mem_usage() - memory_usage) / 1048576.0);
 #endif
     //	g_pGamePersistent->LoadTitle		("st_server_connecting");
-    g_pGamePersistent->LoadTitle(true, g_pGameLevel->name());
+    // TODO: [imdex] remove shared_str
+    g_pGamePersistent->LoadTitle(true, shared_str(g_pGameLevel->name().c_str()));
 }
 
 void CALifeUpdateManager::reload(LPCSTR section) {

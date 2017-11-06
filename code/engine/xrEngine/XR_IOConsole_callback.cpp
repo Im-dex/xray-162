@@ -68,11 +68,11 @@ void CConsole::End_log() // PAGE_DOWN+Ctrl
 
 void CConsole::Find_cmd() // DIK_TAB
 {
-    shared_str out_str;
+    std::string out_str;
 
     IConsole_Command* cc = find_next_cmd(ec().str_edit(), out_str);
-    if (cc && out_str.size()) {
-        ec().set_edit(out_str.c_str());
+    if (cc && !out_str.empty()) {
+        ec().set_edit(out_str.c_str()); // TODO: [imdex] use string_view
     }
 }
 
@@ -153,14 +153,14 @@ void CConsole::PageDown_tips() {
 void CConsole::Execute_cmd() // DIK_RETURN, DIK_NUMPADENTER
 {
     if (0 <= m_select_tip && m_select_tip < (int)m_tips.size()) {
-        shared_str const& str = m_tips[m_select_tip].text;
+        const auto& str = m_tips[m_select_tip].text;
         if (m_tips_mode == 1) {
             LPSTR buf;
-            STRCONCAT(buf, str.c_str(), " ");
+            STRCONCAT(buf, str.c_str(), " "); // TODO: [imdex] use string_view
             ec().set_edit(buf);
         } else if (m_tips_mode == 2) {
             LPSTR buf;
-            STRCONCAT(buf, m_cur_cmd.c_str(), " ", str.c_str());
+            STRCONCAT(buf, m_cur_cmd.c_str(), " ", str.c_str()); // TODO: [imdex] use string_view
             ec().set_edit(buf);
         }
         reset_selected_tip();

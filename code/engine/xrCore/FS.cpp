@@ -366,6 +366,11 @@ void IReader::r_stringZ(xr_string& dest) {
     Pos += int(dest.size() + 1);
 }
 
+void IReader::r_stringZ(std::string& dest) {
+    dest = data + Pos;
+    Pos += int(dest.size() + 1);
+}
+
 void IReader::skip_stringZ() {
     char* src = data;
     while ((src[Pos] != 0) && !eof())

@@ -140,9 +140,12 @@ void CLevelSoundManager::Load() {
 
     CInifile& gameLtx = *pGameIni;
 
-    if (gameLtx.section_exist(Level().name())) {
-        if (gameLtx.line_exist(Level().name(), "music_tracks")) {
-            LPCSTR music_sect = gameLtx.r_string(Level().name(), "music_tracks");
+    // TODO: [imdex] use string_view
+    if (gameLtx.section_exist(Level().name().c_str())) {
+        // TODO: [imdex] use string_view
+        if (gameLtx.line_exist(Level().name().c_str(), "music_tracks")) {
+            // TODO: [imdex] use string_view
+            LPCSTR music_sect = gameLtx.r_string(Level().name().c_str(), "music_tracks");
             if (music_sect && music_sect[0]) {
 #ifdef DEBUG
                 Msg("- Loading music tracks from '%s'...", music_sect);

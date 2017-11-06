@@ -47,7 +47,7 @@ public:
     virtual void remove_all_restrictions(NET_Packet& packet, u16 id);
     virtual bool custom_sls_default() { return !!m_alife_simulator; };
     virtual void sls_default();
-    virtual shared_str level_name(const shared_str& server_options) const;
+    virtual std::string level_name(const shared_str& server_options) const;
     virtual void on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src);
     void restart_simulator(LPCSTR saved_game_name);
 

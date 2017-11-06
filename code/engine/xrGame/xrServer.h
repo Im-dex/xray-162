@@ -210,7 +210,7 @@ public:
     void SLS_Clear();
     void SLS_Save(IWriter& fs);
     void SLS_Load(IReader& fs);
-    shared_str level_name(const shared_str& server_options) const;
+    std::string level_name(const shared_str& server_options) const;
     shared_str level_version(const shared_str& server_options) const;
     static LPCSTR get_map_download_url(LPCSTR level_name, LPCSTR level_version);
 

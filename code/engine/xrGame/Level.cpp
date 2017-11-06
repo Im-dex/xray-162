@@ -274,7 +274,7 @@ CLevel::~CLevel() {
     deinit_compression();
 }
 
-shared_str CLevel::name() const { return (map_data.m_name); }
+const std::string& CLevel::name() const { return map_data.m_name; }
 
 void CLevel::GetLevelInfo(CServerInfo* si) {
     if (Server && game) {

@@ -7,7 +7,7 @@ class CUIMapWnd;
 
 class CUICustomMap : public CUIStatic, public CUIWndCallback {
 protected:
-    shared_str m_name;
+    std::string m_name;
 
     Frect m_BoundRect_; // real map size (meters)
     Flags16 m_flags;
@@ -28,7 +28,7 @@ public:
 
     virtual void SetActivePoint(const Fvector& vNewPoint);
 
-    void Initialize(shared_str name, LPCSTR sh_name);
+    void Initialize(std::string name, LPCSTR sh_name);
     virtual Fvector2
     ConvertRealToLocal(const Fvector2& src,
                        bool for_drawing); // meters->pixels (relatively own left-top pos)
@@ -50,8 +50,8 @@ public:
     const Frect& BoundRect() const { return m_BoundRect_; }
     virtual void OptimalFit(const Frect& r);
 
-    const shared_str& MapName() { return m_name; }
-    virtual CUIGlobalMapSpot* GlobalMapSpot() { return NULL; }
+    const std::string& MapName() { return m_name; }
+    virtual CUIGlobalMapSpot* GlobalMapSpot() { return nullptr; }
 
     virtual void Draw();
     virtual void Update();
@@ -64,7 +64,7 @@ public:
     float GetPointerDistance() { return m_pointer_dist; };
 
 protected:
-    virtual void Init_internal(const shared_str& name, CInifile& pLtx, const shared_str& sect_name,
+    virtual void Init_internal(std::string name, CInifile& pLtx, const shared_str& sect_name,
                                LPCSTR sh_name);
     virtual void UpdateSpots(){};
 };
@@ -102,7 +102,7 @@ public:
     void Initialize();
 
 protected:
-    virtual void Init_internal(const shared_str& name, CInifile& pLtx, const shared_str& sect_name,
+    virtual void Init_internal(std::string name, CInifile& pLtx, const shared_str& sect_name,
                                LPCSTR sh_name);
 };
 
@@ -132,7 +132,7 @@ public:
 
 protected:
     virtual void UpdateSpots();
-    virtual void Init_internal(const shared_str& name, CInifile& pLtx, const shared_str& sect_name,
+    virtual void Init_internal(std::string name, CInifile& pLtx, const shared_str& sect_name,
                                LPCSTR sh_name);
 };
 
@@ -151,6 +151,6 @@ public:
 
 protected:
     virtual void UpdateSpots();
-    virtual void Init_internal(const shared_str& name, CInifile& pLtx, const shared_str& sect_name,
+    virtual void Init_internal(std::string name, CInifile& pLtx, const shared_str& sect_name,
                                LPCSTR sh_name);
 };

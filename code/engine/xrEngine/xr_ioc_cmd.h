@@ -31,8 +31,8 @@ public:
     friend class CConsole;
     typedef char TInfo[256];
     typedef char TStatus[256];
-    typedef xr_vector<shared_str> vecTips;
-    typedef xr_vector<shared_str> vecLRU;
+    typedef xr_vector<std::string> vecTips;
+    typedef xr_vector<std::string> vecLRU;
 
 protected:
     LPCSTR cName;
@@ -42,13 +42,13 @@ protected:
 
     vecLRU m_LRU;
 
-    enum { LRU_MAX_COUNT = 10 };
+    static constexpr size_t LRU_MAX_COUNT = 10;
 
-    IC bool EQ(LPCSTR S1, LPCSTR S2) { return xr_strcmp(S1, S2) == 0; }
+    bool EQ(LPCSTR S1, LPCSTR S2) { return xr_strcmp(S1, S2) == 0; }
 
 public:
     IConsole_Command(LPCSTR N BENCH_SEC_SIGN)
-        : cName(N), bEnabled(TRUE), bLowerCaseArgs(TRUE), bEmptyArgsHandled(FALSE) {
+        : cName(N), bEnabled(true), bLowerCaseArgs(true), bEmptyArgsHandled(false) {
         m_LRU.reserve(LRU_MAX_COUNT + 1);
         m_LRU.clear();
     }
@@ -80,7 +80,7 @@ public:
 
     virtual void fill_tips(vecTips& tips, u32 mode) { add_LRU_to_tips(tips); }
     //			vecLRU&	LRU				() { return m_LRU; }
-    virtual void add_to_LRU(shared_str const& arg);
+    virtual void add_to_LRU(std::string arg);
     void add_LRU_to_tips(vecTips& tips);
 
 }; // class IConsole_Command

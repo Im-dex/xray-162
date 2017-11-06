@@ -42,20 +42,22 @@ CUIMapWnd::CUIMapWnd() {
     //	UIMainMapHeader			= NULL;
     m_scroll_mode = false;
     m_nav_timing = Device.dwTimeGlobal;
-    hint_wnd = NULL;
+    hint_wnd = nullptr;
     g_map_wnd = this;
 }
 
 CUIMapWnd::~CUIMapWnd() {
     delete_data(m_ActionPlanner);
-    delete_data(m_GameMaps);
+    for (auto& item : m_GameMaps) {
+        xr_delete(item.second);
+    }
     delete_data(m_map_location_hint);
     /*
     #ifdef DEBUG
             delete_data( m_dbg_text_hint );
             delete_data( m_dbg_info );
     #endif // DEBUG/**/
-    g_map_wnd = NULL;
+    g_map_wnd = nullptr;
 }
 
 void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from) {
@@ -144,7 +146,8 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from) {
         CInifile::Sect& S = pGameIni->r_section(sect_name.c_str());
         auto it = S.Data.cbegin(), end = S.Data.cend();
         for (; it != end; it++) {
-            shared_str map_name = it->first;
+            // TODO: [imdex] remove shared_str
+            std::string map_name(*it->first);
             xr_strlwr(map_name);
             R_ASSERT2(m_GameMaps.end() == m_GameMaps.find(map_name),
                       "Duplicate level name not allowed");
@@ -152,7 +155,8 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from) {
             CUICustomMap*& l = m_GameMaps[map_name];
 
             l = xr_new<CUILevelMap>(this);
-            R_ASSERT2(pGameIni->section_exist(map_name), map_name.c_str());
+            // TODO: [imdex] use string_view
+            R_ASSERT2(pGameIni->section_exist(map_name.c_str()), map_name.c_str());
             l->Initialize(map_name, "hud\\default");
 
             l->OptimalFit(m_UILevelFrame->GetWndRect());
@@ -171,9 +175,9 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from) {
             CUILevelMap* l2 = smart_cast<CUILevelMap*>(it2->second);
             VERIFY(l2);
             if (l->GlobalRect().intersected(l2->GlobalRect())) {
-                Msg(" --error-incorrect map definition global rect of map [%s] intersects with "
-                    "[%s]",
-                    *l->MapName(), *l2->MapName());
+                LogMsg(" --error-incorrect map definition global rect of map [{0}] intersects with "
+                    "[{1}]",
+                    l->MapName(), l2->MapName());
             }
         }
         if (FALSE == l->GlobalRect().intersected(GlobalMap()->BoundRect())) {
@@ -243,7 +247,7 @@ void CUIMapWnd::RemoveMapToRender(CUICustomMap* m) {
         m_UILevelFrame->DetachChild(smart_cast<CUIWindow*>(m));
 }
 
-void CUIMapWnd::SetTargetMap(const shared_str& name, const Fvector2& pos, bool bZoomIn) {
+void CUIMapWnd::SetTargetMap(const std::string& name, const Fvector2& pos, bool bZoomIn) {
     u16 idx = GetIdxByName(name);
     if (idx != u16(-1)) {
         CUICustomMap* lm = GetMapByIdx(idx);
@@ -251,7 +255,7 @@ void CUIMapWnd::SetTargetMap(const shared_str& name, const Fvector2& pos, bool b
     }
 }
 
-void CUIMapWnd::SetTargetMap(const shared_str& name, bool bZoomIn) {
+void CUIMapWnd::SetTargetMap(const std::string& name, bool bZoomIn) {
     u16 idx = GetIdxByName(name);
     if (idx != u16(-1)) {
         CUICustomMap* lm = GetMapByIdx(idx);
@@ -450,10 +454,10 @@ CUICustomMap* CUIMapWnd::GetMapByIdx(u16 idx) {
     return it->second;
 }
 
-u16 CUIMapWnd::GetIdxByName(const shared_str& map_name) {
+u16 CUIMapWnd::GetIdxByName(const std::string& map_name) {
     auto it = m_GameMaps.find(map_name);
     if (it == m_GameMaps.end()) {
-        Msg("~ Level Map '%s' not registered", map_name.c_str());
+        LogMsg("~ Level Map '{}' not registered", map_name);
         return u16(-1);
     }
     return (u16)std::distance(m_GameMaps.begin(), it);
@@ -607,7 +611,7 @@ void CUIMapWnd::HideHint(CUIWindow* parent) {
 
 void CUIMapWnd::HideCurHint() { m_map_location_hint->SetOwner(NULL); }
 
-void CUIMapWnd::Hint(const shared_str& text) {
+void CUIMapWnd::Hint(const std::string_view text) {
     /*
 #ifdef DEBUG
     m_dbg_text_hint->SetTextST( *text );

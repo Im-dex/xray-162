@@ -266,8 +266,8 @@ void CALifeSimulator__release(CALifeSimulator* self, CSE_Abstract* object, bool)
 }
 
 LPCSTR get_level_name(const CALifeSimulator* self, int level_id) {
-    LPCSTR result = *ai().game_graph().header().level((GameGraph::_LEVEL_ID)level_id).name();
-    return (result);
+    // TODO: [imdex] use string_view
+    return ai().game_graph().header().level((GameGraph::_LEVEL_ID)level_id).name().c_str();
 }
 
 CSE_ALifeCreatureActor* get_actor(const CALifeSimulator* self) {

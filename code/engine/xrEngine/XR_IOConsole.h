@@ -17,31 +17,23 @@ class line_edit_control;
 }; // namespace text_editor
 
 struct TipString {
-    shared_str text;
+    std::string text;
     int HL_start; // Highlight
     int HL_finish;
 
-    TipString() {
-        text._set("");
-        HL_start = 0;
-        HL_finish = 0;
-    }
-    TipString(shared_str const& tips_text, int start_pos, int finish_pos) {
-        text._set(tips_text);
-        HL_start = start_pos;
-        HL_finish = finish_pos;
-    }
-    TipString(LPCSTR tips_text, int start_pos, int finish_pos) {
-        text._set(tips_text);
-        HL_start = start_pos;
-        HL_finish = finish_pos;
-    }
-    TipString(shared_str const& tips_text) {
-        text._set(tips_text);
-        HL_start = 0;
-        HL_finish = 0;
-    }
-    IC bool operator==(shared_str const& tips_text) { return (text == tips_text); }
+    TipString() = default;
+
+    TipString(std::string tips_text, const int start_pos = 0, const int finish_pos = 0)
+        : text(std::move(tips_text)),
+          HL_start(start_pos),
+          HL_finish(finish_pos)
+    {}
+
+    TipString(const std::string_view tips_text, const int start_pos, const int finish_pos)
+        : TipString(std::string(tips_text), start_pos, finish_pos)
+    {}
+
+    bool operator==(const std::string_view tips_text) { return text == tips_text; }
 };
 
 class ENGINE_API CConsole : public pureRender,
@@ -55,8 +47,8 @@ public:
     typedef vecCMD::iterator vecCMD_IT;
     typedef vecCMD::const_iterator vecCMD_CIT;
     typedef fastdelegate::FastDelegate0<void> Callback;
-    typedef xr_vector<shared_str> vecHistory;
-    typedef xr_vector<shared_str> vecTips;
+    typedef xr_vector<std::string> vecHistory;
+    typedef xr_vector<std::string> vecTips;
     typedef xr_vector<TipString> vecTipsEx;
 
     enum { CONSOLE_BUF_SIZE = 1024 };
@@ -77,13 +69,13 @@ private:
     vecHistory m_cmd_history;
     u32 m_cmd_history_max;
     int m_cmd_history_idx;
-    shared_str m_last_cmd;
+    std::string m_last_cmd;
     BENCH_SEC_SCRAMBLEMEMBER1
 
     vecTips m_temp_tips;
     vecTipsEx m_tips;
     u32 m_tips_mode;
-    shared_str m_cur_cmd;
+    std::string m_cur_cmd;
     int m_select_tip;
     int m_start_tip;
     u32 m_prev_length_str;
@@ -178,7 +170,7 @@ protected:
     void xr_stdcall GamePause();
 
 protected:
-    void add_cmd_history(shared_str const& str);
+    void add_cmd_history(std::string str);
     void next_cmd_history_idx();
     void prev_cmd_history_idx();
     void reset_cmd_history_idx();
@@ -189,12 +181,12 @@ protected:
     void check_prev_selected_tip();
     void reset_selected_tip();
 
-    IConsole_Command* find_next_cmd(LPCSTR in_str, shared_str& out_str);
+    IConsole_Command* find_next_cmd(LPCSTR in_str, std::string& out_str);
     bool add_next_cmds(LPCSTR in_str, vecTipsEx& out_v);
     bool add_internal_cmds(LPCSTR in_str, vecTipsEx& out_v);
 
     void update_tips();
-    void select_for_filter(LPCSTR filter_str, vecTips& in_v, vecTipsEx& out_v);
+    void select_for_filter(const char* filter_str, vecTips& in_v, vecTipsEx& out_v) const;
 
 }; // class CConsole
 

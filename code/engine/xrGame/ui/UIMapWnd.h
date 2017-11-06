@@ -20,7 +20,7 @@ class CGameTask;
 class CUIXml;
 class UIHint;
 
-using GameMaps = xr_map<shared_str, CUICustomMap*>;
+using GameMaps = xr_map<std::string, CUICustomMap*>;
 
 class CUIMapWnd : public CUIWindow, public CUIWndCallback {
     typedef CUIWindow inherited;
@@ -132,7 +132,7 @@ public:
 
     void HideHint(CUIWindow* parent);
     void HideCurHint();
-    void Hint(const shared_str& text);
+    void Hint(const std::string_view text);
     virtual bool OnMouseAction(float x, float y, EUIMessages mouse_action);
     virtual bool OnKeyboardAction(int dik, EUIMessages keyboard_action);
     virtual bool OnKeyboardHold(int dik);
@@ -141,8 +141,8 @@ public:
 
     void SetTargetMap(CUICustomMap* m, bool bZoomIn = false);
     void SetTargetMap(CUICustomMap* m, const Fvector2& pos, bool bZoomIn = false);
-    void SetTargetMap(const shared_str& name, const Fvector2& pos, bool bZoomIn = false);
-    void SetTargetMap(const shared_str& name, bool bZoomIn = false);
+    void SetTargetMap(const std::string& name, const Fvector2& pos, bool bZoomIn = false);
+    void SetTargetMap(const std::string& name, bool bZoomIn = false);
 
     void MapLocationRelcase(CMapLocation* ml);
 
@@ -156,7 +156,7 @@ public:
     CUIGlobalMap* GlobalMap() { return m_GlobalMap; };
     const GameMaps& GameMaps() { return m_GameMaps; };
     CUICustomMap* GetMapByIdx(u16 idx);
-    u16 GetIdxByName(const shared_str& map_name);
+    u16 GetIdxByName(const std::string& map_name);
     void UpdateScroll();
     shared_str cName() const { return "ui_map_wnd"; };
 };

@@ -10,14 +10,14 @@
 
 struct CLevelInfo {
     u8 m_id;
-    shared_str m_name;
+    std::string m_name;
     Fvector m_offset;
-    shared_str m_section;
+    std::string m_section;
 
-    CLevelInfo(u8 id, shared_str name, const Fvector& offset, shared_str section)
-        : m_id(id), m_name(name), m_offset(offset), m_section(section) {}
+    CLevelInfo(const u8 id, std::string name, const Fvector& offset, std::string section)
+        : m_id(id), m_name(std::move(name)), m_offset(offset), m_section(std::move(section)) {}
 
-    IC bool operator<(const CLevelInfo& info) const { return (m_id < info.m_id); }
+    bool operator<(const CLevelInfo& info) const { return m_id < info.m_id; }
 };
 
 extern void xrMergeGraphs(LPCSTR game_graph_id, LPCSTR name, bool rebuild);

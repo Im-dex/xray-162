@@ -395,28 +395,28 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp) {
             //}
             static bool bbb = false;
             if (!bDone && bbb) {
-                Msg("! Error. Path from actor to selected map spot does not contain level changer "
+                Log("! Error. Path from actor to selected map spot does not contain level changer "
                     ":(");
-                Msg("Path:");
+                Log("Path:");
                 xr_vector<u32>::iterator it = map_point_path.begin();
                 xr_vector<u32>::iterator it_e = map_point_path.end();
                 for (; it != it_e; ++it) {
                     //					Msg("%d-%s",(*it),ai().game_graph().vertex(*it));
-                    Msg("[%d] level[%s]", (*it),
-                        *ai().game_graph()
+                    LogMsg("[{0}] level[{1}]", (*it),
+                        ai().game_graph()
                              .header()
                              .level(ai().game_graph().vertex(*it)->level_id())
                              .name());
                 }
-                Msg("- Available LevelChangers:");
+                Log("- Available LevelChangers:");
                 xr_vector<CLevelChanger*>::iterator lit, lit_e;
                 lit_e = g_lchangers.end();
                 for (lit = g_lchangers.begin(); lit != lit_e; ++lit) {
                     GameGraph::_GRAPH_ID gid = (*lit)->ai_location().game_vertex_id();
-                    Msg("[%d]", gid);
+                    LogMsg("[{}]", gid);
                     Fvector p = ai().game_graph().vertex(gid)->level_point();
-                    Msg("lch_name=%s pos=%f %f %f",
-                        *ai().game_graph()
+                    LogMsg("lch_name={0} pos={1} {2} {3}",
+                        ai().game_graph()
                              .header()
                              .level(ai().game_graph().vertex(gid)->level_id())
                              .name(),
@@ -432,7 +432,7 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp) {
                 xr_vector<u32>::reverse_iterator it = map_point_path.rbegin();
                 xr_vector<u32>::reverse_iterator it_e = map_point_path.rend();
                 for (; (it != it_e) && (!bDone); ++it) {
-                    if (*ai().game_graph()
+                    if (ai().game_graph()
                              .header()
                              .level(ai().game_graph().vertex(*it)->level_id())
                              .name() == Level().name())

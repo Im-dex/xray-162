@@ -1,13 +1,12 @@
-#ifndef LEVEL_NETWORK_MAP_SYNC_H
-#define LEVEL_NETWORK_MAP_SYNC_H
+#pragma once
 
 struct LevelMapSyncData {
     bool m_sended_map_name_request;
     bool m_map_sync_received;
     bool m_map_loaded;
-    shared_str m_name;        // map name that currently loaded
-    shared_str m_map_version; // map version that currently loaded
-    shared_str m_map_download_url;
+    std::string m_name;        // map name that currently loaded
+    std::string m_map_version; // map version that currently loaded
+    std::string m_map_download_url;
     u32 m_level_geom_crc32;
 
     u32 m_wait_map_time;
@@ -32,5 +31,3 @@ struct LevelMapSyncData {
     inline bool IsInvalidClientChecksum() { return invalid_geom_checksum; }
 
 }; // class LevelMapSyncData
-
-#endif

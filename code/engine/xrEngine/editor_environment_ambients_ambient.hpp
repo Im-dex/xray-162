@@ -6,8 +6,7 @@
 //	Description : editor environment ambients ambient class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOR_WEATHER_AMBIENTS_AMBIENT_HPP_INCLUDED
-#define EDITOR_WEATHER_AMBIENTS_AMBIENT_HPP_INCLUDED
+#pragma once
 
 #ifdef INGAME_EDITOR
 
@@ -33,7 +32,6 @@ class effect_id;
 class sound_id;
 
 class ambient : public CEnvAmbient, public editor::property_holder_holder {
-private:
     typedef CEnvAmbient inherited;
 
 public:
@@ -89,5 +87,3 @@ private:
 } // namespace editor
 
 #endif // #ifdef INGAME_EDITOR
-
-#endif // ifndef EDITOR_WEATHER_AMBIENTS_AMBIENT_HPP_INCLUDED

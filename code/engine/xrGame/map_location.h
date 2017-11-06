@@ -54,7 +54,7 @@ protected:
         GameGraph::_GRAPH_ID m_graphID;
         Fvector2 m_Position;
         Fvector2 m_Direction;
-        shared_str m_LevelName;
+        std::string m_LevelName;
         bool m_Actuality;
     };
     SCachedValues m_cached;
@@ -95,7 +95,7 @@ public:
 
     void CalcPosition();
     const Fvector2& CalcDirection();
-    IC const shared_str& GetLevelName() { return m_cached.m_LevelName; }
+    const std::string& GetLevelName() { return m_cached.m_LevelName; }
     const Fvector2& GetPosition() { return m_cached.m_Position; }
 
     u16 ObjectID() { return m_objectID; }

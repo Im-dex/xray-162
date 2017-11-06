@@ -150,7 +150,8 @@ CSavedGameWrapper::CSavedGameWrapper(LPCSTR saved_game_name) {
         {
             CGameGraph graph(*chunk);
             m_level_id = graph.vertex(object->m_tGraphID)->level_id();
-            m_level_name = graph.header().level(m_level_id).name();
+            // TODO: [imdex] remove shared_str
+            m_level_name = shared_str(graph.header().level(m_level_id).name().c_str());
         }
 
         chunk->close();

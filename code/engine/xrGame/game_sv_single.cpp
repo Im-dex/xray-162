@@ -288,10 +288,10 @@ void game_sv_Single::remove_all_restrictions(NET_Packet& packet, u16 id) {
 
 void game_sv_Single::sls_default() { alife().update_switch(); }
 
-shared_str game_sv_Single::level_name(const shared_str& server_options) const {
+std::string game_sv_Single::level_name(const shared_str& server_options) const {
     if (!ai().get_alife())
         return (inherited::level_name(server_options));
-    return (alife().level_name());
+    return alife().level_name();
 }
 
 void game_sv_Single::on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src) {

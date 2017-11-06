@@ -18,24 +18,25 @@ CUICustomMap::CUICustomMap() {
     SetPointerDistance(0.0f);
 }
 
-void CUICustomMap::Initialize(shared_str name, LPCSTR sh_name) {
-    CInifile* levelIni = NULL;
+void CUICustomMap::Initialize(std::string name, LPCSTR sh_name) {
+    CInifile* levelIni = nullptr;
     if (name == g_pGameLevel->name())
         levelIni = g_pGameLevel->pLevel;
     else {
         string_path map_cfg_fn;
         string_path fname;
+        // TODO: [imdex] use string_view
         strconcat(sizeof(fname), fname, name.c_str(), "\\level.ltx");
         FS.update_path(map_cfg_fn, "$game_levels$", fname);
         levelIni = xr_new<CInifile>(map_cfg_fn);
     }
 
     if (levelIni->section_exist("level_map")) {
-        Init_internal(name, *levelIni, "level_map", sh_name);
+        Init_internal(std::move(name), *levelIni, "level_map", sh_name);
     } else {
-        Msg("! default LevelMap used for level[%s]", name.c_str());
+        LogMsg("! default LevelMap used for level[{}]", name);
         Init_internal(name, *pGameIni, "def_map", sh_name);
-        m_name = name;
+        m_name = std::move(name);
     }
     if (levelIni != g_pGameLevel->pLevel)
         xr_delete(levelIni);
@@ -57,9 +58,9 @@ void CUICustomMap::Draw() {
     UI().PopScissor();
 }
 
-void CUICustomMap::Init_internal(const shared_str& name, CInifile& pLtx,
+void CUICustomMap::Init_internal(std::string name, CInifile& pLtx,
                                  const shared_str& sect_name, LPCSTR sh_name) {
-    m_name = name;
+    m_name = std::move(name);
     Fvector4 tmp;
 
     m_texture = pLtx.r_string(sect_name, "texture");
@@ -262,11 +263,12 @@ void CUIGlobalMap::Initialize() {
     Init_internal("global_map", *pGameIni, "global_map", "hud\\default");
 }
 
-void CUIGlobalMap::Init_internal(const shared_str& name, CInifile& pLtx,
+void CUIGlobalMap::Init_internal(std::string name, CInifile& pLtx,
                                  const shared_str& sect_name, LPCSTR sh_name) {
-    inherited::Init_internal(name, pLtx, sect_name, sh_name);
+    inherited::Init_internal(std::move(name), pLtx, sect_name, sh_name);
     //	Fvector2 size = CUIStatic::GetWndSize();
-    SetMaxZoom(pLtx.r_float(m_name, "max_zoom"));
+    // TODO: [imdex] use_string_view
+    SetMaxZoom(pLtx.r_float(m_name.c_str(), "max_zoom"));
 }
 
 void CUIGlobalMap::Update() {
@@ -389,10 +391,11 @@ void CUILevelMap::Draw() {
     inherited::Draw();
 }
 
-void CUILevelMap::Init_internal(const shared_str& name, CInifile& pLtx, const shared_str& sect_name,
+void CUILevelMap::Init_internal(std::string name, CInifile& pLtx, const shared_str& sect_name,
                                 LPCSTR sh_name) {
-    inherited::Init_internal(name, pLtx, sect_name, sh_name);
-    Fvector4 tmp = pGameIni->r_fvector4(MapName(), "global_rect");
+    inherited::Init_internal(std::move(name), pLtx, sect_name, sh_name);
+    // TODO: [imdex] use string_view
+    Fvector4 tmp = pGameIni->r_fvector4(MapName().c_str(), "global_rect");
 
     tmp.x *= UI().get_current_kx();
     tmp.z *= UI().get_current_kx();
@@ -512,9 +515,9 @@ CUIMiniMap::CUIMiniMap() {}
 
 CUIMiniMap::~CUIMiniMap() {}
 
-void CUIMiniMap::Init_internal(const shared_str& name, CInifile& pLtx, const shared_str& sect_name,
+void CUIMiniMap::Init_internal(std::string name, CInifile& pLtx, const shared_str& sect_name,
                                LPCSTR sh_name) {
-    inherited::Init_internal(name, pLtx, sect_name, sh_name);
+    inherited::Init_internal(std::move(name), pLtx, sect_name, sh_name);
     CUIStatic::SetTextureColor(0x7fffffff);
 }
 

@@ -32,22 +32,23 @@ struct
 class
 #endif
     SLevel {
-    shared_str m_name;
+    std::string m_name;
     Fvector m_offset;
     _LEVEL_ID m_id;
-    shared_str m_section;
+    std::string m_section;
     xrGUID m_guid;
 
 public:
-    IC const shared_str& name() const { return (m_name); }
+    // TODO: [imdex] use string_view
+    const std::string& name() const { return m_name; }
 
-    IC const Fvector& offset() const { return (m_offset); }
+    Fvector offset() const { return m_offset; }
 
-    IC const _LEVEL_ID& id() const { return (m_id); }
+    const _LEVEL_ID& id() const { return m_id; }
 
-    IC const shared_str& section() const { return (m_section); }
+    std::string_view section() const { return m_section; }
 
-    IC const xrGUID& guid() const { return (m_guid); }
+    const xrGUID& guid() const { return m_guid; }
 
     IC void load(IReader* reader);
     IC void save(IWriter* writer);

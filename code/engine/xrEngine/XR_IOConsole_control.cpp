@@ -8,11 +8,11 @@
 #include "stdafx.h"
 #include "XR_IOConsole.h"
 
-void CConsole::add_cmd_history(shared_str const& str) {
-    if (str.size() == 0) {
+void CConsole::add_cmd_history(std::string str) {
+    if (str.empty()) {
         return;
     }
-    m_cmd_history.push_back(str);
+    m_cmd_history.push_back(std::move(str));
     if (m_cmd_history.size() > m_cmd_history_max) {
         m_cmd_history.erase(m_cmd_history.begin());
     }

@@ -46,12 +46,13 @@ void CGameGraphBuilder::create_graph(const float& start, const float& amount) {
 void CGameGraphBuilder::load_level_graph(const float& start, const float& amount) {
     Progress(start);
 
-    Msg("Loading AI map");
+    Log("Loading AI map");
 
     VERIFY(!m_level_graph);
-    m_level_graph = xr_new<CLevelGraph>(*m_level_name);
+    // TODO: [imdex] use string_view
+    m_level_graph = xr_new<CLevelGraph>(m_level_name.c_str());
 
-    Msg("%d nodes loaded", level_graph().header().vertex_count());
+    LogMsg("{} nodes loaded", level_graph().header().vertex_count());
 
     Progress(start + amount);
 }
@@ -137,10 +138,11 @@ void CGameGraphBuilder::load_graph_point(NET_Packet& net_packet) {
 void CGameGraphBuilder::load_graph_points(const float& start, const float& amount) {
     Progress(start);
 
-    Msg("Loading graph points");
+    Log("Loading graph points");
 
     string_path spawn_file_name;
-    strconcat(sizeof(spawn_file_name), spawn_file_name, *m_level_name, "level.spawn");
+    // TODO: [imdex] use string_view
+    strconcat(sizeof(spawn_file_name), spawn_file_name, m_level_name.c_str(), "level.spawn");
     IReader* reader = FS.r_open(spawn_file_name);
     u32 id;
     NET_Packet net_packet;

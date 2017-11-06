@@ -24,25 +24,25 @@
 #include "mt_config.h"
 
 void CMovementManager::show_game_path_info() {
-    Msg("! Cannot build GAME path! (object %s)", *object().cName());
-    Msg("! CURRENT LEVEL : %s", *Level().name());
+    LogMsg("! Cannot build GAME path! (object {})", *object().cName());
+    LogMsg("! CURRENT LEVEL : {}", Level().name());
     Fvector temp = ai().game_graph().vertex(object().ai_location().game_vertex_id())->level_point();
-    Msg("! CURRENT game point position : [%f][%f][%f]", VPUSH(temp));
+    LogMsg("! CURRENT game point position : [{0}][{1}][{2}]", VPUSH(temp));
     const GameGraph::CVertex* vertex = ai().game_graph().vertex(game_dest_vertex_id());
-    Msg("! TARGET LEVEL : %s", *ai().game_graph().header().level(vertex->level_id()).name());
+    LogMsg("! TARGET LEVEL : {}", ai().game_graph().header().level(vertex->level_id()).name());
     temp = vertex->level_point();
-    Msg("! TARGET  game point position : [%f][%f][%f]", VPUSH(temp));
+    LogMsg("! TARGET  game point position : [{0}][{1}][{2}]", VPUSH(temp));
     const u8* target_vertex_type = ai().game_graph().vertex(game_dest_vertex_id())->vertex_type();
-    Msg("! Target point mask [%d][%d][%d][%d]", target_vertex_type[0], target_vertex_type[1],
+    LogMsg("! Target point mask [{0}][{1}][{2}][{3}]", target_vertex_type[0], target_vertex_type[1],
         target_vertex_type[2], target_vertex_type[3]);
 
-    Msg("! Object masks (%d) :", m_location_manager->vertex_types().size());
+    LogMsg("! Object masks ({}) :", m_location_manager->vertex_types().size());
 
     typedef GameGraph::TERRAIN_VECTOR::const_iterator const_iterator;
     const_iterator I = m_location_manager->vertex_types().begin();
     const_iterator E = m_location_manager->vertex_types().end();
     for (; I != E; ++I)
-        Msg("!   [%d][%d][%d][%d]", (*I).tMask[0], (*I).tMask[1], (*I).tMask[2], (*I).tMask[3]);
+        LogMsg("!   [{0}][{1}][{2}][{3}]", (*I).tMask[0], (*I).tMask[1], (*I).tMask[2], (*I).tMask[3]);
 }
 
 void CMovementManager::process_game_path() {

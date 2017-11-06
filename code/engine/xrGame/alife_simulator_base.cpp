@@ -345,6 +345,6 @@ void CALifeSimulatorBase::assign_death_position(CSE_ALifeCreatureAbstract* tpALi
             l_tpALifeMonsterAbstract->m_tGraphID;
 }
 
-shared_str CALifeSimulatorBase::level_name() const {
-    return (ai().game_graph().header().level(ai().level_graph().level_id()).name());
+const std::string& CALifeSimulatorBase::level_name() const {
+    return ai().game_graph().header().level(ai().level_graph().level_id()).name();
 }

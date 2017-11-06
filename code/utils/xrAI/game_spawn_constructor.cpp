@@ -37,12 +37,10 @@ CGameSpawnConstructor::~CGameSpawnConstructor() {
     xr_delete(m_patrol_path_storage);
 }
 
-IC shared_str CGameSpawnConstructor::actor_level_name() {
-    string256 temp;
-    return (strconcat(
-        sizeof(temp), temp,
-        *game_graph().header().level(game_graph().vertex(m_actor->m_tGraphID)->level_id()).name(),
-        ".spawn"));
+IC std::string CGameSpawnConstructor::actor_level_name() const {
+    XrWriterAs<string256> writer;
+    writer.write("{0}.spawn", game_graph().header().level(game_graph().vertex(m_actor->m_tGraphID)->level_id()).name());
+    return writer.str();
 }
 
 extern void read_levels(CInifile* ini, xr_set<CLevelInfo>& m_levels, bool rebuild_graph,
@@ -77,13 +75,11 @@ void CGameSpawnConstructor::load_spawns(LPCSTR name, bool no_separator_check) {
 
     // load levels
     GameGraph::SLevel level;
-    LEVEL_INFO_STORAGE::const_iterator I = m_levels.begin();
-    LEVEL_INFO_STORAGE::const_iterator E = m_levels.end();
-    for (; I != E; ++I) {
-        level.m_offset = (*I).m_offset;
-        level.m_name = (*I).m_name;
-        level.m_id = (*I).m_id;
-        Msg("%9s %2d %s", "level", level.id(), *(*I).m_name);
+    for (const auto& l : m_levels) {
+        level.m_offset = l.m_offset;
+        level.m_name = l.m_name;
+        level.m_id = l.m_id;
+        LogMsg("{:9s} {:2d} {}", "level", level.id(), l.m_name);
         m_level_spawns.push_back(xr_new<CLevelSpawnConstructor>(level, this, no_separator_check));
     }
 
@@ -182,20 +178,22 @@ void CGameSpawnConstructor::save_spawn(LPCSTR name, LPCSTR output) {
     m_game_graph->save(stream);
     stream.close_chunk();
 
-    stream.save_to(*spawn_name(output));
+    // TODO: [imdex] use string_view
+    stream.save_to(spawn_name(output).c_str());
 }
 
-shared_str CGameSpawnConstructor::spawn_name(LPCSTR output) {
+IC std::string CGameSpawnConstructor::spawn_name(LPCSTR output) {
     string_path file_name;
     if (!output)
-        FS.update_path(file_name, "$game_spawn$", *actor_level_name());
+        // TODO: [imdex] use string_view
+        FS.update_path(file_name, "$game_spawn$", actor_level_name().c_str());
     else {
         actor_level_name();
         string_path out;
         strconcat(sizeof(out), out, output, ".spawn");
         FS.update_path(file_name, "$game_spawn$", out);
     }
-    return (file_name);
+    return file_name;
 }
 
 void CGameSpawnConstructor::add_story_object(ALife::_STORY_ID id, CSE_ALifeDynamicObject* object,
@@ -233,8 +231,8 @@ void CGameSpawnConstructor::process_actor(LPCSTR start_level_name) {
         if (!(*I)->actor())
             continue;
 
-        Msg("Actor is on the level %s",
-            *game_graph()
+        LogMsg("Actor is on the level {}",
+             game_graph()
                  .header()
                  .level(game_graph().vertex((*I)->actor()->m_tGraphID)->level_id())
                  .name());
@@ -247,7 +245,7 @@ void CGameSpawnConstructor::process_actor(LPCSTR start_level_name) {
     if (!start_level_name)
         return;
 
-    if (!xr_strcmp(*actor_level_name(), start_level_name))
+    if (actor_level_name() == start_level_name)
         return;
 
     const CGameGraph::SLevel& level = game_graph().header().level(start_level_name);

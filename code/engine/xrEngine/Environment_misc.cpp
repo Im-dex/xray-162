@@ -501,9 +501,10 @@ void CEnvironment::mods_load() {
 void CEnvironment::mods_unload() { Modifiers.clear(); }
 
 void CEnvironment::load_level_specific_ambients() {
-    const shared_str level_name = g_pGameLevel->name();
+    const auto& level_name = g_pGameLevel->name();
 
     string_path path;
+    // TODO: [imdex] use string_view
     strconcat(sizeof(path), path, "environment\\ambients\\", level_name.c_str(), ".ltx");
 
     string_path full_path;

@@ -246,7 +246,8 @@ bool patrol_path_exists(LPCSTR patrol_path) {
     return (!!ai().patrol_paths().path(patrol_path, true));
 }
 
-LPCSTR get_name() { return (*Level().name()); }
+// TODO: [imdex] use string_view
+LPCSTR get_name() { return Level().name().c_str(); }
 
 void prefetch_sound(LPCSTR name) { Level().PrefetchSound(name); }
 

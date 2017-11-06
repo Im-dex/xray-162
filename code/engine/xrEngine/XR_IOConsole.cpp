@@ -127,12 +127,12 @@ CConsole::CConsole() : m_hShader_back(NULL) {
 void CConsole::Initialize() {
     scroll_delta = 0;
     bVisible = false;
-    pFont = NULL;
-    pFont2 = NULL;
+    pFont = nullptr;
+    pFont2 = nullptr;
 
     m_mouse_pos.x = 0;
     m_mouse_pos.y = 0;
-    m_last_cmd = NULL;
+    m_last_cmd.clear();
 
     m_cmd_history.reserve(m_cmd_history_max + 2);
     m_cmd_history.clear();
@@ -145,7 +145,7 @@ void CConsole::Initialize() {
 
     m_tips_mode = 0;
     m_prev_length_str = 0;
-    m_cur_cmd = NULL;
+    m_cur_cmd.clear();
     reset_selected_tip();
 
     // Commands
@@ -529,7 +529,7 @@ void CConsole::ExecuteCommand(LPCSTR cmd_str, bool record_cmd) {
         c[0] = mark2;
         c[1] = 0;
 
-        if (m_last_cmd.c_str() == 0 || xr_strcmp(m_last_cmd, edt) != 0) {
+        if (m_last_cmd.empty() || m_last_cmd != edt) {
             Log(c, edt);
             add_cmd_history(edt);
             m_last_cmd = edt;
@@ -637,7 +637,7 @@ void CConsole::ExecuteScript(LPCSTR str) {
 
 // -------------------------------------------------------------------------------------------------
 
-IConsole_Command* CConsole::find_next_cmd(LPCSTR in_str, shared_str& out_str) {
+IConsole_Command* CConsole::find_next_cmd(LPCSTR in_str, std::string& out_str) {
     LPCSTR radmin_cmd_name = "ra ";
     bool b_ra = (in_str == strstr(in_str, radmin_cmd_name));
     u32 offset = (b_ra) ? xr_strlen(radmin_cmd_name) : 0;
@@ -655,10 +655,10 @@ IConsole_Command* CConsole::find_next_cmd(LPCSTR in_str, shared_str& out_str) {
         xr_strcpy(new_str, offset + name_cmd_size + 2, (b_ra) ? radmin_cmd_name : "");
         xr_strcat(new_str, offset + name_cmd_size + 2, name_cmd);
 
-        out_str._set((LPCSTR)new_str);
+        out_str = (LPCSTR)new_str;
         return cc;
     }
-    return NULL;
+    return nullptr;
 }
 
 bool CConsole::add_next_cmds(LPCSTR in_str, vecTipsEx& out_v) {
@@ -670,7 +670,7 @@ bool CConsole::add_next_cmds(LPCSTR in_str, vecTipsEx& out_v) {
     LPSTR t2;
     STRCONCAT(t2, in_str, " ");
 
-    shared_str temp;
+    std::string temp;
     IConsole_Command* cc = find_next_cmd(t2, temp);
     if (!cc || temp.size() == 0) {
         return false;
@@ -679,11 +679,10 @@ bool CConsole::add_next_cmds(LPCSTR in_str, vecTipsEx& out_v) {
     bool res = false;
     for (u32 i = cur_count; i < MAX_TIPS_COUNT * 2; ++i) // fake=protect
     {
-        temp._set(cc->Name());
-        bool dup = (std::find(out_v.begin(), out_v.end(), temp) != out_v.end());
+        temp = cc->Name();
+        const bool dup = (std::find(out_v.begin(), out_v.end(), temp) != out_v.end());
         if (!dup) {
-            TipString ts(temp);
-            out_v.push_back(ts);
+            out_v.push_back(TipString(temp));
             res = true;
         }
         if (out_v.size() >= MAX_TIPS_COUNT) {
@@ -720,11 +719,10 @@ bool CConsole::add_internal_cmds(LPCSTR in_str, vecTipsEx& out_v) {
             name2[in_sz] = 0;
 
             if (!stricmp(name2, in_str)) {
-                shared_str temp;
-                temp._set(name);
-                bool dup = (std::find(out_v.begin(), out_v.end(), temp) != out_v.end());
+                std::string temp(name);
+                const bool dup = std::find(out_v.begin(), out_v.end(), temp) != out_v.end();
                 if (!dup) {
-                    out_v.push_back(TipString(temp, 0, in_sz));
+                    out_v.push_back(TipString(std::move(temp), 0, in_sz));
                     res = true;
                 }
             }
@@ -742,13 +740,12 @@ bool CConsole::add_internal_cmds(LPCSTR in_str, vecTipsEx& out_v) {
         LPCSTR name = itb->first;
         LPCSTR fd_str = strstr(name, in_str);
         if (fd_str) {
-            shared_str temp;
-            temp._set(name);
+            std::string temp(name);
             bool dup = (std::find(out_v.begin(), out_v.end(), temp) != out_v.end());
             if (!dup) {
-                u32 name_sz = xr_strlen(name);
-                int fd_sz = name_sz - xr_strlen(fd_str);
-                out_v.push_back(TipString(temp, fd_sz, fd_sz + in_sz));
+                const u32 name_sz = xr_strlen(name);
+                const int fd_sz = name_sz - xr_strlen(fd_str);
+                out_v.push_back(TipString(std::move(temp), fd_sz, fd_sz + in_sz));
                 res = true;
             }
         }
@@ -764,7 +761,7 @@ void CConsole::update_tips() {
     m_temp_tips.clear();
     m_tips.clear();
 
-    m_cur_cmd = NULL;
+    m_cur_cmd.clear();
     if (!bVisible) {
         return;
     }
@@ -808,7 +805,7 @@ void CConsole::update_tips() {
 
                 cc->fill_tips(m_temp_tips, mode);
                 m_tips_mode = 2;
-                m_cur_cmd._set(first);
+                m_cur_cmd = first;
                 select_for_filter(last, m_temp_tips, m_tips);
 
                 if (m_tips.size() == 0) {
@@ -838,27 +835,24 @@ void CConsole::update_tips() {
     }
 }
 
-void CConsole::select_for_filter(LPCSTR filter_str, vecTips& in_v, vecTipsEx& out_v) {
+void CConsole::select_for_filter(const char* filter_str, vecTips& in_v, vecTipsEx& out_v) const {
     out_v.clear();
-    u32 in_count = in_v.size();
-    if (in_count == 0 || !filter_str) {
+    if (in_v.empty() || !filter_str) {
         return;
     }
 
-    bool all = (xr_strlen(filter_str) == 0);
+    const std::string_view filter = filter_str;
+    const bool all = filter.empty();
 
-    vecTips::iterator itb = in_v.begin();
-    vecTips::iterator ite = in_v.end();
-    for (; itb != ite; ++itb) {
-        shared_str const& str = (*itb);
+    for (const auto& str : in_v) {
         if (all) {
             out_v.push_back(TipString(str));
         } else {
-            LPCSTR fd_str = strstr(str.c_str(), filter_str);
-            if (fd_str) {
-                int fd_sz = str.size() - xr_strlen(fd_str);
-                TipString ts(str, fd_sz, fd_sz + xr_strlen(filter_str));
-                out_v.push_back(ts);
+            const auto pos = str.find(filter);
+            if (pos != std::string::npos) {
+                const int fd_sz = str.size() - pos;
+                TipString ts(str, fd_sz, fd_sz + filter.size());
+                out_v.push_back(std::move(ts));
             }
         }
     } // for

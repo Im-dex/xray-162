@@ -60,17 +60,20 @@ IC CGraphEngine& CLevelSpawnConstructor::graph_engine() const { return (*m_graph
 void CLevelSpawnConstructor::init() {
     // loading level graph
     string_path file_name;
-    FS.update_path(file_name, "$game_levels$", *m_level.name());
+    // TODO: [imdex] use string_view
+    FS.update_path(file_name, "$game_levels$", m_level.name().c_str());
     xr_strcat(file_name, "\\");
     m_level_graph = xr_new<CLevelGraph>(file_name);
 
     // loading cross table
+    // TODO: [imdex] use string_view
     m_game_spawn_constructor->game_graph().set_current_level(
-        game_graph().header().level(*m_level.name()).id());
+        game_graph().header().level(m_level.name().c_str()).id());
     m_cross_table = &game_graph().cross_table();
 
     // loading patrol paths
-    FS.update_path(file_name, "$game_levels$", *m_level.name());
+    // TODO: [imdex] use string_view
+    FS.update_path(file_name, "$game_levels$", m_level.name().c_str());
     xr_strcat(file_name, "\\level.game");
     if (FS.exist(file_name)) {
         IReader* stream = FS.r_open(file_name);
@@ -120,8 +123,9 @@ void CLevelSpawnConstructor::add_graph_point(CSE_Abstract* abstract) {
 //}
 
 void CLevelSpawnConstructor::add_story_object(CSE_ALifeDynamicObject* dynamic_object) {
+    // TODO: [imdex] use string_view
     m_game_spawn_constructor->add_story_object(dynamic_object->m_story_id, dynamic_object,
-                                               *m_level.name());
+                                               m_level.name().c_str());
 }
 
 void CLevelSpawnConstructor::add_space_restrictor(CSE_ALifeDynamicObject* dynamic_object) {
@@ -175,7 +179,8 @@ void CLevelSpawnConstructor::add_free_object(CSE_Abstract* abstract) {
 void CLevelSpawnConstructor::load_objects() {
     // loading spawn points
     string_path file_name;
-    FS.update_path(file_name, "$game_levels$", *m_level.name());
+    // TODO: [imdex] use string_view
+    FS.update_path(file_name, "$game_levels$", m_level.name().c_str());
     xr_strcat(file_name, "\\level.spawn");
     IReader* level_spawn = FS.r_open(file_name);
     u32 id;
@@ -205,7 +210,7 @@ void CLevelSpawnConstructor::load_objects() {
 
         CSE_ALifeCreatureActor* actor = smart_cast<CSE_ALifeCreatureActor*>(alife_object);
         if (actor) {
-            R_ASSERT3(!m_actor, "Too many actors on the level ", *m_level.name());
+            R_ASSERT3(!m_actor, "Too many actors on the level ", m_level.name());
             m_actor = actor;
         }
 
@@ -304,10 +309,9 @@ void CLevelSpawnConstructor::correct_objects() {
             }
         }
     if (dwStart >= dwFinish) {
-        string4096 S;
-        xr_sprintf(S, "There are no graph vertices in the game graph for the level '%s' !\n",
-                   *m_level.name());
-        R_ASSERT2(dwStart < dwFinish, S);
+        XrWriterAs<string4096> writer;
+        writer.write("There are no graph vertices in the game graph for the level '{}' !\n", m_level.name());
+        R_ASSERT2(dwStart < dwFinish, writer.strView());
     }
 
     for (int i = 0; i < (int)m_spawns.size(); i++) {
@@ -325,8 +329,9 @@ void CLevelSpawnConstructor::correct_objects() {
         if (m_spawns[i]->used_ai_locations() &&
             !level_graph().inside(level_graph().vertex(m_spawns[i]->m_tNodeID), position)) {
             Fvector new_position = level_graph().vertex_position(m_spawns[i]->m_tNodeID);
+            // TODO: [imdex] refactor clMsg + use string_view
             clMsg("[%s][%s][%s] : position changed from [%f][%f][%f] -> [%f][%f][%f]",
-                  *m_level.name(), *m_spawns[i]->s_name, m_spawns[i]->name_replace(),
+                  m_level.name().c_str(), *m_spawns[i]->s_name, m_spawns[i]->name_replace(),
                   VPUSH(position), VPUSH(new_position));
             m_spawns[i]->o_Position = new_position;
         }
@@ -338,12 +343,14 @@ void CLevelSpawnConstructor::correct_objects() {
                 S, sizeof(S1) - (S1 - &S[0]),
                 "Corresponding graph vertex for the spawn point is located on the ANOTHER level\n",
                 m_spawns[i]->name_replace());
+            // TODO: [imdex] use string_view
             S += xr_sprintf(S, sizeof(S1) - (S1 - &S[0]), "Current level  : [%d][%s]\n",
-                            m_level.id(), *game_graph().header().level(m_level.id()).name());
+                            m_level.id(), game_graph().header().level(m_level.id()).name().c_str());
+            // TODO: [imdex] use string_view
             S += xr_sprintf(
                 S, sizeof(S1) - (S1 - &S[0]), "Conflict level : [%d][%s]\n",
                 game_graph().vertex(dwBest)->level_id(),
-                *game_graph().header().level(game_graph().vertex(dwBest)->level_id()).name());
+                game_graph().header().level(game_graph().vertex(dwBest)->level_id()).name().c_str());
             S += xr_sprintf(S, sizeof(S1) - (S1 - &S[0]),
                             "Probably, you filled offsets in \"game_levels.ltx\" incorrect");
             R_ASSERT2(game_graph().vertex(dwBest)->level_id() == m_level.id(), S1);
@@ -622,7 +629,7 @@ void CLevelSpawnConstructor::update() {
 }
 
 void CLevelSpawnConstructor::verify_space_restrictors() {
-    Msg("Level [%s] : searching for AI map separators space restrictors", *m_level.name());
+    LogMsg("Level [{}] : searching for AI map separators space restrictors", m_level.name());
     SPACE_RESTRICTORS::iterator I = m_space_restrictors.begin();
     SPACE_RESTRICTORS::iterator E = m_space_restrictors.end();
     for (; I != E; ++I) {
@@ -637,5 +644,5 @@ void CLevelSpawnConstructor::verify_space_restrictors() {
     delete_data(m_space_restrictors);
 
     if (m_no_separator_check)
-        Msg("Level [%s] : no separators found", *m_level.name());
+        LogMsg("Level [{}] : no separators found", m_level.name());
 }

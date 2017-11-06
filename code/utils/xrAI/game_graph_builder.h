@@ -39,7 +39,7 @@ private:
     LPCSTR m_cross_table_name;
 
 private:
-    shared_str m_level_name;
+    std::string m_level_name;
 
 private:
     CLevelGraph* m_level_graph;

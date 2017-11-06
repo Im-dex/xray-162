@@ -6,8 +6,7 @@
 //	Description : property collection template class inline functions
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef PROPERTY_COLLECTION_INLINE_HPP_INCLUDED
-#define PROPERTY_COLLECTION_INLINE_HPP_INCLUDED
+#pragma once
 
 #define SPECIALIZATION template <typename container_type, typename holder_type>
 #define PROPERTY_COLLECTION property_collection<container_type, holder_type>
@@ -109,19 +108,15 @@ bool PROPERTY_COLLECTION::unique_id(LPCSTR id) const {
 }
 
 SPECIALIZATION
-shared_str PROPERTY_COLLECTION::generate_unique_id(LPCSTR prefix) const {
-    for (u32 i = 0;; ++i) {
-        string_path result;
-        xr_strcpy(result, prefix);
+std::string PROPERTY_COLLECTION::generate_unique_id(const std::string_view prefix) const {
+    for (size_t i = 0;; ++i) {
+        XrWriterAs<string_path> writer;
+        writer.write("{0}{1}", prefix, i);
 
-        string_path number;
-        R_ASSERT(!_itoa_s(i, number, 10));
-        xr_strcat(result, number);
-
-        if (!unique_id(result))
+        if (!unique_id(writer.c_str()))
             continue;
 
-        return (result);
+        return writer.str();
     }
 }
 
@@ -135,5 +130,3 @@ inline void PROPERTY_COLLECTION::make_state_changed() {
 
 #undef PROPERTY_COLLECTION
 #undef SPECIALIZATION
-
-#endif // #ifndef PROPERTY_COLLECTION_INLINE_HPP_INCLUDED

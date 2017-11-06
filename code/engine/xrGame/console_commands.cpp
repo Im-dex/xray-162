@@ -454,7 +454,7 @@ bool valid_saved_game_name(LPCSTR file_name) {
     return (true);
 }
 
-void get_files_list(xr_vector<shared_str>& files, LPCSTR dir, LPCSTR file_ext) {
+void get_files_list(xr_vector<std::string>& files, LPCSTR dir, LPCSTR file_ext) {
     VERIFY(dir && file_ext);
     files.clear();
 
@@ -1080,14 +1080,13 @@ struct CCC_JumpToLevel : public IConsole_Command {
             return;
         }
 
-        GameGraph::LEVEL_MAP::const_iterator I = ai().game_graph().header().levels().begin();
-        GameGraph::LEVEL_MAP::const_iterator E = ai().game_graph().header().levels().end();
-        for (; I != E; ++I)
-            if (!xr_strcmp((*I).second.name(), level)) {
+        for (const auto& I : ai().game_graph().header().levels()) {
+            if (I.second.name() == level) {
                 ai().alife().jump_to_level(level);
                 return;
             }
-        Msg("! There is no level \"%s\" in the game graph!", level);
+        }
+        LogMsg(R"(! There is no level "{}" in the game graph!)", level);
     }
 
     virtual void Save(IWriter* F){}
@@ -1097,10 +1096,8 @@ struct CCC_JumpToLevel : public IConsole_Command {
             return;
         }
 
-        GameGraph::LEVEL_MAP::const_iterator itb = ai().game_graph().header().levels().begin();
-        GameGraph::LEVEL_MAP::const_iterator ite = ai().game_graph().header().levels().end();
-        for (; itb != ite; ++itb) {
-            tips.push_back((*itb).second.name());
+        for (const auto& level : ai().game_graph().header().levels()) {
+            tips.push_back(std::string(level.second.name()));
         }
     }
 };

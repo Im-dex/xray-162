@@ -61,20 +61,24 @@ bool CLevel::net_start_client2() {
 
 bool CLevel::net_start_client3() {
     if (connected_to_server) {
-        LPCSTR level_name = NULL;
-        LPCSTR level_ver = NULL;
-        LPCSTR download_url = NULL;
+        LPCSTR level_name = "";
+        LPCSTR level_ver = "";
+        LPCSTR download_url = "";
 
         shared_str const& server_options = Server->GetConnectOptions();
+        // TODO: [imdex] remove shared_str
         level_name = name().c_str(); // Server->level_name		(server_options).c_str();
+        level_name = level_name ? level_name : "";
+        // TODO: [imdex] remove shared_str
         level_ver = Server->level_version(server_options).c_str(); // 1.0
+        level_ver = level_ver ? level_ver : "";
         // Determine internal level-ID
         int level_id = pApp->Level_ID(level_name, level_ver, true);
         if (level_id == -1) {
             Disconnect();
 
             connected_to_server = FALSE;
-            Msg("! Level (name:%s), (version:%s), not found, try to download from:%s", level_name,
+            LogMsg("! Level (name:{0}), (version:{1}), not found, try to download from:{2}", level_name,
                 level_ver, download_url);
             map_data.m_name = level_name;
             map_data.m_map_version = level_ver;
@@ -83,7 +87,7 @@ bool CLevel::net_start_client3() {
             return false;
         }
 #ifdef DEBUG
-        Msg("--- net_start_client3: level_id [%d], level_name[%s], level_version[%s]", level_id,
+        LogMsg("--- net_start_client3: level_id [{0}], level_name[{1}], level_version[{2}]", level_id,
             level_name, level_ver);
 #endif // #ifdef DEBUG
         map_data.m_name = level_name;

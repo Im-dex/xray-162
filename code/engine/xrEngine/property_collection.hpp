@@ -6,8 +6,7 @@
 //	Description : property collection template class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef PROPERTY_COLLECTION_HPP_INCLUDED
-#define PROPERTY_COLLECTION_HPP_INCLUDED
+#pragma once
 
 #include "editor/property_holder.hpp"
 #include "../xrServerEntities/object_broker.h"
@@ -39,7 +38,7 @@ public:
 
 public:
     bool unique_id(LPCSTR id) const;
-    shared_str generate_unique_id(LPCSTR prefix) const;
+    std::string generate_unique_id(const std::string_view prefix) const;
 
 private:
     inline void make_state_changed();
@@ -67,5 +66,3 @@ private:
 }; // class property_collection
 
 #include "property_collection_inline.hpp"
-
-#endif // #ifndef PROPERTY_COLLECTION_HPP_INCLUDED

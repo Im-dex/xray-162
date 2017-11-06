@@ -15,19 +15,19 @@
 
 #include "xr_object.h"
 
-xr_token* vid_quality_token = NULL;
+xr_token* vid_quality_token = nullptr;
 
 xr_token vid_bpp_token[] = { { "16", 16 }, { "32", 32 }, { 0, 0 } };
 //-----------------------------------------------------------------------
 
-void IConsole_Command::add_to_LRU(shared_str const& arg) {
-    if (arg.size() == 0 || bEmptyArgsHandled) {
+void IConsole_Command::add_to_LRU(std::string arg) {
+    if (arg.empty() || bEmptyArgsHandled) {
         return;
     }
 
-    bool dup = (std::find(m_LRU.begin(), m_LRU.end(), arg) != m_LRU.end());
+    const bool dup = std::find(m_LRU.begin(), m_LRU.end(), arg) != m_LRU.end();
     if (!dup) {
-        m_LRU.push_back(arg);
+        m_LRU.push_back(std::move(arg));
         if (m_LRU.size() > LRU_MAX_COUNT) {
             m_LRU.erase(m_LRU.begin());
         }
@@ -35,10 +35,9 @@ void IConsole_Command::add_to_LRU(shared_str const& arg) {
 }
 
 void IConsole_Command::add_LRU_to_tips(vecTips& tips) {
-    vecLRU::reverse_iterator it_rb = m_LRU.rbegin();
-    vecLRU::reverse_iterator it_re = m_LRU.rend();
-    for (; it_rb != it_re; ++it_rb) {
-        tips.push_back((*it_rb));
+    tips.reserve(m_LRU.size());
+    for (auto it_rb = m_LRU.rbegin(); it_rb != m_LRU.rend(); ++it_rb) {
+        tips.push_back(*it_rb);
     }
 }
 
@@ -354,7 +353,7 @@ public:
             psCurrentVidMode[0] = _w;
             psCurrentVidMode[1] = _h;
         } else {
-            Msg("! Wrong video mode [%s]", args);
+            LogMsg("! Wrong video mode [{}]", args);
             return;
         }
     }

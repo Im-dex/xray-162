@@ -91,7 +91,8 @@ void demo_info::sort_players(sorting_less_comparator sorting_comparator) {
 }
 
 void demo_info::load_from_game() {
-    m_map_name = Level().name();
+    // TODO: [imdex] remove shared_str
+    m_map_name = shared_str(Level().name().c_str());
     m_map_version = Level().version();
     m_game_type = GameTypeToString(Game().Type(), true);
     m_game_score = "";
