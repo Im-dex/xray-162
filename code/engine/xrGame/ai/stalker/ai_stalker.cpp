@@ -1437,7 +1437,8 @@ void CAI_Stalker::fill_bones_body_parts(LPCSTR bone_id, const ECriticalWoundType
     auto E = body_part_section.Data.cend();
     for (; I != E; ++I)
         m_bones_body_parts.insert(
-            std::make_pair(kinematics->LL_BoneID((*I).first), u32(wound_type)));
+            // TODO: [imdex] remove shared_str
+            std::make_pair(kinematics->LL_BoneID(*(*I).first), u32(wound_type)));
 }
 
 void CAI_Stalker::on_before_change_team() {
@@ -1471,7 +1472,8 @@ void aim_target(shared_str const& aim_bone_id, Fvector& result, const CGameObjec
     IKinematics* kinematics = smart_cast<IKinematics*>(object->Visual());
     VERIFY(kinematics);
 
-    u16 bone_id = kinematics->LL_BoneID(aim_bone_id);
+    // TODO: [imdex] remove shared_str
+    u16 bone_id = kinematics->LL_BoneID(*aim_bone_id);
     VERIFY2(bone_id != BI_NONE, make_string("Cannot find bone %s", bone_id));
 
     Fmatrix const& bone_matrix = kinematics->LL_GetTransform(bone_id);

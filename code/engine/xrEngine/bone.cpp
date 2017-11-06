@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "bone.h"
 #include "gamemtllib.h"
 
+// TODO: [imdex] use string_view
 u16 CBone::get_game_mtl_idx() const { return GMLib.GetMaterialIdx(game_mtl.c_str()); }
 
 static const Fobb dummy = Fobb().identity();

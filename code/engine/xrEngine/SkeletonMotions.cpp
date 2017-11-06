@@ -56,7 +56,7 @@ void CPartition::load(IKinematics* V, LPCSTR model_name) {
     }
 }
 
-u16 find_bone_id(vecBones* bones, shared_str nm) {
+u16 find_bone_id(vecBones* bones, const std::string_view nm) {
     for (u16 i = 0; i < (u16)bones->size(); i++)
         if (bones->at(i)->name == nm)
             return i;
@@ -216,11 +216,10 @@ BOOL motions_value::load(LPCSTR N, IReader* data, vecBones* bones) {
     return bRes;
 }
 
-MotionVec* motions_value::bone_motions(shared_str bone_name) {
-    auto I = m_motions.find(bone_name);
-    //	VERIFY			(I != m_motions.end());
+MotionVec* motions_value::bone_motions(const std::string& bone_name) {
+    const auto I = m_motions.find(bone_name);
     if (I == m_motions.end())
-        return (0);
+        return nullptr;
 
     return (&(*I).second);
 }

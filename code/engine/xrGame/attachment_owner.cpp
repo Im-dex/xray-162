@@ -89,7 +89,8 @@ void CAttachmentOwner::attach(CInventoryItem* inventory_item) {
         if (m_attached_objects.empty())
             game_object->add_visual_callback(AttachmentCallback);
         attachable_item->set_bone_id(smart_cast<IKinematics*>(game_object->Visual())
-                                         ->LL_BoneID(attachable_item->bone_name()));
+                                          // TODO: [imdex] remove shared_str
+                                         ->LL_BoneID(*attachable_item->bone_name()));
         m_attached_objects.push_back(smart_cast<CAttachableItem*>(inventory_item));
 
         inventory_item->object().setVisible(true);
@@ -153,7 +154,8 @@ void CAttachmentOwner::reattach_items() {
         CAttachableItem* attachable_item = *I;
         VERIFY(attachable_item);
         attachable_item->set_bone_id(smart_cast<IKinematics*>(game_object->Visual())
-                                         ->LL_BoneID(attachable_item->bone_name()));
+                                         // TODO: [imdex] remove shared_str
+                                         ->LL_BoneID(*attachable_item->bone_name()));
     }
 }
 

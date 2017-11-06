@@ -536,5 +536,6 @@ void CBaseMonster::fill_bones_body_parts(LPCSTR body_part, CriticalWoundType wou
     auto E = body_part_section.Data.cend();
     for (; I != E; ++I)
         m_bones_body_parts.insert(
-            std::make_pair(kinematics->LL_BoneID((*I).first), u32(wound_type)));
+            // TODO: [imdex] remove shared_str
+            std::make_pair(kinematics->LL_BoneID(*(*I).first), u32(wound_type)));
 }

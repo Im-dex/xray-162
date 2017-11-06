@@ -347,7 +347,8 @@ const Fmatrix CScriptEntity::GetUpdatedMatrix(shared_str caBoneName, const Fvect
         CBoneInstance& l_tBoneInstance =
             smart_cast<IKinematics*>(object().Visual())
                 ->LL_GetBoneInstance(
-                    smart_cast<IKinematics*>(object().Visual())->LL_BoneID(caBoneName));
+                    // TODO: [imdex] remove shared_str
+                    smart_cast<IKinematics*>(object().Visual())->LL_BoneID(*caBoneName));
         l_tMatrix.mulA_43(l_tBoneInstance.mTransform);
         l_tMatrix.mulA_43(object().XFORM());
     }

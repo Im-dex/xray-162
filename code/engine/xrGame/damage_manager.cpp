@@ -71,7 +71,8 @@ void CDamageManager::load_section(LPCSTR section, CInifile const* ini) {
     for (auto i = damages.Data.cbegin(); damages.Data.cend() != i; ++i) {
         if (xr_strcmp(*(*i).first, "default")) { // read all except default line
             VERIFY(m_object);
-            int bone = kinematics->LL_BoneID(i->first);
+            // TODO: [imdex] remove shared_str
+            int bone = kinematics->LL_BoneID(*i->first);
             R_ASSERT2(BI_NONE != bone, *(*i).first);
             CBoneInstance& bone_instance = kinematics->LL_GetBoneInstance(u16(bone));
             bone_instance.set_param(0, (float)atof(_GetItem(*(*i).second, 0, buffer)));

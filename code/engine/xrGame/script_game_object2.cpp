@@ -160,7 +160,8 @@ void CScriptGameObject::Hit(CScriptHit* tpLuaHit) {
     VERIFY(V);                                       //	VERIFY			(V);
     if (xr_strlen(tLuaHit.m_caBoneName))             //	if (xr_strlen	(tLuaHit.m_caBoneName))
         HS.boneID = (V->LL_BoneID(
-            tLuaHit.m_caBoneName)); //		P.w_s16 (V->LL_BoneID(tLuaHit.m_caBoneName));
+            // TODO: [imdex] remove shared_str
+            *tLuaHit.m_caBoneName)); //		P.w_s16 (V->LL_BoneID(tLuaHit.m_caBoneName));
     else                            //	else
         HS.boneID = (s16(0));       //		P.w_s16		(s16(0));
     HS.p_in_bone_space =

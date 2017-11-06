@@ -161,8 +161,7 @@ public:
     virtual ~CKinematics();
 
     // Low level interface
-    u16 _BCL LL_BoneID(LPCSTR B);
-    u16 _BCL LL_BoneID(const shared_str& B);
+    u16 _BCL LL_BoneID(const std::string_view B);
     LPCSTR _BCL LL_BoneName_dbg(u16 ID);
 
     CInifile* _BCL LL_UserData() { return pUserData; }

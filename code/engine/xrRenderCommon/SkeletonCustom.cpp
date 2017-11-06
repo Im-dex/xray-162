@@ -21,34 +21,23 @@ std::recursive_mutex UCalc_Mutex;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-bool pred_N(const std::pair<shared_str, u32>& N, LPCSTR B) { return xr_strcmp(*N.first, B) < 0; }
-u16 CKinematics::LL_BoneID(LPCSTR B) {
-    accel::iterator I = std::lower_bound(bone_map_N->begin(), bone_map_N->end(), B, pred_N);
-    if (I == bone_map_N->end())
-        return BI_NONE;
-    if (0 != xr_strcmp(*(I->first), B))
-        return BI_NONE;
-    return u16(I->second);
-}
-bool pred_P(const std::pair<shared_str, u32>& N, const shared_str& B) {
-    return N.first._get() < B._get();
-}
-u16 CKinematics::LL_BoneID(const shared_str& B) {
-    accel::iterator I = std::lower_bound(bone_map_P->begin(), bone_map_P->end(), B, pred_P);
+u16 CKinematics::LL_BoneID(const std::string_view B) {
+    accel::iterator I = std::lower_bound(bone_map_P->begin(), bone_map_P->end(), B,
+                                         [](const auto& N, const auto B) { return N.first < B; });
     if (I == bone_map_P->end())
         return BI_NONE;
-    if (I->first._get() != B._get())
+    if (I->first != B)
         return BI_NONE;
     return u16(I->second);
 }
 
-//
+// TODO: [imdex] use string_view
 LPCSTR CKinematics::LL_BoneName_dbg(u16 ID) {
     CKinematics::accel::iterator _I, _E = bone_map_N->end();
     for (_I = bone_map_N->begin(); _I != _E; ++_I)
         if (_I->second == ID)
-            return *_I->first;
-    return 0;
+            return _I->first.c_str();
+    return nullptr;
 }
 
 #ifdef DEBUG
@@ -133,13 +122,6 @@ void CKinematics::IBoneInstances_Destroy() {
     }
 }
 
-bool pred_sort_N(const std::pair<shared_str, u32>& A, const std::pair<shared_str, u32>& B) {
-    return xr_strcmp(A.first, B.first) < 0;
-}
-bool pred_sort_P(const std::pair<shared_str, u32>& A, const std::pair<shared_str, u32>& B) {
-    return A.first._get() < B.first._get();
-}
-
 CSkeletonX* CKinematics::LL_GetChild(u32 idx) {
     IRenderVisual* V = children[idx];
     CSkeletonX* B = dynamic_cast<CSkeletonX*>(V);
@@ -202,7 +184,7 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags) {
 
 // Load bones
 #pragma todo("container is created in stack!")
-    xr_vector<shared_str> L_parents;
+    xr_vector<std::string> L_parents;
 
     R_ASSERT(data->find_chunk(OGF_S_BONE_NAMES));
 
@@ -220,7 +202,7 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags) {
         data->r_stringZ(buf, sizeof(buf));
         strlwr(buf);
         CBoneData* pBone = CreateBoneData(ID);
-        pBone->name = shared_str(buf);
+        pBone->name = buf;
         pBone->child_faces.resize(children.size());
         bones->push_back(pBone);
         bone_map_N->push_back(std::make_pair(pBone->name, ID));
@@ -234,15 +216,19 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags) {
         data->r(&pBone->obb, sizeof(Fobb));
         visimask.set(u64(1) << ID, TRUE);
     }
-    std::sort(bone_map_N->begin(), bone_map_N->end(), pred_sort_N);
-    std::sort(bone_map_P->begin(), bone_map_P->end(), pred_sort_P);
+    std::sort(bone_map_N->begin(), bone_map_N->end(), [](const auto& A, const auto& B) {
+        return A.first < B.first;
+    });
+    std::sort(bone_map_P->begin(), bone_map_P->end(), [](const auto& A, const auto& B) {
+        return A.first < B.first;
+    });
 
     // Attach bones to their parents
     iRoot = BI_NONE;
     for (u32 i = 0; i < bones->size(); i++) {
-        shared_str P = L_parents[i];
+        const std::string_view P = L_parents[i];
         CBoneData* B = (*bones)[i];
-        if (!P || !P[0]) {
+        if (P.empty()) {
             // no parent - this is root bone
             R_ASSERT(BI_NONE == iRoot);
             iRoot = u16(i);

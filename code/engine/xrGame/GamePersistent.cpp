@@ -119,8 +119,9 @@ void CGamePersistent::RegisterModel(IRenderVisual* V) {
         int cnt = K->LL_BoneCount();
         for (u16 k = 0; k < cnt; k++) {
             CBoneData& bd = K->LL_GetData(k);
-            if (*(bd.game_mtl_name)) {
-                bd.game_mtl_idx = GMLib.GetMaterialIdx(*bd.game_mtl_name);
+            if (!bd.game_mtl_name.empty()) {
+                // TODO: [imdex] use string_view
+                bd.game_mtl_idx = GMLib.GetMaterialIdx(bd.game_mtl_name.c_str());
                 R_ASSERT2(GMLib.GetMaterialByIdx(bd.game_mtl_idx)->Flags.is(SGameMtl::flDynamic),
                           "Required dynamic game material");
             } else {

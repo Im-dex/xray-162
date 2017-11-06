@@ -104,7 +104,8 @@ void attachable_hud_item::set_bone_visible(const shared_str& bone_name, BOOL bVi
                                            BOOL bSilent) {
     u16 bone_id;
     BOOL bVisibleNow;
-    bone_id = m_model->LL_BoneID(bone_name);
+    // TODO: [imdex] remove shared_str
+    bone_id = m_model->LL_BoneID(*bone_name);
     if (bone_id == BI_NONE) {
         if (bSilent)
             return;
@@ -217,7 +218,8 @@ void hud_item_measures::load(const shared_str& sect_name, IKinematics* K) {
     m_prop_flags.set(e_fire_point, pSettings->line_exist(sect_name, "fire_bone"));
     if (m_prop_flags.test(e_fire_point)) {
         bone_name = pSettings->r_string(sect_name, "fire_bone");
-        m_fire_bone = K->LL_BoneID(bone_name);
+        // TODO: [imdex] remove shared_str
+        m_fire_bone = K->LL_BoneID(*bone_name);
         m_fire_point_offset = pSettings->r_fvector3(sect_name, "fire_point");
     } else
         m_fire_point_offset.set(0, 0, 0);
@@ -225,7 +227,8 @@ void hud_item_measures::load(const shared_str& sect_name, IKinematics* K) {
     m_prop_flags.set(e_fire_point2, pSettings->line_exist(sect_name, "fire_bone2"));
     if (m_prop_flags.test(e_fire_point2)) {
         bone_name = pSettings->r_string(sect_name, "fire_bone2");
-        m_fire_bone2 = K->LL_BoneID(bone_name);
+        // TODO: [imdex] remove shared_str
+        m_fire_bone2 = K->LL_BoneID(*bone_name);
         m_fire_point2_offset = pSettings->r_fvector3(sect_name, "fire_point2");
     } else
         m_fire_point2_offset.set(0, 0, 0);
@@ -233,7 +236,8 @@ void hud_item_measures::load(const shared_str& sect_name, IKinematics* K) {
     m_prop_flags.set(e_shell_point, pSettings->line_exist(sect_name, "shell_bone"));
     if (m_prop_flags.test(e_shell_point)) {
         bone_name = pSettings->r_string(sect_name, "shell_bone");
-        m_shell_bone = K->LL_BoneID(bone_name);
+        // TODO: [imdex] remove shared_str
+        m_shell_bone = K->LL_BoneID(*bone_name);
         m_shell_point_offset = pSettings->r_fvector3(sect_name, "shell_point");
     } else
         m_shell_point_offset.set(0, 0, 0);
@@ -406,7 +410,8 @@ void player_hud::load(const shared_str& player_hud_sect) {
     for (; _b != _e; ++_b) {
         if (strstr(_b->first.c_str(), "ancor_") == _b->first.c_str()) {
             const shared_str& _bone = _b->second;
-            m_ancors.push_back(m_model->dcast_PKinematics()->LL_BoneID(_bone));
+            // TODO: [imdex] remove shared_str
+            m_ancors.push_back(m_model->dcast_PKinematics()->LL_BoneID(*_bone));
         }
     }
 

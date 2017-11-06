@@ -54,7 +54,8 @@ void SBoneProtections::reload(const shared_str& bone_sect, IKinematics* kinemati
             if (!xr_strcmp(i->first.c_str(), "hit_fraction"))
                 continue;
 
-            s16 bone_id = kinematics->LL_BoneID(i->first);
+            // TODO: [imdex] remove shared_str
+            s16 bone_id = kinematics->LL_BoneID(*i->first);
             R_ASSERT2(BI_NONE != bone_id, i->first.c_str());
             m_bones_koeff.insert(std::make_pair(bone_id, BP));
         }
@@ -80,7 +81,8 @@ void SBoneProtections::add(const shared_str& bone_sect, IKinematics* kinematics)
             BP.koeff += (float)atof(_GetItem(i->second.c_str(), 0, buffer));
             BP.armor += (float)atof(_GetItem(i->second.c_str(), 1, buffer));
         } else {
-            s16 bone_id = kinematics->LL_BoneID(i->first);
+            // TODO: [imdex] remove shared_str
+            s16 bone_id = kinematics->LL_BoneID(*i->first);
             R_ASSERT2(BI_NONE != bone_id, i->first.c_str());
             BoneProtection& BP = m_bones_koeff[bone_id];
             BP.koeff += (float)atof(_GetItem(i->second.c_str(), 0, buffer));

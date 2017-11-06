@@ -281,16 +281,14 @@ void CPHShell::applyImpulseTrace(const Fvector& pos, const Fvector& dir, float v
         return;
 
     ((CPhysicsElement*)instance.callback_param())->applyImpulseTrace(pos, dir, val, id);
-    EnableObject(0);
+    EnableObject(nullptr);
 }
 
-CPhysicsElement* CPHShell::get_Element(const shared_str& bone_name) {
+CPhysicsElement* CPHShell::get_Element(const std::string_view bone_name) {
     VERIFY(m_pKinematics);
     return get_Element(m_pKinematics->LL_BoneID(bone_name));
 }
-CPhysicsElement* CPHShell::get_Element(LPCSTR bone_name) {
-    return get_Element((const shared_str&)(bone_name));
-}
+
 CPhysicsElement* CPHShell::get_ElementByStoreOrder(u16 num) {
     R_ASSERT2(num < elements.size(), "argument is out of range");
     return cast_PhysicsElement(elements[num]);
@@ -340,13 +338,9 @@ CPhysicsJoint* CPHShell::get_Joint(u16 bone_id) {
             return static_cast<CPhysicsJoint*>(*i);
     return NULL;
 }
-CPhysicsJoint* CPHShell::get_Joint(const shared_str& bone_name) {
+CPhysicsJoint* CPHShell::get_Joint(const std::string_view bone_name) {
     VERIFY(m_pKinematics);
     return get_Joint(m_pKinematics->LL_BoneID(bone_name));
-}
-
-CPhysicsJoint* CPHShell::get_Joint(LPCSTR bone_name) {
-    return get_Joint((const shared_str&)bone_name);
 }
 
 CPhysicsJoint* CPHShell::get_JointByStoreOrder(u16 num) {

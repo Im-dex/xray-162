@@ -151,7 +151,7 @@ using MotionDefVec = xr_vector<CMotionDef>;
 
 using MotionVec = xr_vector<CMotion>;
 using BoneMotionsVec = xr_vector<MotionVec*>;
-using BoneMotionMap = xr_map<shared_str, MotionVec>;
+using BoneMotionMap = xr_map<std::string, MotionVec>;
 
 // partition
 class ENGINE_API CPartDef {
@@ -193,7 +193,7 @@ struct ENGINE_API motions_value {
     shared_str m_id;
 
     BOOL load(LPCSTR N, IReader* data, vecBones* bones);
-    MotionVec* bone_motions(shared_str bone_name);
+    MotionVec* bone_motions(const std::string& bone_name);
 
     u32 mem_usage() {
         u32 sz = sizeof(*this) + m_motion_map.size() * 6 + m_partition.mem_usage();
@@ -259,8 +259,7 @@ public:
     bool operator==(shared_motions const& rhs) const { return (p_ == rhs.p_); }
 
     // misc func
-    MotionVec* bone_motions(shared_str bone_name) {
-        VERIFY(p_);
+    MotionVec* bone_motions(const std::string& bone_name) const {
         return p_->bone_motions(bone_name);
     }
     accel_map* motion_map() {

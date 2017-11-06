@@ -293,9 +293,9 @@ class CBone;
 using BoneVec = xr_vector<CBone*>;
 
 class ECORE_API CBone : public CBoneInstance, public IBoneData {
-    shared_str name;
-    shared_str parent_name;
-    shared_str wmap;
+    std::string name;
+    std::string parent_name;
+    std::string wmap;
     Fvector rest_offset;
     Fvector rest_rotate; // XYZ format (Game format)
     float rest_length;
@@ -325,7 +325,7 @@ public:
         flSelected = (1 << 0),
     };
     SJointIKData IK_data;
-    shared_str game_mtl;
+    std::string game_mtl;
     SBoneShape shape;
 
     float mass;
@@ -335,43 +335,46 @@ public:
     CBone();
     virtual ~CBone();
 
+    // TODO: [imdex] use string_view
     void SetName(const char* p) {
-        name = p;
+        name = p ? p : "";
         xr_strlwr(name);
     }
+    // TODO: [imdex] use string_view
     void SetParentName(const char* p) {
-        parent_name = p;
+        parent_name = p ? p : "";
         xr_strlwr(parent_name);
     }
-    void SetWMap(const char* p) { wmap = p; }
+    // TODO: [imdex] use string_view
+    void SetWMap(const char* p) { wmap = p ? p : ""; }
     void SetRestParams(float length, const Fvector& offset, const Fvector& rotate) {
         rest_offset.set(offset);
         rest_rotate.set(rotate);
         rest_length = length;
     };
 
-    shared_str Name() { return name; }
-    shared_str ParentName() { return parent_name; }
-    shared_str WMap() { return wmap; }
-    IC CBone* Parent() { return parent; }
-    IC BOOL IsRoot() { return (parent == 0); }
-    shared_str& NameRef() { return name; }
+    const std::string& Name() const { return name; }
+    const std::string& ParentName() const { return parent_name; }
+    const std::string& WMap() const { return wmap; }
+    CBone* Parent() { return parent; }
+    BOOL IsRoot() { return parent == nullptr; }
+    std::string& NameRef() { return name; }
 
     // transformation
     const Fvector& _Offset() { return mot_offset; }
     const Fvector& _Rotate() { return mot_rotate; }
     float _Length() { return mot_length; }
-    IC Fmatrix& _RTransform() { return rest_transform; }
-    IC Fmatrix& _RITransform() { return rest_i_transform; }
-    IC Fmatrix& _LRTransform() { return local_rest_transform; }
-    IC Fmatrix& _MTransform() { return mot_transform; }
+    Fmatrix& _RTransform() { return rest_transform; }
+    Fmatrix& _RITransform() { return rest_i_transform; }
+    Fmatrix& _LRTransform() { return local_rest_transform; }
+    Fmatrix& _MTransform() { return mot_transform; }
 
-    IC Fmatrix& _LTransform() { return mTransform; } //{return last_transform;}
-    IC const Fmatrix& _LTransform() const { return mTransform; }
+    Fmatrix& _LTransform() { return mTransform; } //{return last_transform;}
+    const Fmatrix& _LTransform() const { return mTransform; }
 
-    IC Fmatrix& _RenderTransform() { return mRenderTransform; } //{return render_transform;}
-    IC Fvector& _RestOffset() { return rest_offset; }
-    IC Fvector& _RestRotate() { return rest_rotate; }
+    Fmatrix& _RenderTransform() { return mRenderTransform; } //{return render_transform;}
+    Fvector& _RestOffset() { return rest_offset; }
+    Fvector& _RestRotate() { return rest_rotate; }
 
     void _Update(const Fvector& T, const Fvector& R) {
         mot_offset.set(T);
@@ -389,11 +392,11 @@ public:
     void Load_0(IReader& F);
     void Load_1(IReader& F);
 
-    IC float _BCL engine_lo_limit(u8 k) const { return -IK_data.limits[k].limit.y; }
-    IC float _BCL engine_hi_limit(u8 k) const { return -IK_data.limits[k].limit.x; }
+    float _BCL engine_lo_limit(u8 k) const { return -IK_data.limits[k].limit.y; }
+    float _BCL engine_hi_limit(u8 k) const { return -IK_data.limits[k].limit.x; }
 
-    IC float _BCL editor_lo_limit(u8 k) const { return IK_data.limits[k].limit.x; }
-    IC float _BCL editor_hi_limit(u8 k) const { return IK_data.limits[k].limit.y; }
+    float _BCL editor_lo_limit(u8 k) const { return IK_data.limits[k].limit.x; }
+    float _BCL editor_hi_limit(u8 k) const { return IK_data.limits[k].limit.y; }
 
     void SaveData(IWriter& F);
     void LoadData(IReader& F);
@@ -453,14 +456,14 @@ protected:
     u16 ParentID;
 
 public:
-    shared_str name;
+    std::string name;
 
     Fobb obb;
 
     Fmatrix bind_transform;
     Fmatrix m2b_transform; // model to bone conversion transform
     SBoneShape shape;
-    shared_str game_mtl_name;
+    std::string game_mtl_name;
     u16 game_mtl_idx;
     SJointIKData IK_data;
     float mass;
