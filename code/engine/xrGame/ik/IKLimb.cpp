@@ -850,7 +850,7 @@ void pick_dir_update(Fvector& v, const Fvector& previous_dir, const Fvector& new
     else
         v.set(dir.mul(1.f / m));
 
-    VERIFY(_valid(v));
+    VERIFY(xr::valid(v));
 }
 
 IC void CIKLimb::GetPickDir(Fvector& v, SCalculateData& cd) const {
@@ -959,7 +959,7 @@ struct ssaved_callback {
     CBoneInstance& _bi;
 };
 static void _BCL get_matrix(CBoneInstance* P) {
-    VERIFY(_valid(P->mTransform));
+    VERIFY(xr::valid(P->mTransform));
     *((Fmatrix*)P->callback_param()) = P->mTransform;
 }
 u16 CIKLimb::foot_matrix_predict(Fmatrix& foot, Fmatrix& toe, float time,
@@ -1146,9 +1146,9 @@ void DBG_DrawRotation3(const Fmatrix& start, const float angs[7], const AngleInt
 }
 
 IC void ang_evaluate(Fmatrix& M, const float ang[3]) {
-    VERIFY(_valid(ang[0]));
-    VERIFY(_valid(ang[1]));
-    VERIFY(_valid(ang[2]));
+    VERIFY(xr::valid(ang[0]));
+    VERIFY(xr::valid(ang[1]));
+    VERIFY(xr::valid(ang[2]));
     Fmatrix ry;
     ry.rotateY(-ang[0]);
     Fmatrix rz;
@@ -1156,7 +1156,7 @@ IC void ang_evaluate(Fmatrix& M, const float ang[3]) {
     Fmatrix rx;
     rx.rotateX(-ang[2]);
     M.mul_43(Fmatrix().mul_43(ry, rz), rx);
-    VERIFY(_valid(M));
+    VERIFY(xr::valid(M));
 }
 
 IC void CIKLimb::get_start(Fmatrix& start, SCalculateData& D, u16 bone) {
@@ -1184,7 +1184,7 @@ void CIKLimb::BonesCallback0(CBoneInstance* B) {
         DBG_DrawMatrix(Fmatrix().mul_43(*D->m_obj, Fmatrix().mul_43(start, bm)), 0.75f);
     }
 #endif
-    VERIFY2(_valid(B->mTransform), "CIKLimb::BonesCallback0");
+    VERIFY2(xr::valid(B->mTransform), "CIKLimb::BonesCallback0");
 }
 void CIKLimb::BonesCallback1(CBoneInstance* B) {
     SCalculateData* D = (SCalculateData*)B->callback_param();
@@ -1196,7 +1196,7 @@ void CIKLimb::BonesCallback1(CBoneInstance* B) {
     Fmatrix start;
     get_start(start, *D, 1);
     B->mTransform.mul_43(start, bm);
-    VERIFY2(_valid(B->mTransform), "CIKLimb::BonesCallback1");
+    VERIFY2(xr::valid(B->mTransform), "CIKLimb::BonesCallback1");
 }
 void CIKLimb::BonesCallback2(CBoneInstance* B) {
     SCalculateData* D = (SCalculateData*)B->callback_param();
@@ -1208,8 +1208,8 @@ void CIKLimb::BonesCallback2(CBoneInstance* B) {
     Fmatrix start;
     get_start(start, *D, 2);
 
-    VERIFY2(_valid(bm), "CIKLimb::BonesCallback2");
-    VERIFY2(_valid(start), "CIKLimb::BonesCallback2");
+    VERIFY2(xr::valid(bm), "CIKLimb::BonesCallback2");
+    VERIFY2(xr::valid(start), "CIKLimb::BonesCallback2");
 
     B->mTransform.mul_43(start, bm);
 
@@ -1223,5 +1223,5 @@ void CIKLimb::BonesCallback2(CBoneInstance* B) {
         DBG_DrawMatrix(Fmatrix().mul_43(*D->m_obj, start), 0.3f);
     }
 #endif
-    VERIFY2(_valid(B->mTransform), "CIKLimb::BonesCallback2");
+    VERIFY2(xr::valid(B->mTransform), "CIKLimb::BonesCallback2");
 }

@@ -21,9 +21,9 @@ using editor::environment::suns::flare;
 using editor::environment::suns::manager;
 using editor::property_holder;
 
-sun::sun(manager const& manager, shared_str const& id)
-    : m_manager(manager), m_id(id), m_use(false), m_ignore_color(false), m_radius(0.f),
-      m_shader(""), m_texture(""), m_property_holder(0) {}
+sun::sun(manager const& manager, std::string id)
+    : m_manager(manager), m_id(std::move(id)), m_use(false), m_ignore_color(false), m_radius(0.f),
+      m_shader(), m_texture(), m_property_holder(0) {}
 
 sun::~sun() {
     if (!Device.editor())
@@ -33,11 +33,12 @@ sun::~sun() {
 }
 
 void sun::load(CInifile& config) {
-    m_use = !!READ_IF_EXISTS(&config, r_bool, m_id, "sun", true);
-    m_ignore_color = !!READ_IF_EXISTS(&config, r_bool, m_id, "sun_ignore_color", false);
-    m_radius = READ_IF_EXISTS(&config, r_float, m_id, "sun_radius", .15f);
-    m_shader = READ_IF_EXISTS(&config, r_string, m_id, "sun_shader", "effects\\sun");
-    m_texture = READ_IF_EXISTS(&config, r_string, m_id, "sun_texture", "fx\\fx_sun.tga");
+    // TODO: [imdex] remove shared_str (ini)
+    m_use = !!READ_IF_EXISTS(&config, r_bool, m_id.c_str(), "sun", true);
+    m_ignore_color = !!READ_IF_EXISTS(&config, r_bool, m_id.c_str(), "sun_ignore_color", false);
+    m_radius = READ_IF_EXISTS(&config, r_float, m_id.c_str(), "sun_radius", .15f);
+    m_shader = READ_IF_EXISTS(&config, r_string, m_id.c_str(), "sun_shader", "effects\\sun");
+    m_texture = READ_IF_EXISTS(&config, r_string, m_id.c_str(), "sun_texture", "fx\\fx_sun.tga");
 }
 
 void sun::save(CInifile& config) {
@@ -51,8 +52,8 @@ void sun::save(CInifile& config) {
 LPCSTR sun::id_getter() const { return (m_id.c_str()); }
 
 void sun::id_setter(LPCSTR value_) {
-    shared_str value = value_;
-    if (m_id._get() == value._get())
+    std::string value = value_;
+    if (m_id == value)
         return;
 
     m_id = m_manager.unique_id(value);

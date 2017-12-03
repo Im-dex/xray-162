@@ -41,10 +41,10 @@ void CWound::load(IReader& input_packet) {
 float CWound::TotalSize() {
     float total_size = 0.f;
     for (int i = 0; i < ALife::eHitTypeMax; i++) {
-        VERIFY(_valid(m_Wounds[i]));
+        VERIFY(xr::valid(m_Wounds[i]));
         total_size += m_Wounds[i];
     }
-    VERIFY(_valid(total_size));
+    VERIFY(xr::valid(total_size));
     return total_size;
 }
 

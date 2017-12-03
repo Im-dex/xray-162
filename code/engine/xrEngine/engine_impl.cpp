@@ -63,7 +63,7 @@ void engine_impl::disconnect() { Console->Execute("quit"); }
 
 void engine_impl::value(const char* value, std::string& result) { result = value; }
 
-const char*LPCSTR engine_impl::value(std::string const& value) { return (value.c_str()); }
+const char* engine_impl::value(std::string const& value) { return value.c_str(); }
 
 void engine_impl::weather(LPCSTR value) {
     if (!g_pGamePersistent)

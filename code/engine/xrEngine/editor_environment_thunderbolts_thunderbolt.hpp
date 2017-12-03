@@ -59,9 +59,9 @@ private:
 private:
     gradient* m_center;
     gradient* m_top;
-    shared_str m_color_animator;
-    shared_str m_lighting_model;
-    shared_str m_sound;
+    std::string m_color_animator;
+    std::string m_lighting_model;
+    std::string m_sound;
 }; // class thunderbolt
 
 } // namespace thunderbolts

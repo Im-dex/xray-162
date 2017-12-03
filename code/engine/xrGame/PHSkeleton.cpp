@@ -288,7 +288,7 @@ void CPHSkeleton::UnsplitSingle(CPHSkeleton* SO) {
     VERIFY2(!O->m_pPhysicsShell, "this has shell already!!!");
     CPhysicsShell* newPhysicsShell = m_unsplited_shels.front().first;
     O->m_pPhysicsShell = newPhysicsShell;
-    VERIFY(_valid(newPhysicsShell->mXFORM));
+    VERIFY(xr::valid(newPhysicsShell->mXFORM));
     IKinematics* newKinematics = smart_cast<IKinematics*>(O->Visual());
     IKinematics* pKinematics = smart_cast<IKinematics*>(obj->Visual());
 
@@ -313,9 +313,9 @@ void CPHSkeleton::UnsplitSingle(CPHSkeleton* SO) {
     newKinematics->CalculateBones(TRUE);
 
     newPhysicsShell->set_Kinematics(newKinematics);
-    VERIFY(_valid(newPhysicsShell->mXFORM));
+    VERIFY(xr::valid(newPhysicsShell->mXFORM));
     newPhysicsShell->ResetCallbacks(split_bone, mask1);
-    VERIFY(_valid(newPhysicsShell->mXFORM));
+    VERIFY(xr::valid(newPhysicsShell->mXFORM));
 
     newPhysicsShell->ObjectInRoot().identity();
 

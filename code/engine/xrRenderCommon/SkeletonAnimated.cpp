@@ -824,7 +824,7 @@ void CKinematicsAnimated::LL_BoneMatrixBuild(CBoneInstance& bi, const Fmatrix* p
     if (!check_scale(RES)) {
         VERIFY(check_scale(bi.mTransform));
     }
-    VERIFY(_valid(bi.mTransform));
+    VERIFY(xr::valid(bi.mTransform));
     Fbox dbg_box;
     float box_size = 100000.f;
     dbg_box.set(-box_size, -box_size, -box_size, box_size, box_size, box_size);

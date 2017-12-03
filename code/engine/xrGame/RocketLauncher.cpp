@@ -82,7 +82,7 @@ void CRocketLauncher::DetachRocket(u16 rocket_id, bool bLaunch) {
 
 void CRocketLauncher::LaunchRocket(const Fmatrix& xform, const Fvector& vel,
                                    const Fvector& angular_vel) {
-    VERIFY2(_valid(xform), "CRocketLauncher::LaunchRocket. Invalid xform argument!");
+    VERIFY2(xr::valid(xform), "CRocketLauncher::LaunchRocket. Invalid xform argument!");
     getCurrentRocket()->SetLaunchParams(xform, vel, angular_vel);
 
     m_launched_rockets.push_back(getCurrentRocket());

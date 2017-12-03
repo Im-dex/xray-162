@@ -32,9 +32,9 @@ editor::property_holder* property_collection<channel::sound_container_type, chan
     return (object->object());
 }
 
-channel::channel(manager const& manager, shared_str const& id)
+channel::channel(manager const& manager, std::string id)
     : m_manager(manager), m_property_holder(0), m_collection(0) {
-    m_load_section = id;
+    m_load_section = std::move(id);
     m_sound_dist = Fvector2().set(0.f, 0.f);
     m_sound_period = Ivector4().set(0, 0, 0, 0);
     m_collection = xr_new<collection_type>(&m_sounds, this);
@@ -54,7 +54,8 @@ void channel::load(CInifile& config) {
     inherited::load(config, m_load_section.c_str());
 
     VERIFY(m_sounds.empty());
-    LPCSTR sounds = config.r_string(m_load_section, "sounds");
+    // TODO: [imdex] remove shared_str (ini)
+    LPCSTR sounds = config.r_string(m_load_section.c_str(), "sounds");
     string_path sound;
     for (u32 i = 0, n = _GetItemCount(sounds); i < n; ++i) {
         source* object = xr_new<source>(_GetItem(sounds, i, sound));
@@ -95,11 +96,12 @@ void channel::save(CInifile& config) {
 LPCSTR channel::id_getter() const { return (m_load_section.c_str()); }
 
 void channel::id_setter(LPCSTR value_) {
-    shared_str value = value_;
-    if (m_load_section._get() == value._get())
+    std::string value = value_;
+    if (m_load_section == value)
         return;
 
-    m_load_section = m_manager.unique_id(value);
+    // TODO: [imdex] remove shared_str (ini)
+    m_load_section = *m_manager.unique_id(value.c_str());
 }
 
 void channel::fill(editor::property_holder_collection* collection) {

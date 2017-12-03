@@ -178,7 +178,7 @@ void object_shift::set_taget(float taget_, float time) {
         }
     }
 
-    VERIFY(_valid(accel));
+    VERIFY(xr::valid(accel));
 
     current_time = time_global;
 

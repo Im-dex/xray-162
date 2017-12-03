@@ -92,7 +92,7 @@ IC bool CLevelPathManager::is_goal_reached(const _index_type& node_index) {
 
 TEMPLATE_SPECIALIZATION
 IC bool CLevelPathManager::is_limit_reached(const _iteration_type iteration_count) const {
-    VERIFY(data_storage);
+    VERIFY(this->data_storage);
     return (inherited::is_limit_reached(iteration_count));
 }
 

@@ -40,7 +40,7 @@ IC void CLevelManagerTemplate::build_path(const _vertex_id_type start_vertex_id,
     inherited::build_path(start_vertex_id, dest_vertex_id);
 
 #ifdef DEBUG
-    if (failed()) {
+    if (this->failed()) {
         Msg("! NPC %s couldn't build path from \n~ [%d][%f][%f][%f]\n~ to\n~ [%d][%f][%f][%f]",
             *this->m_object->object().cName(), start_vertex_id,
             VPUSH(ai().level_graph().vertex_position(start_vertex_id)), dest_vertex_id,
@@ -56,8 +56,8 @@ IC void CLevelManagerTemplate::before_search(const _vertex_id_type start_vertex_
                                              const _vertex_id_type dest_vertex_id) {
     if (this->m_object) {
         this->m_object->add_border(start_vertex_id, dest_vertex_id);
-        VERIFY(!m_object->applied() || ai().level_graph().is_accessible(start_vertex_id));
-        VERIFY(!m_object->applied() || ai().level_graph().is_accessible(dest_vertex_id));
+        VERIFY(!this->m_object->applied() || ai().level_graph().is_accessible(start_vertex_id));
+        VERIFY(!this->m_object->applied() || ai().level_graph().is_accessible(dest_vertex_id));
     }
 }
 

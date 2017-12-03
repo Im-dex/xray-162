@@ -158,31 +158,28 @@ void draw_planner(const planner_type& brain, LPCSTR start_indent, LPCSTR indent,
                     _brain.action2string(brain.solution()[i]));
     // current
     DBG_OutText("%s%scurrent world state", start_indent, indent);
-    planner_type::EVALUATORS::const_iterator I = brain.evaluators().begin();
-    planner_type::EVALUATORS::const_iterator E = brain.evaluators().end();
-    for (; I != E; ++I) {
-        xr_vector<planner_type::COperatorCondition>::const_iterator J = std::lower_bound(
+    for (const auto& ev : brain.evaluators()) {
+        auto J = std::lower_bound(
             brain.current_state().conditions().begin(), brain.current_state().conditions().end(),
-            planner_type::CWorldProperty((*I).first, false));
+            planner_type::CWorldProperty(ev.first, false));
         char temp = '?';
-        if ((J != brain.current_state().conditions().end()) && ((*J).condition() == (*I).first)) {
+        if ((J != brain.current_state().conditions().end()) && ((*J).condition() == ev.first)) {
             temp = (*J).value() ? '+' : '-';
-            DBG_OutText("%s%s%s    %5c : [%d][%s]", start_indent, indent, indent, temp, (*I).first,
-                        _brain.property2string((*I).first));
+            DBG_OutText("%s%s%s    %5c : [%d][%s]", start_indent, indent, indent, temp, ev.first,
+                        _brain.property2string(ev.first));
         }
     }
     // goal
     DBG_OutText("%s%starget world state", start_indent, indent);
-    I = brain.evaluators().begin();
-    for (; I != E; ++I) {
-        xr_vector<planner_type::COperatorCondition>::const_iterator J = std::lower_bound(
+    for (const auto& ev : brain.evaluators()) {
+        auto J = std::lower_bound(
             brain.target_state().conditions().begin(), brain.target_state().conditions().end(),
-            planner_type::CWorldProperty((*I).first, false));
+            planner_type::CWorldProperty(ev.first, false));
         char temp = '?';
-        if ((J != brain.target_state().conditions().end()) && ((*J).condition() == (*I).first)) {
+        if ((J != brain.target_state().conditions().end()) && ((*J).condition() == ev.first)) {
             temp = (*J).value() ? '+' : '-';
-            DBG_OutText("%s%s%s    %5c : [%d][%s]", start_indent, indent, indent, temp, (*I).first,
-                        _brain.property2string((*I).first));
+            DBG_OutText("%s%s%s    %5c : [%d][%s]", start_indent, indent, indent, temp, ev.first,
+                        _brain.property2string(ev.first));
         }
     }
 }
@@ -1214,9 +1211,9 @@ static Fmatrix aim_on_actor(Fvector const& bone_position, Fvector const& weapon_
 
     Fvector const center2projection_direction =
         Fvector().sub(projection, circle_center).normalize();
-    float const circle_radius_sqr = sphere_radius_sqr - _sqr(to_circle_center);
+    float const circle_radius_sqr = sphere_radius_sqr - xr::sqr(to_circle_center);
     VERIFY(circle_radius_sqr >= 0.f);
-    float const circle_radius = _sqrt(circle_radius_sqr);
+    float const circle_radius = std::sqrt(circle_radius_sqr);
     Fvector const target_point =
         Fvector().mad(circle_center, center2projection_direction, circle_radius);
     Fvector const current_direction = Fvector().sub(current_point, bone_position).normalize();
@@ -1227,7 +1224,7 @@ static Fmatrix aim_on_actor(Fvector const& bone_position, Fvector const& weapon_
         temp.c = target_point;
         renderer.draw_ellipse(temp, D3DCOLOR_XRGB(255, 255, 255));
 
-        float const sphere_radius = _sqrt(sphere_radius_sqr);
+        float const sphere_radius = std::sqrt(sphere_radius_sqr);
         temp.scale(sphere_radius, sphere_radius, sphere_radius);
         temp.c = bone_position;
         renderer.draw_ellipse(temp, D3DCOLOR_XRGB(255, 255, 0));
@@ -1243,10 +1240,10 @@ static Fmatrix aim_on_actor(Fvector const& bone_position, Fvector const& weapon_
             transform0.rotation(cross_product.div(sin_alpha), atan2f(sin_alpha, cos_alpha));
         } else {
             float const dot_product = current_direction.dotproduct(target_direction);
-            if (fsimilar(_abs(dot_product), 0.f))
+            if (fsimilar(xr::abs(dot_product), 0.f))
                 transform0.identity();
             else {
-                VERIFY(fsimilar(_abs(dot_product), 1.f));
+                VERIFY(fsimilar(xr::abs(dot_product), 1.f));
                 cross_product.crossproduct(current_direction, direction_target);
                 transform0.rotation(cross_product.normalize(), dot_product > 0.f ? 0.f : PI);
             }
@@ -1265,10 +1262,10 @@ static Fmatrix aim_on_actor(Fvector const& bone_position, Fvector const& weapon_
             transform1.rotation(cross_product.div(sin_alpha), atan2f(sin_alpha, cos_alpha));
         } else {
             float const dot_product = current_direction.dotproduct(target_direction);
-            if (fsimilar(_abs(dot_product), 0.f))
+            if (fsimilar(xr::abs(dot_product), 0.f))
                 transform1.identity();
             else {
-                VERIFY(fsimilar(_abs(dot_product), 1.f));
+                VERIFY(fsimilar(xr::abs(dot_product), 1.f));
                 transform1.rotation(target_direction, dot_product > 0.f ? 0.f : PI);
             }
         }

@@ -133,7 +133,7 @@ TEST_F(OptionValueTest, GetTest) {
     EXPECT_EQ(nonEmpty.get_or_throw(test_exception()), value);
 
 #ifdef DEBUG
-    EXPECT_ANY_DEATH(empty.get());
+    EXPECT_DEATH(empty.get(), ".*");
 #endif
     EXPECT_THROW(empty.get_or_throw<test_exception>(), test_exception);
     EXPECT_THROW(empty.get_or_throw(test_exception()), test_exception);
@@ -151,7 +151,7 @@ TEST_F(OptionRefTest, GetTest) {
     EXPECT_EQ(std::addressof(nonEmpty.get_or_throw(test_exception())), std::addressof(value));
 
 #ifdef DEBUG
-    EXPECT_ANY_DEATH(empty.get());
+    EXPECT_DEATH(empty.get(), ".*");
 #endif
     EXPECT_THROW(empty.get_or_throw<test_exception>(), test_exception);
     EXPECT_THROW(empty.get_or_throw(test_exception()), test_exception);

@@ -124,7 +124,7 @@ void CPostprocessAnimator::Stop(float sp) {
     if (m_bStop)
         return;
     m_bStop = true;
-    VERIFY(_valid(sp));
+    VERIFY(xr::valid(sp));
     m_factor_speed = sp;
 }
 
@@ -144,15 +144,15 @@ void CPostprocessAnimator::Update(float tm) {
 void CPostprocessAnimator::SetDesiredFactor(float f, float sp) {
     m_dest_factor = f;
     m_factor_speed = sp;
-    VERIFY(_valid(m_factor));
-    VERIFY(_valid(m_dest_factor));
+    VERIFY(xr::valid(m_factor));
+    VERIFY(xr::valid(m_dest_factor));
 };
 
 void CPostprocessAnimator::SetCurrentFactor(float f) {
     m_factor = f;
     m_dest_factor = f;
-    VERIFY(_valid(m_factor));
-    VERIFY(_valid(m_dest_factor));
+    VERIFY(xr::valid(m_factor));
+    VERIFY(xr::valid(m_dest_factor));
 };
 
 #ifndef _PP_EDITOR_
@@ -169,9 +169,9 @@ BOOL CPostprocessAnimator::Process(SPPInfo& PPInfo) {
 
     Update(Device.fTimeGlobal - m_start_time);
 
-    VERIFY(_valid(m_factor));
-    VERIFY(_valid(m_factor_speed));
-    VERIFY(_valid(m_dest_factor));
+    VERIFY(xr::valid(m_factor));
+    VERIFY(xr::valid(m_factor_speed));
+    VERIFY(xr::valid(m_dest_factor));
     if (m_bStop)
         m_factor -= Device.fTimeDelta * m_factor_speed;
     else
@@ -179,8 +179,8 @@ BOOL CPostprocessAnimator::Process(SPPInfo& PPInfo) {
 
     clamp(m_factor, 0.0001f, 1.0f);
 
-    VERIFY(_valid(m_factor));
-    VERIFY(_valid(m_factor_speed));
+    VERIFY(xr::valid(m_factor));
+    VERIFY(xr::valid(m_factor_speed));
 
     m_EffectorParams.color_base += pp_identity.color_base;
     m_EffectorParams.color_gray += pp_identity.color_gray;

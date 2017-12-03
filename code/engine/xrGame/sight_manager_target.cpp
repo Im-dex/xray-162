@@ -27,10 +27,10 @@ void CSightManager::SetPointLookAngles(const Fvector& tPosition, float& yaw, flo
     target.sub(my_position);
     target.getHP(yaw, pitch);
 
-    VERIFY(_valid(yaw));
+    VERIFY(xr::valid(yaw));
     yaw *= -1;
 
-    VERIFY(_valid(pitch));
+    VERIFY(xr::valid(pitch));
     pitch *= -1;
 }
 
@@ -95,8 +95,8 @@ void CSightManager::SetFirePointLookAngles(const Fvector& tPosition, float& yaw,
         target.set(0.f, 0.f, 1.f);
 
     target.getHP(yaw, pitch);
-    VERIFY(_valid(yaw));
-    VERIFY(_valid(pitch));
+    VERIFY(xr::valid(yaw));
+    VERIFY(xr::valid(pitch));
     yaw *= -1;
     pitch *= -1;
 }
@@ -195,7 +195,7 @@ void CSightManager::SetLessCoverLook(const CLevelGraph::CVertex* tpNode, float f
 
     object().movement().m_head.target.yaw = angle_normalize_signed(fBestAngle);
     object().movement().m_head.target.pitch = 0;
-    VERIFY(_valid(object().movement().m_head.target.yaw));
+    VERIFY(xr::valid(object().movement().m_head.target.yaw));
 }
 
 bool CSightManager::GetDirectionAngles(float& yaw, float& pitch) {
@@ -226,14 +226,14 @@ bool CSightManager::GetDirectionAnglesByPrevPositions(float& yaw, float& pitch) 
 
     CObject::SavedPosition tPreviousPosition = m_object->ps_Element(i - 2),
                            tCurrentPosition = m_object->ps_Element(i - 1);
-    VERIFY(_valid(tPreviousPosition.vPosition));
-    VERIFY(_valid(tCurrentPosition.vPosition));
+    VERIFY(xr::valid(tPreviousPosition.vPosition));
+    VERIFY(xr::valid(tCurrentPosition.vPosition));
     tDirection.sub(tCurrentPosition.vPosition, tPreviousPosition.vPosition);
     if (tDirection.magnitude() < EPS_L)
         return (false);
     tDirection.getHP(yaw, pitch);
-    VERIFY(_valid(yaw));
-    VERIFY(_valid(pitch));
+    VERIFY(xr::valid(yaw));
+    VERIFY(xr::valid(pitch));
 
     return (true);
 }

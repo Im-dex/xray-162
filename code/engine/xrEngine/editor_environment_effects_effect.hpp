@@ -25,14 +25,14 @@ class manager;
 
 class effect : public CEnvAmbient::SEffect, public editor::property_holder_holder {
 public:
-    effect(manager const& manager, shared_str const& id);
+    effect(manager const& manager, std::string id);
     effect(const effect&) = delete;
     effect& operator=(const effect&) = delete;
     virtual ~effect();
     void load(CInifile& config);
     void save(CInifile& config);
     void fill(editor::property_holder_collection* collection);
-    inline LPCSTR id() const { return m_id.c_str(); }
+    LPCSTR id() const { return m_id.c_str(); }
 
 private:
     LPCSTR xr_stdcall id_getter() const;
@@ -51,7 +51,7 @@ public:
     virtual property_holder_type* object();
 
 private:
-    shared_str m_id;
+    std::string m_id;
     property_holder_type* m_property_holder;
     shared_str m_sound;
 

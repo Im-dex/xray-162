@@ -42,7 +42,7 @@ IC bool CGameManagerTemplate::completed() const {
 
 TEMPLATE_SPECIALIZATION
 IC void CGameManagerTemplate::select_intermediate_vertex() {
-    VERIFY(!path().empty());
+    VERIFY(!this->path().empty());
     if (this->m_intermediate_index != _index_type(-1))
         ++this->m_intermediate_index;
     else if (this->path().size() < 2)

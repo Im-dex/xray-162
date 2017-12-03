@@ -382,7 +382,7 @@ void CRenderTarget::phase_combine() {
 
             Fvector L_dir, L_up = P.n, L_right;
             L_dir.set(0, 0, 1);
-            if (_abs(L_up.dotproduct(L_dir)) > .99f)
+            if (xr::abs(L_up.dotproduct(L_dir)) > .99f)
                 L_dir.set(1, 0, 0);
             L_right.crossproduct(L_up, L_dir);
             L_right.normalize();

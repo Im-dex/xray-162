@@ -43,7 +43,7 @@ IC _dist_type CGamePathManager::estimate(const _index_type& node_index) const {
 
 TEMPLATE_SPECIALIZATION
 IC bool CGamePathManager::is_limit_reached(const _iteration_type iteration_count) const {
-    VERIFY(data_storage);
+    VERIFY(this->data_storage);
     return (false);
 }
 

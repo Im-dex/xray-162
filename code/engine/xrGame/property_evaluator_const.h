@@ -23,7 +23,7 @@ public:
     CPropertyEvaluatorConst(_value_type value, LPCSTR evaluator_name = "")
         : m_value(value) {
 #ifdef LOG_ACTION
-        m_evaluator_name = evaluator_name;
+        this->m_evaluator_name = evaluator_name;
 #endif
     }
     virtual _value_type evaluate() {

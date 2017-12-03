@@ -16,8 +16,8 @@
 using editor::environment::ambients::sound_id;
 using editor::environment::sound_channels::manager;
 
-sound_id::sound_id(manager const& manager, shared_str const& id)
-    : m_manager(manager), m_id(id), m_property_holder(0) {}
+sound_id::sound_id(manager const& manager, std::string id)
+    : m_manager(manager), m_id(std::move(id)), m_property_holder(0) {}
 
 sound_id::~sound_id() {
     if (!Device.editor())

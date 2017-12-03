@@ -26,12 +26,12 @@ namespace ambients {
 
 class sound_id : public editor::property_holder_holder {
 public:
-    sound_id(sound_channels::manager const& manager, shared_str const& sound);
+    sound_id(sound_channels::manager const& manager, std::string sound);
     sound_id(const sound_id&) = delete;
     sound_id& operator=(const sound_id&) = delete;
     virtual ~sound_id();
     void fill(editor::property_holder_collection* collection);
-    inline shared_str const& id() const { return m_id; }
+    const std::string& id() const { return m_id; }
 
 private:
     typedef editor::property_holder property_holder_type;
@@ -46,7 +46,7 @@ private:
 private:
     property_holder_type* m_property_holder;
     sound_channels::manager const& m_manager;
-    shared_str m_id;
+    std::string m_id;
 }; // class sound_id
 } // namespace ambients
 } // namespace environment

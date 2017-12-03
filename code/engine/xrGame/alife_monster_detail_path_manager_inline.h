@@ -14,12 +14,12 @@ IC CALifeMonsterDetailPathManager::object_type& CALifeMonsterDetailPathManager::
 }
 
 IC void CALifeMonsterDetailPathManager::speed(const float& speed) {
-    VERIFY(_valid(speed));
+    VERIFY(xr::valid(speed));
     m_speed = speed;
 }
 
 IC const float& CALifeMonsterDetailPathManager::speed() const {
-    VERIFY(_valid(m_speed));
+    VERIFY(xr::valid(m_speed));
     return (m_speed);
 }
 

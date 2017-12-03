@@ -35,15 +35,15 @@ class ambient : public CEnvAmbient, public editor::property_holder_holder {
     typedef CEnvAmbient inherited;
 
 public:
-    ambient(manager const& manager, shared_str const& id);
+    ambient(manager const& manager, std::string id);
     ambient(const ambient&) = delete;
     ambient& operator=(const ambient&) = delete;
     virtual ~ambient();
     virtual void load(CInifile& ambients_config, CInifile& sound_channels_config,
-                      CInifile& effects_config, const shared_str& section);
+                      CInifile& effects_config, std::string section);
     void save(CInifile& config);
     void fill(editor::property_holder_collection* collection);
-    inline shared_str const& id() const { return m_load_section; }
+    const std::string& id() const { return m_load_section; }
     virtual SEffect* create_effect(CInifile& config, LPCSTR id);
     virtual SSndChannel* create_sound_channel(CInifile& config, LPCSTR id);
     virtual EffectVec& effects();

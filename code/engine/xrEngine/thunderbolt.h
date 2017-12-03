@@ -33,7 +33,7 @@ struct SThunderboltDesc {
     struct SFlare {
         float fOpacity;
         Fvector2 fRadius;
-        shared_str texture;
+        std::string texture;
         shared_str shader;
         // ref_shader				hShader;
         FactoryPtr<IFlareRender> m_pFlare;

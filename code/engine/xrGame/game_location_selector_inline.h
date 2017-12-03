@@ -65,8 +65,8 @@ IC void CGameLocationSelector::select_location(const _vertex_id_type start_verte
 TEMPLATE_SPECIALIZATION
 IC void CGameLocationSelector::select_random_location(const _vertex_id_type start_vertex_id,
                                                       _vertex_id_type& dest_vertex_id) {
-    VERIFY(m_graph);
-    VERIFY(m_graph->valid_vertex_id(start_vertex_id));
+    VERIFY(this->m_graph);
+    VERIFY(this->m_graph->valid_vertex_id(start_vertex_id));
 
     if (!this->m_graph->valid_vertex_id(m_previous_vertex_id))
         m_previous_vertex_id = GameGraph::_GRAPH_ID(start_vertex_id);

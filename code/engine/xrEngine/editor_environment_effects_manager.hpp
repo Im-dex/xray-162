@@ -34,10 +34,10 @@ public:
     void load();
     void save();
     void fill(editor::property_holder* holder);
-    shared_str unique_id(shared_str const& id) const;
+    std::string unique_id(const std::string& id) const;
 
 public:
-    inline ::editor::environment::manager& environment() const { return m_environment; }
+    ::editor::environment::manager& environment() const { return m_environment; }
 
 public:
     typedef xr_vector<effect*> effect_container_type;

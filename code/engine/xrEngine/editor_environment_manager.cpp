@@ -111,7 +111,7 @@ void manager::load_weathers() {
     auto _I = WeatherCycles.begin();
     auto _E = WeatherCycles.end();
     for (; _I != _E; _I++) {
-        R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", *_I->first);
+        R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", _I->first.c_str());
         std::sort(_I->second.begin(), _I->second.end(), sort_env_etl_pred);
     }
     R_ASSERT2(!WeatherCycles.empty(), "Empty weathers.");
@@ -213,7 +213,7 @@ manager::thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection,
 }
 
 CLensFlareDescriptor* manager::add_flare(xr_vector<CLensFlareDescriptor*>& collection,
-                                         shared_str const& id) {
+                                         const std::string& id) {
 #if 0
 //	return						(m_suns->get_flare(id));
 	typedef xr_vector<CLensFlareDescriptor*>	container_type;
@@ -228,7 +228,7 @@ CLensFlareDescriptor* manager::add_flare(xr_vector<CLensFlareDescriptor*>& colle
 	return						(0);
 #endif // #ifdef DEBUG
 #endif // #if 0
-    return (inherited::add_flare(collection, id));
+    return inherited::add_flare(collection, id);
 }
 
 #endif // #ifdef INGAME_EDITOR

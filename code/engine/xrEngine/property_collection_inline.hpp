@@ -98,7 +98,7 @@ inline PROPERTY_COLLECTION::unique_id_predicate::unique_id_predicate(LPCSTR id) 
 SPECIALIZATION
 inline bool PROPERTY_COLLECTION::unique_id_predicate::
 operator()(typename container_type::value_type const& value) const {
-    return (!xr_strcmp(m_id, value->id()));
+    return m_id == value->id();
 }
 
 SPECIALIZATION

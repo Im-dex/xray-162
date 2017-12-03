@@ -60,10 +60,6 @@ string_path g_last_saved_game;
 extern float air_resistance_epsilon;
 #endif // #ifdef DEBUG
 
-extern void show_smart_cast_stats();
-extern void clear_smart_cast_stats();
-extern void release_smart_cast_stats();
-
 extern u64 g_qwStartGameTime;
 extern u64 g_qwEStartGameTime;
 
@@ -1037,17 +1033,6 @@ struct CCC_LuaHelp : public IConsole_Command {
     virtual void Execute(LPCSTR args) { print_help(ai().script_engine().lua()); }
 };
 
-struct CCC_ShowSmartCastStats : public IConsole_Command {
-    CCC_ShowSmartCastStats(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
-
-    virtual void Execute(LPCSTR args) { show_smart_cast_stats(); }
-};
-
-struct CCC_ClearSmartCastStats : public IConsole_Command {
-    CCC_ClearSmartCastStats(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
-
-    virtual void Execute(LPCSTR args) { clear_smart_cast_stats(); }
-};
 /*
 struct CCC_NoClip : public CCC_Mask
 {
@@ -1458,9 +1443,9 @@ public:
             return;
         }
 
-        Msg("bones for model \"%s\"", arguments);
+        LogMsg("bones for model \"{}\"", arguments);
         for (u16 i = 0, n = kinematics->LL_BoneCount(); i < n; ++i)
-            Msg("%s", *kinematics->LL_GetData(i).name);
+            LogMsg("{}", kinematics->LL_GetData(i).name);
 
         Render->model_Delete(visual);
     }
@@ -1790,8 +1775,6 @@ void CCC_RegisterCommands() {
 
 #ifdef DEBUG
     CMD1(CCC_LuaHelp, "lua_help");
-    CMD1(CCC_ShowSmartCastStats, "show_smart_cast_stats");
-    CMD1(CCC_ClearSmartCastStats, "clear_smart_cast_stats");
 
     CMD3(CCC_Mask, "dbg_draw_actor_alive", &dbg_net_Draw_Flags, dbg_draw_actor_alive);
     CMD3(CCC_Mask, "dbg_draw_actor_dead", &dbg_net_Draw_Flags, dbg_draw_actor_dead);

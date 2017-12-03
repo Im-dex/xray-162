@@ -6,10 +6,7 @@
 //	Description : property holder interface class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOR_PROPERTY_HOLDER_HPP_INCLUDED
-#define EDITOR_PROPERTY_HOLDER_HPP_INCLUDED
-
-class shared_str;
+#pragma once
 
 namespace editor {
 
@@ -261,7 +258,7 @@ public:
         refresh_grid_on_change_enum const& refresh_grid = do_not_refresh_grid_on_change) = 0;
     virtual property_value* add_property(
         LPCSTR identifier, LPCSTR category, LPCSTR description, LPCSTR default_value,
-        shared_str& value, readonly_enum const& read_only = property_read_write,
+        std::string& value, readonly_enum const& read_only = property_read_write,
         notify_parent_on_change_enum const& notify_parent = do_not_notify_parent_on_change,
         password_char_enum const& password = no_password_char,
         refresh_grid_on_change_enum const& refresh_grid = do_not_refresh_grid_on_change) = 0;
@@ -279,7 +276,7 @@ public:
         refresh_grid_on_change_enum const& refresh_grid = do_not_refresh_grid_on_change) = 0;
     virtual property_value* add_property(
         LPCSTR identifier, LPCSTR category, LPCSTR description, LPCSTR default_value,
-        shared_str& value,
+        std::string& value,
         LPCSTR default_extension, // ".dds",
         LPCSTR file_mask,         // "Texture files (*.dds)|*.dds",
         LPCSTR default_folder,    // "R:\\development\\priquel\\resources\\gamedata\\textures\\sky",
@@ -299,7 +296,7 @@ public:
         refresh_grid_on_change_enum const& refresh_grid = do_not_refresh_grid_on_change) = 0;
     virtual property_value* add_property(
         LPCSTR identifier, LPCSTR category, LPCSTR description, LPCSTR default_value,
-        shared_str& value, LPCSTR const* values, u32 const& value_count,
+        std::string& value, LPCSTR const* values, u32 const& value_count,
         value_editor_enum const& value_editor, enter_text_enum const& can_enter_text,
         readonly_enum const& read_only = property_read_write,
         notify_parent_on_change_enum const& notify_parent = do_not_notify_parent_on_change,
@@ -317,7 +314,7 @@ public:
         refresh_grid_on_change_enum const& refresh_grid = do_not_refresh_grid_on_change) = 0;
     virtual property_value* add_property(
         LPCSTR identifier, LPCSTR category, LPCSTR description, LPCSTR default_value,
-        shared_str& value, string_collection_getter_type const& values,
+        std::string& value, string_collection_getter_type const& values,
         string_collection_size_getter_type const& value_count,
         value_editor_enum const& value_editor, enter_text_enum const& can_enter_text,
         readonly_enum const& read_only = property_read_write,
@@ -382,5 +379,3 @@ public:
 }; // class property_value
 
 } // namespace editor
-
-#endif // ifndef EDITOR_PROPERTY_HOLDER_HPP_INCLUDED

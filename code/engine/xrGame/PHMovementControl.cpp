@@ -1381,7 +1381,7 @@ static const float move_velocity = 1.f;
 static const float fmove_steps_max_num = move_steps_max_num;
 void CPHMovementControl::VirtualMoveTo(const Fvector& in_pos, Fvector& out_pos) {
     VERIFY(CharacterExist());
-    VERIFY(_valid(in_pos));
+    VERIFY(xr::valid(in_pos));
 
     class ph_character_state_save {
     public:
@@ -1438,7 +1438,7 @@ void CPHMovementControl::VirtualMoveTo(const Fvector& in_pos, Fvector& out_pos) 
     }
 
     m_character->GetPosition(out_pos);
-    VERIFY(_valid(out_pos));
+    VERIFY(xr::valid(out_pos));
 }
 
 // static void	non_interactive_collide_callback( bool& do_collide, bool bo1, dContact& c,

@@ -283,7 +283,7 @@ void phys_shell_verify_object_model(IPhysicsShellHolder& O) {
             O.ObjectNameVisual()) /*+ make_string("\n object dump: \n") + dbg_object_full_dump_string( &O )*/);
 
     VERIFY2(
-        _valid(O.ObjectXFORM()),
+        xr::valid(O.ObjectXFORM()),
         make_string(
             "create physics shell: object matrix is not valid") /*+ make_string("\n object dump: \n") + dbg_object_full_dump_string( &O )*/);
 

@@ -37,7 +37,7 @@ IC bool CPatrolPathManager::completed() const { return (m_completed); }
 IC bool CPatrolPathManager::random() const { return (m_random); }
 
 IC const Fvector& CPatrolPathManager::destination_position() const {
-    VERIFY(_valid(m_dest_position));
+    VERIFY(xr::valid(m_dest_position));
     return (m_dest_position);
 }
 

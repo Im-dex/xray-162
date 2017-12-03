@@ -95,7 +95,7 @@ void CKinematics::CalculateBones(BOOL bForceExact) {
         }
 #ifdef DEBUG
         // Validate
-        VERIFY3(_valid(vis.box.min) && _valid(vis.box.max), "Invalid bones-xform in model",
+        VERIFY3(xr::valid(vis.box.min) && xr::valid(vis.box.max), "Invalid bones-xform in model",
                 dbg_name.c_str());
         if (vis.sphere.R > 1000.f) {
             for (u16 ii = 0; ii < LL_BoneCount(); ++ii) {
@@ -153,12 +153,12 @@ void CKinematics::CLBone(const CBoneData* bd, CBoneInstance& bi, const Fmatrix* 
 
             BuildBoneMatrix(bd, bi, parent, channel_mask);
 #ifndef MASTER_GOLD
-            R_ASSERT2(_valid(bi.mTransform), "anim kils bone matrix");
+            R_ASSERT2(xr::valid(bi.mTransform), "anim kils bone matrix");
 #endif // #ifndef MASTER_GOLD
             if (bi.callback()) {
                 bi.callback()(&bi);
 #ifndef MASTER_GOLD
-                R_ASSERT2(_valid(bi.mTransform),
+                R_ASSERT2(xr::valid(bi.mTransform),
                           make_string("callback kils bone matrix bone: %s ", bd->name.c_str()));
 #endif // #ifndef MASTER_GOLD
             }
@@ -172,7 +172,7 @@ void CKinematics::Bone_GetAnimPos(Fmatrix& pos, u16 id, u8 mask_channel, bool ig
     CBoneInstance bi = LL_GetBoneInstance(id);
     BoneChain_Calculate(&LL_GetData(id), bi, mask_channel, ignore_callbacks);
 #ifndef MASTER_GOLD
-    R_ASSERT(_valid(bi.mTransform));
+    R_ASSERT(xr::valid(bi.mTransform));
 #endif
     pos.set(bi.mTransform);
 }

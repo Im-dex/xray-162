@@ -108,7 +108,7 @@ static void get_viewport_geom(Fvector& box, Fmatrix& form, const CCameraBase& ca
     form.k.set(camera.Direction());
     form.c.mad(camera.Position(), camera.Direction(), _viewport_near / 2.f);
 #ifdef DEBUG
-    if (!_valid(form)) {
+    if (!xr::valid(form)) {
         dump("form", form);
         dump("camera.Right()", camera.Right());
         dump("camera.Up()", camera.Up());
@@ -210,7 +210,7 @@ void set_camera_collision(const Fvector& box_size, const Fmatrix& xform, CPhysic
                                               camera_collision_character_skin_depth));
     // character_collision_geom->set_size( character_collision_box_size );
     character_collision_geom->set_radius(character_collision_box_size.x);
-    VERIFY(_valid(xform));
+    VERIFY(xr::valid(xform));
     Fmatrix character_collision_geom_local_xform(Fmatrix().invert(xform));
     Fvector shift_fv = Fvector().mul(xform.k, camera_collision_character_shift_z);
     shift_fv.y = 0;

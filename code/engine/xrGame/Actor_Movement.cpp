@@ -364,7 +364,7 @@ void CActor::g_Orientate(u32 mstate_rl, float dt) {
     mXFORM.rotateY(-(r_model_yaw + r_model_yaw_delta));
     mXFORM.c.set(Position());
     XFORM().set(mXFORM);
-    VERIFY(_valid(XFORM()));
+    VERIFY(xr::valid(XFORM()));
 
     //-------------------------------------------------
 
@@ -418,11 +418,11 @@ bool CActor::g_LadderOrient() {
     Fvector position;
     position.set(Position());
     // XFORM().rotation(q3);
-    VERIFY2(_valid(M), "Invalide matrix in g_LadderOrient");
+    VERIFY2(xr::valid(M), "Invalide matrix in g_LadderOrient");
     XFORM().set(M);
-    VERIFY2(_valid(position), "Invalide position in g_LadderOrient");
+    VERIFY2(xr::valid(position), "Invalide position in g_LadderOrient");
     Position().set(position);
-    VERIFY(_valid(XFORM()));
+    VERIFY(xr::valid(XFORM()));
     return true;
 }
 // ****************************** Update actor orientation according to camera orientation

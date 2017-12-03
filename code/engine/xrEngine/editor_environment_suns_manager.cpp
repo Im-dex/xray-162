@@ -81,16 +81,18 @@ void manager::add(CInifile& config, shared_str const& section) {
     struct predicate {
         shared_str m_id;
 
-        inline predicate(shared_str const& id) : m_id(id) {}
+        predicate(shared_str const& id) : m_id(id) {}
 
-        inline bool operator()(sun const* const& object) const {
-            return (object->id()._get() == m_id._get());
+        bool operator()(sun const* const& object) const {
+            // TODO: [imdex] remove shared_str (ini)
+            return (object->id() == *m_id);
         }
     };
 
     VERIFY(std::find_if(m_suns.begin(), m_suns.end(), predicate(section)) == m_suns.end());
 
-    sun* object = xr_new<sun>(*this, section);
+    // TODO: [imdex] remove shared_str (ini)
+    sun* object = xr_new<sun>(*this, *section);
     object->load(config);
     object->fill(m_collection);
     m_suns.push_back(object);
@@ -102,11 +104,11 @@ void manager::fill(editor::property_holder* holder) {
                          m_collection);
 }
 
-shared_str manager::unique_id(shared_str const& id) const {
+std::string manager::unique_id(const std::string& id) const {
     if (m_collection->unique_id(id.c_str()))
-        return (id);
+        return id;
 
-    return (m_collection->generate_unique_id(id.c_str()));
+    return m_collection->generate_unique_id(id.c_str());
 }
 
 manager::suns_ids_type const& manager::suns_ids() const {
@@ -136,7 +138,8 @@ struct predicate {
 
     IC predicate(shared_str const& id) : m_id(id) {}
 
-    IC bool operator()(sun* const& sun) const { return (sun->id()._get() == m_id._get()); }
+    // TODO: [imdex] remove shared_str (ini)
+    IC bool operator()(sun* const& sun) const { return (sun->id() == *m_id); }
 }; // struct predicate
 
 CLensFlareDescriptor* manager::get_flare(shared_str const& id) const {

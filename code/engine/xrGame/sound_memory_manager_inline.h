@@ -42,10 +42,10 @@ IC void CSoundMemoryManager::set_squad_objects(SOUNDS* squad_objects) { m_sounds
 
 IC void CSoundMemoryManager::set_threshold(float threshold) {
     m_sound_threshold = threshold;
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
 }
 
 IC void CSoundMemoryManager::restore_threshold() {
     m_sound_threshold = m_min_sound_threshold;
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
 }

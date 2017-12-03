@@ -154,7 +154,7 @@ void CEntityCondition::reinit() {
 }
 
 void CEntityCondition::ChangeHealth(const float value) {
-    VERIFY(_valid(value));
+    VERIFY(xr::valid(value));
     m_fDeltaHealth += (CanBeHarmed() || (value > 0)) ? value : 0;
 }
 
@@ -464,7 +464,7 @@ void CEntityCondition::UpdateHealth() {
     m_fDeltaHealth -= CanBeHarmed() ? bleeding_speed : 0;
     m_fDeltaHealth += m_fDeltaTime * m_change_v.m_fV_HealthRestore;
 
-    VERIFY(_valid(m_fDeltaHealth));
+    VERIFY(xr::valid(m_fDeltaHealth));
     ChangeBleeding(m_change_v.m_fV_WoundIncarnation * m_fDeltaTime);
 }
 

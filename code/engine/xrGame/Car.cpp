@@ -1581,7 +1581,7 @@ void CCar::PhDataUpdate(float step) {
     }
 
     m_steer_angle = m_steering_wheels.begin()->GetSteerAngle() * 0.1f + m_steer_angle * 0.9f;
-    VERIFY(_valid(m_steer_angle));
+    VERIFY(xr::valid(m_steer_angle));
 }
 
 BOOL CCar::UsedAI_Locations() { return (FALSE); }

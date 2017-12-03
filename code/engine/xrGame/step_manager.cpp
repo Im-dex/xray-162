@@ -64,7 +64,7 @@ void CStepManager::reload(LPCSTR section) {
             param.step[j].time = float(atof(cur_elem));
             _GetItem(val, 1 + j * 2 + 1, cur_elem);
             param.step[j].power = float(atof(cur_elem));
-            VERIFY(_valid(param.step[j].power));
+            VERIFY(xr::valid(param.step[j].power));
         }
 
         MotionID motion_id = skeleton_animated->ID_Cycle_Safe(anim_name);

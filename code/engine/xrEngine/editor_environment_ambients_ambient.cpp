@@ -51,9 +51,9 @@ editor::property_holder* property_collection<ambient::sound_container_type, ambi
     return (object->object());
 }
 
-ambient::ambient(manager const& manager, shared_str const& id)
+ambient::ambient(manager const& manager, std::string id)
     : m_manager(manager), m_property_holder(0), m_effects_collection(0), m_sounds_collection(0) {
-    m_load_section = id;
+    m_load_section = std::move(id);
     m_effects_collection = xr_new<effect_collection_type>(&m_effects_ids, this);
     m_sounds_collection = xr_new<sound_collection_type>(&m_sound_channels_ids, this);
 }
@@ -72,14 +72,15 @@ ambient::~ambient() {
 }
 
 void ambient::load(CInifile& ambients_config, CInifile& sound_channels_config,
-                   CInifile& effects_config, const shared_str& section) {
+                   CInifile& effects_config, std::string section) {
     VERIFY(m_load_section == section);
     inherited::load(ambients_config, sound_channels_config, effects_config, m_load_section);
 
     {
         VERIFY(m_effects_ids.empty());
+        // TODO: [imdex] remove shared_str (ini)
         LPCSTR effects_string =
-            READ_IF_EXISTS(&ambients_config, r_string, m_load_section, "effects", "");
+            READ_IF_EXISTS(&ambients_config, r_string, m_load_section.c_str(), "effects", "");
         for (u32 i = 0, n = _GetItemCount(effects_string); i < n; ++i) {
             string_path temp;
             effect_id* object =
@@ -91,8 +92,9 @@ void ambient::load(CInifile& ambients_config, CInifile& sound_channels_config,
 
     {
         VERIFY(m_sound_channels_ids.empty());
+        // TODO: [imdex] remove shared_str (ini)
         LPCSTR sounds_string =
-            READ_IF_EXISTS(&ambients_config, r_string, m_load_section, "sound_channels", "");
+            READ_IF_EXISTS(&ambients_config, r_string, m_load_section.c_str(), "sound_channels", "");
         for (u32 i = 0, n = _GetItemCount(sounds_string); i < n; ++i) {
             string_path temp;
             sound_id* object =
@@ -154,11 +156,12 @@ void ambient::save(CInifile& config) {
 LPCSTR ambient::id_getter() const { return (m_load_section.c_str()); }
 
 void ambient::id_setter(LPCSTR value_) {
-    shared_str value = value_;
-    if (m_load_section._get() == value._get())
+    std::string value = value_;
+    if (m_load_section == value)
         return;
 
-    m_load_section = m_manager.unique_id(value);
+    // TODO: [imdex] remove shared_str (ini)
+    m_load_section = *m_manager.unique_id(value.c_str());
 }
 
 void ambient::fill(editor::property_holder_collection* collection) {

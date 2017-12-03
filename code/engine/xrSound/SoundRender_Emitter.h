@@ -71,18 +71,18 @@ public:
 public:
     void Event_Propagade();
     void Event_ReleaseOwner();
-    BOOL isPlaying(void) { return m_current_state != stStopped; }
+    BOOL isPlaying() { return m_current_state != stStopped; }
 
     virtual BOOL is_2D() { return b2D; }
     virtual void switch_to_2D();
     virtual void switch_to_3D();
     virtual void set_position(const Fvector& pos);
     virtual void set_frequency(float scale) {
-        VERIFY(_valid(scale));
+        VERIFY(xr::valid(scale));
         p_source.freq = scale;
     }
     virtual void set_range(float min, float max) {
-        VERIFY(_valid(min) && _valid(max));
+        VERIFY(xr::valid(min) && xr::valid(max));
         p_source.min_distance = min;
         p_source.max_distance = max;
     }

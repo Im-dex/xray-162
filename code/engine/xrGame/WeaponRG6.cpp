@@ -104,7 +104,7 @@ void CWeaponRG6::FireStart() {
 
         d.normalize();
         d.mul(m_fLaunchSpeed);
-        VERIFY2(_valid(launch_matrix), "CWeaponRG6::FireStart. Invalid launch_matrix");
+        VERIFY2(xr::valid(launch_matrix), "CWeaponRG6::FireStart. Invalid launch_matrix");
         CRocketLauncher::LaunchRocket(launch_matrix, d, zero_vel);
 
         CExplosiveRocket* pGrenade = smart_cast<CExplosiveRocket*>(getCurrentRocket());

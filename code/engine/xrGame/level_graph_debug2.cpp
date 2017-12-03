@@ -182,7 +182,7 @@ void CLevelGraph::draw_nodes() {
                     continue;
                 if (S.x < -1.f || S.x > 1.f || S.y < -1.f || S.x > 1.f)
                     continue;
-                F->SetHeightI(0.05f / _sqrt(_abs(S.w)));
+                F->SetHeightI(0.05f / std::sqrt(xr::abs(S.w)));
                 F->SetColor(0xffffffff);
                 F->OutI(S.x, -S.y, "~%d", Nid);
             }

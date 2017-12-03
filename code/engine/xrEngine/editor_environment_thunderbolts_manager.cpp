@@ -131,7 +131,8 @@ void manager::load_collections() {
     sections_type::const_iterator i = sections.begin();
     sections_type::const_iterator e = sections.end();
     for (; i != e; ++i) {
-        collection* object = xr_new<collection>(*this, (*i)->Name);
+        // TODO: [imdex] remove shared_str (ini)
+        collection* object = xr_new<collection>(*this, *(*i)->Name);
         object->load(*config);
         object->fill(m_thunderbolt_collection);
         m_collections.push_back(object);
@@ -289,14 +290,16 @@ shared_str manager::unique_thunderbolt_id(shared_str const& id) const {
     if (m_thunderbolt_collection->unique_id(id.c_str()))
         return (id);
 
-    return (m_thunderbolt_collection->generate_unique_id(id.c_str()));
+    // TODO: [imdex] remove shared_str (ini)
+    return shared_str((m_thunderbolt_collection->generate_unique_id(id.c_str())).c_str());
 }
 
 shared_str manager::unique_collection_id(shared_str const& id) const {
     if (m_collections_collection->unique_id(id.c_str()))
         return (id);
 
-    return (m_collections_collection->generate_unique_id(id.c_str()));
+    // TODO: [imdex] remove shared_str (ini)
+    return shared_str((m_collections_collection->generate_unique_id(id.c_str())).c_str());
 }
 
 SThunderboltDesc* manager::description(CInifile& config, shared_str const& section) const {

@@ -56,7 +56,8 @@ void manager::load() {
     sections_type::const_iterator i = sections.begin();
     sections_type::const_iterator e = sections.end();
     for (; i != e; ++i) {
-        channel* object = xr_new<channel>(*this, (*i)->Name);
+        // TODO: [imdex] remove shared_str (ini)
+        channel* object = xr_new<channel>(*this, *(*i)->Name);
         object->load(*config);
         object->fill(m_collection);
         m_channels.push_back(object);
@@ -110,7 +111,8 @@ shared_str manager::unique_id(shared_str const& id) const {
     if (m_collection->unique_id(id.c_str()))
         return (id);
 
-    return (m_collection->generate_unique_id(id.c_str()));
+    // TODO: [imdex] remove shared_str (ini)
+    return shared_str((m_collection->generate_unique_id(id.c_str())).c_str());
 }
 
 #endif // #ifdef INGAME_EDITOR

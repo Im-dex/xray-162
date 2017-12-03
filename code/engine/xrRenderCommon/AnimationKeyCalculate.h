@@ -3,7 +3,7 @@
 // calculate
 //------------------------------------------------------------------------------
 IC void KEY_Interp(CKey& D, const CKey& K1, const CKey& K2, float delta) {
-    VERIFY(_valid(delta));
+    VERIFY(xr::valid(delta));
     VERIFY(delta >= 0.f && delta <= 1.f);
     D.Q.slerp(K1.Q, K2.Q, delta);
     D.T.lerp(K1.T, K2.T, delta);
@@ -361,8 +361,8 @@ IC void process_single_channel(CKey& Result, const animation::channel_def& ch, c
                                const CBlend* const BA[MAX_BLENDED], int b_count) {
 
     MixInterlerp(Result, R, BA, b_count);
-    VERIFY(_valid(Result.T));
-    VERIFY(_valid(Result.Q));
+    VERIFY(xr::valid(Result.T));
+    VERIFY(xr::valid(Result.Q));
 }
 IC void MixChannels(CKey& Result, const CKey* R, const animation::channel_def* BA, int b_count) {
     VERIFY(b_count > 0);
@@ -383,6 +383,6 @@ IC void MixChannels(CKey& Result, const CKey* R, const animation::channel_def* B
         default:
             NODEFAULT;
         }
-    VERIFY(_valid(Result.T));
-    VERIFY(_valid(Result.Q));
+    VERIFY(xr::valid(Result.T));
+    VERIFY(xr::valid(Result.Q));
 }

@@ -29,29 +29,29 @@ public:
     typedef editor::property_holder property_holder_type;
 
 public:
-    weather(environment::manager* manager, shared_str const& id);
+    weather(environment::manager* manager, std::string id);
     weather(const weather&) = delete;
     weather& operator=(const weather&) = delete;
     virtual ~weather();
     void load();
     void save();
     void fill(::editor::property_holder_collection* holder);
-    inline shared_str const& id() const { return m_id; }
-    shared_str unique_id(shared_str const& current, shared_str const& id) const;
-    shared_str generate_unique_id() const;
+    const std::string& id() const { return m_id; }
+    std::string unique_id(const std::string& current, const std::string& id) const;
+    std::string generate_unique_id() const;
     virtual property_holder_type* object() { return m_property_holder; }
-    bool save_time_frame(shared_str const& frame_id, char* buffer, u32 const& buffer_size);
-    bool paste_time_frame(shared_str const& frame_id, char const* buffer, u32 const& buffer_size);
-    void reload_time_frame(shared_str const& frame_id);
+    bool save_time_frame(const std::string& frame_id, char* buffer, u32 const& buffer_size);
+    bool paste_time_frame(const std::string& frame_id, char const* buffer, u32 const& buffer_size);
+    void reload_time_frame(const std::string& frame_id);
     void reload();
     bool add_time_frame(char const* buffer, u32 const& buffer_size);
 
 private:
-    bool valid_id(shared_str const& id_) const;
-    bool try_hours(u32& hours, u32& minutes, u32& seconds, shared_str& result) const;
-    bool try_minutes(u32& hours, u32& minutes, u32& seconds, shared_str& result) const;
-    shared_str try_all(u32& hours, u32& minutes, u32& seconds) const;
-    shared_str generate_unique_id(shared_str const& start) const;
+    bool valid_id(const std::string& id_) const;
+    bool try_hours(u32& hours, u32& minutes, u32& seconds, std::string& result) const;
+    bool try_minutes(u32& hours, u32& minutes, u32& seconds, std::string& result) const;
+    std::string try_all(u32& hours, u32& minutes, u32& seconds) const;
+    std::string generate_unique_id(const std::string& start) const;
 
 private:
     LPCSTR xr_stdcall id_getter() const;
@@ -61,13 +61,13 @@ public:
     typedef xr_vector<time*> container_type;
 
 public:
-    inline container_type const& times() const { return m_times; }
+    container_type const& times() const { return m_times; }
 
 private:
     typedef property_collection<container_type, weather> collection_type;
 
 private:
-    shared_str m_id;
+    std::string m_id;
     container_type m_times;
     collection_type* m_collection;
     property_holder_type* m_property_holder;

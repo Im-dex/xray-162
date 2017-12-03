@@ -31,8 +31,8 @@ static inline editor::color create_color(float const& r, float const& g, float c
     return (result);
 }
 
-time::time(editor::environment::manager* manager, weather const* weather, shared_str const& id)
-    : CEnvDescriptorMixer(id), m_manager(*manager), m_weather(weather), m_property_holder(0),
+time::time(editor::environment::manager* manager, weather const* weather, std::string id)
+    : CEnvDescriptorMixer(std::move(id)), m_manager(*manager), m_weather(weather), m_property_holder(0),
       m_ambient(""), m_sun(""), m_thunderbolt_collection("") {}
 
 time::~time() {
@@ -42,10 +42,10 @@ time::~time() {
     ::ide().destroy(m_property_holder);
 }
 
-void time::load_from(shared_str const& id, CInifile& config, shared_str const& new_id) {
-    m_identifier = id;
+void time::load_from(std::string id, CInifile& config, std::string new_id) {
+    m_identifier = std::move(id);
     load(config);
-    m_identifier = new_id;
+    m_identifier = std::move(new_id);
 }
 
 void time::load(CInifile& config) {
@@ -56,7 +56,8 @@ void time::load(CInifile& config) {
     //time",m_identifier.c_str()); 	exec_time					=
     //tm.x*3600.f+tm.y*60.f+tm.z; 	exec_time_loaded			= exec_time;
 
-    m_ambient = config.r_string(m_identifier, "ambient");
+    // TODO: [imdex] remove shared_str (ini)
+    m_ambient = config.r_string(m_identifier.c_str(), "ambient");
     //	ambient						= config.r_fvector3(m_identifier,
     //"ambient_color"); 	clouds_texture_name			=
     //config.r_string(m_identifier, "clouds_texture");
@@ -81,8 +82,9 @@ void time::load(CInifile& config) {
     //	sun_color					= config.r_fvector3(m_identifier,
     //"sun_color"); 	m_fSunShaftsIntensity		= config.r_float(m_identifier,
     //"sun_shafts_intensity");
-    m_sun = config.r_string(m_identifier, "sun");
-    m_thunderbolt_collection = config.r_string(m_identifier, "thunderbolt_collection");
+    // TODO: [imdex] remove shared_str (ini)
+    m_sun = config.r_string(m_identifier.c_str(), "sun");
+    m_thunderbolt_collection = config.r_string(m_identifier.c_str(), "thunderbolt_collection");
     //	bolt_duration				= config.r_float(m_identifier, 	"bolt_duration");
     //	bolt_period					= config.r_float(m_identifier,
     //"bolt_period"); 	m_fWaterIntensity			= config.r_float(m_identifier,
@@ -140,14 +142,14 @@ void time::save(CInifile& config) {
 LPCSTR time::id_getter() const { return (m_identifier.c_str()); }
 
 void time::id_setter(LPCSTR value_) {
-    shared_str value = value_;
-    if (m_identifier._get() == value._get())
+    std::string value = value_;
+    if (m_identifier == value)
         return;
 
     if (m_weather)
         m_identifier = m_weather->unique_id(m_identifier, value);
     else
-        m_identifier = value;
+        m_identifier = std::move(value);
 }
 
 LPCSTR const* time::ambients_collection() {
@@ -195,7 +197,7 @@ void time::sun_longitude_setter(float value) {
 LPCSTR time::ambient_getter() const { return (m_ambient.c_str()); }
 
 void time::ambient_setter(LPCSTR value) {
-    if (m_ambient._get() == shared_str(value)._get())
+    if (m_ambient == value)
         return;
 
     m_ambient = value;
@@ -205,7 +207,7 @@ void time::ambient_setter(LPCSTR value) {
 LPCSTR time::sun_getter() const { return (m_sun.c_str()); }
 
 void time::sun_setter(LPCSTR value) {
-    if (m_sun._get() == shared_str(value)._get())
+    if (m_sun == value)
         return;
 
     m_sun = value;
@@ -215,7 +217,7 @@ void time::sun_setter(LPCSTR value) {
 LPCSTR time::thunderbolt_getter() const { return (m_thunderbolt_collection.c_str()); }
 
 void time::thunderbolt_setter(LPCSTR value) {
-    if (m_thunderbolt_collection._get() == shared_str(value)._get())
+    if (m_thunderbolt_collection == value)
         return;
 
     m_thunderbolt_collection = value;
@@ -227,7 +229,7 @@ void time::thunderbolt_setter(LPCSTR value) {
 LPCSTR time::sky_texture_getter() const { return (sky_texture_name.c_str()); }
 
 void time::sky_texture_setter(LPCSTR value) {
-    if (sky_texture_name._get() == shared_str(value)._get())
+    if (sky_texture_name == value)
         return;
 
     sky_texture_name = value;
@@ -241,7 +243,7 @@ void time::sky_texture_setter(LPCSTR value) {
 LPCSTR time::clouds_texture_getter() const { return (clouds_texture_name.c_str()); }
 
 void time::clouds_texture_setter(LPCSTR value) {
-    if (clouds_texture_name._get() == shared_str(value)._get())
+    if (clouds_texture_name == value)
         return;
 
     clouds_texture_name = value;

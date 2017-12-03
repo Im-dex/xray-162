@@ -116,7 +116,7 @@ IC void CDetailPathManager::assign_angle(float& angle, const float start_yaw, co
         else
             angle = angle - PI_MUL_2;
 
-    VERIFY(_valid(angle));
+    VERIFY(xr::valid(angle));
 }
 
 IC bool CDetailPathManager::compute_circles(STrajectoryPoint& point, SCirclePoint* circles) {

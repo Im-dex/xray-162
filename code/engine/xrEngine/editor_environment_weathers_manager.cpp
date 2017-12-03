@@ -99,12 +99,12 @@ LPCSTR const* manager::weathers_getter() const { return (&*weather_ids().begin()
 u32 manager::weathers_size_getter() const { return (weather_ids().size()); }
 
 struct predicate {
-    shared_str value;
+    std::string value;
 
-    inline predicate(LPCSTR const& value_) : value(value_) {}
+    predicate(LPCSTR const& value_) : value(value_) {}
 
-    inline bool operator()(weather const* weather) const {
-        return (value._get() == weather->id()._get());
+    bool operator()(weather const* weather) const {
+        return value == weather->id();
     }
 }; // struct predicate
 
@@ -115,7 +115,7 @@ LPCSTR const* manager::frames_getter(LPCSTR weather_id) const {
         std::find_if(m_weathers.begin(), m_weathers.end(), predicate(weather_id));
 
     if (found == m_weathers.end())
-        return (0);
+        return nullptr;
 
     typedef weather::container_type container_type;
     container_type const& times = (*found)->times();
@@ -188,11 +188,11 @@ manager::weather_ids_type const& manager::weather_ids() const {
     return (m_weather_ids);
 }
 
-shared_str manager::unique_id(shared_str const& id) const {
+std::string manager::unique_id(const std::string& id) const {
     if (m_collection->unique_id(id.c_str()))
-        return (id);
+        return id;
 
-    return (m_collection->generate_unique_id(id.c_str()));
+    return m_collection->generate_unique_id(id.c_str());
 }
 
 bool manager::save_current_blend(char* buffer, u32 const& buffer_size) {
@@ -220,7 +220,7 @@ bool manager::paste_current_time_frame(char const* buffer, u32 const& buffer_siz
     weather_container_type::iterator i = m_weathers.begin();
     weather_container_type::iterator e = m_weathers.end();
     for (; i != e; ++i) {
-        if (m_manager.CurrentWeatherName._get() != (*i)->id()._get())
+        if (m_manager.CurrentWeatherName != (*i)->id())
             continue;
 
         return ((*i)->paste_time_frame(m_manager.Current[0]->m_identifier, buffer, buffer_size));
@@ -236,7 +236,7 @@ bool manager::paste_target_time_frame(char const* buffer, u32 const& buffer_size
     weather_container_type::iterator i = m_weathers.begin();
     weather_container_type::iterator e = m_weathers.end();
     for (; i != e; ++i) {
-        if (m_manager.CurrentWeatherName._get() != (*i)->id()._get())
+        if (m_manager.CurrentWeatherName != (*i)->id())
             continue;
 
         return ((*i)->paste_time_frame(m_manager.Current[1]->m_identifier, buffer, buffer_size));
@@ -249,7 +249,7 @@ bool manager::add_time_frame(char const* buffer, u32 const& buffer_size) {
     weather_container_type::iterator i = m_weathers.begin();
     weather_container_type::iterator e = m_weathers.end();
     for (; i != e; ++i) {
-        if (m_manager.CurrentWeatherName._get() != (*i)->id()._get())
+        if (m_manager.CurrentWeatherName != (*i)->id())
             continue;
 
         return ((*i)->add_time_frame(buffer, buffer_size));
@@ -265,7 +265,7 @@ void manager::reload_current_time_frame() {
     weather_container_type::iterator i = m_weathers.begin();
     weather_container_type::iterator e = m_weathers.end();
     for (; i != e; ++i) {
-        if (m_manager.CurrentWeatherName._get() != (*i)->id()._get())
+        if (m_manager.CurrentWeatherName != (*i)->id())
             continue;
 
         (*i)->reload_time_frame(m_manager.Current[0]->m_identifier);
@@ -280,7 +280,7 @@ void manager::reload_target_time_frame() {
     weather_container_type::iterator i = m_weathers.begin();
     weather_container_type::iterator e = m_weathers.end();
     for (; i != e; ++i) {
-        if (m_manager.CurrentWeatherName._get() != (*i)->id()._get())
+        if (m_manager.CurrentWeatherName != (*i)->id())
             continue;
 
         (*i)->reload_time_frame(m_manager.Current[1]->m_identifier);
@@ -292,7 +292,7 @@ void manager::reload_current_weather() {
     weather_container_type::iterator i = m_weathers.begin();
     weather_container_type::iterator e = m_weathers.end();
     for (; i != e; ++i) {
-        if (m_manager.CurrentWeatherName._get() != (*i)->id()._get())
+        if (m_manager.CurrentWeatherName != (*i)->id())
             continue;
 
         (*i)->reload();

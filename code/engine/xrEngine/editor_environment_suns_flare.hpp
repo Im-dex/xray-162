@@ -35,7 +35,7 @@ private:
     property_holder* m_property_holder;
 
 public:
-    shared_str m_texture;
+    std::string m_texture;
     float m_opacity;
     float m_position;
     float m_radius;

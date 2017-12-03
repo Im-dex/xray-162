@@ -35,7 +35,7 @@ public:
     void OA_SetNormal(Fvector& _N) {
         normal.set(_N);
         normal.normalize();
-        VERIFY(_valid(normal));
+        VERIFY(xr::valid(normal));
     }
     BOOL OA_Place(Face* owner);
     void OA_Place(vecFace& lst);

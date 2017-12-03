@@ -104,7 +104,7 @@ void CAI_Space::load(LPCSTR level_name) {
               "graph doesn't correspond to the AI-map");
 
 #ifdef DEBUG
-    if (!xr_strcmp(current_level.name(), level_name))
+    if (current_level.name() == level_name)
         validate(current_level.id());
 #endif
 

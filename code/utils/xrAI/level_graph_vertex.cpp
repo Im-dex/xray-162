@@ -443,8 +443,8 @@ bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& star
                 default:
                     NODEFAULT;
                 }
-                VERIFY(_valid(next1));
-                VERIFY(_valid(next2));
+                VERIFY(xr::valid(next1));
+                VERIFY(xr::valid(next2));
                 u32 dwIntersect =
                     intersect(start_point.x, start_point.y, finish_point.x, finish_point.y, next1.x,
                               next1.y, next2.x, next2.y, &tIntersectPoint.x, &tIntersectPoint.z);

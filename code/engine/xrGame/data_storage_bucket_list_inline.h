@@ -194,7 +194,7 @@ TEMPLATE_SPECIALIZATION
 IC void CBucketList::remove_best_opened() {
     VERIFY(!is_opened_empty());
     verify_buckets();
-    VERIFY(m_buckets[m_min_bucket_id] && is_visited(m_buckets[m_min_bucket_id]->index()));
+    VERIFY(m_buckets[m_min_bucket_id] && this->is_visited(m_buckets[m_min_bucket_id]->index()));
     m_buckets[m_min_bucket_id] = m_buckets[m_min_bucket_id]->next();
     if (m_buckets[m_min_bucket_id])
         m_buckets[m_min_bucket_id]->prev() = 0;

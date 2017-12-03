@@ -84,7 +84,7 @@ void CALifeGraphRegistry::setup_current_level() {
 
     // TODO: [imdex] use string_view
     int id = pApp->Level_ID((*I).second.name().c_str(), "1.0", true);
-    VERIFY3(id >= 0, "Level is corrupted or doesn't exist", *(*I).second.name());
+    VERIFY3(id >= 0, "Level is corrupted or doesn't exist", (*I).second.name().c_str());
     // TODO: [imdex] use string_view
     ai().load((*I).second.name().c_str());
 }

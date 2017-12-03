@@ -162,7 +162,7 @@ void SHeliMovementState::getPathAltitude(Fvector& point, float base_altitude) {
     down_dir.set(0.0f, -1.0f, 0.0f);
 
     point.y = boundingVolume.max.y + EPS_L;
-    VERIFY(_valid(point));
+    VERIFY(xr::valid(point));
 
     Level().ObjectSpace.RayPick(point, down_dir, boundSize.y + 1.0f, collide::rqtStatic, cR, NULL);
 
@@ -173,14 +173,14 @@ void SHeliMovementState::getPathAltitude(Fvector& point, float base_altitude) {
     else
         point.y = boundingVolume.max.y - EPS_L;
 
-    VERIFY(_valid(point));
+    VERIFY(xr::valid(point));
 
     float minY =
         boundingVolume.min
             .y; //+(m_boundingVolume.max.y-m_boundingVolume.min.y)*m_heli->m_data.m_alt_korridor;
     float maxY = boundingVolume.max.y + base_altitude;
     clamp(point.y, minY, maxY);
-    VERIFY(_valid(point));
+    VERIFY(xr::valid(point));
 }
 void SHeliMovementState::SetDestPosition(Fvector* pos) {
     desiredPoint = *pos;

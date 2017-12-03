@@ -34,7 +34,7 @@ public:
     void load();
     void save();
     void fill(::editor::property_holder* property_holder);
-    shared_str unique_id(shared_str const& id) const;
+    std::string unique_id(const std::string& id) const;
     bool save_current_blend(char* buffer, u32 const& buffer_size);
     bool paste_current_time_frame(char const* buffer, u32 const& buffer_size);
     bool paste_target_time_frame(char const* buffer, u32 const& buffer_size);

@@ -39,8 +39,8 @@ private:
     bool m_use;
     float m_opacity;
     float m_radius;
-    shared_str m_shader;
-    shared_str m_texture;
+    std::string m_shader;
+    std::string m_texture;
 }; // class gradient
 
 } // namespace suns

@@ -36,7 +36,7 @@ void CSightManager::reinit() {
     m_enabled = true;
     m_turning_in_place = false;
 
-    VERIFY(_valid(s_free_factors));
+    VERIFY(xr::valid(s_free_factors));
     m_current.m_head.m_factor = s_free_factors.x;
     m_current.m_shoulder.m_factor = s_free_factors.y;
     m_current.m_spine.m_factor = s_free_factors.z;
@@ -343,13 +343,13 @@ Fvector CSightManager::aiming_position() const {
 
     switch (current_action().sight_type()) {
     case eSightTypeCurrentDirection: {
-        VERIFY2(_valid(object().Position()),
+        VERIFY2(xr::valid(object().Position()),
                 make_string("[%f][%f][%f]", VPUSH(object().Position())));
-        VERIFY2(_valid(-object().movement().m_head.current.yaw),
+        VERIFY2(xr::valid(-object().movement().m_head.current.yaw),
                 make_string("%f", -object().movement().m_head.current.yaw));
-        VERIFY2(_valid(-object().movement().m_head.current.yaw),
+        VERIFY2(xr::valid(-object().movement().m_head.current.yaw),
                 make_string("%f", -object().movement().m_head.current.pitch));
-        VERIFY(_valid(Fvector().setHP(-object().movement().m_head.current.yaw,
+        VERIFY(xr::valid(Fvector().setHP(-object().movement().m_head.current.yaw,
                                       -object().movement().m_head.current.pitch)));
         result.mad(object().Position(),
                    Fvector().setHP(-object().movement().m_head.current.yaw,
@@ -360,7 +360,7 @@ Fvector CSightManager::aiming_position() const {
                 make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(object().Position()),
                             -object().movement().m_head.current.yaw,
                             -object().movement().m_head.current.pitch, fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypePathDirection: {
@@ -372,16 +372,16 @@ Fvector CSightManager::aiming_position() const {
                 make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(object().Position()),
                             -object().movement().m_head.target.yaw,
                             -object().movement().m_head.target.pitch, fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypeDirection: {
-        VERIFY(_valid(current_action().vector3d()));
+        VERIFY(xr::valid(current_action().vector3d()));
         result.mad(object().Position(), current_action().vector3d(), fake_distance);
         VERIFY2(result.magnitude() < 100000.f,
                 make_string("[%f][%f][%f] [%f][%f][%f] [%f]", VPUSH(object().Position()),
                             VPUSH(current_action().vector3d()), fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypePosition:
@@ -389,13 +389,13 @@ Fvector CSightManager::aiming_position() const {
         result = current_action().vector3d();
         VERIFY2(result.magnitude() < 100000.f,
                 make_string("[%f][%f][%f]", VPUSH(current_action().vector3d())));
-        VERIFY(_valid(current_action().vector3d()));
+        VERIFY(xr::valid(current_action().vector3d()));
         break;
     }
     case eSightTypeObject: {
         result = object_position();
         VERIFY2(result.magnitude() < 100000.f, make_string("[%f][%f][%f]", VPUSH(result)));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypeFireObject: {
@@ -403,13 +403,13 @@ Fvector CSightManager::aiming_position() const {
         case 0: {
             result = current_action().vector3d(); // object_position();
             VERIFY2(result.magnitude() < 100000.f, make_string("[%f][%f][%f]", VPUSH(result)));
-            VERIFY(_valid(result));
+            VERIFY(xr::valid(result));
             break;
         }
         case 1: {
             result = current_action().vector3d();
             VERIFY2(result.magnitude() < 100000.f, make_string("[%f][%f][%f]", VPUSH(result)));
-            VERIFY(_valid(result));
+            VERIFY(xr::valid(result));
             break;
         }
         default:
@@ -426,7 +426,7 @@ Fvector CSightManager::aiming_position() const {
                 make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(object().Position()),
                             -object().movement().m_head.current.yaw,
                             -object().movement().m_head.current.pitch, fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypeSearch: {
@@ -438,7 +438,7 @@ Fvector CSightManager::aiming_position() const {
                 make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(object().Position()),
                             -object().movement().m_head.current.yaw,
                             -object().movement().m_head.current.pitch, fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypeLookOver: {
@@ -450,7 +450,7 @@ Fvector CSightManager::aiming_position() const {
                 make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(object().Position()),
                             -object().movement().m_head.current.yaw,
                             -object().movement().m_head.current.pitch, fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypeCoverLookOver: {
@@ -462,7 +462,7 @@ Fvector CSightManager::aiming_position() const {
                 make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(object().Position()),
                             -object().movement().m_head.current.yaw,
                             -object().movement().m_head.current.pitch, fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     case eSightTypeAnimationDirection: {
@@ -474,7 +474,7 @@ Fvector CSightManager::aiming_position() const {
                 make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(object().Position()),
                             -object().movement().m_head.current.yaw,
                             -object().movement().m_head.current.pitch, fake_distance));
-        VERIFY(_valid(result));
+        VERIFY(xr::valid(result));
         break;
     }
     default:
@@ -483,7 +483,7 @@ Fvector CSightManager::aiming_position() const {
 
     VERIFY2(result.magnitude() < 100000.f,
             make_string("[%f][%f][%f] [%f][%f] [%f]", VPUSH(result)));
-    VERIFY(_valid(result));
+    VERIFY(xr::valid(result));
     return (result);
 }
 
@@ -506,8 +506,8 @@ static inline float lerp(float low, float high, float value) {
 }
 
 void CSightManager::process_action(float const time_delta) {
-    VERIFY(_valid(time_delta));
-    VERIFY(_valid(s_factor_lerp_speed));
+    VERIFY(xr::valid(time_delta));
+    VERIFY(xr::valid(s_factor_lerp_speed));
 
     //	if ( current_action().sight_type() == SightManager::eSightTypeAnimationDirection ) {
     //		m_current.m_spine.m_rotation			= Fidentity;
@@ -520,7 +520,7 @@ void CSightManager::process_action(float const time_delta) {
     SBoneRotation const& body = object().movement().m_body;
 
     Fvector const& factors = current_action().use_torso_look() ? s_danger_factors : s_free_factors;
-    VERIFY(_valid(factors));
+    VERIFY(xr::valid(factors));
     //	if ( object().cName() == "level_prefix_stalker" ) {
     //		Msg							("[%6d][%6d] [%f] + [%f] = [%f] ([%f])",  Device.dwFrame,
     //Device.dwTimeGlobal, m_current.m_head.m_factor,		s_factor_lerp_speed*time_delta,		lerp (
@@ -535,20 +535,20 @@ void CSightManager::process_action(float const time_delta) {
     //);
     //	}
 
-    VERIFY(_valid(m_current.m_head.m_factor));
+    VERIFY(xr::valid(m_current.m_head.m_factor));
     m_current.m_head.m_factor =
         lerp(m_current.m_head.m_factor, factors.x, s_factor_lerp_speed * time_delta);
-    VERIFY(_valid(m_current.m_head.m_factor));
+    VERIFY(xr::valid(m_current.m_head.m_factor));
 
-    VERIFY(_valid(m_current.m_shoulder.m_factor));
+    VERIFY(xr::valid(m_current.m_shoulder.m_factor));
     m_current.m_shoulder.m_factor =
         lerp(m_current.m_shoulder.m_factor, factors.y, s_factor_lerp_speed * time_delta);
-    VERIFY(_valid(m_current.m_shoulder.m_factor));
+    VERIFY(xr::valid(m_current.m_shoulder.m_factor));
 
-    VERIFY(_valid(m_current.m_spine.m_factor));
+    VERIFY(xr::valid(m_current.m_spine.m_factor));
     m_current.m_spine.m_factor =
         lerp(m_current.m_spine.m_factor, factors.z, s_factor_lerp_speed * time_delta);
-    VERIFY(_valid(m_current.m_spine.m_factor));
+    VERIFY(xr::valid(m_current.m_spine.m_factor));
 
     Fvector const angles =
         Fvector().set(angle_normalize_signed(-(head.current.pitch - body.current.pitch)),
@@ -592,7 +592,7 @@ void CSightManager::compute_aiming(float const time_delta, float const angular_s
         object().animation().remove_bone_callbacks();
         VERIFY(object().best_weapon());
         VERIFY(smart_cast<CWeapon const*>(object().best_weapon()));
-        VERIFY(_valid(aiming_position()));
+        VERIFY(xr::valid(aiming_position()));
         aimers::weapon aimer(&object(), m_animation_id.c_str(),
                              m_animation_frame == animation_frame_start, aiming_position(),
                              pSettings->r_string(object().cNameSect().c_str(), "bone_spin"),
@@ -648,7 +648,7 @@ void CSightManager::compute_aiming(float const time_delta, float const angular_s
         bool forward_blend_callbacks = object().animation().forward_blend_callbacks();
         bool backward_blend_callbacks = object().animation().backward_blend_callbacks();
         object().animation().remove_bone_callbacks();
-        VERIFY(_valid(aiming_position()));
+        VERIFY(xr::valid(aiming_position()));
         aimers::bone<3> aimer(&object(), m_animation_id.c_str(),
                               m_animation_frame == animation_frame_start, aiming_position(), bones);
         if (forward_blend_callbacks)

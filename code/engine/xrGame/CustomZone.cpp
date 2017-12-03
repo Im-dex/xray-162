@@ -904,7 +904,7 @@ void CCustomZone::UpdateBlowoutLight() {
         float scale = time_k / (m_fLightTime * 1000.0f);
         scale = powf(scale + EPS_L, 0.15f);
         float r = m_fLightRange * scale;
-        VERIFY(_valid(r));
+        VERIFY(xr::valid(r));
         m_pLight->set_color(m_LightColor.r * scale, m_LightColor.g * scale, m_LightColor.b * scale);
         m_pLight->set_range(r);
 

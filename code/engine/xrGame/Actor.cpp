@@ -1204,12 +1204,12 @@ void CActor::shedule_Update(u32 DT) {
 };
 #include "debug_renderer.h"
 void CActor::renderable_Render() {
-    VERIFY(_valid(XFORM()));
+    VERIFY(xr::valid(XFORM()));
     inherited::renderable_Render();
     if (1 /*!HUDview()*/) {
         CInventoryOwner::renderable_Render();
     }
-    VERIFY(_valid(XFORM()));
+    VERIFY(xr::valid(XFORM()));
 }
 
 BOOL CActor::renderable_ShadowGenerate() {

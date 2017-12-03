@@ -240,11 +240,11 @@ void IGame_Level::SoundEvent_Register(ref_sound_data_ptr S, float range) {
         snd_position.add(Sound->listener_position());
     }
 
-    VERIFY(p && _valid(range));
+    VERIFY(p && xr::valid(range));
     range = std::min(range, p->max_ai_distance);
-    VERIFY(_valid(snd_position));
-    VERIFY(_valid(p->max_ai_distance));
-    VERIFY(_valid(p->volume));
+    VERIFY(xr::valid(snd_position));
+    VERIFY(xr::valid(p->max_ai_distance));
+    VERIFY(xr::valid(p->volume));
 
     // Query objects
     Fvector bb_size = { range, range, range };
@@ -263,17 +263,17 @@ void IGame_Level::SoundEvent_Register(ref_sound_data_ptr S, float range) {
             continue;
 
         // Energy and signal
-        VERIFY(_valid((*it)->spatial.sphere.P));
+        VERIFY(xr::valid((*it)->spatial.sphere.P));
         float dist = snd_position.distance_to((*it)->spatial.sphere.P);
         if (dist > p->max_ai_distance)
             continue;
-        VERIFY(_valid(dist));
+        VERIFY(xr::valid(dist));
         VERIFY2(!fis_zero(p->max_ai_distance), S->handle->file_name());
         float Power = (1.f - dist / p->max_ai_distance) * p->volume;
-        VERIFY(_valid(Power));
+        VERIFY(xr::valid(Power));
         if (Power > EPS_S) {
             float occ = Sound->get_occlusion_to((*it)->spatial.sphere.P, snd_position);
-            VERIFY(_valid(occ));
+            VERIFY(xr::valid(occ));
             Power *= occ;
             if (Power > EPS_S) {
                 _esound_delegate D = { L, S, Power };

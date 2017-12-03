@@ -47,7 +47,8 @@ void manager::load() {
     sections_type::const_iterator i = sections.begin();
     sections_type::const_iterator e = sections.end();
     for (; i != e; ++i) {
-        effect* object = xr_new<effect>(*this, (*i)->Name);
+        // TODO: [imdex] remove shared_str (ini)
+        effect* object = xr_new<effect>(*this, *(*i)->Name);
         object->load(*config);
         object->fill(m_collection);
         m_effects.push_back(object);
@@ -96,11 +97,11 @@ manager::effects_ids_type const& manager::effects_ids() const {
     return (m_effects_ids);
 }
 
-shared_str manager::unique_id(shared_str const& id) const {
+std::string manager::unique_id(const std::string& id) const {
     if (m_collection->unique_id(id.c_str()))
-        return (id);
+        return id;
 
-    return (m_collection->generate_unique_id(id.c_str()));
+    return m_collection->generate_unique_id(id.c_str());
 }
 
 #endif // #ifdef INGAME_EDITOR

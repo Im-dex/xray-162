@@ -390,7 +390,7 @@ BOOL CFrustum::CreateFromClipPoly(Fvector* p, int count, Fvector& vBase, CFrustu
 }
 
 void CFrustum::CreateFromMatrix(Fmatrix& M, u32 mask) {
-    VERIFY(_valid(M));
+    VERIFY(xr::valid(M));
     p_count = 0;
 
     // Left clipping plane

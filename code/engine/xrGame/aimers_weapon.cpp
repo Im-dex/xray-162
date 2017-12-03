@@ -33,13 +33,13 @@ weapon::weapon(CGameObject* object, LPCSTR animation_id, bool animation_start,
 
 #if 1
     Fmatrix& bone_0 = m_result[bone_id0];
-    VERIFY(_valid(bone_0));
+    VERIFY(xr::valid(bone_0));
     Fvector angles;
     bone_0.getXYZ(angles);
-    VERIFY(_valid(angles));
+    VERIFY(xr::valid(angles));
     angles.mul(.5f);
     bone_0.setXYZ(angles);
-    VERIFY(_valid(bone_0));
+    VERIFY(xr::valid(bone_0));
 
     CBoneInstance& bone = m_kinematics.LL_GetBoneInstance(m_bones_ids[bone_id0]);
     BoneCallback const& old_callback = bone.callback();
@@ -102,13 +102,13 @@ void weapon::compute_bone(u32 const bone_id) {
     Fvector direction = Fvector().set(0.f, 0.f, 1.f);
     transform.transform_dir(direction);
 
-    VERIFY(_valid(m_bones[bone_id]));
-    VERIFY(_valid(position));
-    VERIFY(_valid(direction));
+    VERIFY(xr::valid(m_bones[bone_id]));
+    VERIFY(xr::valid(position));
+    VERIFY(xr::valid(direction));
     aim_at_position(m_bones[bone_id].c, position, direction, m_result[bone_id]);
-    VERIFY(_valid(m_result[bone_id]));
-    VERIFY(_valid(m_start_transform));
-    VERIFY(_valid(Fmatrix(m_start_transform).invert()));
+    VERIFY(xr::valid(m_result[bone_id]));
+    VERIFY(xr::valid(m_start_transform));
+    VERIFY(xr::valid(Fmatrix(m_start_transform).invert()));
     m_result[bone_id] =
         Fmatrix(m_start_transform).invert().mulB_43(m_result[bone_id]).mulB_43(m_start_transform);
 }

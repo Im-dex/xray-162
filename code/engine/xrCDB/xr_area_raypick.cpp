@@ -29,7 +29,7 @@ BOOL CObjectSpace::RayTest(const Fvector& start, const Fvector& dir, float range
 BOOL CObjectSpace::_RayTest(const Fvector& start, const Fvector& dir, float range,
                             collide::rq_target tgt, collide::ray_cache* cache,
                             CObject* ignore_object) {
-    VERIFY(_abs(dir.magnitude() - 1) < EPS);
+    VERIFY(xr::abs(dir.magnitude() - 1) < EPS);
     r_temp.r_clear();
 
     xrc.ray_options(CDB::OPT_ONLYFIRST);
@@ -319,7 +319,7 @@ BOOL CObjectSpace::_RayQuery(collide::rq_results& r_dest, const collide::ray_def
                              collide::rq_callback* CB, LPVOID user_data, collide::test_callback* tb,
                              CObject* ignore_object) {
 #ifdef DEBUG
-    if (R.range < EPS || !_valid(R.range))
+    if (R.range < EPS || !xr::valid(R.range))
         Debug.fatal(DEBUG_INFO, "Invalid RayQuery range passed: %f.", R.range);
 #endif
     // initialize query

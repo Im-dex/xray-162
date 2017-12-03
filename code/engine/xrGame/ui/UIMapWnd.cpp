@@ -181,8 +181,8 @@ void CUIMapWnd::Init(LPCSTR xml_name, LPCSTR start_from) {
             }
         }
         if (FALSE == l->GlobalRect().intersected(GlobalMap()->BoundRect())) {
-            Msg(" --error-incorrect map definition map [%s] places outside global map",
-                *l->MapName());
+            LogMsg(" --error-incorrect map definition map [{}] places outside global map",
+                l->MapName());
         }
     }
 #endif

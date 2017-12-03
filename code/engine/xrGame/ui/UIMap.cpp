@@ -406,7 +406,7 @@ void CUILevelMap::Init_internal(std::string name, CInifile& pLtx, const shared_s
     float kh = m_GlobalRect.height() / BoundRect().height();
 
     if (FALSE == fsimilar(kw, kh, EPS_L)) {
-        Msg(" --incorrect global rect definition for map [%s]  kw=%f kh=%f", *MapName(), kw, kh);
+        LogMsg(" --incorrect global rect definition for map [{0}]  kw={1} kh={2}", MapName(), kw, kh);
         Msg(" --try x2=%f or  y2=%f", m_GlobalRect.x1 + kh * BoundRect().width(),
             m_GlobalRect.y1 + kw * BoundRect().height());
     }

@@ -260,7 +260,7 @@ void CRender::add_StaticWallmark(ref_shader& S, const Fvector& P, float s, CDB::
                                  Fvector* verts) {
     if (T->suppress_wm)
         return;
-    VERIFY2(_valid(P) && _valid(s) && T && verts && (s > EPS_L), "Invalid static wallmark params");
+    VERIFY2(xr::valid(P) && xr::valid(s) && T && verts && (s > EPS_L), "Invalid static wallmark params");
     Wallmarks->AddStaticWallmark(T, verts, P, &*S, s);
 }
 
@@ -298,7 +298,7 @@ void CRender::add_SkeletonWallmark(const Fmatrix* xf, IKinematics* obj, IWallMar
         add_SkeletonWallmark(xf, (CKinematics*)obj, *pShader, start, dir, size);
 }
 void CRender::add_Occluder(Fbox2& bb_screenspace) {
-    VERIFY(_valid(bb_screenspace));
+    VERIFY(xr::valid(bb_screenspace));
     HOM.occlude(bb_screenspace);
 }
 

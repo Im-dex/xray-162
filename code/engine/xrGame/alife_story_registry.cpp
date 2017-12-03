@@ -19,8 +19,8 @@ void CALifeStoryRegistry::add(ALife::_STORY_ID id, CSE_ALifeDynamicObject* objec
         return;
 
 #ifdef DEBUG
-    Msg("Adding Story item ID [%u], Object [%s] at level [%s]", id, object->name_replace(),
-        *ai().game_graph()
+    LogMsg("Adding Story item ID [{0}], Object [{1}] at level [{2}]", id, object->name_replace(),
+        ai().game_graph()
              .header()
              .level(ai().game_graph().vertex(object->m_tGraphID)->level_id())
              .name());

@@ -637,9 +637,9 @@ CGraphMerger::CGraphMerger(LPCSTR game_graph_id, LPCSTR name, bool rebuild) {
                     tGraphEdge.m_vertex_id =
                         (GameGraph::_GRAPH_ID)((*M).second.tGraphID + (*K).second->m_dwOffset);
                     VERIFY3(tConnectionVertex.tGraphID < (*I).second->m_tpVertices.size(),
-                            "Rebuild graph for the level", *(*I).second->m_tLevel.name());
+                            "Rebuild graph for the level", (*I).second->m_tLevel.name().c_str());
                     VERIFY3((*M).second.tGraphID < (*K).second->m_tpVertices.size(),
-                            "Rebuild graph for the level", *(*K).second->m_tLevel.name());
+                            "Rebuild graph for the level", (*K).second->m_tLevel.name().c_str());
                     tGraphEdge.m_path_distance =
                         (*I).second->m_tpVertices[tConnectionVertex.tGraphID]
                             .tGlobalPoint.distance_to(

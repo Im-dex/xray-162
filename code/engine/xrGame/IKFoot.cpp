@@ -275,7 +275,7 @@ ik_goal_matrix::e_collide_state CIKFoot::rotate(Fmatrix& xm, const Fplane& p,
     float s = ax.magnitude();
     clamp(s, 0.f, 1.f);
     float angle = asinf(-s);
-    VERIFY(_valid(angle));
+    VERIFY(xr::valid(angle));
     clamp(angle, -M_PI / 6, M_PI / 6);
     ik_goal_matrix::e_collide_state cl_state = ik_goal_matrix::cl_undefined;
     if (!fis_zero(s)) {
@@ -354,7 +354,7 @@ bool CIKFoot::GetFootStepMatrix(ik_goal_matrix& m, const Fmatrix& g_anim, const 
     else if (cl_state == ik_goal_matrix::cl_undefined)
         cl_state = ik_goal_matrix::cl_free;
 
-    VERIFY(_valid(xm));
+    VERIFY(xr::valid(xm));
     m.set(xm, cl_state);
 #ifdef DEBUG
     if (ph_dbg_draw_mask.test(phDbgDrawIKGoal)) {

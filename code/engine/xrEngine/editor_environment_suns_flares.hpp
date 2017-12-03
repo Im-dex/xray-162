@@ -44,7 +44,7 @@ public:
 
 private:
     flares_type m_flares;
-    shared_str m_shader;
+    std::string m_shader;
     collection_type* m_collection;
     bool m_use;
 }; // class flares

@@ -223,7 +223,7 @@ void CPHShell::Update() {
         (*i)->Update();
 
     mXFORM.set((*elements.begin())->mXFORM);
-    VERIFY2(_valid(mXFORM), "invalid position in update");
+    VERIFY2(xr::valid(mXFORM), "invalid position in update");
 }
 
 void CPHShell::Freeze() { CPHObject::Freeze(); }
@@ -374,7 +374,7 @@ void CPHShell::BonesCallback(CBoneInstance* B) {
 
     //}
     E->BonesCallBack(B);
-    VERIFY2(_valid(B->mTransform), "CPHShell:: BonesCallback");
+    VERIFY2(xr::valid(B->mTransform), "CPHShell:: BonesCallback");
 }
 
 void CPHShell::StataticRootBonesCallBack(CBoneInstance* B) {
@@ -488,7 +488,7 @@ void CPHShell::TransformPosition(const Fmatrix& form, motion_history_state histo
 
 void CPHShell::SetGlTransformDynamic(const Fmatrix& form) {
     VERIFY(isActive());
-    VERIFY(_valid(form));
+    VERIFY(xr::valid(form));
     Fmatrix current, replace;
     GetGlobalTransformDynamic(&current);
     current.invert();
@@ -992,7 +992,7 @@ void CPHShell::InterpolateGlobalTransform(Fmatrix* m) {
 
     mXFORM.set(*m);
 
-    VERIFY2(_valid(*m), "not valide transform");
+    VERIFY2(xr::valid(*m), "not valide transform");
 
     IPhysicsShellHolder* ref_object = (*elements.begin())->PhysicsRefObject();
     if (ref_object && m_active_count < 0) {
@@ -1013,19 +1013,19 @@ void CPHShell::GetGlobalTransformDynamic(Fmatrix* m) {
     m->mulB_43(m_object_in_root);
     mXFORM.set(*m);
 
-    VERIFY2(_valid(*m), "not valide transform");
+    VERIFY2(xr::valid(*m), "not valide transform");
 }
 void CPHShell::InterpolateGlobalPosition(Fvector* v) {
     (*elements.begin())->InterpolateGlobalPosition(v);
 
     v->add(m_object_in_root.c);
 
-    VERIFY2(_valid(*v), "not valide result position");
+    VERIFY2(xr::valid(*v), "not valide result position");
 }
 
 void CPHShell::GetGlobalPositionDynamic(Fvector* v) {
     (*elements.begin())->GetGlobalPositionDynamic(v);
-    VERIFY2(_valid(*v), "not valide result position");
+    VERIFY2(xr::valid(*v), "not valide result position");
 }
 
 void CPHShell::ObjectToRootForm(const Fmatrix& form) {
@@ -1035,7 +1035,7 @@ void CPHShell::ObjectToRootForm(const Fmatrix& form) {
     M.mul(m_object_in_root, ILF);
     M.invert();
     mXFORM.mul(form, M);
-    VERIFY2(_valid(form), "not valide transform");
+    VERIFY2(xr::valid(form), "not valide transform");
 }
 
 CPhysicsElement* CPHShell::NearestToPoint(const Fvector& point, NearestToPointCallback* cb /*=0*/) {
@@ -1080,7 +1080,7 @@ void CPHShell::PassEndElements(u16 from, u16 to, CPHShell* dest) {
             dSpaceRemove(m_space, spaced_geom);
             dSpaceAdd(dest->m_space, spaced_geom);
         }
-        VERIFY(_valid(dest->mXFORM));
+        VERIFY(xr::valid(dest->mXFORM));
         (*i)->SetShell(dest);
     }
     dest->elements.insert(dest->elements.end(), i_from, e);

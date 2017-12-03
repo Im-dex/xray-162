@@ -27,7 +27,7 @@ class thunderbolt_id;
 
 class collection : public SThunderboltCollection, public editor::property_holder_holder {
 public:
-    collection(manager const& manager, shared_str const& id);
+    collection(manager const& manager, std::string id);
     collection(const collection&) = delete;
     collection& operator=(const collection&) = delete;
     virtual ~collection();

@@ -14,7 +14,7 @@ void CStateBurerAntiAim<Object>::initialize() {
     this->object->control().activate(ControlCom::eAntiAim);
     m_allow_anti_aim = false;
 
-    VERIFY(object->get_anti_aim()->is_active());
+    VERIFY(this->object->get_anti_aim()->is_active());
 }
 
 template <class Object>

@@ -27,8 +27,8 @@ private:
     virtual void capture_input(bool const& value);
     virtual void disconnect();
 
-    virtual void value(const char* value, std::string& result);
-    virtual const char* value(std::string const& value);
+    void value(const char* value, std::string& result) override;
+    const char* value(std::string const& value) override;
 
     virtual void weather(LPCSTR value);
     virtual LPCSTR weather();

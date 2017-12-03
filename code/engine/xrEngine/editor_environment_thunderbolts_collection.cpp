@@ -33,9 +33,9 @@ editor::property_holder* property_collection<collection::container_type, collect
     return (object->object());
 }
 
-collection::collection(manager const& manager, shared_str const& id)
+collection::collection(manager const& manager, std::string id)
     : m_manager(manager), m_collection(0), m_property_holder(0) {
-    section = id;
+    section = std::move(id);
     m_collection = xr_new<collection_type>(&m_ids, this);
 }
 
@@ -52,13 +52,15 @@ collection::~collection() {
 }
 
 void collection::load(CInifile& config) {
-    CInifile::Sect& items = config.r_section(section);
+    // TODO: [imdex] remove shared_str (ini)
+    CInifile::Sect& items = config.r_section(section.c_str());
     m_ids.reserve(items.Data.size());
     typedef CInifile::Items items_type;
     items_type::const_iterator i = items.Data.begin();
     items_type::const_iterator e = items.Data.end();
     for (; i != e; ++i) {
-        thunderbolt_id* object = xr_new<thunderbolt_id>(m_manager, (*i).first);
+        // TODO: [imdex] remove shared_str (ini)
+        thunderbolt_id* object = xr_new<thunderbolt_id>(m_manager, *(*i).first);
         object->fill(m_collection);
         m_ids.push_back(object);
 
@@ -76,11 +78,12 @@ void collection::save(CInifile& config) {
 LPCSTR collection::id_getter() const { return (section.c_str()); }
 
 void collection::id_setter(LPCSTR value_) {
-    shared_str value = value_;
-    if (section._get() == value._get())
+    std::string value = value_;
+    if (section == value)
         return;
 
-    section = m_manager.unique_collection_id(value);
+    // TODO: [imdex] remove shared_str (ini)
+    section = *m_manager.unique_collection_id(value.c_str());
 }
 
 void collection::fill(editor::property_holder_collection* collection) {

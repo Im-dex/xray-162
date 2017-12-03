@@ -447,7 +447,7 @@ void CPHWorld::FrameStep(dReal step) {
     if (IsFreezed())
         return;
 
-    VERIFY(_valid(step));
+    VERIFY(xr::valid(step));
     step *= phTimefactor;
     // compute contact joints and forces
 

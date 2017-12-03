@@ -252,14 +252,14 @@ float CExplosive::ExplosionEffect(collide::rq_results& storage, CExplosive* exp_
         float l_S = effective_volume * (xr::abs(l_dir.dotproduct(obj_xform.i)) / l_d.x +
                                         xr::abs(l_dir.dotproduct(obj_xform.j)) / l_d.y +
                                         xr::abs(l_dir.dotproduct(obj_xform.k)) / l_d.z);
-        float add_eff = _sqrt(l_S / max_s) *
+        float add_eff = std::sqrt(l_S / max_s) *
                         TestPassEffect(l_source_p, l_dir, mag, expl_radius, storage, blasted_obj);
         effect += add_eff;
         if (ph_dbg_draw_mask.test(phDbgDrawExplosions)) {
             Msg("dist %f,effect R %f", mag, expl_radius);
             Msg("test pass effect %f", add_eff);
-            Msg("S effect %f", _sqrt(l_S / max_s));
-            Msg("dist/overlap effect, %f", add_eff / _sqrt(l_S / max_s));
+            Msg("S effect %f", std::sqrt(l_S / max_s));
+            Msg("dist/overlap effect, %f", add_eff / std::sqrt(l_S / max_s));
         }
 #else
         float l_S = effective_volume * (xr::abs(l_dir.dotproduct(obj_xform.i)) / l_d.x +

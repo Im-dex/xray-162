@@ -40,13 +40,13 @@ void CHUDCrosshair::SetDispersion(float disp) {
 #ifdef DEBUG
 void CHUDCrosshair::SetFirstBulletDispertion(float fbdisp) {
     Fvector4 r;
-    Fvector R = { VIEWPORT_NEAR * _sin(fbdisp), 0.f, VIEWPORT_NEAR };
+    Fvector R = { VIEWPORT_NEAR * std::sin(fbdisp), 0.f, VIEWPORT_NEAR };
     Device.mProject.transform(r, R);
 
     Fvector2 scr_size;
     scr_size.set(float(::Render->getTarget()->get_width()),
                  float(::Render->getTarget()->get_height()));
-    fb_radius = _abs(r.x) * scr_size.x / 2.0f;
+    fb_radius = xr::abs(r.x) * scr_size.x / 2.0f;
 }
 
 BOOL g_bDrawFirstBulletCrosshair = FALSE;

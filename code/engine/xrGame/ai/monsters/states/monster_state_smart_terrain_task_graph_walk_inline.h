@@ -31,7 +31,7 @@ bool CStateMonsterSmartTerrainTaskGraphWalkAbstract::check_start_conditions() {
         return false;
 
     m_task = monster->brain().smart_terrain().task(monster);
-    VERIFY3(m_task, "Smart terrain selected, but task was not set for monster ", *object->cName());
+    VERIFY3(m_task, "Smart terrain selected, but task was not set for monster ", *this->object->cName());
     if (this->object->ai_location().game_vertex_id() == m_task->game_vertex_id())
         return false;
 

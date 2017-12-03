@@ -20,8 +20,8 @@
 using editor::environment::effects::effect;
 using editor::environment::effects::manager;
 
-effect::effect(manager const& manager, shared_str const& id)
-    : m_manager(manager), m_property_holder(0), m_id(id), m_sound("") {
+effect::effect(manager const& manager, std::string id)
+    : m_manager(manager), m_property_holder(0), m_id(std::move(id)), m_sound("") {
     particles = "";
 }
 
@@ -33,11 +33,12 @@ effect::~effect() {
 }
 
 void effect::load(CInifile& config) {
-    life_time = config.r_u32(m_id, "life_time");
-    offset = config.r_fvector3(m_id, "offset");
-    particles = config.r_string(m_id, "particles");
-    m_sound = config.r_string(m_id, "sound");
-    wind_gust_factor = config.r_float(m_id, "wind_gust_factor");
+    // TODO: [imdex] remove shared_str (ini)
+    life_time = config.r_u32(m_id.c_str(), "life_time");
+    offset = config.r_fvector3(m_id.c_str(), "offset");
+    particles = config.r_string(m_id.c_str(), "particles");
+    m_sound = config.r_string(m_id.c_str(), "sound");
+    wind_gust_factor = config.r_float(m_id.c_str(), "wind_gust_factor");
 }
 
 void effect::save(CInifile& config) {
@@ -55,8 +56,8 @@ void effect::save(CInifile& config) {
 LPCSTR effect::id_getter() const { return (m_id.c_str()); }
 
 void effect::id_setter(LPCSTR value_) {
-    shared_str value = value_;
-    if (m_id._get() == value._get())
+    std::string value = value_;
+    if (m_id == value)
         return;
 
     m_id = m_manager.unique_id(value);

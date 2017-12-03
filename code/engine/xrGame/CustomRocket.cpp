@@ -85,7 +85,7 @@ void CCustomRocket::net_Destroy() {
 
 void CCustomRocket::SetLaunchParams(const Fmatrix& xform, const Fvector& vel,
                                     const Fvector& angular_vel) {
-    VERIFY2(_valid(xform), "SetLaunchParams. Invalid xform argument!");
+    VERIFY2(xr::valid(xform), "SetLaunchParams. Invalid xform argument!");
     m_LaunchXForm = xform;
     m_vLaunchVelocity = vel;
     //	if(m_pOwner->ID()==Actor()->ID())
@@ -110,7 +110,7 @@ void CCustomRocket::activate_physic_shell() {
     R_ASSERT(m_pPhysicsShell);
     if (m_pPhysicsShell->isActive())
         return;
-    VERIFY2(_valid(m_LaunchXForm), "CCustomRocket::activate_physic_shell. Invalid m_LaunchXForm!");
+    VERIFY2(xr::valid(m_LaunchXForm), "CCustomRocket::activate_physic_shell. Invalid m_LaunchXForm!");
 
     //	if(m_pOwner->ID()==Actor()->ID())
     //	{
@@ -243,7 +243,7 @@ void CCustomRocket::ObjectContactCallback(bool& do_colide, bool bo1, dContact& c
                         CalculateTriangle(l_pUD->neg_tri, g, neg_tri,
                                           Level().ObjectSpace.GetStaticVerts());
                         float cosinus = velocity.dotproduct(*((Fvector*)neg_tri.norm));
-                        VERIFY(_valid(neg_tri.dist));
+                        VERIFY(xr::valid(neg_tri.dist));
                         float dist = neg_tri.dist / cosinus;
                         velocity.mul(dist * 1.1f);
                         l_pos.sub(velocity);

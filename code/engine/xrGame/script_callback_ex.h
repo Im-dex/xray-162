@@ -112,7 +112,7 @@ public:
                 if (this->m_functor) {
                     VERIFY(this->m_functor.is_valid());
                     if (this->m_object.is_valid()) {
-                        VERIFY(m_object.is_valid());
+                        VERIFY(this->m_object.is_valid());
                         return do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                     } else
                         return do_return(this->m_functor(std::forward<Args>(args)...));
@@ -140,9 +140,9 @@ public:
         try {
             try {
                 if (this->m_functor) {
-                    VERIFY(m_functor.is_valid());
+                    VERIFY(this->m_functor.is_valid());
                     if (this->m_object.is_valid()) {
-                        VERIFY(m_object.is_valid());
+                        VERIFY(this->m_object.is_valid());
                         return do_return(this->m_functor(this->m_object, std::forward<Args>(args)...));
                     } else
                         return do_return(this->m_functor(std::forward<Args>(args)...));

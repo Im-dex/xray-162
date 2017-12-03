@@ -130,7 +130,7 @@ namespace xr {
 
 template <class T>
 bool valid(const _plane<T>& s) {
-    return _valid(s.n) && xr::valid(s.d);
+    return valid(s.n) && valid(s.d);
 }
 
 } // xr namespace

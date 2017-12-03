@@ -58,9 +58,10 @@ void manager::load() {
     sections_type::const_iterator i = sections.begin();
     sections_type::const_iterator e = sections.end();
     for (; i != e; ++i) {
-        ambient* object = xr_new<ambient>(*this, (*i)->Name);
+        // TODO: [imdex] remove shared_str (ini)
+        ambient* object = xr_new<ambient>(*this, *(*i)->Name);
         object->load(*m_manager.m_ambients_config, *m_manager.m_sound_channels_config,
-                     *m_manager.m_effects_config, (*i)->Name);
+                     *m_manager.m_effects_config, *(*i)->Name);
         object->fill(m_collection);
         m_ambients.push_back(object);
     }
@@ -98,7 +99,8 @@ shared_str manager::unique_id(shared_str const& id) const {
     if (m_collection->unique_id(id.c_str()))
         return (id);
 
-    return (m_collection->generate_unique_id(id.c_str()));
+    // TODO: [imdex] remove shared_str (ini)
+    return shared_str((m_collection->generate_unique_id(id.c_str())).c_str());
 }
 
 manager::ambients_ids_type const& manager::ambients_ids() const {
@@ -126,7 +128,8 @@ ambient* manager::get_ambient(shared_str const& id) const {
     ambient_container_type::const_iterator i = m_ambients.begin();
     ambient_container_type::const_iterator e = m_ambients.end();
     for (; i != e; ++i)
-        if ((*i)->id() == id)
+        // TODO: [imdex] remove shared_str (ini)
+        if ((*i)->id() == *id)
             return (*i);
 
     NODEFAULT;

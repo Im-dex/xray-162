@@ -44,7 +44,7 @@ void LogStackTrace(const char* header) {
     Msg("%s", header);
 
     for (size_t i = 1; i < stackTrace.count; ++i)
-        Msg("%s", stackTrace[i]);
+        LogMsg("{}", stackTrace[i]);
 }
 
 void xrDebug::gather_info(const std::string_view expression, const std::string_view description,
@@ -97,8 +97,7 @@ void xrDebug::gather_info(const std::string_view expression, const std::string_v
             Log("stack trace:\n");
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
-        buffer += xr_sprintf(buffer, assertion_info_size - size_t(buffer - buffer_base), "stack trace:%s%s",
-                             endline, endline);
+        writer.write("stack trace:{0}{0}", endline);
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
 
         BuildStackTrace(stackTrace);

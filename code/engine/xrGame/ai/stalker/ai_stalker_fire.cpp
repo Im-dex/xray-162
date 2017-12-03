@@ -913,7 +913,7 @@ void CAI_Stalker::update_throw_params() {
     if (m_throw_actual) {
         if (m_computed_object_position.similar(Position())) {
             if (m_computed_object_direction.similar(Direction())) {
-                VERIFY(_valid(m_throw_velocity));
+                VERIFY(xr::valid(m_throw_velocity));
                 return;
             }
         }

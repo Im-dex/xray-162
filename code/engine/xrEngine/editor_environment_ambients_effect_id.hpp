@@ -26,12 +26,12 @@ namespace ambients {
 
 class effect_id : public editor::property_holder_holder {
 public:
-    effect_id(effects::manager const& manager, shared_str const& id);
+    effect_id(effects::manager const& manager, std::string id);
     effect_id(const effect_id&) = delete;
     effect_id& operator=(const effect_id&) = delete;
     virtual ~effect_id();
     void fill(editor::property_holder_collection* collection);
-    inline shared_str const& id() const { return m_id; }
+    const std::string& id() const { return m_id; }
 
 private:
     typedef editor::property_holder property_holder_type;
@@ -46,7 +46,7 @@ private:
 private:
     property_holder_type* m_property_holder;
     effects::manager const& m_manager;
-    shared_str m_id;
+    std::string m_id;
 }; // class effect_id
 } // namespace ambients
 } // namespace environment

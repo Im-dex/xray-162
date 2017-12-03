@@ -295,7 +295,7 @@ void CHelicopter::startRocket(u16 idx) {
         xform.k.set(dir);
         Fvector::generate_orthonormal_basis(xform.k, xform.j, xform.i);
         xform.c = rocketXFORM.c;
-        VERIFY2(_valid(xform), "CHelicopter::startRocket. Invalid xform");
+        VERIFY2(xr::valid(xform), "CHelicopter::startRocket. Invalid xform");
         LaunchRocket(xform, vel, zero_vel);
 
         NET_Packet P;

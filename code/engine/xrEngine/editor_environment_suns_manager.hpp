@@ -36,7 +36,7 @@ public:
     void load();
     void save();
     void fill(editor::property_holder* holder);
-    shared_str unique_id(shared_str const& id) const;
+    std::string unique_id(const std::string& id) const;
     CLensFlareDescriptor* get_flare(shared_str const& id) const;
 
 private:

@@ -16,8 +16,8 @@
 using editor::environment::thunderbolts::thunderbolt_id;
 using editor::environment::thunderbolts::manager;
 
-thunderbolt_id::thunderbolt_id(manager const& manager, shared_str const& id)
-    : m_manager(manager), m_id(id), m_property_holder(0) {}
+thunderbolt_id::thunderbolt_id(manager const& manager, std::string id)
+    : m_manager(manager), m_id(std::move(id)), m_property_holder(0) {}
 
 thunderbolt_id::~thunderbolt_id() {
     if (!Device.editor())

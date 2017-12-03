@@ -266,7 +266,7 @@ BOOL CGameObject::net_Spawn(CSE_Abstract* DC) {
             PH_DBG_ObjectTrackName(), Position().x, Position().y, Position().z);
     }
 #endif
-    VERIFY(_valid(renderable.xform));
+    VERIFY(xr::valid(renderable.xform));
     VERIFY(!fis_zero(DET(renderable.xform)));
     CSE_ALifeObject* O = smart_cast<CSE_ALifeObject*>(E);
     if (O && xr_strlen(O->m_ini_string)) {

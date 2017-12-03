@@ -31,15 +31,15 @@ public:
     typedef editor::property_holder property_holder_type;
 
 public:
-    time(editor::environment::manager* manager, weather const* weather, shared_str const& id);
+    time(editor::environment::manager* manager, weather const* weather, std::string id);
     time(const time&) = delete;
     time& operator=(const time&) = delete;
     virtual ~time();
     void load(CInifile& config);
-    void load_from(shared_str const& id, CInifile& config, shared_str const& new_id);
+    void load_from(std::string id, CInifile& config, std::string new_id);
     void save(CInifile& config);
     void fill(::editor::property_holder_collection* holder);
-    inline shared_str const& id() const { return m_identifier; }
+    const std::string& id() const { return m_identifier; }
     virtual property_holder_type* object() { return m_property_holder; }
     virtual void lerp(CEnvironment* parent, CEnvDescriptor& A, CEnvDescriptor& B, float f,
                       CEnvModifier& M, float m_power);
@@ -74,12 +74,10 @@ private:
     LPCSTR xr_stdcall clouds_texture_getter() const;
     void xr_stdcall clouds_texture_setter(LPCSTR value);
 
-private:
-    shared_str m_ambient;
-    shared_str m_sun;
-    shared_str m_thunderbolt_collection;
+    std::string m_ambient;
+    std::string m_sun;
+    std::string m_thunderbolt_collection;
 
-private:
     editor::environment::manager& m_manager;
     weather const* m_weather;
     property_holder_type* m_property_holder;

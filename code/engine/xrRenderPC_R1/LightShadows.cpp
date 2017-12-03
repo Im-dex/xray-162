@@ -194,8 +194,8 @@ void CLightShadows::calculate() {
                 Lpos.add(C.C);
                 Lrange = 120;
             } else {
-                VERIFY(_valid(Lpos));
-                VERIFY(_valid(C.C));
+                VERIFY(xr::valid(Lpos));
+                VERIFY(xr::valid(C.C));
                 float _dist;
                 while (true) {
                     _dist = C.C.distance_to(Lpos);

@@ -15,7 +15,7 @@
 
 using editor::environment::sound_channels::source;
 
-source::source(shared_str const& source) : m_source(source), m_property_holder(0) {}
+source::source(std::string source) : m_source(std::move(source)), m_property_holder(0) {}
 
 source::~source() {
     if (!Device.editor())

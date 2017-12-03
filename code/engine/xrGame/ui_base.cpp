@@ -264,7 +264,7 @@ std::string ui_core::get_xml_name(const std::string_view fn) {
             }
         }
 #ifdef DEBUG
-        LogMsg("[16-9] get_xml_name for[{0}] returns [{1}]", fn, str);
+        LogMsg("[16-9] get_xml_name for[{0}] returns [{1}]", fn, writer.strView());
 #endif // #ifdef DEBUG
     }
 

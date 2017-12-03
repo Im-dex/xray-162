@@ -16,7 +16,7 @@ CEvaluator::CPropertyEvaluatorMember(CPropertyStorage* storage, _condition_type 
                                      _value_type value, bool equality, LPCSTR evaluator_name)
     : m_condition_id(condition_id), m_value(value), m_equality(equality) {
 #ifdef LOG_ACTION
-    m_evaluator_name = evaluator_name;
+    this->m_evaluator_name = evaluator_name;
 #endif
     this->m_storage = storage;
 }

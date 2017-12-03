@@ -1183,7 +1183,7 @@ void CActor::make_Interpolation() {
             if (!pSyncObj)
                 return;
             pSyncObj->set_State(PredictedState); //, PredictedState.enabled);
-            VERIFY2(_valid(renderable.xform), *cName());
+            VERIFY2(xr::valid(renderable.xform), *cName());
         } else {
             float factor = 0.0f;
 
@@ -1193,7 +1193,7 @@ void CActor::make_Interpolation() {
             Fvector NewPos;
             NewPos.lerp(IStart.Pos, IEnd.Pos, factor);
 
-            VERIFY2(_valid(renderable.xform), *cName());
+            VERIFY2(xr::valid(renderable.xform), *cName());
 
             //			r_model_yaw		= angle_lerp	(IStart.o_model,IEnd.o_model,
             //factor);
@@ -1354,7 +1354,7 @@ void dbg_draw_piramid(Fvector pos, Fvector dir, float size, float xdir, u32 colo
     bool Double = false;
     Fmatrix t;
     t.identity();
-    if (_valid(dir) && dir.square_magnitude() > 0.01f) {
+    if (xr::valid(dir) && dir.square_magnitude() > 0.01f) {
         t.k.normalize(dir);
         Fvector::generate_orthonormal_basis(t.k, t.j, t.i);
     } else {

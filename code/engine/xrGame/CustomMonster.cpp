@@ -307,7 +307,7 @@ void CCustomMonster::net_Import(NET_Packet& P) {
 void CCustomMonster::shedule_Update(u32 DT) {
     VERIFY(!g_Alive() || processing_enabled());
     // Queue shrink
-    VERIFY(_valid(Position()));
+    VERIFY(xr::valid(Position()));
     u32 dwTimeCL = Level().timeServer() - NET_Latency;
     VERIFY(!NET.empty());
     while ((NET.size() > 2) && (NET[1].dwTimeStamp < dwTimeCL))
@@ -341,7 +341,7 @@ void CCustomMonster::shedule_Update(u32 DT) {
 
     m_dwCurrentTime = Device.dwTimeGlobal;
 
-    VERIFY(_valid(Position()));
+    VERIFY(xr::valid(Position()));
     if (Remote()) {
     } else {
         // here is monster AI call
@@ -362,9 +362,9 @@ void CCustomMonster::shedule_Update(u32 DT) {
         float temp = conditions().health();
         if (temp > 0) {
             Exec_Action(dt);
-            VERIFY(_valid(Position()));
+            VERIFY(xr::valid(Position()));
             // Exec_Visibility		();
-            VERIFY(_valid(Position()));
+            VERIFY(xr::valid(Position()));
             //////////////////////////////////////
             // Fvector C; float R;
             //////////////////////////////////////
@@ -568,18 +568,18 @@ void CCustomMonster::eye_pp_s0() {
     Fmatrix& mEye = V->LL_GetTransform(u16(eye_bone));
     Fmatrix X;
     X.mul_43(XFORM(), mEye);
-    VERIFY(_valid(mEye));
+    VERIFY(xr::valid(mEye));
 
     const MonsterSpace::SBoneRotation& rotation = head_orientation();
 
-    VERIFY(_valid(rotation.current.yaw));
-    VERIFY(_valid(m_fEyeShiftYaw));
-    VERIFY(_valid(rotation.current.pitch));
+    VERIFY(xr::valid(rotation.current.yaw));
+    VERIFY(xr::valid(m_fEyeShiftYaw));
+    VERIFY(xr::valid(rotation.current.pitch));
 
     eye_matrix.setHPB(-rotation.current.yaw + m_fEyeShiftYaw, -rotation.current.pitch, 0);
     eye_matrix.c.add(X.c, m_tEyeShift);
 
-    VERIFY(_valid(eye_matrix));
+    VERIFY(xr::valid(eye_matrix));
 }
 
 void CCustomMonster::update_range_fov(float& new_range, float& new_fov, float start_range,
@@ -617,7 +617,7 @@ void CCustomMonster::eye_pp_s1() {
     Device.Statistic->AI_Vis_Query.Begin();
     Fmatrix mProject, mFull, mView;
     mView.build_camera_dir(eye_matrix.c, eye_matrix.k, eye_matrix.j);
-    VERIFY(_valid(eye_matrix));
+    VERIFY(xr::valid(eye_matrix));
     mProject.build_projection(deg2rad(new_fov), 1, 0.1f, new_range);
     mFull.mul(mProject, mView);
     feel_vision_query(mFull, eye_matrix.c);

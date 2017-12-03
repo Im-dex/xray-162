@@ -197,7 +197,7 @@ void CCF_Skeleton::BuildTopLevel() {
     bv_sphere.P.average(vis.sphere.P);
     bv_sphere.R += vis.sphere.R;
     bv_sphere.R *= 0.5f;
-    VERIFY(_valid(bv_sphere));
+    VERIFY(xr::valid(bv_sphere));
 }
 
 BOOL CCF_Skeleton::_RayQuery(const collide::ray_defs& Q, collide::rq_results& R) {

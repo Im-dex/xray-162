@@ -158,7 +158,7 @@ void CWeapon::UpdateFireDependencies_internal() {
 
         if (GetHUDmode()) {
             HudItemData()->setup_firedeps(m_current_firedeps);
-            VERIFY(_valid(m_current_firedeps.m_FireParticlesXForm));
+            VERIFY(xr::valid(m_current_firedeps.m_FireParticlesXForm));
         } else {
             // 3rd person or no parent
             Fmatrix& parent = XFORM();
@@ -174,7 +174,7 @@ void CWeapon::UpdateFireDependencies_internal() {
             parent.transform_dir(m_current_firedeps.vLastFD);
 
             m_current_firedeps.m_FireParticlesXForm.set(parent);
-            VERIFY(_valid(m_current_firedeps.m_FireParticlesXForm));
+            VERIFY(xr::valid(m_current_firedeps.m_FireParticlesXForm));
         }
     }
 }

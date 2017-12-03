@@ -185,8 +185,8 @@ void CLightProjector::calculate() {
         IRenderable* O = receivers[tid];
         const vis_data& vis = O->renderable.visual->getVisData();
         CROS_impl* LT = (CROS_impl*)O->renderable_ROS();
-        VERIFY2(_valid(O->renderable.xform), "Invalid object transformation");
-        VERIFY2(_valid(vis.sphere.P), "Invalid object's visual sphere");
+        VERIFY2(xr::valid(O->renderable.xform), "Invalid object transformation");
+        VERIFY2(xr::valid(vis.sphere.P), "Invalid object's visual sphere");
 
         Fvector C;
         O->renderable.xform.transform_tiny(C, vis.sphere.P);
@@ -219,7 +219,7 @@ void CLightProjector::calculate() {
         v_Cs = v_C;
         v_C.y += P_cam_dist;
         v_N.set(0, 0, 1);
-        VERIFY(_valid(v_C) && _valid(v_Cs) && _valid(v_N));
+        VERIFY(xr::valid(v_C) && xr::valid(v_Cs) && xr::valid(v_N));
 
         // validate
         Fvector v;

@@ -74,26 +74,26 @@ SPPInfo::SPPInfo() {
 void SPPInfo::normalize() {}
 
 void SPPInfo::validate(LPCSTR str) {
-    VERIFY2(_valid(duality.h), str);
-    VERIFY2(_valid(duality.v), str);
-    VERIFY2(_valid(blur), str);
-    VERIFY2(_valid(gray), str);
-    VERIFY2(_valid(noise.intensity), str);
-    VERIFY2(_valid(noise.grain), str);
-    VERIFY2(_valid(noise.fps), str);
-    VERIFY2(_valid(color_base.r), str);
-    VERIFY2(_valid(color_base.g), str);
-    VERIFY2(_valid(color_base.b), str);
-    VERIFY2(_valid(color_gray.r), str);
-    VERIFY2(_valid(color_gray.g), str);
-    VERIFY2(_valid(color_gray.b), str);
-    VERIFY2(_valid(color_add.r), str);
-    VERIFY2(_valid(color_add.g), str);
-    VERIFY2(_valid(color_add.b), str);
+    VERIFY2(xr::valid(duality.h), str);
+    VERIFY2(xr::valid(duality.v), str);
+    VERIFY2(xr::valid(blur), str);
+    VERIFY2(xr::valid(gray), str);
+    VERIFY2(xr::valid(noise.intensity), str);
+    VERIFY2(xr::valid(noise.grain), str);
+    VERIFY2(xr::valid(noise.fps), str);
+    VERIFY2(xr::valid(color_base.r), str);
+    VERIFY2(xr::valid(color_base.g), str);
+    VERIFY2(xr::valid(color_base.b), str);
+    VERIFY2(xr::valid(color_gray.r), str);
+    VERIFY2(xr::valid(color_gray.g), str);
+    VERIFY2(xr::valid(color_gray.b), str);
+    VERIFY2(xr::valid(color_add.r), str);
+    VERIFY2(xr::valid(color_add.g), str);
+    VERIFY2(xr::valid(color_add.b), str);
 }
 
 SPPInfo& SPPInfo::lerp(const SPPInfo& def, const SPPInfo& to, float factor) {
-    VERIFY(_valid(factor));
+    VERIFY(xr::valid(factor));
     SPPInfo& pp = *this;
     clamp(factor, 0.0f, 1.0f);
 

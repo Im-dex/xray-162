@@ -131,7 +131,7 @@ public:
 //const;
 
 #ifdef DEBUG
-    void CInventoryOwner::DumpInfo() const;
+    void DumpInfo() const;
 #endif
 
     CInfoPortionWrapper* m_known_info_registry;

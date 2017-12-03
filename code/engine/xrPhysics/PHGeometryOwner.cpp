@@ -348,7 +348,7 @@ float CPHGeometryOwner::getRadius() {
 void CPHGeometryOwner::get_mc_vs_transform(Fvector& mc, const Fmatrix& m) {
     mc.set(m_mass_center);
     m.transform_tiny(mc);
-    VERIFY2(_valid(mc), "invalid mc in_set_transform");
+    VERIFY2(xr::valid(mc), "invalid mc in_set_transform");
 }
 
 void CPHGeometryOwner::setStaticForm(const Fmatrix& form) {

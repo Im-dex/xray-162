@@ -343,7 +343,7 @@ void CSightAction::predict_object_position(bool use_exact_position) {
         }
     }
 
-    VERIFY(_valid(m_vector3d));
+    VERIFY(xr::valid(m_vector3d));
     execute_position(m_object->eye_matrix.c);
 }
 

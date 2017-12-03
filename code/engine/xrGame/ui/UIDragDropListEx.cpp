@@ -281,8 +281,8 @@ void CUIDragDropListEx::Update() {
 void CUIDragDropListEx::ReinitScroll() {
     float h1 = m_container->GetWndSize().y;
     float h2 = GetWndSize().y;
-    VERIFY(_valid(h1));
-    VERIFY(_valid(h2));
+    VERIFY(xr::valid(h1));
+    VERIFY(xr::valid(h2));
     float dh = h1 - h2;
     m_vScrollBar->Show((dh > 0) || m_flags.test(flAlwaysShowScroll));
     m_vScrollBar->Enable((dh > 0) || m_flags.test(flAlwaysShowScroll));

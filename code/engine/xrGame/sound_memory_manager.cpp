@@ -50,7 +50,7 @@ void CSoundMemoryManager::reinit() {
     m_priorities.clear();
     m_last_sound_time = 0;
     m_sound_threshold = m_min_sound_threshold;
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
 #ifdef USE_SELECTED_SOUND
     xr_delete(m_selected_sound);
 #endif
@@ -73,9 +73,9 @@ void CSoundMemoryManager::reload(LPCSTR section) {
 }
 
 IC void CSoundMemoryManager::update_sound_threshold() {
-    VERIFY(_valid(m_self_sound_factor));
-    VERIFY(_valid(m_sound_threshold));
-    VERIFY(_valid(m_min_sound_threshold));
+    VERIFY(xr::valid(m_self_sound_factor));
+    VERIFY(xr::valid(m_sound_threshold));
+    VERIFY(xr::valid(m_min_sound_threshold));
     VERIFY(!fis_zero(m_decrease_factor));
     VERIFY(m_sound_decrease_quant);
     // t = max(t*f^((tc - tl)/tq),min_threshold)
@@ -83,7 +83,7 @@ IC void CSoundMemoryManager::update_sound_threshold() {
                                      exp(float(Device.dwTimeGlobal - m_last_sound_time) /
                                          float(m_sound_decrease_quant) * log(m_decrease_factor)),
                                  m_min_sound_threshold);
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
 }
 
 IC u32 CSoundMemoryManager::priority(const MemorySpace::CSoundObject& sound) const {
@@ -114,7 +114,7 @@ void CSoundMemoryManager::feel_sound_new(CObject* object, int sound_type,
         return;
 #endif // MASTER_GOLD
 
-    VERIFY(_valid(sound_power));
+    VERIFY(xr::valid(sound_power));
     if (!m_sounds)
         return;
 
@@ -129,9 +129,9 @@ void CSoundMemoryManager::feel_sound_new(CObject* object, int sound_type,
         position.x, position.y, position.z, sound_power);
 #endif
 
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
     m_object->sound_callback(object, sound_type, position, sound_power);
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
 
     update_sound_threshold();
 
@@ -139,27 +139,27 @@ void CSoundMemoryManager::feel_sound_new(CObject* object, int sound_type,
     if (!entity_alive->g_Alive())
         return;
 
-    VERIFY(_valid(sound_power));
+    VERIFY(xr::valid(sound_power));
     if (is_sound_type(sound_type, SOUND_TYPE_WEAPON))
         sound_power *= m_weapon_factor;
 
-    VERIFY(_valid(sound_power));
+    VERIFY(xr::valid(sound_power));
     if (is_sound_type(sound_type, SOUND_TYPE_ITEM))
         sound_power *= m_item_factor;
 
-    VERIFY(_valid(sound_power));
+    VERIFY(xr::valid(sound_power));
     if (is_sound_type(sound_type, SOUND_TYPE_MONSTER))
         sound_power *= m_npc_factor;
 
-    VERIFY(_valid(sound_power));
+    VERIFY(xr::valid(sound_power));
     if (is_sound_type(sound_type, SOUND_TYPE_ANOMALY))
         sound_power *= m_anomaly_factor;
 
-    VERIFY(_valid(sound_power));
+    VERIFY(xr::valid(sound_power));
     if (is_sound_type(sound_type, SOUND_TYPE_WORLD))
         sound_power *= m_world_factor;
 
-    VERIFY(_valid(sound_power));
+    VERIFY(xr::valid(sound_power));
     if (sound_power >= m_sound_threshold) {
         if (is_sound_type(sound_type, SOUND_TYPE_WEAPON_SHOOTING)) {
             // this is fake!
@@ -186,9 +186,9 @@ void CSoundMemoryManager::feel_sound_new(CObject* object, int sound_type,
     }
 
     m_last_sound_time = Device.dwTimeGlobal;
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
     m_sound_threshold = std::max(m_sound_threshold, sound_power);
-    VERIFY(_valid(m_sound_threshold));
+    VERIFY(xr::valid(m_sound_threshold));
 }
 
 void CSoundMemoryManager::add(const CSoundObject& sound_object, bool check_for_existance) {

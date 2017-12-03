@@ -419,8 +419,8 @@ IC bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& s
                     NODEFAULT;
                 }
 #ifdef DEBUG
-                VERIFY(_valid(next1));
-                VERIFY(_valid(next2));
+                VERIFY(xr::valid(next1));
+                VERIFY(xr::valid(next2));
                 u32 dwIntersect =
 #endif
                     intersect_no_check(start_point.x, start_point.y, finish_point.x, finish_point.y,
@@ -428,8 +428,8 @@ IC bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& s
                                        &tIntersectPoint.z);
 #ifdef DEBUG
                 VERIFY(dwIntersect);
-                VERIFY(_valid(tIntersectPoint.x));
-                VERIFY(_valid(tIntersectPoint.z));
+                VERIFY(xr::valid(tIntersectPoint.x));
+                VERIFY(xr::valid(tIntersectPoint.z));
 #endif
 
                 clamp(tIntersectPoint.x, std::min(next1.x, next2.x), std::max(next1.x, next2.x));

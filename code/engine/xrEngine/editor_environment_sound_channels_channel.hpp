@@ -30,7 +30,7 @@ private:
     typedef CEnvAmbient::SSndChannel inherited;
 
 public:
-    channel(manager const& manager, shared_str const& id);
+    channel(manager const& manager, std::string id);
     channel(const channel&) = delete;
     channel& operator=(const channel&) = delete;
     virtual ~channel();

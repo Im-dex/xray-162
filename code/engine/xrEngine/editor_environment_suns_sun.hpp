@@ -27,7 +27,7 @@ class manager;
 
 class sun : public CLensFlare, public editor::property_holder_holder {
 public:
-    sun(manager const& manager, shared_str const& section);
+    sun(manager const& manager, std::string section);
     sun(const sun&) = delete;
     sun& operator=(const sun&) = delete;
     ~sun();
@@ -40,13 +40,13 @@ private:
     void xr_stdcall id_setter(LPCSTR value);
 
 public:
-    inline shared_str const& id() const { return m_id; }
+    const std::string& id() const { return m_id; }
     virtual property_holder* object();
 
 private:
-    shared_str m_id;
-    shared_str m_shader;
-    shared_str m_texture;
+    std::string m_id;
+    std::string m_shader;
+    std::string m_texture;
     manager const& m_manager;
     editor::property_holder* m_property_holder;
     float m_radius;

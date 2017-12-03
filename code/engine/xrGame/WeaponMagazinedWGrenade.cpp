@@ -220,14 +220,16 @@ void CWeaponMagazinedWGrenade::state_Fire(float dt) {
         {
                 ++m_iShotNum;
                 OnShot			();
-                
+                
+
                 // Ammo
                 if(Local())
                 {
                         VERIFY				(m_magazine.size());
                         m_magazine.pop_back	();
                         --iAmmoElapsed;
-                
+                
+
                         VERIFY((u32)iAmmoElapsed == m_magazine.size());
                 }
         }
@@ -330,7 +332,7 @@ void CWeaponMagazinedWGrenade::LaunchGrenade() {
 
         d.normalize();
         d.mul(CRocketLauncher::m_fLaunchSpeed);
-        VERIFY2(_valid(launch_matrix),
+        VERIFY2(xr::valid(launch_matrix),
                 "CWeaponMagazinedWGrenade::SwitchState. Invalid launch_matrix!");
         CRocketLauncher::LaunchRocket(launch_matrix, d, zero_vel);
 

@@ -52,27 +52,27 @@ void CPlanner::update() {
 #ifdef LOG_ACTION
     // printing solution
     if (m_use_log) {
-        if (m_solution_changed) {
+        if (this->m_solution_changed) {
             show_current_world_state();
             show_target_world_state();
             Msg("%6d : Solution for object %s [%d vertices searched]", Device.dwTimeGlobal,
                 object_name(),
                 ai().graph_engine().solver_algorithm().data_storage().get_visited_node_count());
-            for (int i = 0; i < (int)solution().size(); ++i)
-                Msg("%s", action2string(solution()[i]));
+            for (int i = 0; i < (int)this->solution().size(); ++i)
+                Msg("%s", action2string(this->solution()[i]));
         }
     }
 #endif
 
 #ifdef LOG_ACTION
-    if (m_failed) {
+    if (this->m_failed) {
         // printing current world state
         show();
 
-        Msg("! ERROR : there is no action sequence, which can transfer current world state to the "
-            "target one");
-        Msg("Time : %6d", Device.dwTimeGlobal);
-        Msg("Object : %s", object_name());
+        LogMsg("! ERROR : there is no action sequence, which can transfer current world state to the "
+               "target one");
+        LogMsg("Time : {:6d}", Device.dwTimeGlobal);
+        LogMsg("Object : {}", object_name());
 
         show_current_world_state();
         show_target_world_state();
@@ -211,34 +211,30 @@ IC void CPlanner::set_use_log(bool value) {
 
 TEMPLATE_SPECIALIZATION
 IC void CPlanner::show_current_world_state() {
-    Msg("Current world state :");
-    auto I = evaluators().cbegin();
-    auto E = evaluators().cend();
-    for (; I != E; ++I) {
-        xr_vector<COperatorCondition>::const_iterator J =
-            std::lower_bound(current_state().conditions().begin(),
-                             current_state().conditions().end(), CWorldProperty((*I).first, false));
+    Log("Current world state :");
+    for (const auto& ev : this->evaluators()) {
+        auto J =
+            std::lower_bound(this->current_state().conditions().begin(),
+                             this->current_state().conditions().end(), CWorldProperty(ev.first, false));
         char temp = '?';
-        if ((J != current_state().conditions().end()) && ((*J).condition() == (*I).first)) {
+        if ((J != this->current_state().conditions().end()) && ((*J).condition() == ev.first)) {
             temp = (*J).value() ? '+' : '-';
-            Msg("%5c : [%d][%s]", temp, (*I).first, property2string((*I).first));
+            Msg("%5c : [%d][%s]", temp, ev.first, property2string(ev.first));
         }
     }
 }
 
 TEMPLATE_SPECIALIZATION
 IC void CPlanner::show_target_world_state() {
-    Msg("Target world state :");
-    auto I = evaluators().cbegin();
-    auto E = evaluators().cend();
-    for (; I != E; ++I) {
-        xr_vector<COperatorCondition>::const_iterator J =
-            std::lower_bound(target_state().conditions().begin(), target_state().conditions().end(),
-                             CWorldProperty((*I).first, false));
+    Log("Target world state :");
+    for (const auto& ev : this->evaluators()) {
+        auto J =
+            std::lower_bound(this->target_state().conditions().begin(), this->target_state().conditions().end(),
+                             CWorldProperty(ev.first, false));
         char temp = '?';
-        if ((J != target_state().conditions().end()) && ((*J).condition() == (*I).first)) {
+        if ((J != this->target_state().conditions().end()) && ((*J).condition() == ev.first)) {
             temp = (*J).value() ? '+' : '-';
-            Msg("%5c : [%d][%s]", temp, (*I).first, property2string((*I).first));
+            Msg("%5c : [%d][%s]", temp, ev.first, property2string(ev.first));
         }
     }
 }
@@ -248,37 +244,33 @@ IC void CPlanner::show(LPCSTR offset) {
     string256 temp;
     strconcat(sizeof(temp), temp, offset, "    ");
     {
-        Msg("\n%sEVALUATORS : %d\n", offset, evaluators().size());
-        auto I = evaluators().cbegin();
-        auto E = evaluators().cend();
-        for (; I != E; ++I)
-            Msg("%sevaluator   [%d][%s]", offset, (*I).first, property2string((*I).first));
+        LogMsg("\n{0}EVALUATORS : {1}\n", offset, this->evaluators().size());
+        for (const auto& ev : this->evaluators())
+            LogMsg("{0}evaluator   [{1}][{2}]", offset, ev.first, property2string(ev.first));
     }
     {
-        Msg("\n%sOPERATORS : %d\n", offset, operators().size());
-        auto I = operators().cbegin();
-        auto E = operators().cend();
-        for (; I != E; ++I) {
-            Msg("%soperator    [%d][%s]", offset, (*I).m_operator_id,
-                (*I).m_operator->m_action_name);
+        Msg("\n%sOPERATORS : %d\n", offset, this->operators().size());
+        for (const auto& op : this->operators()) {
+            LogMsg("{0}soperator    [{1}][{2}]", offset, op.m_operator_id,
+                   op.m_operator->m_action_name);
 
             {
-                auto i = (*I).m_operator->conditions().conditions().cbegin();
-                auto e = (*I).m_operator->conditions().conditions().cend();
+                auto i = op.m_operator->conditions().conditions().cbegin();
+                auto e = op.m_operator->conditions().conditions().cend();
                 for (; i != e; ++i)
                     Msg("%s	condition [%d][%s] = %s", offset, (*i).condition(),
                         property2string((*i).condition()), (*i).value() ? "TRUE" : "FALSE");
             }
             {
-                auto i = (*I).m_operator->effects().conditions().cbegin();
-                auto e = (*I).m_operator->effects().conditions().cend();
+                auto i = op.m_operator->effects().conditions().cbegin();
+                auto e = op.m_operator->effects().conditions().cend();
                 for (; i != e; ++i)
                     Msg("%s	effect    [%d][%s] = %s", offset, (*i).condition(),
                         property2string((*i).condition()), (*i).value() ? "TRUE" : "FALSE");
             }
 
-            (*I).m_operator->show(temp);
-            Msg(" ");
+            op.m_operator->show(temp);
+            LogMsg(" ");
         }
     }
 }

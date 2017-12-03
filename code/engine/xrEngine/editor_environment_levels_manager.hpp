@@ -49,7 +49,7 @@ private:
         }
     }; // struct predicate
 
-    typedef associative_vector<shared_str, std::pair<LPCSTR, shared_str>, predicate>
+    typedef associative_vector<shared_str, std::pair<LPCSTR, std::string>, predicate>
         levels_container_type;
 
 private:

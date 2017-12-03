@@ -350,7 +350,7 @@ void CShootingObject::UpdateFlameParticles() {
     pos.set(get_ParticlesXFORM());
     pos.c.set(get_CurrentFirePoint());
 
-    VERIFY(_valid(pos));
+    VERIFY(xr::valid(pos));
 
     m_pFlameParticles->SetXFORM(pos);
 

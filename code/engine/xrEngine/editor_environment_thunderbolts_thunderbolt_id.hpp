@@ -24,7 +24,7 @@ class manager;
 
 class thunderbolt_id : public editor::property_holder_holder {
 public:
-    thunderbolt_id(manager const& manager, shared_str const& thunderbolt);
+    thunderbolt_id(manager const& manager, std::string thunderbolt);
     thunderbolt_id(const thunderbolt_id&) = delete;
     thunderbolt_id& operator=(const thunderbolt_id&) = delete;
     virtual ~thunderbolt_id();
@@ -44,7 +44,7 @@ private:
 private:
     property_holder_type* m_property_holder;
     manager const& m_manager;
-    shared_str m_id;
+    std::string m_id;
 }; // class thunderbolt_id
 } // namespace thunderbolts
 } // namespace environment

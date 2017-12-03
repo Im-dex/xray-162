@@ -424,10 +424,14 @@ typedef _quaternion<double> Dquaternion;
 template struct XRCORE_API _quaternion<float>;
 template struct XRCORE_API _quaternion<double>;
 
+namespace xr {
+
 template <class T>
-bool _valid(const _quaternion<T>& s) {
-    return xr::valid(s.x) && xr::valid(s.y) && xr::valid(s.z) && xr::valid(s.w);
+bool valid(const _quaternion<T>& s) {
+    return valid(s.x) && valid(s.y) && valid(s.z) && valid(s.w);
 }
+
+} // xr namespace
 
 #undef UNIT_TOLERANCE
 #undef QZERO_TOLERANCE

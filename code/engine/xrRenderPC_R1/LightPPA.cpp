@@ -150,7 +150,7 @@ void CLightR_Manager::render_point(u32 _priority) {
     for (xr_vector<light*>::iterator it = selected_point.begin(); it != selected_point.end();
          it++) {
         light* L = *it;
-        VERIFY(L->spatial.sector && _valid(L->range));
+        VERIFY(L->spatial.sector && xr::valid(L->range));
 
         //		0. Dimm & Clip
         float lc_dist = lc_COP.distance_to(L->spatial.sphere.P) - L->spatial.sphere.R;

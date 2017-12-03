@@ -1116,14 +1116,14 @@ void CAI_Stalker::shedule_Update(u32 DT) {
     //	if (Position().distance_to(Level().CurrentEntity()->Position()) <= 50.f)
     //		Msg				("[%6d][SH][%s]",Device.dwTimeGlobal,*cName());
     // Queue shrink
-    VERIFY(_valid(Position()));
+    VERIFY(xr::valid(Position()));
     u32 dwTimeCL = Level().timeServer() - NET_Latency;
     VERIFY(!NET.empty());
     while ((NET.size() > 2) && (NET[1].dwTimeStamp < dwTimeCL))
         NET.pop_front();
 
     Fvector vNewPosition = Position();
-    VERIFY(_valid(Position()));
+    VERIFY(xr::valid(Position()));
     // *** general stuff
     float dt = float(DT) / 1000.f;
 
@@ -1167,7 +1167,7 @@ void CAI_Stalker::shedule_Update(u32 DT) {
     if (Remote()) {
     } else {
         // here is monster AI call
-        VERIFY(_valid(Position()));
+        VERIFY(xr::valid(Position()));
         m_fTimeUpdateDelta = dt;
         Device.Statistic->AI_Think.Begin();
         if (GetScriptControl())
@@ -1179,7 +1179,7 @@ void CAI_Stalker::shedule_Update(u32 DT) {
             Think();
         m_dwLastUpdateTime = Device.dwTimeGlobal;
         Device.Statistic->AI_Think.End();
-        VERIFY(_valid(Position()));
+        VERIFY(xr::valid(Position()));
 
         // Look and action streams
         float temp = conditions().health();
@@ -1213,7 +1213,7 @@ void CAI_Stalker::shedule_Update(u32 DT) {
             STOP_PROFILE
         }
     }
-    VERIFY(_valid(Position()));
+    VERIFY(xr::valid(Position()));
 
     START_PROFILE("stalker/schedule_update/inventory_owner")
     UpdateInventoryOwner(DT);
@@ -1226,9 +1226,9 @@ void CAI_Stalker::shedule_Update(u32 DT) {
     //#endif
 
     START_PROFILE("stalker/schedule_update/physics")
-    VERIFY(_valid(Position()));
+    VERIFY(xr::valid(Position()));
     m_pPhysics_support->in_shedule_Update(DT);
-    VERIFY(_valid(Position()));
+    VERIFY(xr::valid(Position()));
     STOP_PROFILE
     STOP_PROFILE
     STOP_PROFILE
