@@ -6,10 +6,7 @@
 //	Description : engine interface class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef EDITOR_ENGINE_HPP_INCLUDED
-#define EDITOR_ENGINE_HPP_INCLUDED
-
-class shared_str;
+#pragma once
 
 namespace editor {
 
@@ -24,9 +21,9 @@ public:
     virtual void pause(bool const& value) = 0;
     virtual void capture_input(bool const& value) = 0;
     virtual void disconnect() = 0;
-    // shared_str support
-    virtual void value(LPCSTR value, shared_str& result) = 0;
-    virtual LPCSTR value(shared_str const& value) = 0;
+    // std::string support
+    virtual void value(const char* value, std::string& result) = 0;
+    virtual const char* value(std::string const& value) = 0;
 
     // weather editor
 
@@ -72,5 +69,3 @@ public:
 }; // class engine
 
 } // namespace editor
-
-#endif // ifndef EDITOR_ENGINE_HPP_INCLUDED

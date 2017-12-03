@@ -239,7 +239,7 @@ static LPCSTR state_to_string (const CLensFlare::LFState &state)
 static Fvector2 RayDeltas[CLensFlare::MAX_RAYS] = {
     { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, -1 }, { 0, 1 },
 };
-void CLensFlare::OnFrame(shared_str id) {
+void CLensFlare::OnFrame(const std::string& id) {
     if (dwFrame == Device.dwFrame)
         return;
 #ifndef _EDITOR
@@ -578,15 +578,15 @@ void CLensFlare::Render(BOOL bSun, BOOL bFlares, BOOL bGradient) {
     */
 }
 
-shared_str CLensFlare::AppendDef(CEnvironment& environment, CInifile* pIni, LPCSTR sect) {
+std::string CLensFlare::AppendDef(CEnvironment& environment, CInifile* pIni, LPCSTR sect) {
     if (!sect || (0 == sect[0]))
         return "";
-    for (auto it = m_Palette.begin(); it != m_Palette.end(); it++)
-        if (0 == xr_strcmp(*(*it)->section, sect))
+    for (const auto& flare : m_Palette) {
+        if (flare->section == sect)
             return sect;
+    }
 
-    environment.add_flare(m_Palette, sect);
-    return sect;
+    return environment.add_flare(m_Palette, sect)->section;
 }
 
 void CLensFlare::OnDeviceCreate() {

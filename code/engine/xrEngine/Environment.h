@@ -1,5 +1,4 @@
-#ifndef EnvironmentH
-#define EnvironmentH
+#pragma once
 
 // refs
 class ENGINE_API IRender_Visual;
@@ -53,7 +52,7 @@ public:
     struct SEffect {
         u32 life_time;
         ref_sound sound;
-        shared_str particles;
+        std::string particles;
         Fvector offset;
         float wind_gust_factor;
         float wind_blast_in_time;
@@ -65,7 +64,7 @@ public:
     };
     using EffectVec = xr_vector<SEffect*>;
     struct SSndChannel {
-        shared_str m_load_section;
+        std::string m_load_section;
         Fvector2 m_sound_dist;
         Ivector4 m_sound_period;
 
@@ -87,8 +86,8 @@ public:
             return (m_sound_dist.x < m_sound_dist.y) ? Random.randF(m_sound_dist.x, m_sound_dist.y)
                                                      : 0;
         }
-        INGAME_EDITOR_VIRTUAL ~SSndChannel() {}
-        inline INGAME_EDITOR_VIRTUAL sounds_type& sounds() { return m_sounds; }
+        INGAME_EDITOR_VIRTUAL ~SSndChannel() = default;
+        INGAME_EDITOR_VIRTUAL sounds_type& sounds() { return m_sounds; }
 
     protected:
         xr_vector<ref_sound> m_sounds;
@@ -96,31 +95,31 @@ public:
     using SSndChannelVec = xr_vector<SSndChannel*>;
 
 protected:
-    shared_str m_load_section;
+    std::string m_load_section;
 
     EffectVec m_effects;
     Ivector2 m_effect_period;
 
     SSndChannelVec m_sound_channels;
-    shared_str m_ambients_config_filename;
+    std::string m_ambients_config_filename;
 
 public:
-    IC const shared_str& name() { return m_load_section; }
-    IC const shared_str& get_ambients_config_filename() { return m_ambients_config_filename; }
+    const std::string& name() const { return m_load_section; }
+    const std::string& get_ambients_config_filename() const { return m_ambients_config_filename; }
 
     INGAME_EDITOR_VIRTUAL void load(CInifile& ambients_config, CInifile& sound_channels_config,
-                                    CInifile& effects_config, const shared_str& section);
-    IC SEffect* get_rnd_effect() {
+                                    CInifile& effects_config, std::string section);
+    SEffect* get_rnd_effect() {
         return effects().empty() ? 0 : effects()[Random.randI(effects().size())];
     }
-    IC u32 get_rnd_effect_time() { return Random.randI(m_effect_period.x, m_effect_period.y); }
+    u32 get_rnd_effect_time() { return Random.randI(m_effect_period.x, m_effect_period.y); }
 
     INGAME_EDITOR_VIRTUAL SEffect* create_effect(CInifile& config, LPCSTR id);
     INGAME_EDITOR_VIRTUAL SSndChannel* create_sound_channel(CInifile& config, LPCSTR id);
     INGAME_EDITOR_VIRTUAL ~CEnvAmbient();
     void destroy();
-    inline INGAME_EDITOR_VIRTUAL EffectVec& effects() { return m_effects; }
-    inline INGAME_EDITOR_VIRTUAL SSndChannelVec& get_snd_channels() { return m_sound_channels; }
+    INGAME_EDITOR_VIRTUAL EffectVec& effects() { return m_effects; }
+    INGAME_EDITOR_VIRTUAL SSndChannelVec& get_snd_channels() { return m_sound_channels; }
 };
 
 class ENGINE_API CEnvDescriptor {
@@ -128,9 +127,9 @@ public:
     float exec_time;
     float exec_time_loaded;
 
-    shared_str sky_texture_name;
-    shared_str sky_texture_env_name;
-    shared_str clouds_texture_name;
+    std::string sky_texture_name;
+    std::string sky_texture_env_name;
+    std::string clouds_texture_name;
 
     BENCH_SEC_SCRAMBLEMEMBER1
 
@@ -169,12 +168,12 @@ public:
 
     //	int					lens_flare_id;
     //	int					tb_id;
-    shared_str lens_flare_id;
-    shared_str tb_id;
+    std::string lens_flare_id;
+    std::string tb_id;
 
     CEnvAmbient* env_ambient;
 
-    CEnvDescriptor(shared_str const& identifier);
+    CEnvDescriptor(std::string identifier);
 
     void load(CEnvironment& environment, CInifile& config);
     void copy(const CEnvDescriptor& src) {
@@ -188,7 +187,7 @@ public:
     void on_device_create();
     void on_device_destroy();
 
-    shared_str m_identifier;
+    std::string m_identifier;
 };
 
 class ENGINE_API CEnvDescriptorMixer : public CEnvDescriptor {
@@ -205,7 +204,7 @@ public:
     float fog_far;
 
 public:
-    CEnvDescriptorMixer(shared_str const& identifier);
+    CEnvDescriptorMixer(std::string identifier);
     INGAME_EDITOR_VIRTUAL void lerp(CEnvironment* parent, CEnvDescriptor& A, CEnvDescriptor& B,
                                     float f, CEnvModifier& M, float m_power);
     void clear();
@@ -214,16 +213,10 @@ public:
 
 class ENGINE_API CEnvironment {
     friend class dxEnvironmentRender;
-    struct str_pred {
-        IC bool operator()(const shared_str& x, const shared_str& y) const {
-            return xr_strcmp(x, y) < 0;
-        }
-    };
-
 public:
     using EnvAmbVec = xr_vector<CEnvAmbient*>;
     using EnvVec = xr_vector<CEnvDescriptor*>;
-    using EnvsMap = xr_map<shared_str, EnvVec, str_pred>;
+    using EnvsMap = xr_map<std::string, EnvVec>;
 
 private:
     // clouds
@@ -277,8 +270,8 @@ public:
     CEnvDescriptor* WFX_end_desc[2];
 
     EnvVec* CurrentWeather;
-    shared_str CurrentWeatherName;
-    shared_str CurrentCycleName;
+    std::string CurrentWeatherName;
+    std::string CurrentCycleName;
 
     EnvsMap WeatherCycles;
     EnvsMap WeatherFXs;
@@ -294,7 +287,7 @@ public:
     void SelectEnvs(float gt);
 
     void UpdateAmbient();
-    INGAME_EDITOR_VIRTUAL CEnvAmbient* AppendEnvAmb(const shared_str& sect);
+    INGAME_EDITOR_VIRTUAL CEnvAmbient* AppendEnvAmb(std::string sect);
 
     void Invalidate();
 
@@ -317,13 +310,13 @@ public:
     void RenderFlares();
     void RenderLast();
 
-    bool SetWeatherFX(shared_str name);
-    bool StartWeatherFXFromTime(shared_str name, float time);
+    bool SetWeatherFX(const std::string& name);
+    bool StartWeatherFXFromTime(const std::string& name, float time);
     bool IsWFXPlaying() { return bWFX; }
     void StopWFX();
 
-    void SetWeather(shared_str name, bool forced = false);
-    shared_str GetWeather() { return CurrentWeatherName; }
+    void SetWeather(const std::string& name, bool forced = false);
+    const std::string& GetWeather() const { return CurrentWeatherName; }
     void ChangeGameTime(float game_time);
     void SetGameTime(float game_time, float time_factor);
 
@@ -355,7 +348,7 @@ public:
     CInifile* m_thunderbolts_config;
 
 protected:
-    INGAME_EDITOR_VIRTUAL CEnvDescriptor* create_descriptor(shared_str const& identifier,
+    INGAME_EDITOR_VIRTUAL CEnvDescriptor* create_descriptor(std::string identifier,
                                                             CInifile* config);
     INGAME_EDITOR_VIRTUAL void load_weathers();
     INGAME_EDITOR_VIRTUAL void load_weather_effects();
@@ -370,9 +363,9 @@ public:
     INGAME_EDITOR_VIRTUAL SThunderboltCollection*
     thunderbolt_collection(CInifile* pIni, CInifile* thunderbolts, LPCSTR section);
     INGAME_EDITOR_VIRTUAL SThunderboltCollection*
-    thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection, shared_str const& id);
+    thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection, const std::string& id);
     INGAME_EDITOR_VIRTUAL CLensFlareDescriptor*
-    add_flare(xr_vector<CLensFlareDescriptor*>& collection, shared_str const& id);
+    add_flare(xr_vector<CLensFlareDescriptor*>& collection, const std::string& id);
 
 public:
     float p_var_alt;
@@ -389,5 +382,3 @@ public:
 
 ENGINE_API extern Flags32 psEnvFlags;
 ENGINE_API extern float psVisDistance;
-
-#endif // EnvironmentH

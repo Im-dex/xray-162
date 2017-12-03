@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #ifndef _EDITOR
 #include "render.h"
@@ -43,16 +42,15 @@ const float MAX_DIST_FACTOR = 0.95f;
 
 //////////////////////////////////////////////////////////////////////////
 // environment
-CEnvironment::CEnvironment() : CurrentEnv(0), m_ambients_config(0) {
+CEnvironment::CEnvironment() : CurrentEnv(nullptr), m_ambients_config(nullptr) {
     bNeed_re_create_env = FALSE;
     bWFX = false;
-    Current[0] = 0;
-    Current[1] = 0;
-    CurrentWeather = 0;
-    CurrentWeatherName = 0;
-    eff_Rain = 0;
-    eff_LensFlare = 0;
-    eff_Thunderbolt = 0;
+    Current[0] = nullptr;
+    Current[1] = nullptr;
+    CurrentWeather = nullptr;
+    eff_Rain = nullptr;
+    eff_LensFlare = nullptr;
+    eff_Thunderbolt = nullptr;
     OnDeviceCreate();
 #ifdef _EDITOR
     ed_from_time = 0.f;
@@ -212,17 +210,17 @@ float CEnvironment::NormalizeTime(float tm) {
         return tm;
 }
 
-void CEnvironment::SetWeather(shared_str name, bool forced) {
+void CEnvironment::SetWeather(const std::string& name, bool forced) {
     //.	static BOOL bAlready = FALSE;
     //.	if(bAlready)	return;
     if (name.size()) {
         //.		bAlready = TRUE;
         auto it = WeatherCycles.find(name);
         if (it == WeatherCycles.end()) {
-            Msg("! Invalid weather name: %s", name.c_str());
+            LogMsg("! Invalid weather name: {}", name);
             return;
         }
-        R_ASSERT3(it != WeatherCycles.end(), "Invalid weather name.", *name);
+        R_ASSERT3(it != WeatherCycles.end(), "Invalid weather name.", name.c_str());
         CurrentCycleName = it->first;
         if (forced) {
             Invalidate();
@@ -235,7 +233,7 @@ void CEnvironment::SetWeather(shared_str name, bool forced) {
             SelectEnvs(fGameTime);
         }
 #ifdef WEATHER_LOGGING
-        Msg("Starting Cycle: %s [%s]", *name, forced ? "forced" : "deferred");
+        LogMsg("Starting Cycle: {0} [{1}]", name, forced ? "forced"sv : "deferred"sv);
 #endif
     } else {
 #ifndef _EDITOR
@@ -244,12 +242,12 @@ void CEnvironment::SetWeather(shared_str name, bool forced) {
     }
 }
 
-bool CEnvironment::SetWeatherFX(shared_str name) {
+bool CEnvironment::SetWeatherFX(const std::string& name) {
     if (bWFX)
         return false;
     if (name.size()) {
         auto it = WeatherFXs.find(name);
-        R_ASSERT3(it != WeatherFXs.end(), "Invalid weather effect name.", *name);
+        R_ASSERT3(it != WeatherFXs.end(), "Invalid weather effect name.", name.c_str());
         EnvVec* PrevWeather = CurrentWeather;
         VERIFY(PrevWeather);
         CurrentWeather = &it->second;
@@ -310,7 +308,7 @@ bool CEnvironment::SetWeatherFX(shared_str name) {
     return true;
 }
 
-bool CEnvironment::StartWeatherFXFromTime(shared_str name, float time) {
+bool CEnvironment::StartWeatherFXFromTime(const std::string& name, float time) {
     if (!SetWeatherFX(name))
         return false;
 
@@ -322,7 +320,7 @@ bool CEnvironment::StartWeatherFXFromTime(shared_str name, float time) {
 }
 
 void CEnvironment::StopWFX() {
-    VERIFY(CurrentCycleName.size());
+    VERIFY(!CurrentCycleName.empty());
     bWFX = false;
     SetWeather(CurrentCycleName, false);
     Current[0] = WFX_end_desc[0];
@@ -465,10 +463,10 @@ void CEnvironment::OnFrame() {
     wind_strength_factor =
         clampr(PerlinNoise1D->GetContinious(Device.fTimeGlobal) + 0.5f, 0.f, 1.f);
 
-    shared_str l_id =
+    const auto& l_id =
         (current_weight < 0.5f) ? Current[0]->lens_flare_id : Current[1]->lens_flare_id;
     eff_LensFlare->OnFrame(l_id);
-    shared_str t_id = (current_weight < 0.5f) ? Current[0]->tb_id : Current[1]->tb_id;
+    const auto& t_id = (current_weight < 0.5f) ? Current[0]->tb_id : Current[1]->tb_id;
     eff_Thunderbolt->OnFrame(t_id, CurrentEnv->bolt_period, CurrentEnv->bolt_duration);
     eff_Rain->OnFrame();
 
@@ -563,38 +561,35 @@ SThunderboltCollection* CEnvironment::thunderbolt_collection(CInifile* pIni, CIn
                                                              LPCSTR section) {
     SThunderboltCollection* result = xr_new<SThunderboltCollection>();
     result->load(pIni, thunderbolts, section);
-    return (result);
+    return result;
 }
 
 SThunderboltCollection*
 CEnvironment::thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection,
-                                     shared_str const& id) {
-    typedef xr_vector<SThunderboltCollection*> Container;
-    Container::iterator i = collection.begin();
-    Container::iterator e = collection.end();
-    for (; i != e; ++i)
-        if ((*i)->section == id)
-            return (*i);
+                                     const std::string& id) {
+    for (auto* item : collection) {
+        if (item->section == id)
+            return item;
+    }
 
     NODEFAULT;
 #ifdef DEBUG
-    return (0);
+    return nullptr;
 #endif // #ifdef DEBUG
 }
 
 CLensFlareDescriptor* CEnvironment::add_flare(xr_vector<CLensFlareDescriptor*>& collection,
-                                              shared_str const& id) {
+                                              const std::string& id) {
     typedef xr_vector<CLensFlareDescriptor*> Flares;
 
-    Flares::const_iterator i = collection.begin();
-    Flares::const_iterator e = collection.end();
-    for (; i != e; ++i) {
-        if ((*i)->section == id)
-            return (*i);
+    for (auto* flare : collection) {
+        if (flare->section == id)
+            return flare;
     }
 
     CLensFlareDescriptor* result = xr_new<CLensFlareDescriptor>();
+    // TODO: [imdex] remove shared_str (ini)
     result->load(m_suns_config, id.c_str());
     collection.push_back(result);
-    return (result);
+    return result;
 }

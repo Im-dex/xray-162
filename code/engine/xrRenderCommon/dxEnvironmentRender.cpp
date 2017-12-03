@@ -112,13 +112,13 @@ void dxEnvDescriptorMixerRender::lerp(IEnvDescriptorRender* inA, IEnvDescriptorR
 }
 
 void dxEnvDescriptorRender::OnDeviceCreate(CEnvDescriptor& owner) {
-    if (owner.sky_texture_name.size())
+    if (!owner.sky_texture_name.empty())
         sky_texture.create(owner.sky_texture_name.c_str());
 
-    if (owner.sky_texture_env_name.size())
+    if (!owner.sky_texture_env_name.empty())
         sky_texture_env.create(owner.sky_texture_env_name.c_str());
 
-    if (owner.clouds_texture_name.size())
+    if (!owner.clouds_texture_name.empty())
         clouds_texture.create(owner.clouds_texture_name.c_str());
 }
 

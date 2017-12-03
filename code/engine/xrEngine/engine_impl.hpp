@@ -6,8 +6,7 @@
 //	Description : engine implementation class
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef ENGINE_IMPL_HPP_INCLUDED
-#define ENGINE_IMPL_HPP_INCLUDED
+#pragma once
 
 #ifdef INGAME_EDITOR
 
@@ -28,8 +27,8 @@ private:
     virtual void capture_input(bool const& value);
     virtual void disconnect();
 
-    virtual void value(LPCSTR value, shared_str& result);
-    virtual LPCSTR value(shared_str const& value);
+    virtual void value(const char* value, std::string& result);
+    virtual const char* value(std::string const& value);
 
     virtual void weather(LPCSTR value);
     virtual LPCSTR weather();
@@ -78,5 +77,3 @@ private:
 }; // class engine_impl
 
 #endif // #ifdef INGAME_EDITOR
-
-#endif // ifndef ENGINE_IMPL_HPP_INCLUDED

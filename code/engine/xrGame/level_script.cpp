@@ -84,12 +84,12 @@ CScriptGameObject* get_object_by_name(LPCSTR caObjectName) {
 CScriptGameObject* get_object_by_id(u16 id) {
     CGameObject* pGameObject = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
     if (!pGameObject)
-        return NULL;
+        return nullptr;
 
     return pGameObject->lua_game_object();
 }
 
-LPCSTR get_weather() { return (*g_pGamePersistent->Environment().GetWeather()); }
+LPCSTR get_weather() { return g_pGamePersistent->Environment().GetWeather().c_str(); }
 
 void set_weather(LPCSTR weather_name, bool forced) {
 #ifdef INGAME_EDITOR

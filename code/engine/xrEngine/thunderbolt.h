@@ -60,14 +60,14 @@ public:
 struct SThunderboltCollection {
     using DescVec = xr_vector<SThunderboltDesc*>;
     DescVec palette;
-    shared_str section;
+    std::string section;
 
 public:
     SThunderboltCollection();
     ~SThunderboltCollection();
     void load(CInifile* pIni, CInifile* thunderbolts, LPCSTR sect);
     SThunderboltDesc* GetRandomDesc() {
-        VERIFY(palette.size() > 0);
+        VERIFY(!palette.empty());
         return palette[Random.randI(palette.size())];
     }
 };
@@ -114,16 +114,16 @@ private:
     //	float						p_fog_color;
 private:
     static BOOL RayPick(const Fvector& s, const Fvector& d, float& range);
-    void Bolt(shared_str id, float period, float life_time);
+    void Bolt(const std::string& id, const float period, const float life_time);
 
 public:
     CEffect_Thunderbolt();
     ~CEffect_Thunderbolt();
 
-    void OnFrame(shared_str id, float period, float duration);
+    void OnFrame(const std::string& id, const float period, const float duration);
     void Render();
 
-    shared_str AppendDef(CEnvironment& environment, CInifile* pIni, CInifile* thunderbolts,
+    std::string AppendDef(CEnvironment& environment, CInifile* pIni, CInifile* thunderbolts,
                          LPCSTR sect);
 };
 

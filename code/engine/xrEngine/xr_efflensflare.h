@@ -44,12 +44,11 @@ public:
     void AddFlare(float fRadius, float fOpacity, float fPosition, LPCSTR tex_name, LPCSTR sh_name);
     // ref_shader			CreateShader	(LPCSTR tex_name, LPCSTR sh_name);
 
-    shared_str section;
+    std::string section;
 
 public:
     CLensFlareDescriptor() {
         m_Flags.zero();
-        section = 0;
         m_StateBlendUpSpeed = m_StateBlendDnSpeed = 0.1f;
     }
     void load(CInifile* pIni, LPCSTR section);
@@ -108,12 +107,12 @@ public:
     CLensFlare();
     virtual ~CLensFlare();
 
-    void OnFrame(shared_str id);
+    void OnFrame(const std::string& id);
     void __fastcall Render(BOOL bSun, BOOL bFlares, BOOL bGradient);
     void OnDeviceCreate();
     void OnDeviceDestroy();
 
-    shared_str AppendDef(CEnvironment& environment, CInifile* pIni, LPCSTR sect);
+    std::string AppendDef(CEnvironment& environment, CInifile* pIni, LPCSTR sect);
 
     void Invalidate() { m_State = lfsNone; }
 };

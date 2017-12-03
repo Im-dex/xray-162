@@ -61,17 +61,17 @@ void engine_impl::capture_input(bool const& value) {
 
 void engine_impl::disconnect() { Console->Execute("quit"); }
 
-void engine_impl::value(LPCSTR value, shared_str& result) { result = value; }
+void engine_impl::value(const char* value, std::string& result) { result = value; }
 
-LPCSTR engine_impl::value(shared_str const& value) { return (value.c_str()); }
+const char*LPCSTR engine_impl::value(std::string const& value) { return (value.c_str()); }
 
 void engine_impl::weather(LPCSTR value) {
     if (!g_pGamePersistent)
         return;
 
-    shared_str new_weather_id = value;
+    std::string new_weather_id = value;
     CEnvironment& environment = g_pGamePersistent->Environment();
-    if (environment.CurrentWeatherName._get() == new_weather_id._get())
+    if (environment.CurrentWeatherName == new_weather_id)
         return;
 
     typedef CEnvironment::EnvsMap EnvsMap;
@@ -97,7 +97,7 @@ void engine_impl::current_weather_frame(LPCSTR frame_id) {
     if (!g_pGamePersistent)
         return;
 
-    shared_str new_frame_id = frame_id;
+    std::string new_frame_id = frame_id;
 
     CEnvironment& environment = g_pGamePersistent->Environment();
     VERIFY(environment.CurrentWeather);
@@ -106,7 +106,7 @@ void engine_impl::current_weather_frame(LPCSTR frame_id) {
     EnvVec::const_iterator i = frames.begin();
     EnvVec::const_iterator e = frames.end();
     for (; i != e; ++i)
-        if ((*i)->m_identifier._get() == new_frame_id._get()) {
+        if ((*i)->m_identifier == new_frame_id) {
             environment.Current[0] = (*i);
             environment.Current[1] = ((i + 1) == e) ? (*frames.begin()) : *(i + 1);
             bool set_time = true;

@@ -72,12 +72,13 @@ float CEnvModifier::sum(CEnvModifier& M, Fvector3& view) {
 void CEnvAmbient::SSndChannel::load(CInifile& config, LPCSTR sect) {
     m_load_section = sect;
 
-    m_sound_dist.x = config.r_float(m_load_section, "min_distance");
-    m_sound_dist.y = config.r_float(m_load_section, "max_distance");
-    m_sound_period.x = config.r_s32(m_load_section, "period0");
-    m_sound_period.y = config.r_s32(m_load_section, "period1");
-    m_sound_period.z = config.r_s32(m_load_section, "period2");
-    m_sound_period.w = config.r_s32(m_load_section, "period3");
+    // TODO: [imdex] remove shared_str (ini)
+    m_sound_dist.x = config.r_float(m_load_section.c_str(), "min_distance");
+    m_sound_dist.y = config.r_float(m_load_section.c_str(), "max_distance");
+    m_sound_period.x = config.r_s32(m_load_section.c_str(), "period0");
+    m_sound_period.y = config.r_s32(m_load_section.c_str(), "period1");
+    m_sound_period.z = config.r_s32(m_load_section.c_str(), "period2");
+    m_sound_period.w = config.r_s32(m_load_section.c_str(), "period3");
 
     //	m_sound_period			= config.r_ivector4(sect,"sound_period");
     R_ASSERT(m_sound_period.x <= m_sound_period.y && m_sound_period.z <= m_sound_period.w);
@@ -101,8 +102,9 @@ void CEnvAmbient::SSndChannel::load(CInifile& config, LPCSTR sect) {
 CEnvAmbient::SEffect* CEnvAmbient::create_effect(CInifile& config, LPCSTR id) {
     SEffect* result = xr_new<SEffect>();
     result->life_time = iFloor(config.r_float(id, "life_time") * 1000.f);
+    // TODO: [imdex] remove shared_str (ini)
     result->particles = config.r_string(id, "particles");
-    VERIFY(result->particles.size());
+    VERIFY(!result->particles.empty());
     result->offset = config.r_fvector3(id, "offset");
     result->wind_gust_factor = config.r_float(id, "wind_gust_factor");
 
@@ -140,13 +142,15 @@ void CEnvAmbient::destroy() {
 }
 
 void CEnvAmbient::load(CInifile& ambients_config, CInifile& sound_channels_config,
-                       CInifile& effects_config, const shared_str& sect) {
+                       CInifile& effects_config, std::string sect) {
+    // TODO: [imdex] remove shared_str (ini)
     m_ambients_config_filename = ambients_config.fname();
-    m_load_section = sect;
+    m_load_section = std::move(sect);
     string_path tmp;
 
     // sounds
-    LPCSTR channels = ambients_config.r_string(sect, "sound_channels");
+    // TODO: [imdex] remove shared_str (ini)
+    LPCSTR channels = ambients_config.r_string(m_load_section.c_str(), "sound_channels");
     u32 cnt = _GetItemCount(channels);
     //	R_ASSERT3				(cnt,"sound_channels empty", sect.c_str());
     m_sound_channels.resize(cnt);
@@ -156,9 +160,10 @@ void CEnvAmbient::load(CInifile& ambients_config, CInifile& sound_channels_confi
             create_sound_channel(sound_channels_config, _GetItem(channels, i, tmp));
 
     // effects
-    m_effect_period.set(iFloor(ambients_config.r_float(sect, "min_effect_period") * 1000.f),
-                        iFloor(ambients_config.r_float(sect, "max_effect_period") * 1000.f));
-    LPCSTR effs = ambients_config.r_string(sect, "effects");
+    // TODO: [imdex] remove shared_str (ini)
+    m_effect_period.set(iFloor(ambients_config.r_float(m_load_section.c_str(), "min_effect_period") * 1000.f),
+                        iFloor(ambients_config.r_float(m_load_section.c_str(), "max_effect_period") * 1000.f));
+    LPCSTR effs = ambients_config.r_string(m_load_section.c_str(), "effects");
     cnt = _GetItemCount(effs);
     //	R_ASSERT3				(cnt,"effects empty", sect.c_str());
 
@@ -172,7 +177,7 @@ void CEnvAmbient::load(CInifile& ambients_config, CInifile& sound_channels_confi
 //-----------------------------------------------------------------------------
 // Environment descriptor
 //-----------------------------------------------------------------------------
-CEnvDescriptor::CEnvDescriptor(shared_str const& identifier) : m_identifier(identifier) {
+CEnvDescriptor::CEnvDescriptor(std::string identifier) : m_identifier(std::move(identifier)) {
     exec_time = 0.0f;
     exec_time_loaded = 0.0f;
 
@@ -181,7 +186,6 @@ CEnvDescriptor::CEnvDescriptor(shared_str const& identifier) : m_identifier(iden
     sky_rotation = 0.0f;
 
     far_plane = 400.0f;
-    ;
 
     fog_color.set(1, 1, 1);
     fog_density = 0.0f;
@@ -207,7 +211,7 @@ CEnvDescriptor::CEnvDescriptor(shared_str const& identifier) : m_identifier(iden
     lens_flare_id = "";
     tb_id = "";
 
-    env_ambient = NULL;
+    env_ambient = nullptr;
 }
 
 #define C_CHECK(C)                                                           \
@@ -222,11 +226,13 @@ void CEnvDescriptor::load(CEnvironment& environment, CInifile& config) {
               "Incorrect weather time", m_identifier.c_str());
     exec_time = tm.x * 3600.f + tm.y * 60.f + tm.z;
     exec_time_loaded = exec_time;
+    // TODO: [imdex] could be optimized
     string_path st, st_env;
     xr_strcpy(st, config.r_string(m_identifier.c_str(), "sky_texture"));
     strconcat(sizeof(st_env), st_env, st, "#small");
     sky_texture_name = st;
     sky_texture_env_name = st_env;
+    // TODO: [imdex] remove shared_str (ini)
     clouds_texture_name = config.r_string(m_identifier.c_str(), "clouds_texture");
     LPCSTR cldclr = config.r_string(m_identifier.c_str(), "clouds_color");
     float multiplier = 0, save = 0;
@@ -271,10 +277,11 @@ void CEnvDescriptor::load(CEnvironment& environment, CInifile& config) {
         environment, environment.m_thunderbolt_collections_config,
         environment.m_thunderbolts_config,
         config.r_string(m_identifier.c_str(), "thunderbolt_collection"));
-    bolt_period = (tb_id.size()) ? config.r_float(m_identifier.c_str(), "thunderbolt_period") : 0.f;
+    bolt_period = (!tb_id.empty()) ? config.r_float(m_identifier.c_str(), "thunderbolt_period") : 0.f;
     bolt_duration =
-        (tb_id.size()) ? config.r_float(m_identifier.c_str(), "thunderbolt_duration") : 0.f;
+        (!tb_id.empty()) ? config.r_float(m_identifier.c_str(), "thunderbolt_duration") : 0.f;
     env_ambient = config.line_exist(m_identifier.c_str(), "ambient")
+                      // TODO: [imdex] remove shared_str (ini)
                       ? environment.AppendEnvAmb(config.r_string(m_identifier.c_str(), "ambient"))
                       : 0;
 
@@ -320,8 +327,8 @@ void CEnvDescriptor::on_device_destroy() {
 //-----------------------------------------------------------------------------
 // Environment Mixer
 //-----------------------------------------------------------------------------
-CEnvDescriptorMixer::CEnvDescriptorMixer(shared_str const& identifier)
-    : CEnvDescriptor(identifier) {}
+CEnvDescriptorMixer::CEnvDescriptorMixer(std::string identifier)
+    : CEnvDescriptor(std::move(identifier)) {}
 
 void CEnvDescriptorMixer::destroy() {
     m_pDescriptorMixer->Destroy();
@@ -463,14 +470,15 @@ void CEnvDescriptorMixer::lerp(CEnvironment*, CEnvDescriptor& A, CEnvDescriptor&
 //-----------------------------------------------------------------------------
 // Environment IO
 //-----------------------------------------------------------------------------
-CEnvAmbient* CEnvironment::AppendEnvAmb(const shared_str& sect) {
-    for (auto it = Ambients.begin(); it != Ambients.end(); it++)
-        if ((*it)->name().equal(sect))
-            return (*it);
+CEnvAmbient* CEnvironment::AppendEnvAmb(std::string sect) {
+    for (auto* env : Ambients) {
+        if (env->name() == sect)
+            return env;
+    }
 
     Ambients.push_back(xr_new<CEnvAmbient>());
-    Ambients.back()->load(*m_ambients_config, *m_sound_channels_config, *m_effects_config, sect);
-    return (Ambients.back());
+    Ambients.back()->load(*m_ambients_config, *m_sound_channels_config, *m_effects_config, std::move(sect));
+    return Ambients.back();
 }
 
 void CEnvironment::mods_load() {
@@ -514,10 +522,11 @@ void CEnvironment::load_level_specific_ambients() {
     for (auto I = Ambients.begin(), E = Ambients.end(); I != E; ++I) {
         CEnvAmbient* ambient = *I;
 
-        shared_str section_name = ambient->name();
+        const auto& section_name = ambient->name();
 
         // choose a source ini file
-        CInifile* source = (level_ambients && level_ambients->section_exist(section_name))
+        // TODO: [imdex] remove shared_str (ini)
+        CInifile* source = (level_ambients && level_ambients->section_exist(section_name.c_str()))
                                ? level_ambients
                                : m_ambients_config;
 
@@ -531,8 +540,8 @@ void CEnvironment::load_level_specific_ambients() {
     xr_delete(level_ambients);
 }
 
-CEnvDescriptor* CEnvironment::create_descriptor(shared_str const& identifier, CInifile* config) {
-    CEnvDescriptor* result = xr_new<CEnvDescriptor>(identifier);
+CEnvDescriptor* CEnvironment::create_descriptor(std::string identifier, CInifile* config) {
+    CEnvDescriptor* result = xr_new<CEnvDescriptor>(std::move(identifier));
     if (config)
         result->load(*this, *config);
     return (result);
@@ -571,10 +580,9 @@ void CEnvironment::load_weathers() {
 
         env.reserve(sections.size());
 
-        sections_type::const_iterator i = sections.begin();
-        sections_type::const_iterator e = sections.end();
-        for (; i != e; ++i) {
-            CEnvDescriptor* object = create_descriptor((*i)->Name, config);
+        for (const auto* sect : sections) {
+            // TODO: [imdex] remove shared_str (ini)
+            CEnvDescriptor* object = create_descriptor(*sect->Name, config);
             env.push_back(object);
         }
 
@@ -587,11 +595,11 @@ void CEnvironment::load_weathers() {
     auto _I = WeatherCycles.begin();
     auto _E = WeatherCycles.end();
     for (; _I != _E; _I++) {
-        R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", *_I->first);
+        R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", _I->first.c_str());
         std::sort(_I->second.begin(), _I->second.end(), sort_env_etl_pred);
     }
     R_ASSERT2(!WeatherCycles.empty(), "Empty weathers.");
-    SetWeather((*WeatherCycles.begin()).first.c_str());
+    SetWeather((*WeatherCycles.begin()).first);
 }
 
 void CEnvironment::load_weather_effects() {
@@ -628,10 +636,9 @@ void CEnvironment::load_weather_effects() {
         env.reserve(sections.size() + 2);
         env.push_back(create_descriptor("00:00:00", false));
 
-        sections_type::const_iterator i = sections.begin();
-        sections_type::const_iterator e = sections.end();
-        for (; i != e; ++i) {
-            CEnvDescriptor* object = create_descriptor((*i)->Name, config);
+        for (const auto* sect : sections) {
+            // TODO: [imdex] remove shared_str (ini)
+            CEnvDescriptor* object = create_descriptor(*sect->Name, config);
             env.push_back(object);
         }
 
@@ -667,7 +674,7 @@ void CEnvironment::load_weather_effects() {
     auto _I = WeatherFXs.begin();
     auto _E = WeatherFXs.end();
     for (; _I != _E; _I++) {
-        R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", *_I->first);
+        R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", _I->first.c_str());
         std::sort(_I->second.begin(), _I->second.end(), sort_env_etl_pred);
     }
 }
@@ -716,8 +723,8 @@ void CEnvironment::unload() {
     xr_delete(eff_Rain);
     xr_delete(eff_LensFlare);
     xr_delete(eff_Thunderbolt);
-    CurrentWeather = 0;
-    CurrentWeatherName = 0;
+    CurrentWeather = nullptr;
+    CurrentWeatherName.clear();
     CurrentEnv->clear();
     Invalidate();
 

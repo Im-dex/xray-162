@@ -299,12 +299,13 @@ void CGamePersistent::WeathersUpdate() {
                     ambient_effect_wind_on = true;
 
                     ambient_particles =
+                        // TODO: [imdex] use string_view
                         CParticlesObject::Create(eff->particles.c_str(), FALSE, false);
                     Fvector pos;
                     pos.add(Device.vCameraPosition, eff->offset);
                     ambient_particles->play_at_pos(pos);
                     if (eff->sound._handle())
-                        eff->sound.play_at_pos(0, pos);
+                        eff->sound.play_at_pos(nullptr, pos);
 
                     Environment().wind_blast_strength_start_value =
                         Environment().wind_strength_factor;

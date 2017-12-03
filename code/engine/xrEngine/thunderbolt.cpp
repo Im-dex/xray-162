@@ -83,7 +83,7 @@ SThunderboltCollection::SThunderboltCollection() {}
 
 void SThunderboltCollection::load(CInifile* pIni, CInifile* thunderbolts, LPCSTR sect) {
     section = sect;
-    int tb_count = pIni->line_count(sect);
+    const int tb_count = pIni->line_count(sect);
     for (int tb_idx = 0; tb_idx < tb_count; tb_idx++) {
         LPCSTR N, V;
         if (pIni->r_line(sect, tb_idx, &N, &V))
@@ -138,13 +138,14 @@ CEffect_Thunderbolt::~CEffect_Thunderbolt() {
     // hGeom_gradient.destroy		();
 }
 
-shared_str CEffect_Thunderbolt::AppendDef(CEnvironment& environment, CInifile* pIni,
-                                          CInifile* thunderbolts, LPCSTR sect) {
+std::string CEffect_Thunderbolt::AppendDef(CEnvironment& environment, CInifile* pIni,
+                                           CInifile* thunderbolts, LPCSTR sect) {
     if (!sect || (0 == sect[0]))
         return "";
-    for (auto it = collection.begin(); it != collection.end(); it++)
-        if ((*it)->section == sect)
-            return (*it)->section;
+    for (const auto* item : collection) {
+        if (item->section == sect)
+            return item->section;
+    }
     collection.push_back(environment.thunderbolt_collection(pIni, thunderbolts, sect));
     return collection.back()->section;
 }
@@ -176,14 +177,15 @@ BOOL CEffect_Thunderbolt::RayPick(const Fvector& s, const Fvector& d, float& dis
 }
 #define FAR_DIST g_pGamePersistent->Environment().CurrentEnv->far_plane
 
-void CEffect_Thunderbolt::Bolt(shared_str id, float period, float lt) {
-    VERIFY(id.size());
+void CEffect_Thunderbolt::Bolt(const std::string& id, const float period, const float lt) {
+    VERIFY(!id.empty());
     state = stWorking;
     life_time = lt + Random.randF(-lt * 0.5f, lt * 0.5f);
     current_time = 0.f;
 
     current =
-        g_pGamePersistent->Environment().thunderbolt_collection(collection, id)->GetRandomDesc();
+        // TODO: [imdex] remove shared_str (ini)
+        g_pGamePersistent->Environment().thunderbolt_collection(collection, id.c_str())->GetRandomDesc();
     VERIFY(current);
 
     Fmatrix XF, S;
@@ -228,8 +230,8 @@ void CEffect_Thunderbolt::Bolt(shared_str id, float period, float lt) {
     current_direction.invert(); // for env-sun
 }
 
-void CEffect_Thunderbolt::OnFrame(shared_str id, float period, float duration) {
-    BOOL enabled = !!(id.size());
+void CEffect_Thunderbolt::OnFrame(const std::string& id, const float period, const float duration) {
+    const bool enabled = !id.empty();
     if (bEnabled != enabled) {
         bEnabled = enabled;
         next_lightning_time =
@@ -244,7 +246,7 @@ void CEffect_Thunderbolt::OnFrame(shared_str id, float period, float duration) {
         current_time += Device.fTimeDelta;
         Fvector fClr;
         int frame;
-        u32 uClr = current->color_anim->CalculateRGB(current_time / life_time, frame);
+        const u32 uClr = current->color_anim->CalculateRGB(current_time / life_time, frame);
         fClr.set(clampr(float(color_get_R(uClr) / 255.f), 0.f, 1.f),
                  clampr(float(color_get_G(uClr) / 255.f), 0.f, 1.f),
                  clampr(float(color_get_B(uClr) / 255.f), 0.f, 1.f));
