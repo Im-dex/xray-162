@@ -48,7 +48,7 @@ void OGF_Base::CalcBounds() {
         if (d > S2.R)
             S2.R = d;
     }
-    S2.R = _sqrt(_abs(S2.R));
+    S2.R = std::sqrt(xr::abs(S2.R));
     BOOL B2 = SphereValid(V, S2);
 
     // 3: calc magic-fm

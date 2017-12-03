@@ -46,7 +46,7 @@ void GetCylinderExtensions(dGeomID cyl, const dReal* axis, const dReal* pos, con
     dReal _cos = dFabs(dDOT14(axis, rot + 1));
     dReal cos1 = dDOT14(axis, rot + 0);
     dReal cos3 = dDOT14(axis, rot + 2);
-    dReal _sin = _sqrt(cos1 * cos1 + cos3 * cos3);
+    dReal _sin = std::sqrt(cos1 * cos1 + cos3 * cos3);
     length /= 2.f;
     dReal ful_ext = _cos * length + _sin * radius;
     *lo_ext = -ful_ext + dif;

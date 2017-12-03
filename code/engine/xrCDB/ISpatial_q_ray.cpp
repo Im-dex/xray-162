@@ -205,13 +205,13 @@ public:
         ray.fwd_dir.set(_dir);
         if (!b_use_sse) {
             // for FPU - zero out inf
-            if (_abs(_dir.x) > flt_eps) {
+            if (xr::abs(_dir.x) > flt_eps) {
             } else
                 ray.inv_dir.x = 0;
-            if (_abs(_dir.y) > flt_eps) {
+            if (xr::abs(_dir.y) > flt_eps) {
             } else
                 ray.inv_dir.y = 0;
-            if (_abs(_dir.z) > flt_eps) {
+            if (xr::abs(_dir.z) > flt_eps) {
             } else
                 ray.inv_dir.z = 0;
         }

@@ -243,14 +243,14 @@ static Fvector trajectory_velocity(Fvector const& start_velocity, Fvector const&
         ::parabolic_velocity(start_velocity, gravity, air_resistance, parabolic_time);
 
     VERIFY(!fis_zero(air_resistance_epsilon) ||
-           fis_zero(_sqr(parabolic_velocity.x) + _sqr(parabolic_velocity.z), EPS_L));
+           fis_zero(xr::sqr(parabolic_velocity.x) + xr::sqr(parabolic_velocity.z), EPS_L));
     return (parabolic_velocity.mad(gravity, fall_down_time));
 }
 
 static Fvector parabolic_position(Fvector const& start_position, Fvector const& start_velocity,
                                   Fvector const& gravity, float const air_resistance,
                                   float const time) {
-    float const sqr_t_div_2 = _sqr(time) * .5f;
+    float const sqr_t_div_2 = xr::sqr(time) * .5f;
     return (Fvector()
                 .mad(start_position, start_velocity, time)
                 .mad(Fvector(start_velocity).mul(-air_resistance), sqr_t_div_2)
@@ -266,7 +266,7 @@ static Fvector trajectory_position(Fvector const& start_position,
                                    Fvector const& base_start_velocity, Fvector const& base_gravity,
                                    float base_air_resistance, float const base_time) {
     Fvector const& gravity = base_gravity; // g_use_new_ballistics ?
-                                           // Fvector(base_gravity).mul(_sqr(factor)) : base_gravity;
+                                           // Fvector(base_gravity).mul(xr::sqr(factor)) : base_gravity;
     float const& air_resistance = base_air_resistance; // g_use_new_ballistics ?
                                                        // base_air_resistance*factor :
                                                        // base_air_resistance;
@@ -283,7 +283,7 @@ static Fvector trajectory_position(Fvector const& start_position,
             return (
                 parabolic_position(start_position, start_velocity, gravity, air_resistance, time));
 
-        return (Fvector(start_position).mad(start_velocity, time).mad(gravity, _sqr(time) * .5f));
+        return (Fvector(start_position).mad(start_velocity, time).mad(gravity, xr::sqr(time) * .5f));
     }
 
     Fvector const parabolic_position = ::parabolic_position(start_position, start_velocity, gravity,
@@ -292,7 +292,7 @@ static Fvector trajectory_position(Fvector const& start_position,
         ::parabolic_velocity(start_velocity, gravity, air_resistance, parabolic_time);
     return (Fvector(parabolic_position)
                 .mad(parabolic_velocity, fall_down_time)
-                .mad(gravity, _sqr(fall_down_time) * .5f));
+                .mad(gravity, xr::sqr(fall_down_time) * .5f));
 }
 
 inline static float trajectory_max_error_time(float const t0, float const t1) {
@@ -318,7 +318,7 @@ static float trajectory_pick_error(float const low, float const high, Fvector co
     Fvector start_to_target = Fvector().sub(target, start).normalize();
     float cosine_alpha =
         std::max(-1.f, std::min(start_to_max_error.dotproduct(start_to_target), 1.f));
-    float sine_alpha = _sqrt(1.f - _sqr(cosine_alpha));
+    float sine_alpha = std::sqrt(1.f - xr::sqr(cosine_alpha));
     return (magnitude * sine_alpha);
 }
 
@@ -328,7 +328,7 @@ static float trajectory_select_pick_gravity(SBullet& bullet, float start_low, fl
     float const time_delta = high - start_low;
     float const time_to_fly = Fvector(bullet.start_velocity)
                                   .mul(time_delta)
-                                  .mad(gravity, _sqr(time_delta) * .5f)
+                                  .mad(gravity, xr::sqr(time_delta) * .5f)
                                   .magnitude();
     if (time_to_fly <= max_test_distance)
         return (high);
@@ -336,7 +336,7 @@ static float trajectory_select_pick_gravity(SBullet& bullet, float start_low, fl
     float const fall_down_velocity_magnitude = bullet.speed;
     float const positive_gravity = -gravity.y;
     float time =
-        (_sqrt(_sqr(fall_down_velocity_magnitude) + 2.f * max_test_distance * positive_gravity) -
+        (std::sqrt(xr::sqr(fall_down_velocity_magnitude) + 2.f * max_test_distance * positive_gravity) -
          fall_down_velocity_magnitude) /
         positive_gravity;
     VERIFY(time >= 0.f);
@@ -459,7 +459,7 @@ static void update_bullet_parabolic(SBullet& bullet, bullet_test_callback_data& 
         clamp(value, 0.f, 1.f);
         VERIFY(value <= 1.f);
         VERIFY(value >= 0.f);
-        data.collide_time = (1.f - _sqrt(1.f - value)) / air_resistance;
+        data.collide_time = (1.f - std::sqrt(1.f - value)) / air_resistance;
     } else
         data.collide_time = xz_range / xz_velocity.magnitude();
 
@@ -487,7 +487,7 @@ static void update_bullet_gravitation(SBullet& bullet, bullet_test_callback_data
     Fvector const fall_down_velocity =
         trajectory_velocity(bullet.start_velocity, gravity, air_resistance, fall_down_time);
     VERIFY(!fis_zero(air_resistance_epsilon) ||
-           fis_zero(_sqr(fall_down_velocity.x) + _sqr(fall_down_velocity.z), EPS_L));
+           fis_zero(xr::sqr(fall_down_velocity.x) + xr::sqr(fall_down_velocity.z), EPS_L));
     float const fall_down_velocity_magnitude = fall_down_velocity.magnitude();
 
     Fvector xz_projection = Fvector(data.collide_position).sub(fall_down_position);
@@ -511,7 +511,7 @@ static void update_bullet_gravitation(SBullet& bullet, bullet_test_callback_data
         float const distance = fall_down_position.distance_to(data.collide_position);
         data.collide_time =
             fall_down_time +
-            (_sqrt(_sqr(fall_down_velocity_magnitude) + 2.f * distance * positive_gravity) -
+            (std::sqrt(xr::sqr(fall_down_velocity_magnitude) + 2.f * distance * positive_gravity) -
              fall_down_velocity_magnitude) /
                 positive_gravity;
         VERIFY(data.collide_time >= 0.f);
@@ -848,7 +848,7 @@ void CBulletManager::Render() {
             if (dist2segSqr < MinDistSqr)
                 dist2segSqr = MinDistSqr;
 
-            width *= _sqrt(dist2segSqr / MaxDistSqr);
+            width *= std::sqrt(dist2segSqr / MaxDistSqr);
         }
         if (Device.vCameraPosition.distance_to_sqr(bullet->bullet_pos) < (length * length)) {
             length = Device.vCameraPosition.distance_to(bullet->bullet_pos) - 0.3f;

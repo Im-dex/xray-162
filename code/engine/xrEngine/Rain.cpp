@@ -81,9 +81,9 @@ void CEffect_Rain::Born(Item& dest, float radius) {
     Fvector& view = Device.vCameraPosition;
     float angle = ::Random.randF(0, PI_MUL_2);
     float dist = ::Random.randF();
-    dist = _sqrt(dist) * radius;
-    float x = dist * _cos(angle);
-    float z = dist * _sin(angle);
+    dist = std::sqrt(dist) * radius;
+    float x = dist * std::cos(angle);
+    float z = dist * std::sin(angle);
     dest.D.random_dir(axis, deg2rad(drop_angle));
     dest.P.set(x + view.x - dest.D.x * source_offset, source_offset + view.y,
                z + view.z - dest.D.z * source_offset);
@@ -221,7 +221,8 @@ Fvector norm	={0.f,-1.f,0.f};
 Fvector upper;
 upper.set(Device.vCameraPosition.x,Device.vCameraPosition.y+source_offset,Device.vCameraPosition.z);
 src_plane.build(upper,norm);
-    
+    
+
     // perform update
     u32			vOffset;
     FVF::LIT	*verts		= (FVF::LIT	*)
@@ -285,7 +286,8 @@ Device.fTimeDelta; one.P.mad		(one.D,one.fSpeed*dt);
             Fvector&	pos_head	= one.P;
             Fvector		pos_trail;	pos_trail.mad
 (pos_head,one.D,-drop_length*factor_visual);
-            
+            
+
             // Culling
             Fvector sC,lineD;	float sR;
             sC.sub			(pos_head,pos_trail);
@@ -294,7 +296,8 @@ Device.fTimeDelta; one.P.mad		(one.D,one.fSpeed*dt);
             sR				= sC.magnitude();
             sC.add			(pos_trail);
             if (!::Render->ViewBase.testSphere_dirty(sC,sR))	continue;
-            
+            
+
             static Fvector2 UV[2][4]={
                     {{0,1},{0,0},{1,1},{1,0}},
                     {{1,0},{1,1},{0,0},{0,1}}
@@ -315,7 +318,8 @@ verts++;
     }
     u32 vCount					= (u32)(verts-start);
     RCache.Vertex.Unlock		(vCount,hGeom_Rain->vb_stride);
-    
+    
+
     // Render if needed
     if (vCount)	{
             HW.pDevice->SetRenderState	(D3DRS_CULLMODE,D3DCULL_NONE);
@@ -326,16 +330,19 @@ verts++;
 (D3DPT_TRIANGLELIST,vOffset,0,vCount,0,vCount/2); HW.pDevice->SetRenderState
 (D3DRS_CULLMODE,D3DCULL_CCW);
     }
-    
+    
+
     // Particles
     Particle*	P		= particle_active;
     if (0==P)			return;
-    
+    
+
     {
             float	dt				= Device.fTimeDelta;
             _IndexStream& _IS		= RCache.Index;
             RCache.set_Shader		(DM_Drop->shader);
-            
+            
+
             Fmatrix					mXform,mScale;
             int						pcount  = 0;
             u32						v_offset,i_offset;
@@ -345,7 +352,8 @@ particles_cache*DM_Drop->number_vertices; u32						iCount_Lock
 (IRender_DetailModel::fvfVertexOut*) RCache.Vertex.Lock	(vCount_Lock, hGeom_Drops->vb_stride,
 v_offset); u16*					i_ptr			= _IS.Lock
 (iCount_Lock, i_offset); while (P)	{ Particle*	next	=	P->next;
-                    
+                    
+
                     // Update
                     // P can be zero sometimes and it crashes
                     P->time				-=	dt;
@@ -362,7 +370,8 @@ v_offset); u16*					i_ptr			= _IS.Lock
                             float scale			=	P->time / particles_time;
                             mScale.scale		(scale,scale,scale);
                             mXform.mul_43		(P->mXForm,mScale);
-                            
+                            
+
                             // XForm verts
                             DM_Drop->transfer
 (mXform,v_ptr,u_rain_color,i_ptr,pcount*DM_Drop->number_vertices); v_ptr			+=
@@ -377,16 +386,19 @@ DM_Drop->number_vertices; i_ptr			+=	DM_Drop->number_indices; pcount
                                     RCache.set_Geometry		(hGeom_Drops);
                                     RCache.Render			(D3DPT_TRIANGLELIST,v_offset,
 0,vCount_Lock,i_offset,dwNumPrimitives);
-                                    
+                                    
+
                                     v_ptr					= (IRender_DetailModel::fvfVertexOut*)
 RCache.Vertex.Lock	(vCount_Lock, hGeom_Drops->vb_stride, v_offset); i_ptr
 = _IS.Lock
 (iCount_Lock, i_offset);
-                                    
+                                    
+
                                     pcount	= 0;
                             }
                     }
-                    
+                    
+
                     P = next;
             }
 

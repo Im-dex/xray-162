@@ -641,7 +641,7 @@ IC float distance_to_line(const Fvector& p0, const Fvector& p1, const Fvector& p
     if (p1p2.dotproduct(p1p0) < 0.f)
         return (p1p2.magnitude());
 
-    float sin_alpha = _sqrt(1.f - _sqr(cos_alpha));
+    float sin_alpha = std::sqrt(1.f - xr::sqr(cos_alpha));
     return (p0p2_magnitude * sin_alpha);
 }
 

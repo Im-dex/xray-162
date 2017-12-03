@@ -467,7 +467,7 @@ void CStalkerActionTakeCover::initialize() {
     if (object().memory().enemy().selected()->human_being()) {
         if (object().agent_manager().member().can_cry_noninfo_phrase())
             if (object().Position().distance_to_sqr(
-                    object().memory().enemy().selected()->Position()) < _sqr(10.f))
+                    object().memory().enemy().selected()->Position()) < xr::sqr(10.f))
                 if (object().memory().visual().visible_now(object().memory().enemy().selected()) &&
                     object().agent_manager().member().group_behaviour())
                     object().sound().play(eStalkerSoundBackup, 0, 0, 6000, 4000);
@@ -910,7 +910,7 @@ void CStalkerActionHideFromGrenade::execute() {
             aim_ready();
         } else {
             if (!m_object->memory().visual().visible_now(object().memory().enemy().selected())) {
-                if (position.distance_to_sqr(object().Position()) < _sqr(5.f))
+                if (position.distance_to_sqr(object().Position()) < xr::sqr(5.f))
                     object().sight().setup(
                         CSightAction(SightManager::eSightTypePathDirection, true, true));
                 else
@@ -1191,7 +1191,7 @@ void CStalkerCombatActionThrowGrenade::execute() {
                                                    -object().movement().m_head.current.pitch);
     float const cos_alpha = head_direction.dotproduct(enemy_direction);
 
-    if (_abs(acosf(cos_alpha)) >= PI_DIV_8)
+    if (xr::abs(acosf(cos_alpha)) >= PI_DIV_8)
         return;
 
     object().throw_target(enemy_position, enemy_vertex_id, const_cast<CEntityAlive*>(enemy));

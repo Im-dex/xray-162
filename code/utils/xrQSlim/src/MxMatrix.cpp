@@ -3,12 +3,12 @@
   NxN Matrix class
 
   Copyright (C) 1998 Michael Garland.  See "COPYING.txt" for details.
-  
+  
+
   $Id: MxMatrix.cxx,v 1.4 1998/10/26 21:09:09 garland Exp $
 
  ************************************************************************/
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "MxMatrix.h"
 
@@ -40,8 +40,8 @@ static double internal_invert(MxMatrix& A, MxMatrix& B) {
     for (i = 0; i < N; i++) { /* eliminate in column i, below diag */
         max = -1.;
         for (k = i; k < N; k++) /* find pivot for column i */
-            if (_abs(A(k, i)) > max) {
-                max = _abs(A(k, i));
+            if (xr::abs(A(k, i)) > max) {
+                max = xr::abs(A(k, i));
                 j = k;
             }
         if (max <= 0.)

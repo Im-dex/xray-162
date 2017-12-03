@@ -152,8 +152,8 @@ void CSector::traverse(CFrustum& F, _scissor& R_scissor) {
             float R = PORTAL->S.R;
             float distSQ = dir2portal.square_magnitude();
             float ssa = R * R / distSQ;
-            dir2portal.div(_sqrt(distSQ));
-            ssa *= _abs(PORTAL->P.n.dotproduct(dir2portal));
+            dir2portal.div(std::sqrt(distSQ));
+            ssa *= xr::abs(PORTAL->P.n.dotproduct(dir2portal));
             if (ssa < r_ssaDISCARD)
                 continue;
 

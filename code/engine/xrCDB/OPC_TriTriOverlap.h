@@ -81,9 +81,9 @@ BOOL CoplanarTriTri(const Point& n, const Point& v0, const Point& v1, const Poin
     short i0, i1;
     /* first project onto an axis-aligned plane, that maximizes the area */
     /* of the triangles, compute indices: i0,i1. */
-    A[0] = _abs(((const float*)n)[0]);
-    A[1] = _abs(((const float*)n)[1]);
-    A[2] = _abs(((const float*)n)[2]);
+    A[0] = xr::abs(((const float*)n)[0]);
+    A[1] = xr::abs(((const float*)n)[1]);
+    A[2] = xr::abs(((const float*)n)[2]);
     if (A[0] > A[1]) {
         if (A[0] > A[2]) {
             i0 = 1; /* A[0] is greatest */
@@ -201,11 +201,11 @@ inline_ BOOL AABBTreeCollider::TriTriOverlap(const Point& V0, const Point& V1, c
 
 // Coplanarity robustness check
 #ifdef OPC_TRITRI_EPSILON_TEST
-    if (_abs(du0) < LOCAL_EPSILON)
+    if (xr::abs(du0) < LOCAL_EPSILON)
         du0 = 0.0f;
-    if (_abs(du1) < LOCAL_EPSILON)
+    if (xr::abs(du1) < LOCAL_EPSILON)
         du1 = 0.0f;
-    if (_abs(du2) < LOCAL_EPSILON)
+    if (xr::abs(du2) < LOCAL_EPSILON)
         du2 = 0.0f;
 #endif
     const float du0du1 = du0 * du1;
@@ -227,11 +227,11 @@ inline_ BOOL AABBTreeCollider::TriTriOverlap(const Point& V0, const Point& V1, c
     float dv2 = (N2 | V2) + d2;
 
 #ifdef OPC_TRITRI_EPSILON_TEST
-    if (_abs(dv0) < LOCAL_EPSILON)
+    if (xr::abs(dv0) < LOCAL_EPSILON)
         dv0 = 0.0f;
-    if (_abs(dv1) < LOCAL_EPSILON)
+    if (xr::abs(dv1) < LOCAL_EPSILON)
         dv1 = 0.0f;
-    if (_abs(dv2) < LOCAL_EPSILON)
+    if (xr::abs(dv2) < LOCAL_EPSILON)
         dv2 = 0.0f;
 #endif
 
@@ -245,10 +245,10 @@ inline_ BOOL AABBTreeCollider::TriTriOverlap(const Point& V0, const Point& V1, c
     const Point D = N1 ^ N2;
 
     // Compute and index to the largest component of D
-    float max = _abs(((const float*)D)[0]);
+    float max = xr::abs(((const float*)D)[0]);
     short index = 0;
-    float bb = _abs(((const float*)D)[1]);
-    float cc = _abs(((const float*)D)[2]);
+    float bb = xr::abs(((const float*)D)[1]);
+    float cc = xr::abs(((const float*)D)[2]);
     if (bb > max)
         max = bb, index = 1;
     if (cc > max)

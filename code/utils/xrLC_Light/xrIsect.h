@@ -96,14 +96,14 @@ inline int lines_intersect(float x1, float y1, /* First line segment */
         return (LI_NONE);
 
     // Check for equality
-    if (_abs(r1 * r2) < EPS_S && _abs(r3 * r4) < EPS_S)
+    if (xr::abs(r1 * r2) < EPS_S && xr::abs(r3 * r4) < EPS_S)
         return LI_NONE;
 
     /* Line segments intersect: compute intersection point.
      */
 
     denom = a1 * b2 - a2 * b1;
-    if (_abs(denom) < EPS)
+    if (xr::abs(denom) < EPS)
         return (LI_COLLINEAR);
 
     num = b1 * c2 - b2 * c1;

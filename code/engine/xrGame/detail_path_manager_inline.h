@@ -92,8 +92,8 @@ IC void CDetailPathManager::set_path_type(const EDetailPathType path_type) {
 
 IC void CDetailPathManager::adjust_point(const Fvector2& source, float yaw, float magnitude,
                                          Fvector2& dest) const {
-    dest.x = -_sin(yaw);
-    dest.y = _cos(yaw);
+    dest.x = -std::sin(yaw);
+    dest.y = std::cos(yaw);
     dest.mad(source, dest, magnitude);
 }
 
@@ -125,7 +125,7 @@ IC bool CDetailPathManager::compute_circles(STrajectoryPoint& point, SCirclePoin
         return false;
     }
 
-    point.radius = _abs(point.linear_velocity) / point.angular_velocity;
+    point.radius = xr::abs(point.linear_velocity) / point.angular_velocity;
     circles[0].radius = circles[1].radius = point.radius;
     VERIFY(fsimilar(point.direction.square_magnitude(), 1.f));
     circles[0].center.x = point.direction.y * point.radius + point.position.x;

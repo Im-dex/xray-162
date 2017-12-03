@@ -549,7 +549,7 @@ mat3& invert(mat3& B, const mat3& A) {
 }
 
 vec3& normalize(vec3& u) {
-    nv_scalar norm = _sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
+    nv_scalar norm = std::sqrt(u.x * u.x + u.y * u.y + u.z * u.z);
     if (norm > nv_eps)
         norm = nv_one / norm;
     else
@@ -558,7 +558,7 @@ vec3& normalize(vec3& u) {
 }
 
 vec4& normalize(vec4& u) {
-    nv_scalar norm = _sqrt(u.x * u.x + u.y * u.y + u.z * u.z + u.w * u.w);
+    nv_scalar norm = std::sqrt(u.x * u.x + u.y * u.y + u.z * u.z + u.w * u.w);
     if (norm > nv_eps)
         norm = nv_one / norm;
     else
@@ -567,7 +567,7 @@ vec4& normalize(vec4& u) {
 }
 
 quat& normalize(quat& p) {
-    nv_scalar norm = _sqrt(p.x * p.x + p.y * p.y + p.z * p.z + p.w * p.w);
+    nv_scalar norm = std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z + p.w * p.w);
     if (norm > nv_eps)
         norm = nv_one / norm;
     else
@@ -678,11 +678,11 @@ quat::quat(const vec3& axis, nv_scalar angle) {
     if (len) {
         nv_scalar invLen = 1 / len;
         nv_scalar angle2 = angle / 2;
-        nv_scalar scale = _sin(angle2) * invLen;
+        nv_scalar scale = std::sin(angle2) * invLen;
         x = scale * axis[0];
         y = scale * axis[1];
         z = scale * axis[2];
-        w = _cos(angle2);
+        w = std::cos(angle2);
     }
 }
 
@@ -699,7 +699,7 @@ quat& quat::operator=(const quat& quat) {
 quat quat::Inverse() { return quat(-x, -y, -z, w); }
 
 void quat::Normalize() {
-    nv_scalar len = _sqrt(x * x + y * y + z * z + w * w);
+    nv_scalar len = std::sqrt(x * x + y * y + z * z + w * w);
     if (len > 0) {
         nv_scalar invLen = 1 / len;
         x *= invLen;
@@ -712,7 +712,7 @@ void quat::Normalize() {
 void quat::FromMatrix(const mat3& mat) {
     nv_scalar trace = mat(0, 0) + mat(1, 1) + mat(2, 2);
     if (trace > 0) {
-        nv_scalar scale = _sqrt(trace + 1.0f);
+        nv_scalar scale = std::sqrt(trace + 1.0f);
         w = 0.5f * scale;
         scale = 0.5f / scale;
         x = scale * (mat(2, 1) - mat(1, 2));
@@ -727,7 +727,7 @@ void quat::FromMatrix(const mat3& mat) {
             i = 2;
         int j = next[i];
         int k = next[j];
-        nv_scalar scale = _sqrt(mat(i, i) - mat(j, j) - mat(k, k) + 1);
+        nv_scalar scale = std::sqrt(mat(i, i) - mat(j, j) - mat(k, k) + 1);
         nv_scalar* q[] = { &x, &y, &z };
         *q[i] = 0.5f * scale;
         scale = 0.5f / scale;
@@ -797,11 +797,11 @@ quat& axis_to_quat(quat& q, const vec3& a, const nv_scalar phi) {
     vec3 tmp(a.x, a.y, a.z);
 
     normalize(tmp);
-    nv_scalar s = _sin(phi / nv_two);
+    nv_scalar s = std::sin(phi / nv_two);
     q.x = s * tmp.x;
     q.y = s * tmp.y;
     q.z = s * tmp.z;
-    q.w = _cos(phi / nv_two);
+    q.w = std::cos(phi / nv_two);
     return q;
 }
 
@@ -861,14 +861,14 @@ quat& slerp_quats(quat& p, nv_scalar s, const quat& q1, const quat& q2) {
     else if (cosine > 1)
         cosine = 1;
     nv_scalar angle = (nv_scalar)acosf(cosine);
-    if (_abs(angle) < nv_eps) {
+    if (xr::abs(angle) < nv_eps) {
         p = q1;
         return p;
     }
-    nv_scalar sine = _sin(angle);
+    nv_scalar sine = std::sin(angle);
     nv_scalar sineInv = 1.0f / sine;
-    nv_scalar c1 = _sin((1.0f - s) * angle) * sineInv;
-    nv_scalar c2 = _sin(s * angle) * sineInv;
+    nv_scalar c1 = std::sin((1.0f - s) * angle) * sineInv;
+    nv_scalar c2 = std::sin(s * angle) * sineInv;
     p.x = c1 * q1.x + c2 * q2.x;
     p.y = c1 * q1.y + c2 * q2.y;
     p.z = c1 * q1.z + c2 * q2.z;
@@ -883,8 +883,8 @@ nv_scalar nv_random() { return ((nv_scalar)(rand() - HALF_RAND) / (nv_scalar)HAL
 // v is normalized
 // theta in radians
 void mat3::set_rot(const nv_scalar& theta, const vec3& v) {
-    nv_scalar ct = nv_scalar(_cos(theta));
-    nv_scalar st = nv_scalar(_sin(theta));
+    nv_scalar ct = nv_scalar(std::cos(theta));
+    nv_scalar st = nv_scalar(std::sin(theta));
 
     nv_scalar xx = v.x * v.x;
     nv_scalar yy = v.y * v.y;
@@ -946,8 +946,8 @@ void mat4::set_rot(const quat& q) {
 // v is normalized
 // theta in radians
 void mat4::set_rot(const nv_scalar& theta, const vec3& v) {
-    nv_scalar ct = nv_scalar(_cos(theta));
-    nv_scalar st = nv_scalar(_sin(theta));
+    nv_scalar ct = nv_scalar(std::cos(theta));
+    nv_scalar st = nv_scalar(std::sin(theta));
 
     nv_scalar xx = v.x * v.x;
     nv_scalar yy = v.y * v.y;
@@ -1054,7 +1054,7 @@ mat3& tangent_basis(mat3& basis, const vec3& v0, const vec3& v1, const vec3& v2,
     vec3 e1(v2.x - v0.x, t2.s - t0.s, t2.t - t0.t);
 
     cross(cp, e0, e1);
-    if (_abs(cp.x) > nv_eps) {
+    if (xr::abs(cp.x) > nv_eps) {
         basis.a00 = -cp.y / cp.x;
         basis.a10 = -cp.z / cp.x;
     }
@@ -1063,7 +1063,7 @@ mat3& tangent_basis(mat3& basis, const vec3& v0, const vec3& v1, const vec3& v2,
     e1.x = v2.y - v0.y;
 
     cross(cp, e0, e1);
-    if (_abs(cp.x) > nv_eps) {
+    if (xr::abs(cp.x) > nv_eps) {
         basis.a01 = -cp.y / cp.x;
         basis.a11 = -cp.z / cp.x;
     }
@@ -1072,20 +1072,20 @@ mat3& tangent_basis(mat3& basis, const vec3& v0, const vec3& v1, const vec3& v2,
     e1.x = v2.z - v0.z;
 
     cross(cp, e0, e1);
-    if (_abs(cp.x) > nv_eps) {
+    if (xr::abs(cp.x) > nv_eps) {
         basis.a02 = -cp.y / cp.x;
         basis.a12 = -cp.z / cp.x;
     }
 
     // tangent...
     nv_scalar oonorm =
-        nv_one / _sqrt(basis.a00 * basis.a00 + basis.a01 * basis.a01 + basis.a02 * basis.a02);
+        nv_one / std::sqrt(basis.a00 * basis.a00 + basis.a01 * basis.a01 + basis.a02 * basis.a02);
     basis.a00 *= oonorm;
     basis.a01 *= oonorm;
     basis.a02 *= oonorm;
 
     // binormal...
-    oonorm = nv_one / _sqrt(basis.a10 * basis.a10 + basis.a11 * basis.a11 + basis.a12 * basis.a12);
+    oonorm = nv_one / std::sqrt(basis.a10 * basis.a10 + basis.a11 * basis.a11 + basis.a12 * basis.a12);
     basis.a10 *= oonorm;
     basis.a11 *= oonorm;
     basis.a12 *= oonorm;
@@ -1096,7 +1096,7 @@ mat3& tangent_basis(mat3& basis, const vec3& v0, const vec3& v1, const vec3& v2,
     basis.a21 = basis.a02 * basis.a10 - basis.a00 * basis.a12;
     basis.a22 = basis.a00 * basis.a11 - basis.a01 * basis.a10;
 
-    oonorm = nv_one / _sqrt(basis.a20 * basis.a20 + basis.a21 * basis.a21 + basis.a22 * basis.a22);
+    oonorm = nv_one / std::sqrt(basis.a20 * basis.a20 + basis.a21 * basis.a21 + basis.a22 * basis.a22);
     basis.a20 *= oonorm;
     basis.a21 *= oonorm;
     basis.a22 *= oonorm;
@@ -1123,9 +1123,9 @@ mat3& tangent_basis(mat3& basis, const vec3& v0, const vec3& v1, const vec3& v2,
 nv_scalar tb_project_to_sphere(nv_scalar r, nv_scalar x, nv_scalar y) {
     nv_scalar d, t, z;
 
-    d = _sqrt(x * x + y * y);
+    d = std::sqrt(x * x + y * y);
     if (d < r * 0.70710678118654752440) { /* Inside sphere */
-        z = _sqrt(r * r - d * d);
+        z = std::sqrt(r * r - d * d);
     } else { /* On hyperbola */
         t = r / (nv_scalar)1.41421356237309504880;
         z = t * t / d;
@@ -1169,7 +1169,7 @@ quat& trackball(quat& q, vec2& pt1, vec2& pt2, nv_scalar trackballsize) {
     d.x = p1.x - p2.x;
     d.y = p1.y - p2.y;
     d.z = p1.z - p2.z;
-    t = _sqrt(d.x * d.x + d.y * d.y + d.z * d.z) / (trackballsize);
+    t = std::sqrt(d.x * d.x + d.y * d.y + d.z * d.z) / (trackballsize);
 
     // Avoid problems with out-of-control values...
 
@@ -1305,7 +1305,7 @@ nv_scalar nv_find_circ_circle(vec3& center, const vec3& v1, const vec3& v2, cons
     madd(center, v3, c1 + c2);
     center *= oo_c * nv_zero_5;
 
-    return nv_zero_5 * _sqrt((d1 + d2) * (d2 + d3) * (d3 + d1) * oo_c);
+    return nv_zero_5 * std::sqrt((d1 + d2) * (d2 + d3) * (d3 + d1) * oo_c);
 }
 
 nv_scalar ffast_cos(const nv_scalar x) {

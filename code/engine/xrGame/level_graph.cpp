@@ -303,7 +303,7 @@ u32 CLevelGraph::guess_vertex_id(u32 const& current_vertex_id, Fvector const& po
                 best_vertex_id = vertex_id;
             }
 
-            if (_abs(best_point.y - position.y) >= 3.f)
+            if (xr::abs(best_point.y - position.y) >= 3.f)
                 continue;
 
             if (result_distance <= best_distance)

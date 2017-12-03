@@ -362,7 +362,7 @@ void CSightAction::execute_fire_object() {
         if (m_object->can_kill_enemy() && !m_object->can_kill_member())
             break;
 
-        if (m_object_to_look->Position().distance_to_sqr(m_object->Position()) < _sqr(5.f))
+        if (m_object_to_look->Position().distance_to_sqr(m_object->Position()) < xr::sqr(5.f))
             break;
 
         //			Msg							("%6d switch to mode 1",
@@ -378,7 +378,7 @@ void CSightAction::execute_fire_object() {
     case 1: {
 
         if (Device.dwTimeGlobal >= m_state_fire_switch_time + 1500) {
-            if (m_object_to_look->Position().distance_to_sqr(m_object->Position()) > _sqr(5.f)) {
+            if (m_object_to_look->Position().distance_to_sqr(m_object->Position()) > xr::sqr(5.f)) {
                 if (!m_holder_start_position.similar(m_object->Position(), .05f)) {
                     m_vector3d = m_object->sight().object_position();
                     m_already_switched = false;

@@ -27,11 +27,11 @@ void CCar::OnMouseMove(int dx, int dy) {
     float scale = (C->f_fov / g_fov) * psMouseSens * psMouseSensScale / 50.f;
     if (dx) {
         float d = float(dx) * scale;
-        C->Move((d < 0) ? kLEFT : kRIGHT, _abs(d));
+        C->Move((d < 0) ? kLEFT : kRIGHT, xr::abs(d));
     }
     if (dy) {
         float d = ((psMouseInvert.test(1)) ? -1 : 1) * float(dy) * scale * 3.f / 4.f;
-        C->Move((d > 0) ? kUP : kDOWN, _abs(d));
+        C->Move((d > 0) ? kUP : kDOWN, xr::abs(d));
     }
 }
 
@@ -53,8 +53,8 @@ bool CCar::bfAssignMovement(CScriptEntityAction* tpEntityAction) {
     if (!!(l_tInput & CScriptMovementAction::eInputKeyEngineOff))
         StopEngine();
 
-    // if (_abs(tpEntityAction->m_tMovementAction.m_fSpeed) > EPS_L)
-    // m_current_rpm = _abs(tpEntityAction->m_tMovementAction.m_fSpeed*m_current_gear_ratio);
+    // if (xr::abs(tpEntityAction->m_tMovementAction.m_fSpeed) > EPS_L)
+    // m_current_rpm = xr::abs(tpEntityAction->m_tMovementAction.m_fSpeed*m_current_gear_ratio);
 
     return (true);
 }

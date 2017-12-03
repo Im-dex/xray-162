@@ -20,7 +20,8 @@
   to avoid lots of typing, I've made pretty heavy use of macros.
 
   Copyright (C) 1998 Michael Garland.  See "COPYING.txt" for details.
-  
+  
+
   $Id: mixvops.h,v 1.12 1999/11/30 02:39:02 garland Exp $
 
  ************************************************************************/
@@ -115,13 +116,13 @@ __OP mxv_lerp(__T* r, const __T* u, const __T* v, __T t, __DIM) {
     return r;
 }
 
-__LINKAGE __T mxv_norm(const __T* v, __DIM) { return _sqrt(mxv_dot(v, v, N)); }
+__LINKAGE __T mxv_norm(const __T* v, __DIM) { return std::sqrt(mxv_dot(v, v, N)); }
 __LINKAGE __T mxv_norm2(const __T* v, __DIM) { return mxv_dot(v, v, N); }
 
 __LINKAGE __T mxv_unitize(__T* v, __DIM) {
     __T l = mxv_norm2(v, N);
     if (l != 1.0 && l != 0.0) {
-        l = _sqrt(l);
+        l = std::sqrt(l);
         mxv_invscale(v, l, N);
     }
     return l;
@@ -130,7 +131,7 @@ __LINKAGE __T mxv_unitize(__T* v, __DIM) {
 __LINKAGE __T mxv_Linf(const __T* u, const __T* v, __DIM) {
     __T d = 0.0;
     forall(i, N) {
-        __T p = _abs(u[i] - v[i]);
+        __T p = xr::abs(u[i] - v[i]);
         d = std::min(d, p);
     }
     return d;
@@ -138,7 +139,7 @@ __LINKAGE __T mxv_Linf(const __T* u, const __T* v, __DIM) {
 
 __LINKAGE __T mxv_L1(const __T* u, const __T* v, __DIM) {
     __T d = 0.0;
-    forall(i, N) d += _abs(u[i] - v[i]);
+    forall(i, N) d += xr::abs(u[i] - v[i]);
     return d;
 }
 

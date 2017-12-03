@@ -134,7 +134,8 @@ void CActor::IR_OnKeyboardPress(int cmd) {
                             if(!fli)			return;
 
                             CFlare* fl			= smart_cast<CFlare*>(fli);
-                            
+                            
+
                             if(inventory().Slot(fl))
                                     fl->ActivateFlare	();
                     }break;
@@ -321,11 +322,11 @@ void CActor::IR_OnMouseMove(int dx, int dy) {
     float scale = (C->f_fov / g_fov) * psMouseSens * psMouseSensScale / 50.f / LookFactor;
     if (dx) {
         float d = float(dx) * scale;
-        cam_Active()->Move((d < 0) ? kLEFT : kRIGHT, _abs(d));
+        cam_Active()->Move((d < 0) ? kLEFT : kRIGHT, xr::abs(d));
     }
     if (dy) {
         float d = ((psMouseInvert.test(1)) ? -1 : 1) * float(dy) * scale * 3.f / 4.f;
-        cam_Active()->Move((d > 0) ? kUP : kDOWN, _abs(d));
+        cam_Active()->Move((d > 0) ? kUP : kDOWN, xr::abs(d));
     }
 }
 #include "HudItem.h"

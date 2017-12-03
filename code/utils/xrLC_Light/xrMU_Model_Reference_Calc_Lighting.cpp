@@ -31,7 +31,7 @@ T simple_optimize(xr_vector<T>& A, xr_vector<T>& B, T2& _scale, T2& _bias) {
         // 1. scale
         u32 _ok = 0;
         for (accum = 0, it = 0; it < A.size(); it++)
-            if (_abs(A[it]) > EPS_L) {
+            if (xr::abs(A[it]) > EPS_L) {
                 accum += (B[it] - bias) / A[it];
                 _ok += 1;
             }
@@ -39,7 +39,7 @@ T simple_optimize(xr_vector<T>& A, xr_vector<T>& B, T2& _scale, T2& _bias) {
 
         // 2. bias
         T b = bias;
-        if (_abs(scale) > EPS) {
+        if (xr::abs(scale) > EPS) {
             for (accum = 0, it = 0; it < A.size(); it++)
                 accum += B[it] - A[it] / scale;
             b = accum / elements;

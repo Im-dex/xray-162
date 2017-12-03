@@ -129,7 +129,7 @@ void CDeflector::OA_Export() {
         density += F->Shader().lm_density;
         fcount += 1.f;
     }
-    if (tN.magnitude() > EPS_S && _valid(tN))
+    if (tN.magnitude() > EPS_S && xr::valid(tN))
         normal.set(tN).normalize();
     else {
         clMsg("* ERROR: Internal precision error in CDeflector::OA_Export");
@@ -153,7 +153,7 @@ void CDeflector::OA_Export() {
     at.set(0, 0, 0);
     from.add(at, normal);
     y.set(0, 1, 0);
-    if (_abs(normal.y) > .99f)
+    if (xr::abs(normal.y) > .99f)
         y.set(1, 0, 0);
     right.crossproduct(y, normal);
     right.normalize_safe();
@@ -196,7 +196,7 @@ BOOL CDeflector::OA_Place(Face* owner) {
     // It is not correct to rely solely on normal-split-angle for lmaps - imagine smooth sphere
     float cosa = normal.dotproduct(owner->N);
     VERIFY(inlc_global_data());
-    if (cosa < _cos(deg2rad(inlc_global_data()->g_params().m_sm_angle + 1)))
+    if (cosa < std::cos(deg2rad(inlc_global_data()->g_params().m_sm_angle + 1)))
         return FALSE;
 
     UVtri T;
@@ -325,7 +325,8 @@ xr_vector<UVtri>			UVpolys;
 Fvector						normal;
 lm_layer					layer;
 Fsphere						Sphere;
-
+
+
 BOOL						bMerged;
 */
 

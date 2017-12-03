@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "xrsharedmem.h"
 #include "xrMemory_pure.h"
@@ -47,7 +46,6 @@ void xrMemory::_initialize(bool bDebug) {
     stat_calls = 0;
     stat_counter = 0;
 
-#ifndef M_BORLAND
     if (!strstr(Core.Params, "-pure_alloc")) {
         // initialize POOLs
         u32 element = mem_pools_ebase;
@@ -57,7 +55,6 @@ void xrMemory::_initialize(bool bDebug) {
             element += mem_pools_ebase;
         }
     }
-#endif // M_BORLAND
 
 #ifdef DEBUG_MEMORY_MANAGER
     if (0 == strstr(Core.Params, "-memo"))
@@ -96,12 +93,10 @@ void xrMemory::_destroy() {
     xr_delete(g_pSharedMemoryContainer);
     xr_delete(g_pStringContainer);
 
-#ifndef M_BORLAND
 #ifdef DEBUG_MEMORY_MANAGER
     if (debug_mode)
         dbg_dump_leaks();
 #endif // DEBUG_MEMORY_MANAGER
-#endif // M_BORLAND
 
     mem_initialized = false;
 #ifdef DEBUG_MEMORY_MANAGER
@@ -259,6 +254,6 @@ XRCORE_API bool is_stack_ptr(void* _ptr) {
     int local_value = 0;
     void* ptr_refsound = _ptr;
     void* ptr_local = &local_value;
-    ptrdiff_t difference = (ptrdiff_t)_abs(s64(ptrdiff_t(ptr_local) - ptrdiff_t(ptr_refsound)));
+    ptrdiff_t difference = (ptrdiff_t)xr::abs(s64(ptrdiff_t(ptr_local) - ptrdiff_t(ptr_refsound)));
     return (difference < (512 * 1024));
 }

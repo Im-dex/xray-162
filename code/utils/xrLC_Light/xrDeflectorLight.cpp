@@ -384,7 +384,7 @@ float getLastRP_Scale(CDB::COLLIDER* DB, CDB::MODEL* MDL, R_Light& L, Face* skip
 
             u32 pixel = T.pSurface[V * T.dwWidth + U];
             u32 pixel_a = color_get_A(pixel);
-            float opac = 1.f - _sqr(float(pixel_a) / 255.f);
+            float opac = 1.f - xr::sqr(float(pixel_a) / 255.f);
             scale *= opac;
         }
     }
@@ -457,7 +457,7 @@ void LightPoint(CDB::COLLIDER* DB, CDB::MODEL* MDL, base_color_c& C, Fvector& P,
                     continue;
 
                 // Trace Light
-                float R = _sqrt(sqD);
+                float R = std::sqrt(sqD);
                 float scale =
                     D * L->energy * rayTrace(DB, MDL, *L, Pnew, Ldir, R, skip, bUseFaceDisable);
                 float A;
@@ -493,7 +493,7 @@ void LightPoint(CDB::COLLIDER* DB, CDB::MODEL* MDL, base_color_c& C, Fvector& P,
                 // Jitter + trace light -> monte-carlo method
                 Fvector Psave = L->position, Pdir;
                 L->position.mad(Pdir.random_dir(L->direction, PI_DIV_4), .05f);
-                float R = _sqrt(sqD);
+                float R = std::sqrt(sqD);
                 float scale = powf(D, 1.f / 8.f) * L->energy *
                               rayTrace(DB, MDL, *L, Pnew, Ldir, R, skip, bUseFaceDisable);
                 float A = scale * (1 - R / L->range);
@@ -535,7 +535,7 @@ void LightPoint(CDB::COLLIDER* DB, CDB::MODEL* MDL, base_color_c& C, Fvector& P,
                     continue;
 
                 // Trace Light
-                float R = _sqrt(sqD);
+                float R = std::sqrt(sqD);
                 float scale =
                     D * L->energy * rayTrace(DB, MDL, *L, Pnew, Ldir, R, skip, bUseFaceDisable);
                 float A = scale / (L->attenuation0 + L->attenuation1 * R + L->attenuation2 * sqD);
@@ -574,7 +574,7 @@ void LightPoint(CDB::COLLIDER* DB, CDB::MODEL* MDL, base_color_c& C, Fvector& P,
                     continue;
 
                 // Trace Light
-                float R = _sqrt(sqD);
+                float R = std::sqrt(sqD);
                 float scale =
                     D * L->energy * rayTrace(DB, MDL, *L, Pnew, Ldir, R, skip, bUseFaceDisable);
                 float A = scale / (L->attenuation0 + L->attenuation1 * R + L->attenuation2 * sqD);

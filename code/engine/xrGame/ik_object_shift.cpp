@@ -75,7 +75,7 @@ bool square_equation(float a, float b, float c, float& x0,
     float d = b * b - 4.f * a * c;
     if (d < 0.f)
         return false;
-    float srt_d_2a = 0.5f * _sqrt(d) / a;
+    float srt_d_2a = 0.5f * std::sqrt(d) / a;
     float b_2a = 0.5f * b / a;
     x0 = -b_2a - srt_d_2a;
     x1 = -b_2a + srt_d_2a;
@@ -166,9 +166,9 @@ void object_shift::set_taget(float taget_, float time) {
     if ((x > half_shift_restrict_up || x < -half_shift_restrict_down) &&
         square_equation(aaccel / 2.f, accel, speed, x0, x1)) {
 
-        float max_shift0 = _abs(delta_shift(x0));
-        float max_shift1 = _abs(delta_shift(x1));
-        float ax = _abs(x);
+        float max_shift0 = xr::abs(delta_shift(x0));
+        float max_shift1 = xr::abs(delta_shift(x1));
+        float ax = xr::abs(x);
         bool bx0 = max_shift0 > 2.f * ax;
         bool bx1 = max_shift1 > 2.f * ax;
         if (((x0 > 0.f && x0 < time - EPS_S) && bx0) || ((x1 > 0.f && x1 < time - EPS_S) && bx1)) {

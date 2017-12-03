@@ -136,7 +136,7 @@ void CStalkerActionReachWounded::execute() {
     //		return;
     //	}
 
-    if (object().Position().distance_to_sqr(mem_object.m_object_params.m_position) < _sqr(3.f)) {
+    if (object().Position().distance_to_sqr(mem_object.m_object_params.m_position) < xr::sqr(3.f)) {
         object().movement().set_movement_type(eMovementTypeStand);
         return;
     }

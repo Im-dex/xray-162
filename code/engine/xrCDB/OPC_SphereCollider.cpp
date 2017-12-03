@@ -200,7 +200,7 @@ BOOL SphereCollider::InitQuery(SphereCache& cache, const Sphere& sphere, const M
         } else {
             // We're interested in all contacts =>test the _new_ real sphere N(ew) against the
             // previous fat sphere P(revious):
-            float r = _sqrt(cache.FatRadius2) - sphere.mRadius;
+            float r = std::sqrt(cache.FatRadius2) - sphere.mRadius;
             if (cache.Center.SquareDistance(mCenter) < r * r) {
                 // - if N is included in P, return previous list
                 // => we simply leave the list (mTouchedFaces) unchanged

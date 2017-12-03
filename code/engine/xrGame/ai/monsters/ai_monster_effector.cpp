@@ -76,9 +76,9 @@ BOOL CMonsterEffectorHit::ProcessCam(SCamEffectorInfo& info) {
     float cur_amp = max_amp * (PI / 180) * time_left_perc;
 
     Fvector dangle;
-    dangle.x = cur_amp / offset.x * _sin(period_all / offset.x * (1.0f - time_left_perc));
-    dangle.y = cur_amp / offset.y * _cos(period_all / offset.y * (1.0f - time_left_perc));
-    dangle.z = cur_amp / offset.z * _sin(period_all / offset.z * (1.0f - time_left_perc));
+    dangle.x = cur_amp / offset.x * std::sin(period_all / offset.x * (1.0f - time_left_perc));
+    dangle.y = cur_amp / offset.y * std::cos(period_all / offset.y * (1.0f - time_left_perc));
+    dangle.z = cur_amp / offset.z * std::sin(period_all / offset.z * (1.0f - time_left_perc));
 
     // Установить углы смещения
     Fmatrix R;

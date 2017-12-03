@@ -207,7 +207,7 @@ CLevelGraph::intersect_no_check(float x1, float y1,                     /* First
 } /* lines_intersect */
 
 IC bool CLevelGraph::similar(const Fvector& tPoint0, const Fvector& tPoint1) const {
-    return ((_abs(tPoint0.x - tPoint1.x) < EPS_L) && (_abs(tPoint0.z - tPoint1.z) < EPS_L));
+    return ((xr::abs(tPoint0.x - tPoint1.x) < EPS_L) && (xr::abs(tPoint0.z - tPoint1.z) < EPS_L));
 }
 
 IC bool CLevelGraph::inside(const Fvector& tPoint, const CLevelGraph::SContour& tContour) const {

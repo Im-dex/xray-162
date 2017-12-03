@@ -211,7 +211,7 @@ IC BOOL material_callback(collide::rq_result& result, LPVOID params) {
 
 IC void blend_lerp(float& cur, float tgt, float speed, float dt) {
     float diff = tgt - cur;
-    float diff_a = _abs(diff);
+    float diff_a = xr::abs(diff);
     if (diff_a < EPS_S)
         return;
     float mot = speed * dt;
@@ -248,9 +248,9 @@ void CLensFlare::OnFrame(const std::string& id) {
 #endif
     dwFrame = Device.dwFrame;
 
-    R_ASSERT(_valid(g_pGamePersistent->Environment().CurrentEnv->sun_dir));
+    R_ASSERT(xr::valid(g_pGamePersistent->Environment().CurrentEnv->sun_dir));
     vSunDir.mul(g_pGamePersistent->Environment().CurrentEnv->sun_dir, -1);
-    R_ASSERT(_valid(vSunDir));
+    R_ASSERT(xr::valid(vSunDir));
 
     // color
     float tf = g_pGamePersistent->Environment().fTimeFactor;
@@ -344,10 +344,10 @@ void CLensFlare::OnFrame(const std::string& id) {
     vecX.set(1.0f, 0.0f, 0.0f);
     matEffCamPos.transform_dir(vecX);
     vecX.normalize();
-    R_ASSERT(_valid(vecX));
+    R_ASSERT(xr::valid(vecX));
 
     vecY.crossproduct(vecX, vecDir);
-    R_ASSERT(_valid(vecY));
+    R_ASSERT(xr::valid(vecY));
 
 #ifdef _EDITOR
     float dist = UI->ZFar();
@@ -370,11 +370,11 @@ void CLensFlare::OnFrame(const std::string& id) {
     vecSy.mul(vecY, fScale);
 
     CObject* o_main = g_pGameLevel->CurrentViewEntity();
-    R_ASSERT(_valid(vSunDir));
+    R_ASSERT(xr::valid(vSunDir));
     STranspParam TP(&m_ray_cache[0], Device.vCameraPosition, vSunDir, 1000.f, EPS_L);
 
-    R_ASSERT(_valid(TP.P));
-    R_ASSERT(_valid(TP.D));
+    R_ASSERT(xr::valid(TP.P));
+    R_ASSERT(xr::valid(TP.D));
     collide::ray_defs RD(TP.P, TP.D, TP.f, CDB::OPT_CULL, collide::rqtBoth);
     float fVisResult = 0.0f;
 
@@ -382,7 +382,7 @@ void CLensFlare::OnFrame(const std::string& id) {
         TP.D = vSunDir;
         TP.D.add(Fvector().mul(vecSx, RayDeltas[i].x));
         TP.D.add(Fvector().mul(vecSy, RayDeltas[i].y));
-        R_ASSERT(_valid(TP.D));
+        R_ASSERT(xr::valid(TP.D));
         TP.pray_cache = &(m_ray_cache[i]);
         TP.vis = 1.0f;
         RD.dir = TP.D;
@@ -463,12 +463,12 @@ blend_lerp(fBlend,TP.vis,BLEND_DEC_SPEED,Device.fTimeDelta);
         float sun_max = 2.5f;
         scr_pos.y *= -1;
 
-        if (_abs(scr_pos.x) > sun_blend)
-            kx = ((sun_max - (float)_abs(scr_pos.x))) / (sun_max - sun_blend);
-        if (_abs(scr_pos.y) > sun_blend)
-            ky = ((sun_max - (float)_abs(scr_pos.y))) / (sun_max - sun_blend);
+        if (xr::abs(scr_pos.x) > sun_blend)
+            kx = ((sun_max - (float)xr::abs(scr_pos.x))) / (sun_max - sun_blend);
+        if (xr::abs(scr_pos.y) > sun_blend)
+            ky = ((sun_max - (float)xr::abs(scr_pos.y))) / (sun_max - sun_blend);
 
-        if (!((_abs(scr_pos.x) > sun_max) || (_abs(scr_pos.y) > sun_max))) {
+        if (!((xr::abs(scr_pos.x) > sun_max) || (xr::abs(scr_pos.y) > sun_max))) {
             float op = m_StateBlend * m_Current->m_Gradient.fOpacity;
             fGradientValue = kx * ky * op * fBlend;
         } else

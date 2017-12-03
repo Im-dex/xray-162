@@ -59,7 +59,7 @@ void CMonsterEnemyMemory::update() {
         if (dangerous && Device.dwTimeGlobal < sound.time + 2000) {
             if (CEntityAlive const* enemy = smart_cast<CEntityAlive const*>(sound.who)) {
                 float const xz_dist = monster->Position().distance_to_xz(g_actor->Position());
-                float const y_dist = _abs(monster->Position().y - g_actor->Position().y);
+                float const y_dist = xr::abs(monster->Position().y - g_actor->Position().y);
 
                 if (monster->CCustomMonster::useful(&monster->memory().enemy(), enemy) &&
                     y_dist < 10 &&
@@ -89,7 +89,7 @@ void CMonsterEnemyMemory::update() {
     float const feel_enemy_max_distance = monster->get_feel_enemy_max_distance();
     if (g_actor) {
         float const xz_dist = monster->Position().distance_to_xz(g_actor->Position());
-        float const y_dist = _abs(monster->Position().y - g_actor->Position().y);
+        float const y_dist = xr::abs(monster->Position().y - g_actor->Position().y);
 
         if (xz_dist < feel_enemy_max_distance && y_dist < 10 &&
             monster->memory().enemy().is_useful(g_actor) &&

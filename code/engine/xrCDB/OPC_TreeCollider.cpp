@@ -111,7 +111,8 @@ bool AABBTreeCollider::Collide(BVTCache& cache, const Matrix4x4* world0, const M
         return false;
 
 /*
-
+
+
   Rules:
         - perform hull test
         - when hulls collide, disable hull test
@@ -260,7 +261,7 @@ void AABBTreeCollider::InitQuery(const Matrix4x4* world0, const Matrix4x4* world
     for (udword i = 0; i < 3; i++) {
         for (udword j = 0; j < 3; j++) {
             // Epsilon value prevents floating-point inaccuracies (strategy borrowed from RAPID)
-            mAR.m[i][j] = 1e-6f + _abs(mR1to0.m[i][j]);
+            mAR.m[i][j] = 1e-6f + xr::abs(mR1to0.m[i][j]);
         }
     }
 }

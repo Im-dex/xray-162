@@ -196,7 +196,7 @@ BOOL OBBCollider::InitQuery(OBBCache& cache, const OBB& box, const Matrix4x4* wo
     for (udword i = 0; i < 3; i++) {
         for (udword j = 0; j < 3; j++) {
             // Epsilon value prevents floating-point inaccuracies (strategy borrowed from RAPID)
-            mAR.m[i][j] = 1e-6f + _abs(mRBoxToModel.m[i][j]);
+            mAR.m[i][j] = 1e-6f + xr::abs(mRBoxToModel.m[i][j]);
         }
     }
 
@@ -449,8 +449,8 @@ inline_ BOOL OBBCollider::OBBContainsBox(const Point& bc, const Point& be) {
     // - test AABB-in-AABB
     float NCx =
         bc.x * mRModelToBox.m[0][0] + bc.y * mRModelToBox.m[1][0] + bc.z * mRModelToBox.m[2][0];
-    float NEx = _abs(mRModelToBox.m[0][0] * be.x) + _abs(mRModelToBox.m[1][0] * be.y) +
-                _abs(mRModelToBox.m[2][0] * be.z);
+    float NEx = xr::abs(mRModelToBox.m[0][0] * be.x) + xr::abs(mRModelToBox.m[1][0] * be.y) +
+                xr::abs(mRModelToBox.m[2][0] * be.z);
 
     if (mB0.x < NCx + NEx)
         return FALSE;
@@ -459,8 +459,8 @@ inline_ BOOL OBBCollider::OBBContainsBox(const Point& bc, const Point& be) {
 
     float NCy =
         bc.x * mRModelToBox.m[0][1] + bc.y * mRModelToBox.m[1][1] + bc.z * mRModelToBox.m[2][1];
-    float NEy = _abs(mRModelToBox.m[0][1] * be.x) + _abs(mRModelToBox.m[1][1] * be.y) +
-                _abs(mRModelToBox.m[2][1] * be.z);
+    float NEy = xr::abs(mRModelToBox.m[0][1] * be.x) + xr::abs(mRModelToBox.m[1][1] * be.y) +
+                xr::abs(mRModelToBox.m[2][1] * be.z);
 
     if (mB0.y < NCy + NEy)
         return FALSE;
@@ -469,8 +469,8 @@ inline_ BOOL OBBCollider::OBBContainsBox(const Point& bc, const Point& be) {
 
     float NCz =
         bc.x * mRModelToBox.m[0][2] + bc.y * mRModelToBox.m[1][2] + bc.z * mRModelToBox.m[2][2];
-    float NEz = _abs(mRModelToBox.m[0][2] * be.x) + _abs(mRModelToBox.m[1][2] * be.y) +
-                _abs(mRModelToBox.m[2][2] * be.z);
+    float NEz = xr::abs(mRModelToBox.m[0][2] * be.x) + xr::abs(mRModelToBox.m[1][2] * be.y) +
+                xr::abs(mRModelToBox.m[2][2] * be.z);
 
     if (mB0.z < NCz + NEz)
         return FALSE;

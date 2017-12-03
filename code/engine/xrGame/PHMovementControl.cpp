@@ -1143,7 +1143,7 @@ void CPHMovementControl::GetJumpParam(Fvector& velocity, JumpType& type, const F
         return;
     }
     float rise_time = velosity.y / physics_world()->Gravity();
-    if (_abs(rise_time - time) < EPS_L) {
+    if (xr::abs(rise_time - time) < EPS_L) {
         type = jtHigh;
     } else if (rise_time > time) {
         type = jtStrait;
@@ -1314,7 +1314,7 @@ void CPHMovementControl::TraceBorder(const Fvector& prev_position) {
     float sq_mag = dir.square_magnitude();
     if (sq_mag == 0.f)
         return;
-    float mag = _sqrt(sq_mag);
+    float mag = std::sqrt(sq_mag);
     dir.mul(1.f / mag);
     collide::ray_defs RD(from_pos, dir, mag, 0, collide::rqtStatic);
     VERIFY(!fis_zero(RD.dir.square_magnitude()));
@@ -1353,7 +1353,7 @@ void CPHMovementControl::UpdateObjectBox(CPHCharacter* ach) {
     Fvector2 plane_k;
     plane_k.set(pObject->XFORM().k.x, pObject->XFORM().k.z);
     float R =
-        _abs(poses_dir.dotproduct(plane_i) * cbox.x) + _abs(poses_dir.dotproduct(plane_k) * cbox.z);
+        xr::abs(poses_dir.dotproduct(plane_i) * cbox.x) + xr::abs(poses_dir.dotproduct(plane_k) * cbox.z);
     R *= poses_dir.dotproduct(plane_cam); //(poses_dir.x*plane_cam.x+poses_dir.y*plane_cam.z);
     Calculate(Fvector().set(0, 0, 0), Fvector().set(1, 0, 0), 0, 0, 0, 0);
     m_character->SetObjectRadius(R);
@@ -1364,10 +1364,10 @@ void CPHMovementControl::UpdateObjectBox(CPHCharacter* ach) {
 void CPHMovementControl::SetPathDir(const Fvector& v) {
     _vPathDir = v;
 
-    if (_abs(_vPathDir.x) > 1000 || _abs(_vPathDir.y) > 1000 || _abs(_vPathDir.z) > 1000) {
+    if (xr::abs(_vPathDir.x) > 1000 || xr::abs(_vPathDir.y) > 1000 || xr::abs(_vPathDir.z) > 1000) {
         Log("_vPathDir", _vPathDir);
     }
-    VERIFY2(_abs(_vPathDir.x) < 1000, " incorrect SetPathDir ");
+    VERIFY2(xr::abs(_vPathDir.x) < 1000, " incorrect SetPathDir ");
 }
 const IPhysicsElement* CPHMovementControl::IElement() const {
     if (!CharacterExist())

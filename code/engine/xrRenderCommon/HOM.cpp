@@ -55,7 +55,7 @@ IC float Area(Fvector& v0, Fvector& v1, Fvector& v2) {
     float e3 = v1.distance_to(v2);
 
     float p = (e1 + e2 + e3) / 2.f;
-    return _sqrt(p * (p - e1) * (p - e2) * (p - e3));
+    return std::sqrt(p * (p - e1) * (p - e2) * (p - e3));
 }
 
 void CHOM::Load() {

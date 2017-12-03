@@ -249,9 +249,9 @@ float CExplosive::ExplosionEffect(collide::rq_results& storage, CExplosive* exp_
 #endif
 
 #ifdef DEBUG
-        float l_S = effective_volume * (_abs(l_dir.dotproduct(obj_xform.i)) / l_d.x +
-                                        _abs(l_dir.dotproduct(obj_xform.j)) / l_d.y +
-                                        _abs(l_dir.dotproduct(obj_xform.k)) / l_d.z);
+        float l_S = effective_volume * (xr::abs(l_dir.dotproduct(obj_xform.i)) / l_d.x +
+                                        xr::abs(l_dir.dotproduct(obj_xform.j)) / l_d.y +
+                                        xr::abs(l_dir.dotproduct(obj_xform.k)) / l_d.z);
         float add_eff = _sqrt(l_S / max_s) *
                         TestPassEffect(l_source_p, l_dir, mag, expl_radius, storage, blasted_obj);
         effect += add_eff;
@@ -262,10 +262,10 @@ float CExplosive::ExplosionEffect(collide::rq_results& storage, CExplosive* exp_
             Msg("dist/overlap effect, %f", add_eff / _sqrt(l_S / max_s));
         }
 #else
-        float l_S = effective_volume * (_abs(l_dir.dotproduct(obj_xform.i)) / l_d.x +
-                                        _abs(l_dir.dotproduct(obj_xform.j)) / l_d.y +
-                                        _abs(l_dir.dotproduct(obj_xform.k)) / l_d.z);
-        effect += _sqrt(l_S / max_s) *
+        float l_S = effective_volume * (xr::abs(l_dir.dotproduct(obj_xform.i)) / l_d.x +
+                                        xr::abs(l_dir.dotproduct(obj_xform.j)) / l_d.y +
+                                        xr::abs(l_dir.dotproduct(obj_xform.k)) / l_d.z);
+        effect += std::sqrt(l_S / max_s) *
                   TestPassEffect(l_source_p, l_dir, mag, expl_radius, storage, blasted_obj);
 #endif
     }
@@ -644,7 +644,7 @@ void CExplosive::ExplodeWaveProcessObject(collide::rq_results& storage,
         l_dir.sub(l_goPos, m_vExplodePos);
 
         float rmag =
-            _sqrt(m_fUpThrowFactor * m_fUpThrowFactor + 1.f + 2.f * m_fUpThrowFactor * l_dir.y);
+            std::sqrt(m_fUpThrowFactor * m_fUpThrowFactor + 1.f + 2.f * m_fUpThrowFactor * l_dir.y);
         l_dir.y += m_fUpThrowFactor;
         // rmag -модуль l_dir после l_dir.y += m_fUpThrowFactor,
         // модуль=_sqrt(l_dir^2+y^2+2.*(l_dir,y)),y=(0,m_fUpThrowFactor,0) (до этого модуль l_dir =1)

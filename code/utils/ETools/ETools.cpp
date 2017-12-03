@@ -124,7 +124,7 @@ ETOOLS_API bool __stdcall TestRayTri2(const Fvector& C, const Fvector& D, Fvecto
     // if determinant is near zero, ray lies in plane of triangle
     det = edge1.dotproduct(pvec);
 
-    if (_abs(det) < EPS_S) {
+    if (xr::abs(det) < EPS_S) {
         range = -1;
         return false;
     }

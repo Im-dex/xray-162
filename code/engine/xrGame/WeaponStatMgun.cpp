@@ -64,9 +64,9 @@ void CWeaponStatMgun::Load(LPCSTR section) {
     m_sounds.LoadSound(section, "snd_shoot", "sndShot", false, SOUND_TYPE_WEAPON_SHOOTING);
     m_Ammo->Load(pSettings->r_string(section, "ammo_class"), 0);
     camMaxAngle = pSettings->r_float(section, "cam_max_angle");
-    camMaxAngle = _abs(deg2rad(camMaxAngle));
+    camMaxAngle = xr::abs(deg2rad(camMaxAngle));
     camRelaxSpeed = pSettings->r_float(section, "cam_relax_speed");
-    camRelaxSpeed = _abs(deg2rad(camRelaxSpeed));
+    camRelaxSpeed = xr::abs(deg2rad(camRelaxSpeed));
 
     VERIFY(!fis_zero(camMaxAngle));
     VERIFY(!fis_zero(camRelaxSpeed));

@@ -104,7 +104,7 @@ struct vec3t {
         return *this;
     }
     _T sq_norm() const { return x * x + y * y + z * z; }
-    _T norm() const { return _sqrt(sq_norm()); }
+    _T norm() const { return std::sqrt(sq_norm()); }
     _T normalize() {
         _T _norm = norm();
         if (_norm > nv_eps)
@@ -468,9 +468,9 @@ inline nv_scalar nv_sq_norm(const vec3& n) { return n.x * n.x + n.y * n.y + n.z 
 inline nv_scalar nv_sq_norm(const vec4& n) { return n.x * n.x + n.y * n.y + n.z * n.z + n.w * n.w; }
 
 // Computes the magnitude
-inline nv_scalar nv_norm(const vec3& n) { return _sqrt(nv_sq_norm(n)); }
+inline nv_scalar nv_norm(const vec3& n) { return std::sqrt(nv_sq_norm(n)); }
 
-inline nv_scalar nv_norm(const vec4& n) { return _sqrt(nv_sq_norm(n)); }
+inline nv_scalar nv_norm(const vec4& n) { return std::sqrt(nv_sq_norm(n)); }
 
 // computes the cross product ( v cross w) and stores the result in u
 // i.e.     u = v cross w

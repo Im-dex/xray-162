@@ -86,7 +86,7 @@ void CUIMotionIcon::Update() {
 
     // m_luminosity_progress
     if (cur_pos != m_luminosity) {
-        float _diff = _abs(m_luminosity - cur_pos);
+        float _diff = xr::abs(m_luminosity - cur_pos);
         if (m_luminosity > cur_pos) {
             cur_pos += _diff * Device.fTimeDelta;
         } else {

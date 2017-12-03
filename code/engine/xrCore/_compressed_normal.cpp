@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 // upper 3 bits
 #define pvSIGN_MASK 0xe000
@@ -33,7 +32,7 @@ void pvInitializeStatics(void) {
         float z = float(126 - xbits - ybits);
 
         // calculate the amount of normalization required
-        pvUVAdjustment[idx] = 1.0f / _sqrt(y * y + z * z + x * x);
+        pvUVAdjustment[idx] = 1.0f / std::sqrt(y * y + z * z + x * x);
     }
 }
 

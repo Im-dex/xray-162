@@ -447,7 +447,7 @@ void CAgentEnemyManager::assign_wounded() {
 
             CAgentMemberManager::iterator i = object().member().member(mask);
             if ((*I).first->Position().distance_to_sqr((*i)->object().Position()) >
-                _sqr(wounded_enemy_reached_distance))
+                xr::sqr(wounded_enemy_reached_distance))
                 continue;
 
             if (wounded_processor((*J).m_object) != ALife::_OBJECT_ID(-1))

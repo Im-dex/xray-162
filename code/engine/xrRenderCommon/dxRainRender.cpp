@@ -54,7 +54,7 @@ void dxRainRender::Render(CEffect_Rain& owner) {
     u32 u_rain_color = color_rgba_f(f_rain_color.x, f_rain_color.y, f_rain_color.z, factor_visual);
 
     // born _new_ if needed
-    float b_radius_wrap_sqr = _sqr((source_radius + .5f));
+    float b_radius_wrap_sqr = xr::sqr((source_radius + .5f));
     if (owner.items.size() < desired_items) {
         // owner.items.reserve		(desired_items);
         while (owner.items.size() < desired_items) {
@@ -99,7 +99,7 @@ void dxRainRender::Render(CEffect_Rain& owner) {
         wdir.set(one.P.x - vEye.x, 0, one.P.z - vEye.z);
         float wlen = wdir.square_magnitude();
         if (wlen > b_radius_wrap_sqr) {
-            wlen = _sqrt(wlen);
+            wlen = std::sqrt(wlen);
             //.			Device.Statistic->TEST3.Begin();
             if ((one.P.y - vEye.y) < sink_offset) {
                 // need born
@@ -113,15 +113,15 @@ void dxRainRender::Render(CEffect_Rain& owner) {
                     float dist_sqr = one.P.distance_to_sqr(src_p);
                     float height = max_distance;
                     if (owner.RayPick(src_p, one.D, height, collide::rqtBoth)) {
-                        if (_sqr(height) <= dist_sqr) {
+                        if (xr::sqr(height) <= dist_sqr) {
                             one.invalidate(); // need born
                                               //							Log("1");
                         } else {
-                            owner.RenewItem(one, height - _sqrt(dist_sqr), TRUE); // fly to point
+                            owner.RenewItem(one, height - std::sqrt(dist_sqr), TRUE); // fly to point
                             //							Log("2",height-dist);
                         }
                     } else {
-                        owner.RenewItem(one, max_distance - _sqrt(dist_sqr), FALSE); // fly ...
+                        owner.RenewItem(one, max_distance - std::sqrt(dist_sqr), FALSE); // fly ...
                         //						Log("3",1.5f*b_height-dist);
                     }
                 } else {

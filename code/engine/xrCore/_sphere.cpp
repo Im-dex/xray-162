@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 class Miniball;
 class Basis;
@@ -7,7 +6,6 @@ class Basis;
 // Basis
 // -----
 class Basis {
-private:
     enum { d = 3 } eDimensions;
 
     // data members
@@ -91,7 +89,7 @@ void Miniball::build() {
     support_end = L.begin();
 
     // @@ pivotting or not ?
-    if (1)
+    if constexpr (true)
         pivot_mb(L.end());
     else
         mtf_mb(L.end());
@@ -266,5 +264,5 @@ void Fsphere_compute(Fsphere& dest, const Fvector* verts, int count) {
     mb.build();
 
     dest.P.set(mb.center());
-    dest.R = (_sqrt(mb.squared_radius()));
+    dest.R = (std::sqrt(mb.squared_radius()));
 }

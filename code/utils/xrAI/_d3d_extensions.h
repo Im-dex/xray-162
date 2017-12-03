@@ -1,5 +1,4 @@
-#ifndef _D3D_EXT_internal
-#define _D3D_EXT_internal
+#pragma once
 
 #ifndef NO_XR_LIGHT
 struct Flight {
@@ -18,7 +17,7 @@ public:
     float theta;        /* Inner angle of spotlight cone */
     float phi;          /* Outer angle of spotlight cone */
 
-    IC void set(u32 ltType, float x, float y, float z) {
+    void set(u32 ltType, float x, float y, float z) {
         std::memset(this, 0, sizeof(Flight));
         type = ltType;
         diffuse.set(1.0f, 1.0f, 1.0f, 1.0f);
@@ -26,9 +25,9 @@ public:
         position.set(x, y, z);
         direction.set(x, y, z);
         direction.normalize_safe();
-        range = _sqrt(flt_max);
+        range = std::sqrt(flt_max);
     }
-    IC void mul(float brightness) {
+    void mul(float brightness) {
         diffuse.mul_rgb(brightness);
         ambient.mul_rgb(brightness);
         specular.mul_rgb(brightness);
@@ -45,14 +44,13 @@ public:
 
 #ifndef NO_XR_MATERIAL
 struct Fmaterial {
-public:
     Fcolor diffuse;  /* Diffuse color RGBA */
     Fcolor ambient;  /* Ambient color RGB */
     Fcolor specular; /* Specular 'shininess' */
     Fcolor emissive; /* Emissive color RGB */
     float power;     /* Sharpness if specular highlight */
 
-    IC void set(float r, float g, float b) {
+    void set(float r, float g, float b) {
         std::memset(this, 0, sizeof(Fmaterial));
         diffuse.r = ambient.r = r;
         diffuse.g = ambient.g = g;
@@ -60,7 +58,7 @@ public:
         diffuse.a = ambient.a = 1.0f;
         power = 0;
     }
-    IC void set(float r, float g, float b, float a) {
+    void set(float r, float g, float b, float a) {
         std::memset(this, 0, sizeof(Fmaterial));
         diffuse.r = ambient.r = r;
         diffuse.g = ambient.g = g;
@@ -68,7 +66,7 @@ public:
         diffuse.a = ambient.a = a;
         power = 0;
     }
-    IC void set(Fcolor& c) {
+    void set(Fcolor& c) {
         std::memset(this, 0, sizeof(Fmaterial));
         diffuse.r = ambient.r = c.r;
         diffuse.g = ambient.g = c.g;
@@ -105,6 +103,4 @@ struct VDeclarator : public svector<D3DVERTEXELEMENT9, MAXD3DDECLLENGTH + 1> {
             return 0 == memcmp(begin(), d.begin(), size() * sizeof(D3DVERTEXELEMENT9));
     }
 };
-#endif
-
 #endif

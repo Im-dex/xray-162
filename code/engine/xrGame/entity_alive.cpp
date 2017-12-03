@@ -728,7 +728,7 @@ void CEntityAlive::fill_hit_bone_surface_areas() const {
             break;
         }
         case SBoneShape::stSphere: {
-            surface_area = 4.f * PI * _sqr(shape.sphere.R);
+            surface_area = 4.f * PI * xr::sqr(shape.sphere.R);
             break;
         }
         case SBoneShape::stCylinder: {

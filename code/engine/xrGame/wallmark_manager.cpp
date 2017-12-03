@@ -114,7 +114,8 @@ void CWalmarkManager::StartWorkflow() {
        (m_pos,Fvector().set(m_trace_dist,m_trace_dist,m_trace_dist),D3DCOLOR_XRGB(255,0,0));
             DBG_DrawAABB
        (m_pos,Fvector().set(0.05f,0.05f,0.05f),D3DCOLOR_XRGB(0,255,0));
-            
+            
+
             CTimer T; T.Start();
     */
     for (CDB::RESULT* Res = R_begin; Res != R_end; ++Res) {
@@ -221,7 +222,7 @@ float Distance(const Fvector& rkPoint, const Fvector rkTri[3], float& pfSParam, 
     //.    float fC = kDiff.SquaredLength();
     float fC = kDiff.square_magnitude();
 
-    float fDet = _abs(fA00 * fA11 - fA01 * fA01);
+    float fDet = xr::abs(fA00 * fA11 - fA01 * fA01);
 
     float fS = fA01 * fB1 - fA11 * fB0;
     float fT = fA01 * fB0 - fA00 * fB1;
@@ -382,5 +383,5 @@ float Distance(const Fvector& rkPoint, const Fvector rkTri[3], float& pfSParam, 
 
     dir.sub(closest, rkPoint);
     dir.normalize_safe();
-    return _sqrt(_abs(fSqrDist));
+    return std::sqrt(xr::abs(fSqrDist));
 }

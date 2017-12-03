@@ -22,7 +22,8 @@ including
 
   Stretched Basis -    When two adjacend faces use wildly different texture mappings, causing
 stretching that can ruin per-pixel lighting.
- 
+ 
+
 
   Here is an example usage scenario :
 
@@ -309,9 +310,9 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
 
             vec3 delta = maxPosition - minPosition;
 
-            delta.x = _abs(delta.x);
-            delta.y = _abs(delta.y);
-            delta.z = _abs(delta.z);
+            delta.x = xr::abs(delta.x);
+            delta.y = xr::abs(delta.y);
+            delta.z = xr::abs(delta.z);
 
             bool maxx, maxy, maxz;
             maxx = maxy = maxz = false;
@@ -385,7 +386,7 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
                 nv_scalar longitude = nv_zero;
 
                 // Prevent zero or near-zero from being passed into atan2
-                if (_abs(Other) < 0.0001f) {
+                if (xr::abs(Other) < 0.0001f) {
                     if (Other >= nv_zero) {
                         Other = 0.0001f;
                     } else {
@@ -439,7 +440,7 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
 
                     unsigned int theOneToChange = start;
 
-                    if (_abs(dS) >= 0.5f) {
+                    if (xr::abs(dS) >= 0.5f) {
                         bDoS = true;
                         if (texcoords[indices[start] * 3 + 0] < texcoords[indices[end] * 3 + 0]) {
                             newS = texcoords[indices[start] * 3 + 0] + 1.0f;
@@ -508,7 +509,7 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
 
                         unsigned int theOneToChange = start;
 
-                        if (_abs(dT) >= 0.5f) {
+                        if (xr::abs(dT) >= 0.5f) {
                             bDoT = true;
                             if (texcoords[indices[start] * 3 + 1] <
                                 texcoords[indices[end] * 3 + 1]) {
@@ -649,10 +650,10 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
             b = sxt.y;
             c = sxt.z;
             double ds_dx = nv_zero;
-            if (_abs(a) > _eps)
+            if (xr::abs(a) > _eps)
                 ds_dx = -b / a;
             double dt_dx = nv_zero;
-            if (_abs(a) > _eps)
+            if (xr::abs(a) > _eps)
                 dt_dx = -c / a;
 
             // create an edge out of y, s and t
@@ -664,10 +665,10 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
             b = sxt.y;
             c = sxt.z;
             double ds_dy = nv_zero;
-            if (_abs(a) > _eps)
+            if (xr::abs(a) > _eps)
                 ds_dy = -b / a;
             double dt_dy = nv_zero;
-            if (_abs(a) > _eps)
+            if (xr::abs(a) > _eps)
                 dt_dy = -c / a;
 
             // create an edge out of z, s and t
@@ -679,10 +680,10 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
             b = sxt.y;
             c = sxt.z;
             double ds_dz = nv_zero;
-            if (_abs(a) > _eps)
+            if (xr::abs(a) > _eps)
                 ds_dz = -b / a;
             double dt_dz = nv_zero;
-            if (_abs(a) > _eps)
+            if (xr::abs(a) > _eps)
                 dt_dz = -c / a;
 
             // generate coordinate frame from the gradients
@@ -732,13 +733,13 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
                         const nv_scalar sxtAgreement = dot(sxt, sxtVector[(*iter).face]);
 
                         // Check Radian angle split limit
-                        const nv_scalar epsilon = _cos(bSmoothCreaseAngleRadians);
+                        const nv_scalar epsilon = std::cos(bSmoothCreaseAngleRadians);
 
                         //  if the discontinuity in s, t, or sxt is greater than some epsilon,
                         //   duplicate the vertex so it won't smooth with its neighbor anymore
 
-                        if ((_abs(sAgreement) < epsilon) || (_abs(tAgreement) < epsilon) ||
-                            (_abs(sxtAgreement) < epsilon)) {
+                        if ((xr::abs(sAgreement) < epsilon) || (xr::abs(tAgreement) < epsilon) ||
+                            (xr::abs(sxtAgreement) < epsilon)) {
                             // Duplicate two vertices of this edge for this triangle only.
                             //  This way the faces won't smooth with each other, thus
                             //  preventing the tangent basis from becoming degenerate

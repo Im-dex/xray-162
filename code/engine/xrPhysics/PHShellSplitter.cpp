@@ -285,7 +285,7 @@ shell_root CPHShellSplitterHolder::ElementSingleSplit(const element_fracture& sp
     CPHShell* new_shell_last_desc = smart_cast<CPHShell*>(new_shell_last);
     new_shell_last->mXFORM.set(m_pShell->mXFORM);
     const u16 start_joint = split_elem.second.m_start_jt_num;
-    R_ASSERT(_valid(new_shell_last->mXFORM));
+    R_ASSERT(xr::valid(new_shell_last->mXFORM));
     const u16 end_joint = split_elem.second.m_end_jt_num;
     // it is not right for multiple joints attached to the unsplited part becource all these need to
     // be reattached

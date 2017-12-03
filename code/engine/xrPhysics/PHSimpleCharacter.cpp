@@ -54,7 +54,7 @@ bool test_sides(const Fvector& center, const Fvector& side_dir, const Fvector& f
         float sg_fvn = sgn(fvn);
         float sdn = cast_fv(tri.norm).dotproduct(side_dir);
         float sg_sdn = sgn(sdn);
-        if (sg_fvn * fvn * box.z + sg_sdn * sdn * box.x + _abs(tri.norm[1]) * box.y > _abs(dist))
+        if (sg_fvn * fvn * box.z + sg_sdn * sdn * box.x + xr::abs(tri.norm[1]) * box.y > xr::abs(dist))
             return false;
     }
     {
@@ -121,7 +121,7 @@ bool test_sides(const Fvector& center, const Fvector& side_dir, const Fvector& f
         float dist = c_prg - sv_prg;
         float sg_dist = sgn(dist);
         if (sgn(ov_prg - c_prg) != sg_dist) {
-            if (_abs(fv_dir.dotproduct(crs)) * box.z + _abs(side_dir.dotproduct(crs)) * box.x <
+            if (xr::abs(fv_dir.dotproduct(crs)) * box.z + xr::abs(side_dir.dotproduct(crs)) * box.x <
                 sg_dist * dist)
                 return false;
         }
@@ -208,7 +208,7 @@ void CPHSimpleCharacter::SetBox(const dVector3& sizes) {
     if (m_cyl_hight < 0.f)
         m_cyl_hight = 0.01f;
     const dReal k = 1.20f;
-    dReal doun = m_radius * _sqrt(1.f - 1.f / k / k) / 2.f;
+    dReal doun = m_radius * std::sqrt(1.f - 1.f / k / k) / 2.f;
     // m_geom_shell=dCreateCylinder(0,m_radius/k,m_cyl_hight+doun);
     dGeomCylinderSetParams(m_geom_shell, m_radius / k, m_cyl_hight + doun);
     // m_wheel=dCreateSphere(0,m_radius);
@@ -254,7 +254,7 @@ void CPHSimpleCharacter::Create(dVector3 sizes) {
 
     b_exist = true;
     const dReal k = 1.20f;
-    dReal doun = m_radius * _sqrt(1.f - 1.f / k / k) / 2.f;
+    dReal doun = m_radius * std::sqrt(1.f - 1.f / k / k) / 2.f;
 
     m_geom_shell = dCreateCylinder(0, m_radius / k, m_cyl_hight + doun);
 
@@ -522,7 +522,7 @@ void CPHSimpleCharacter::PhDataUpdate(dReal /**step/**/) {
 
     dMass mass;
     const float* linear_velocity = dBodyGetLinearVel(m_body);
-    dReal linear_velocity_mag = _sqrt(dDOT(linear_velocity, linear_velocity));
+    dReal linear_velocity_mag = std::sqrt(dDOT(linear_velocity, linear_velocity));
     dBodyGetMass(m_body, &mass);
     dReal l_air = linear_velocity_mag * default_k_l; // force/velocity !!!
     if (l_air > mass.mass / fixed_step)
@@ -735,7 +735,7 @@ void CPHSimpleCharacter::PhTune(dReal step) {
                          current_pos[1] - m_jump_depart_position[1],
                          current_pos[2] - m_jump_depart_position[2] };
         dReal amag =
-            _sqrt(m_acceleration.x * m_acceleration.x + m_acceleration.z * m_acceleration.z);
+            std::sqrt(m_acceleration.x * m_acceleration.x + m_acceleration.z * m_acceleration.z);
         if (amag > 0.f)
             if (dif[0] * m_acceleration.x / amag + dif[2] * m_acceleration.z / amag < 0.3f) {
                 Fvector jump_fv =
@@ -1085,7 +1085,7 @@ void CPHSimpleCharacter::SetVelocity(Fvector vel) {
         return;
     float sq_mag = vel.square_magnitude();
     if (sq_mag > default_l_limit * default_l_limit) {
-        float mag = _sqrt(sq_mag);
+        float mag = std::sqrt(sq_mag);
         vel.mul(default_l_limit / mag);
 #ifdef DEBUG
         Msg("set velocity magnitude is too large %f", mag);
@@ -1193,7 +1193,7 @@ void CPHSimpleCharacter::SafeAndLimitVelocity() {
 
     const float* linear_velocity = dBodyGetLinearVel(m_body);
     if (dV_valid(linear_velocity)) {
-        dReal mag = _sqrt(linear_velocity[0] * linear_velocity[0] +
+        dReal mag = std::sqrt(linear_velocity[0] * linear_velocity[0] +
                           linear_velocity[1] * linear_velocity[1] +
                           linear_velocity[2] * linear_velocity[2]); //;
         // limit velocity
@@ -1208,7 +1208,7 @@ void CPHSimpleCharacter::SafeAndLimitVelocity() {
             float ll_limit = m_ext_imulse.dotproduct(cast_fv(linear_velocity)) * 10.f / fixed_step;
             if (sq_mag > EPS_L) {
                 Fvector acc;
-                acc.set(Fvector().mul(m_acceleration, 1.f / _sqrt(sq_mag)));
+                acc.set(Fvector().mul(m_acceleration, 1.f / std::sqrt(sq_mag)));
                 Fvector vll;
                 vll.mul(cast_fv(linear_velocity), 1.f / mag);
                 float mxa = vll.dotproduct(acc);
@@ -1622,7 +1622,7 @@ void CPHSimpleCharacter::DeathPosition(Fvector& deathPos) {
         deathPos.set(m_death_position);
     else {
         deathPos.set(cast_fv(dBodyGetPosition(m_body)));
-        if (!_valid(deathPos))
+        if (!xr::valid(deathPos))
             deathPos.set(m_safe_position);
     }
     deathPos.y -= m_radius;

@@ -82,8 +82,8 @@ void SimpleJtLimit::init(int jt_type,
 
     psi.Reset(a,b,c);
     limits.Set(low,high);
-    sin_low = _sin(low);
-    sin_high = _sin(high); 
+    sin_low = std::sin(low);
+    sin_high = std::sin(high);
 
     switch(jt_type)
     {
@@ -127,7 +127,7 @@ float SimpleJtLimit::theta1_d_aux(float v, float delta) const
 		theta1_d_aux(v - delta, delta * 10.0f)) / 2.0f;
     }
 
-    d = _sqrt(1-d*d);
+    d = std::sqrt(1-d*d);
 
     return (type == SinJtLimit) ? (d_psi / d) : (-d_psi / d);
 }
@@ -340,7 +340,7 @@ void SimpleJtLimit::PsiLimits(AngleIntList &psi1,
 		    continue; 
 #else
 		// Points are closer than 2 eps then interval is nonexistent
-		if (_abs(y[i]-y[i+1]) < 2*eps)
+		if (xr::abs(y[i]-y[i+1]) < 2*eps)
 		    continue; 
 #endif
 
@@ -359,7 +359,7 @@ void SimpleJtLimit::PsiLimits(AngleIntList &psi1,
 		    continue; 
 #else
 		// Points are closer than 2 eps then interval is nonexistent
-		if (_abs(y[i]-y[i+1]) < 2*eps)
+		if (xr::abs(y[i]-y[i+1]) < 2*eps)
 		    continue; 
 #endif
 		clip(1, y[i]+eps, y[i+1]-eps, limits.Low(), limits.High(), psi1);
@@ -637,10 +637,10 @@ int ComplexJtLimit::Solve(int family, float v, float tan_v, float psi[2]) const
 int angleequal(float x, float y, float eps)
 {
     // Handle case where x = 2*MPI, y = 0 or vice versa 
-    if (equal(x,2*M_PI,eps) &&  _abs(y) < eps)
+    if (equal(x,2*M_PI,eps) &&  xr::abs(y) < eps)
 	return 1;
 
-    if (_abs(x) < eps && equal(y,2*M_PI,eps))
+    if (xr::abs(x) < eps && equal(y,2*M_PI,eps))
 	return 1;
 
     return equal(x,y,eps); 
@@ -695,7 +695,7 @@ void ComplexJtLimit::clip(float low,
     
     for (int i = 0; i < (n-1); i++)
     {
-	if (_abs(p[i]-p[i+1]) < 2*eps)
+	if (xr::abs(p[i]-p[i+1]) < 2*eps)
 	    continue; 
 
 	float t = theta(family, (p[i]+eps + p[i+1]-eps) / 2.0f);

@@ -144,7 +144,7 @@ IC void CSQuadTree::nearest(const Fvector& position, float radius,
         return;
 
     if (depth == m_max_depth) {
-        float radius_sqr = _sqr(radius);
+        float radius_sqr = xr::sqr(radius);
         CListItem* leaf = ((CListItem*)((void*)(node)));
         for (; leaf; leaf = leaf->m_next)
             if (leaf->m_object->position().distance_to_xz_sqr(position) <= radius_sqr)
@@ -156,9 +156,9 @@ IC void CSQuadTree::nearest(const Fvector& position, float radius,
     Fvector next_center = center;
     u32 index = neighbour_index(position, next_center, distance);
     VERIFY(index < 4);
-    if (_abs(position.z - center.z) < radius) {
-        if (_abs(position.x - center.x) < radius) {
-            if (_sqr(position.z - center.z) + _sqr(position.x - center.x) < _sqr(radius)) {
+    if (xr::abs(position.z - center.z) < radius) {
+        if (xr::abs(position.x - center.x) < radius) {
+            if (xr::sqr(position.z - center.z) + xr::sqr(position.x - center.x) < xr::sqr(radius)) {
                 nearest(position, radius, objects, node->m_neighbours[0],
                         next_center.set(center.x - distance, center.y, center.z - distance),
                         distance, depth + 1);
@@ -224,7 +224,7 @@ IC void CSQuadTree::nearest(const Fvector& position, float radius,
         nearest(position, radius, objects, node->m_neighbours[index], next_center, distance,
                 depth + 1);
 
-        if (_abs(position.x - center.x) < radius)
+        if (xr::abs(position.x - center.x) < radius)
             if (position.x > center.x) {
                 if (index > 1)
                     nearest(position, radius, objects, node->m_neighbours[index == 2 ? 0 : 1],

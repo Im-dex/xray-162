@@ -55,7 +55,7 @@ bool CDetailPathManager::valid() const {
     return (b);
 }
 
-bool CDetailPathManager::valid(const Fvector& position) const { return (!!_valid(position)); }
+bool CDetailPathManager::valid(const Fvector& position) const { return xr::valid(position); }
 
 Fvector CDetailPathManager::direction() const {
     if ((m_path.size() < 2) || (m_path.size() <= m_current_travel_point + 1))

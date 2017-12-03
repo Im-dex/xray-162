@@ -248,7 +248,7 @@ void LightPoint(CDB::COLLIDER* DB, base_color& C, Fvector& P, Fvector& N, base_l
                     continue;
 
                 // Trace Light
-                float R = _sqrt(sqD);
+                float R = std::sqrt(sqD);
                 float scale = D * L->energy * rayTrace(DB, *L, Pnew, Ldir, R);
                 float A = scale / (L->attenuation0 + L->attenuation1 * R + L->attenuation2 * sqD);
 
@@ -285,7 +285,7 @@ void LightPoint(CDB::COLLIDER* DB, base_color& C, Fvector& P, Fvector& N, base_l
                     continue;
 
                 // Trace Light
-                float R = _sqrt(sqD);
+                float R = std::sqrt(sqD);
                 float scale = D * L->energy * rayTrace(DB, *L, Pnew, Ldir, R);
                 float A = scale / (L->attenuation0 + L->attenuation1 * R + L->attenuation2 * sqD);
 
@@ -322,7 +322,7 @@ void LightPoint(CDB::COLLIDER* DB, base_color& C, Fvector& P, Fvector& N, base_l
                     continue;
 
                 // Trace Light
-                float R = _sqrt(sqD);
+                float R = std::sqrt(sqD);
                 float scale = D * L->energy * rayTrace(DB, *L, Pnew, Ldir, R);
                 float A = scale / (L->attenuation0 + L->attenuation1 * R + L->attenuation2 * sqD);
 

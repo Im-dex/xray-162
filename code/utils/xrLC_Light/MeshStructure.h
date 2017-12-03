@@ -205,7 +205,7 @@ public:
         float e3 = v[1]->P.distance_to(v[2]->P);
 
         float p = (e1 + e2 + e3) / 2.f;
-        return _sqrt(p * (p - e1) * (p - e2) * (p - e3));
+        return std::sqrt(p * (p - e1) * (p - e2) * (p - e3));
     }
     float CalcMaxEdge() {
         float e1 = v[0]->P.distance_to(v[1]->P);

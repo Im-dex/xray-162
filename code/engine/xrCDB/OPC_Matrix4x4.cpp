@@ -109,7 +109,7 @@ Matrix4x4& Matrix4x4::Invert() {
     float Det = Determinant();
     Matrix4x4 Temp;
 
-    if (_abs(Det) < MATRIX4X4_EPSILON)
+    if (xr::abs(Det) < MATRIX4X4_EPSILON)
         return *this; // The matrix is not invertible! Singular case!
 
     float IDet = 1.0f / Det;
@@ -155,10 +155,10 @@ Matrix4x4& Matrix4x4::Shadow(const Point& light, const Point& p0, const Point& p
     float D = -(p0 | n);
     Plane PlaneEquation;
     float Coeff;
-    if (_abs(D) < 0.0001f)
+    if (xr::abs(D) < 0.0001f)
         Coeff = -1.0f;
     else
-        Coeff = -1.0f / _abs(D);
+        Coeff = -1.0f / xr::abs(D);
     PlaneEquation.n.x = n.x * Coeff;
     PlaneEquation.n.y = n.y * Coeff;
     PlaneEquation.n.z = n.z * Coeff;
@@ -256,7 +256,7 @@ Matrix4x4& Matrix4x4::Rot(float angle, Point& p1, Point& p2) {
 
     Matrix4x4 Rx, InvRx;
     Rx.Identity();
-    float d = _sqrt(Axis.y * Axis.y + Axis.z * Axis.z);
+    float d = std::sqrt(Axis.y * Axis.y + Axis.z * Axis.z);
     if (d != 0.0f) {
         float CosAngle = Axis.z / d;
         float SinAngle = Axis.y / d;
@@ -339,7 +339,7 @@ void Matrix::LUDecomposition(sdword* indx, float* d) {
     for (i = 0; i < 4; i++) {
         big = 0.0f;
         for (j = 0; j < 4; j++)
-            if ((tmp = (float)_abs((*this)(i, j))) > big)
+            if ((tmp = (float)xr::abs((*this)(i, j))) > big)
                 big = tmp;
         /*
         if (big == 0.0f) {
@@ -362,7 +362,7 @@ void Matrix::LUDecomposition(sdword* indx, float* d) {
             for (k = 0; k < j; k++)
                 sum -= (*this)(i, k) * (*this)(k, j);
             (*this)(i, j) = sum;
-            if ((dum = vv[i] * (float)_abs(sum)) >= big) {
+            if ((dum = vv[i] * (float)xr::abs(sum)) >= big) {
                 big = dum;
                 imax = i;
             }
@@ -453,7 +453,7 @@ Matrix::operator PRS() const {
             Row = *GetRow(dwRow);
             Scale[dwRow] = ScaleFactor = Row.Magnitude();
 
-            if (_abs(ScaleFactor) > mEpsilon)
+            if (xr::abs(ScaleFactor) > mEpsilon)
                 NormalizedRow = Row / ScaleFactor;
             else {
                 NormalizedRow[0] = NormalizedRow[1] = NormalizedRow[2] = 0.0f;

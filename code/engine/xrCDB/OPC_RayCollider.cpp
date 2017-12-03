@@ -316,9 +316,9 @@ BOOL RayCollider::InitQuery(const Ray& world_ray, const Matrix4x4* world, udword
         mData2 = mOrigin + mData;
 
         // Precompute mFDir;
-        mFDir.x = _abs(mData.x);
-        mFDir.y = _abs(mData.y);
-        mFDir.z = _abs(mData.z);
+        mFDir.x = xr::abs(mData.x);
+        mFDir.y = xr::abs(mData.y);
+        mFDir.z = xr::abs(mData.z);
     } else {
         // For Ray-AABB overlap
         //		udword x = SIR(mDir.x)-1;
@@ -329,9 +329,9 @@ BOOL RayCollider::InitQuery(const Ray& world_ray, const Matrix4x4* world, udword
         //		mData.z = FR(z);
 
         // Precompute mFDir;
-        mFDir.x = _abs(mDir.x);
-        mFDir.y = _abs(mDir.y);
-        mFDir.z = _abs(mDir.z);
+        mFDir.x = xr::abs(mDir.x);
+        mFDir.y = xr::abs(mDir.y);
+        mFDir.z = xr::abs(mDir.z);
     }
 
     // Check temporal coherence :

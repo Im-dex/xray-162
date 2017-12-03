@@ -229,9 +229,9 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector& vControlAccel, float& Ju
                 isActorAccelerated(mstate_real, IsZoomAimingMode()) && CanAccelerate();
 
             // correct "mstate_real" if opposite keys pressed
-            if (_abs(vControlAccel.z) < EPS)
+            if (xr::abs(vControlAccel.z) < EPS)
                 mstate_real &= ~(mcFwd + mcBack);
-            if (_abs(vControlAccel.x) < EPS)
+            if (xr::abs(vControlAccel.x) < EPS)
                 mstate_real &= ~(mcLStrafe + mcRStrafe);
 
             // normalize and analyze crouch and run
@@ -383,7 +383,7 @@ void CActor::g_Orientate(u32 mstate_rl, float dt) {
 bool CActor::g_LadderOrient() {
     Fvector leader_norm;
     character_physics_support()->movement()->GroundNormal(leader_norm);
-    if (_abs(leader_norm.y) > M_SQRT1_2)
+    if (xr::abs(leader_norm.y) > M_SQRT1_2)
         return false;
     // leader_norm.y=0.f;
     float mag = leader_norm.magnitude();
@@ -457,12 +457,12 @@ void CActor::g_cl_Orientate(u32 mstate_rl, float dt) {
     } else {
         // if camera rotated more than 45 degrees - align model with it
         float ty = angle_normalize(r_torso.yaw);
-        if (_abs(r_model_yaw - ty) > PI_DIV_4) {
+        if (xr::abs(r_model_yaw - ty) > PI_DIV_4) {
             r_model_yaw_dest = ty;
             //
             mstate_real |= mcTurn;
         }
-        if (_abs(r_model_yaw - r_model_yaw_dest) < EPS_L) {
+        if (xr::abs(r_model_yaw - r_model_yaw_dest) < EPS_L) {
             mstate_real &= ~mcTurn;
         }
         if (mstate_rl & mcTurn) {

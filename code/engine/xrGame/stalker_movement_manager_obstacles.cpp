@@ -212,7 +212,7 @@ static float get_distance(Fvector const& a_first, Fvector const& a_second, Fvect
         float const bf_af_magnitude = bf_af.magnitude();
         Fvector2 const as_af_dir = Fvector2(as_af).div(as_af_magnitude);
         float const signed_distance = as_af_dir.dotproduct(bf_af);
-        float const distance = _sqrt(_sqr(bf_af_magnitude) + _sqr(signed_distance));
+        float const distance = std::sqrt(xr::sqr(bf_af_magnitude) + xr::sqr(signed_distance));
         if (distance >= safe_distance)
             return -1.f;
 

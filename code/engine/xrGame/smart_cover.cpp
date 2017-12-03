@@ -183,7 +183,7 @@ void cover::evaluate_loophole(Fvector const& position, smart_cover::loophole*& s
     direction.normalize();
     float cos_alpha = this->fov_direction(*source).dotproduct(direction);
 
-    float alpha = _abs(acosf(cos_alpha));
+    float alpha = xr::abs(acosf(cos_alpha));
     if (alpha >= source->fov() / 2)
         return;
 

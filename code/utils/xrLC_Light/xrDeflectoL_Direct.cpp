@@ -20,8 +20,8 @@ void CDeflector::L_Direct_Edge(CDB::COLLIDER* DB, base_lighting* LightsSelected,
     Fvector2 size;
     size.x = p2.x - p1.x;
     size.y = p2.y - p1.y;
-    int du = iCeil(_abs(size.x) / texel_size);
-    int dv = iCeil(_abs(size.y) / texel_size);
+    int du = iCeil(xr::abs(size.x) / texel_size);
+    int dv = iCeil(xr::abs(size.y) / texel_size);
     int steps = std::max(du, dv);
     if (steps <= 0)
         return;

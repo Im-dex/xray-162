@@ -151,7 +151,7 @@ IC int calcSphereSector(Fvector& dir) {
     flat.norm();
 
     // analyze
-    if (_abs(flat.x) > _abs(flat.y)) {
+    if (xr::abs(flat.x) > xr::abs(flat.y)) {
         // sector 0,7,3,4
         if (flat.x < 0) {
             // sector 3,4
@@ -402,7 +402,7 @@ bool vertex_in_direction(const u32& start_vertex_id, const u32& target_vertex_id
     Fvector2 temp;
     temp = start;
 
-    float cur_sqr = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+    float cur_sqr = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
     for (;;) {
         bool found = false;
         for (int I = 0, E = 4; I != E; ++I) {
@@ -421,7 +421,7 @@ bool vertex_in_direction(const u32& start_vertex_id, const u32& target_vertex_id
                 Fvector2 temp;
                 temp.add(box.min, box.max);
                 temp.mul(.5f);
-                float dist = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+                float dist = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
                 if (dist > cur_sqr)
                     continue;
 

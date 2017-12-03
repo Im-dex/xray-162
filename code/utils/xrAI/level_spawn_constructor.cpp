@@ -403,7 +403,7 @@ struct remove_too_far_predicate {
         VERIFY(graph);
         m_graph = graph;
         m_position = position;
-        m_radius_sqr = _sqr(radius);
+        m_radius_sqr = xr::sqr(radius);
     }
 
     IC bool operator()(const u32& vertex_id) const {

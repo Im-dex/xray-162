@@ -24,7 +24,9 @@ Comments:
   - I'd like to provide a non c++ standard library interface, probably
     a simple c interface for all those simple c folks. or the
         old nvMeshMender interface for all those using it already
-  
+  
+
+
 */
 
 #include "stdafx.h"
@@ -39,7 +41,7 @@ static D3DXVECTOR3* Vec3Normalize(D3DXVECTOR3* pOut, CONST D3DXVECTOR3* pV) {
     assert(pOut != NULL);
     assert(pV != NULL);
 
-    float v = 1.0f / _sqrt(pV->x * pV->x + pV->y * pV->y + pV->z * pV->z);
+    float v = 1.0f / std::sqrt(pV->x * pV->x + pV->y * pV->y + pV->z * pV->z);
     pOut->x *= v;
     pOut->y *= v;
     pOut->z *= v;
@@ -811,7 +813,7 @@ void MeshMender::GetGradients(const MeshMender::Vertex& v0, const MeshMender::Ve
     // solve this for the unormalized T and B to get from tangent to object space
 
     float tmp = 0.0f;
-    if (_abs(s1 * t2 - s2 * t1) <= 0.0001f) {
+    if (xr::abs(s1 * t2 - s2 * t1) <= 0.0001f) {
         tmp = (s1 * t2 - s2 * t1) > 0.f ? 1.0f : -1.f;
     } else {
         tmp = 1.0f / (s1 * t2 - s2 * t1);
@@ -882,7 +884,7 @@ void MeshMender::FixCylindricalWrapping(xr_vector<Vertex>& theVerts,
 
             if (sBegin <= 1.0f && sEnd <= 1.0f && sBegin >= 0.0f && sEnd >= 0.0f) {
                 // we only handle coordinates between 0 and 1 for the cylindrical wrappign fix
-                if (_abs(sBegin - sEnd) > 0.5f) {
+                if (xr::abs(sBegin - sEnd) > 0.5f) {
                     unsigned int theOneToDupe = begin;
                     // we have some wrapping going on.
                     if (sBegin > sEnd)
@@ -907,7 +909,7 @@ void MeshMender::FixCylindricalWrapping(xr_vector<Vertex>& theVerts,
 
             if (tBegin <= 1.0f && tEnd <= 1.0f && tBegin >= 0.0f && tEnd >= 0.0f) {
                 // we only handle coordinates between 0 and 1 for the cylindrical wrappign fix
-                if (_abs(tBegin - tEnd) > 0.5f) {
+                if (xr::abs(tBegin - tEnd) > 0.5f) {
                     unsigned int theOneToDupe = begin;
                     // we have some wrapping going on.
                     if (tBegin > tEnd)

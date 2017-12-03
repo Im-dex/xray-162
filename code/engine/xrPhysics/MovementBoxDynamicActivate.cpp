@@ -134,7 +134,7 @@ public:
             dReal mag;
             Fvector vlinear_velocity;
             vlinear_velocity.set(cast_fv(linear_velocity));
-            mag = _sqrt(linear_velocity[0] * linear_velocity[0] +
+            mag = std::sqrt(linear_velocity[0] * linear_velocity[0] +
                         linear_velocity[2] * linear_velocity[2]); //
             if (mag > l_limit) {
                 dReal f = mag / l_limit;
@@ -143,7 +143,7 @@ public:
                 vlinear_velocity.z /= f;
                 ret = true;
             }
-            mag = _abs(linear_velocity[1]);
+            mag = xr::abs(linear_velocity[1]);
             if (mag > y_limit) {
                 vlinear_velocity.y = linear_velocity[1] / mag * y_limit;
                 ret = true;
@@ -236,21 +236,21 @@ protected:
                     othrers_torque = feedback->t1;
                 }
 
-                save_max(m_max_force_self, _sqrt(dDOT(self_force, self_force)));
-                save_max(m_max_torque_self, _sqrt(dDOT(self_torque, self_torque)));
-                save_max(m_max_force_self_y, _abs(self_force[1]));
+                save_max(m_max_force_self, std::sqrt(dDOT(self_force, self_force)));
+                save_max(m_max_torque_self, std::sqrt(dDOT(self_torque, self_torque)));
+                save_max(m_max_force_self_y, xr::abs(self_force[1]));
                 save_max(m_max_force_self_sd,
-                         _sqrt(self_force[0] * self_force[0] + self_force[2] * self_force[2]));
+                         std::sqrt(self_force[0] * self_force[0] + self_force[2] * self_force[2]));
                 if (other_body) {
                     dVector3 shoulder;
                     dVectorSub(shoulder, dJointGetPositionContact(joint),
                                dBodyGetPosition(other_body));
-                    dReal shoulder_lenght = _sqrt(dDOT(shoulder, shoulder));
+                    dReal shoulder_lenght = std::sqrt(dDOT(shoulder, shoulder));
 
-                    save_max(m_max_force_others, _sqrt(dDOT(othrers_force, othrers_force)));
+                    save_max(m_max_force_others, std::sqrt(dDOT(othrers_force, othrers_force)));
                     if (!fis_zero(shoulder_lenght))
                         save_max(m_max_torque_others,
-                                 _sqrt(dDOT(othrers_torque, othrers_torque)) / shoulder_lenght);
+                                 std::sqrt(dDOT(othrers_torque, othrers_torque)) / shoulder_lenght);
                 }
             }
         }
@@ -328,7 +328,7 @@ bool ActivateBoxDynamic(IPHMovementControl* mov_control, bool character_exist, D
 
     // const Fbox& box =Box();
     float pass = character_exist
-                     ? _abs(mov_control->Box().getradius() - mov_control->Boxes()[id].getradius())
+                     ? xr::abs(mov_control->Box().getradius() - mov_control->Boxes()[id].getradius())
                      : mov_control->Boxes()[id].getradius();
     float max_vel = pass / 2.f / fnum_it / fnum_steps / fixed_step;
     float max_a_vel = M_PI / 8.f / fnum_it / fnum_steps / fixed_step;

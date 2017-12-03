@@ -234,11 +234,11 @@ inline float angle_lerp(const float A, const float B, const float f) {
 
 inline float angle_inertion(float src, const float tgt, const float speed, const float clmp,
                             const float dt) {
-    float a = angle_normalize_signed(tgt);
+    const float a = angle_normalize_signed(tgt);
     angle_lerp(src, a, speed, dt);
     src = angle_normalize_signed(src);
-    float dH = angle_difference_signed(src, a);
-    float dCH = clampr(dH, -clmp, clmp);
+    const float dH = angle_difference_signed(src, a);
+    const float dCH = clampr(dH, -clmp, clmp);
     src -= dH - dCH;
     return src;
 }
@@ -247,11 +247,11 @@ inline float angle_inertion_var(float src, float tgt, const float min_speed, con
                                 const float clmp, const float dt) {
     tgt = angle_normalize_signed(tgt);
     src = angle_normalize_signed(src);
-    float speed = _abs((max_speed - min_speed) * angle_difference(tgt, src) / clmp) + min_speed;
+    const float speed = xr::abs((max_speed - min_speed) * angle_difference(tgt, src) / clmp) + min_speed;
     angle_lerp(src, tgt, speed, dt);
     src = angle_normalize_signed(src);
-    float dH = angle_difference_signed(src, tgt);
-    float dCH = clampr(dH, -clmp, clmp);
+    const float dH = angle_difference_signed(src, tgt);
+    const float dCH = clampr(dH, -clmp, clmp);
     src -= dH - dCH;
     return src;
 }
@@ -325,7 +325,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
 
     auto trace = M._11 + M._22 + M._33;
     if (trace > 0.0f) {
-        s = _sqrt(trace + 1.0f);
+        s = std::sqrt(trace + 1.0f);
         w = s * 0.5f;
         s = 0.5f / s;
 
@@ -350,7 +350,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
         // in the unusual case the original trace fails to produce a good sqrt, try others...
         switch (biggest) {
         case A:
-            s = _sqrt(M._11 - (M._22 + M._33) + 1.0f);
+            s = std::sqrt(M._11 - (M._22 + M._33) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 x = s * 0.5f;
                 s = 0.5f / s;
@@ -360,7 +360,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
                 break;
             }
             // I
-            s = _sqrt(M._33 - (M._11 + M._22) + 1.0f);
+            s = std::sqrt(M._33 - (M._11 + M._22) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 z = s * 0.5f;
                 s = 0.5f / s;
@@ -370,7 +370,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
                 break;
             }
             // E
-            s = _sqrt(M._22 - (M._33 + M._11) + 1.0f);
+            s = std::sqrt(M._22 - (M._33 + M._11) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 y = s * 0.5f;
                 s = 0.5f / s;
@@ -381,7 +381,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
             }
             break;
         case E:
-            s = _sqrt(M._22 - (M._33 + M._11) + 1.0f);
+            s = std::sqrt(M._22 - (M._33 + M._11) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 y = s * 0.5f;
                 s = 0.5f / s;
@@ -391,7 +391,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
                 break;
             }
             // I
-            s = _sqrt(M._33 - (M._11 + M._22) + 1.0f);
+            s = std::sqrt(M._33 - (M._11 + M._22) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 z = s * 0.5f;
                 s = 0.5f / s;
@@ -401,7 +401,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
                 break;
             }
             // A
-            s = _sqrt(M._11 - (M._22 + M._33) + 1.0f);
+            s = std::sqrt(M._11 - (M._22 + M._33) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 x = s * 0.5f;
                 s = 0.5f / s;
@@ -412,7 +412,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
             }
             break;
         case I:
-            s = _sqrt(M._33 - (M._11 + M._22) + 1.0f);
+            s = std::sqrt(M._33 - (M._11 + M._22) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 z = s * 0.5f;
                 s = 0.5f / s;
@@ -422,7 +422,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
                 break;
             }
             // A
-            s = _sqrt(M._11 - (M._22 + M._33) + 1.0f);
+            s = std::sqrt(M._11 - (M._22 + M._33) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 x = s * 0.5f;
                 s = 0.5f / s;
@@ -432,7 +432,7 @@ _quaternion<T>& _quaternion<T>::set(const _matrix<T>& M) {
                 break;
             }
             // E
-            s = _sqrt(M._22 - (M._33 + M._11) + 1.0f);
+            s = std::sqrt(M._22 - (M._33 + M._11) + 1.0f);
             if (s > TRACE_QZERO_TOLERANCE) {
                 y = s * 0.5f;
                 s = 0.5f / s;

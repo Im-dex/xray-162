@@ -33,9 +33,9 @@ __inline float PLC_energy_x86(Fvector& P, Fvector& N, light* L, float E) {
             return 0;
 
         // Trace Light
-        float R = _sqrt(sqD);
+        float R = std::sqrt(sqD);
         float att = 1 - (1 / (1 + R));
-        return (E * att);
+        return E * att;
     }
 }
 

@@ -232,7 +232,7 @@ void CWeapon::Load(LPCSTR section) {
 
     float temp_f = 0.0f;
     temp_f = pSettings->r_float(section, "cam_relax_speed");
-    cam_recoil.RelaxSpeed = _abs(deg2rad(temp_f));
+    cam_recoil.RelaxSpeed = xr::abs(deg2rad(temp_f));
     VERIFY(!fis_zero(cam_recoil.RelaxSpeed));
     if (fis_zero(cam_recoil.RelaxSpeed)) {
         cam_recoil.RelaxSpeed = EPS_L;
@@ -241,21 +241,21 @@ void CWeapon::Load(LPCSTR section) {
     cam_recoil.RelaxSpeed_AI = cam_recoil.RelaxSpeed;
     if (pSettings->line_exist(section, "cam_relax_speed_ai")) {
         temp_f = pSettings->r_float(section, "cam_relax_speed_ai");
-        cam_recoil.RelaxSpeed_AI = _abs(deg2rad(temp_f));
+        cam_recoil.RelaxSpeed_AI = xr::abs(deg2rad(temp_f));
         VERIFY(!fis_zero(cam_recoil.RelaxSpeed_AI));
         if (fis_zero(cam_recoil.RelaxSpeed_AI)) {
             cam_recoil.RelaxSpeed_AI = EPS_L;
         }
     }
     temp_f = pSettings->r_float(section, "cam_max_angle");
-    cam_recoil.MaxAngleVert = _abs(deg2rad(temp_f));
+    cam_recoil.MaxAngleVert = xr::abs(deg2rad(temp_f));
     VERIFY(!fis_zero(cam_recoil.MaxAngleVert));
     if (fis_zero(cam_recoil.MaxAngleVert)) {
         cam_recoil.MaxAngleVert = EPS;
     }
 
     temp_f = pSettings->r_float(section, "cam_max_angle_horz");
-    cam_recoil.MaxAngleHorz = _abs(deg2rad(temp_f));
+    cam_recoil.MaxAngleHorz = xr::abs(deg2rad(temp_f));
     VERIFY(!fis_zero(cam_recoil.MaxAngleHorz));
     if (fis_zero(cam_recoil.MaxAngleHorz)) {
         cam_recoil.MaxAngleHorz = EPS;
@@ -265,7 +265,7 @@ void CWeapon::Load(LPCSTR section) {
     cam_recoil.StepAngleHorz = deg2rad(temp_f);
 
     cam_recoil.DispersionFrac =
-        _abs(READ_IF_EXISTS(pSettings, r_float, section, "cam_dispersion_frac", 0.7f));
+        xr::abs(READ_IF_EXISTS(pSettings, r_float, section, "cam_dispersion_frac", 0.7f));
 
     //подбрасывание камеры во время отдачи в режиме zoom ==> ironsight or scope
     // zoom_cam_recoil.Clone( cam_recoil ); ==== нельзя !!!!!!!!!!
@@ -281,7 +281,7 @@ void CWeapon::Load(LPCSTR section) {
 
     if (pSettings->line_exist(section, "zoom_cam_relax_speed")) {
         zoom_cam_recoil.RelaxSpeed =
-            _abs(deg2rad(pSettings->r_float(section, "zoom_cam_relax_speed")));
+            xr::abs(deg2rad(pSettings->r_float(section, "zoom_cam_relax_speed")));
         VERIFY(!fis_zero(zoom_cam_recoil.RelaxSpeed));
         if (fis_zero(zoom_cam_recoil.RelaxSpeed)) {
             zoom_cam_recoil.RelaxSpeed = EPS_L;
@@ -289,7 +289,7 @@ void CWeapon::Load(LPCSTR section) {
     }
     if (pSettings->line_exist(section, "zoom_cam_relax_speed_ai")) {
         zoom_cam_recoil.RelaxSpeed_AI =
-            _abs(deg2rad(pSettings->r_float(section, "zoom_cam_relax_speed_ai")));
+            xr::abs(deg2rad(pSettings->r_float(section, "zoom_cam_relax_speed_ai")));
         VERIFY(!fis_zero(zoom_cam_recoil.RelaxSpeed_AI));
         if (fis_zero(zoom_cam_recoil.RelaxSpeed_AI)) {
             zoom_cam_recoil.RelaxSpeed_AI = EPS_L;
@@ -297,7 +297,7 @@ void CWeapon::Load(LPCSTR section) {
     }
     if (pSettings->line_exist(section, "zoom_cam_max_angle")) {
         zoom_cam_recoil.MaxAngleVert =
-            _abs(deg2rad(pSettings->r_float(section, "zoom_cam_max_angle")));
+            xr::abs(deg2rad(pSettings->r_float(section, "zoom_cam_max_angle")));
         VERIFY(!fis_zero(zoom_cam_recoil.MaxAngleVert));
         if (fis_zero(zoom_cam_recoil.MaxAngleVert)) {
             zoom_cam_recoil.MaxAngleVert = EPS;
@@ -305,7 +305,7 @@ void CWeapon::Load(LPCSTR section) {
     }
     if (pSettings->line_exist(section, "zoom_cam_max_angle_horz")) {
         zoom_cam_recoil.MaxAngleHorz =
-            _abs(deg2rad(pSettings->r_float(section, "zoom_cam_max_angle_horz")));
+            xr::abs(deg2rad(pSettings->r_float(section, "zoom_cam_max_angle_horz")));
         VERIFY(!fis_zero(zoom_cam_recoil.MaxAngleHorz));
         if (fis_zero(zoom_cam_recoil.MaxAngleHorz)) {
             zoom_cam_recoil.MaxAngleHorz = EPS;
@@ -317,7 +317,7 @@ void CWeapon::Load(LPCSTR section) {
     }
     if (pSettings->line_exist(section, "zoom_cam_dispersion_frac")) {
         zoom_cam_recoil.DispersionFrac =
-            _abs(pSettings->r_float(section, "zoom_cam_dispersion_frac"));
+            xr::abs(pSettings->r_float(section, "zoom_cam_dispersion_frac"));
     }
 
     m_pdm.m_fPDM_disp_base = pSettings->r_float(section, "PDM_disp_base");

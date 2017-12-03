@@ -38,7 +38,7 @@ static xr_vector<record>* vecJunctions;
 static xr_vector<record>* vecEdges;
 
 static void check(Vertex* vE1, Vertex* vE2, Vertex* vTEST) {
-    if (_sqrt(SqrDistance2Segment(vTEST->P, vE1->P, vE2->P)) < 0.002f) {
+    if (std::sqrt(SqrDistance2Segment(vTEST->P, vE1->P, vE2->P)) < 0.002f) {
         BOOL bWeld = FALSE;
 
         // check for duplicated errors

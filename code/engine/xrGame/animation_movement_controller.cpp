@@ -143,7 +143,8 @@ void animation_movement_controller::InitalPositionBlending(const Fmatrix& to) {
             Fmatrix res = to;
             blend_linear_speed  += blend_linear_accel *Device.fTimeDelta ;
             blend_angular_speed += blend_angular_accel *Device.fTimeDelta ;
-            
+            
+
             inital_position_blending = !clamp_change( res, m_pObjXForm,
        blend_linear_speed*Device.fTimeDelta, blend_angular_speed*Device.fTimeDelta, 0.00001,
        0.000001 ); m_pObjXForm.set( res );
@@ -259,7 +260,8 @@ m_pKinematicsC->dcast_PKinematicsAnimated( )->LL_MotionDefName_dbg( ControlBlend
 ).second; LPCSTR new_anim_name	= m_pKinematicsC->dcast_PKinematicsAnimated(
 )->LL_MotionDefName_dbg( B->motionID ).first; LPCSTR new_anim_set		=
 m_pKinematicsC->dcast_PKinematicsAnimated( )->LL_MotionDefName_dbg( B->motionID ).second;
-    
+    
+
     if( ControlBlend( )->playing )
             Msg( " ! obj movement anim not yet ended anim: %s anim set: %s \n and already another
 started anim: %s anim set: %s", new_anim_name,new_anim_set,old_anim_name,old_anim_set
@@ -350,7 +352,7 @@ void animation_movement_controller::RootBoneCallback(CBoneInstance* B) {
 #if 0
 	VERIFY( cmp_matrix( O->DBG_previous_position, O->m_pObjXForm, 1.f, 1.f ) );
 #endif
-    R_ASSERT2(_valid(B->mTransform), "animation_movement_controller::RootBoneCallback");
+    R_ASSERT2(xr::valid(B->mTransform), "animation_movement_controller::RootBoneCallback");
 }
 
 bool animation_movement_controller::IsActive() const { return !!m_control_blend; }

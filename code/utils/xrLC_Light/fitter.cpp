@@ -41,7 +41,7 @@ xr_vector<REAL>& dafGradient(xr_vector<xr_vector<REAL>>& daEvalResults, xr_vecto
             daResult[i] -= B[j][i] - daEvalResults[j][i];
         dNorma += daResult[i] * daResult[i];
     }
-    dNorma = _sqrt(dNorma);
+    dNorma = std::sqrt(dNorma);
 
     for (u32 i = 0; i < dwParameterCount; i++)
         daResult[i] /= (dNorma > 1.f ? dNorma : 1.f) * dNormaFactor;

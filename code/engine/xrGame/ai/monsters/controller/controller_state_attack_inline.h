@@ -77,7 +77,7 @@ void CStateControllerAttackAbstract::execute() {
 
         float const angle = angle_between_vectors(dir_xz, self_to_enemy_xz);
 
-        if (_abs(angle) > deg2rad(30.f)) {
+        if (xr::abs(angle) > deg2rad(30.f)) {
             bool const rotate_right =
                 this->object->control().direction().is_from_right(enemy->Position());
             this->object->anim().set_override_animation(

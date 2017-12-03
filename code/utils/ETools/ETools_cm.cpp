@@ -156,10 +156,10 @@ public:
                         }
                     }
                     sum.mul_rgba(1.f / ds);
-                    sum.r = _sqrt(sum.r);
-                    sum.g = _sqrt(sum.g);
-                    sum.b = _sqrt(sum.b);
-                    sum.a = _sqrt(sum.a);
+                    sum.r = std::sqrt(sum.r);
+                    sum.g = std::sqrt(sum.g);
+                    sum.b = std::sqrt(sum.b);
+                    sum.a = std::sqrt(sum.a);
                     out = sum.get();
                 }
             }

@@ -421,7 +421,7 @@ private:
     float EngineDriveSpeed();
     float DriveWheelsMeanAngleRate();
     IC float EngineRpmFromWheels() {
-        return _abs(DriveWheelsMeanAngleRate() * m_current_gear_ratio);
+        return xr::abs(DriveWheelsMeanAngleRate() * m_current_gear_ratio);
     }
     /////////////////////////////////////////////////////////////////////////
     void SteerRight();

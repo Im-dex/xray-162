@@ -18,7 +18,7 @@ void CLight_Compute_XFORM_and_VIS::compute_xf_spot(light* L) {
     } else {
         // auto find 'up' and 'right' vectors
         L_up.set(0, 1, 0);
-        if (_abs(L_up.dotproduct(L_dir)) > .99f)
+        if (xr::abs(L_up.dotproduct(L_dir)) > .99f)
             L_up.set(0, 0, 1);
         L_right.crossproduct(L_up, L_dir);
         L_right.normalize();
@@ -70,7 +70,7 @@ void CLight_Compute_XFORM_and_VIS::compute_xf_spot(light* L) {
     if (_size > SMAP_adapt_max)
         _size = SMAP_adapt_max;
     int _epsilon = iCeil(float(_size) * 0.01f);
-    int _diff = _abs(int(_size) - int(_cached_size));
+    int _diff = xr::abs(int(_size) - int(_cached_size));
     L->X.S.size = (_diff >= _epsilon) ? _size : _cached_size;
 
     // make N pixel border

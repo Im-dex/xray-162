@@ -1,5 +1,4 @@
-#ifndef _STD_EXT_internal
-#define _STD_EXT_internal
+#pragma once
 
 #define BREAK_AT_STRCMP
 #ifndef DEBUG
@@ -35,14 +34,14 @@ struct XRCORE_API xr_token {
     int id;
 };
 
-IC LPCSTR get_token_name(xr_token* tokens, int key) {
+inline LPCSTR get_token_name(xr_token* tokens, int key) {
     for (int k = 0; tokens[k].name; k++)
         if (key == tokens[k].id)
             return tokens[k].name;
     return "";
 }
 
-IC int get_token_id(xr_token* tokens, LPCSTR key) {
+inline int get_token_id(xr_token* tokens, LPCSTR key) {
     for (int k = 0; tokens[k].name; k++)
         if (stricmp(tokens[k].name, key) == 0)
             return tokens[k].id;
@@ -55,23 +54,34 @@ struct XRCORE_API xr_token2 {
     int id;
 };
 
-// generic
+namespace xr {
+
 template <class T>
-IC T _sqr(T a) {
-    return a * a;
+T sqr(const T value) {
+    return value * value;
 }
 
-// float
-IC float _abs(float x) { return fabsf(x); }
-IC float _sqrt(float x) { return sqrtf(x); }
-IC float _sin(float x) { return sinf(x); }
-IC float _cos(float x) { return cosf(x); }
-IC float _log(float x) { return logf(x); }
-IC BOOL _valid(const float x) {
+template <typename T>
+T abs(const T value) noexcept {
+    if constexpr (std::is_integral_v<T>) {
+        if constexpr (std::is_unsigned_v<T>) {
+            static_assert(false, "Unsigned abs is meaningless");
+            return value;
+        } else {
+            return static_cast<T>(std::abs(value));
+        }
+    } else if constexpr (std::is_floating_point_v<T>) {
+        return std::fabs(value);
+    } else {
+        static_assert(false, "Value type needs to be integral or floating point");
+        return value;
+    }
+}
+
+inline bool valid(const float x) {
     // check for: Signaling NaN, Quiet NaN, Negative infinity ( –INF), Positive infinity (+INF),
     // Negative denormalized, Positive denormalized
-    int cls = _fpclass(double(x));
-    if (cls &
+    if (_fpclass(double(x)) &
         (_FPCLASS_SNAN + _FPCLASS_QNAN + _FPCLASS_NINF + _FPCLASS_PINF + _FPCLASS_ND + _FPCLASS_PD))
         return false;
 
@@ -84,17 +94,10 @@ IC BOOL _valid(const float x) {
     return true;
 }
 
-// double
-IC double _abs(double x) { return fabs(x); }
-IC double _sqrt(double x) { return sqrt(x); }
-IC double _sin(double x) { return sin(x); }
-IC double _cos(double x) { return cos(x); }
-IC double _log(double x) { return log(x); }
-IC BOOL _valid(const double x) {
+inline bool valid(const double x) {
     // check for: Signaling NaN, Quiet NaN, Negative infinity ( –INF), Positive infinity (+INF),
     // Negative denormalized, Positive denormalized
-    int cls = _fpclass(x);
-    if (cls &
+    if (_fpclass(x) &
         (_FPCLASS_SNAN + _FPCLASS_QNAN + _FPCLASS_NINF + _FPCLASS_PINF + _FPCLASS_ND + _FPCLASS_PD))
         return false;
 
@@ -107,23 +110,7 @@ IC BOOL _valid(const double x) {
     return true;
 }
 
-// int8
-IC s8 _abs(s8 x) { return (x >= 0) ? x : s8(-x); }
-
-// unsigned int8
-IC u8 _abs(u8 x) { return x; }
-
-// int16
-IC s16 _abs(s16 x) { return (x >= 0) ? x : s16(-x); }
-
-// unsigned int16
-IC u16 _abs(u16 x) { return x; }
-
-// int32
-IC s32 _abs(s32 x) { return (x >= 0) ? x : s32(-x); }
-
-// int64
-IC s64 _abs(s64 x) { return (x >= 0) ? x : s64(-x); }
+} // xr namespace
 
 // string management
 
@@ -140,9 +127,9 @@ inline std::string_view::size_type findExtPos(const std::string_view str) {
 }
 
 [[deprecated]]
-IC u32 xr_strlen(const char* S) { return (u32)strlen(S); }
+inline u32 xr_strlen(const char* S) { return (u32)strlen(S); }
 
-IC char* xr_strlwr(char* S) { return strlwr(S); }
+inline char* xr_strlwr(char* S) { return strlwr(S); }
 
 #ifdef BREAK_AT_STRCMP
 XRCORE_API int xr_strcmp(const char* S1, const char* S2);
@@ -199,5 +186,3 @@ XRCORE_API char* timestamp(string64& dest);
 extern XRCORE_API u32 crc32(const void* P, u32 len);
 extern XRCORE_API u32 crc32(const void* P, u32 len, u32 starting_crc);
 extern XRCORE_API u32 path_crc32(const char* path, u32 len); // ignores '/' and '\'
-
-#endif // _STD_EXT_internal

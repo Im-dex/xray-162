@@ -133,7 +133,7 @@ float CLevelGraph::check_position_in_direction(u32 start_vertex_id, const Fvecto
     }
 
     if (inside(vertex(dwCurNode), finish_position) &&
-        (_abs(vertex_plane_y(*vertex(dwCurNode), finish_position.x, finish_position.z) -
+        (xr::abs(vertex_plane_y(*vertex(dwCurNode), finish_position.x, finish_position.z) -
               finish_position.y) < .5f))
         return (start_point.distance_to_xz(finish_position));
     else
@@ -261,7 +261,7 @@ u32 CLevelGraph::check_position_in_direction_slow(u32 start_vertex_id,
     Fvector2 temp;
     unpack_xz(vertex(start_vertex_id), temp.x, temp.y);
 
-    float cur_sqr = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+    float cur_sqr = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
     for (;;) {
         const_iterator I, E;
         begin(cur_vertex_id, I, E);
@@ -282,7 +282,7 @@ u32 CLevelGraph::check_position_in_direction_slow(u32 start_vertex_id,
                 Fvector2 temp;
                 temp.add(box.min, box.max);
                 temp.mul(.5f);
-                float dist = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+                float dist = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
                 if (dist > cur_sqr)
                     continue;
 
@@ -317,7 +317,7 @@ bool CLevelGraph::check_vertex_in_direction_slow(u32 start_vertex_id,
     Fvector2 temp;
     unpack_xz(vertex(start_vertex_id), temp.x, temp.y);
 
-    float cur_sqr = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+    float cur_sqr = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
     for (;;) {
         const_iterator I, E;
         begin(cur_vertex_id, I, E);
@@ -336,7 +336,7 @@ bool CLevelGraph::check_vertex_in_direction_slow(u32 start_vertex_id,
                 Fvector2 temp;
                 temp.add(box.min, box.max);
                 temp.mul(.5f);
-                float dist = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+                float dist = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
                 if (dist > cur_sqr)
                     continue;
 
@@ -392,7 +392,7 @@ bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& star
         tpaOutputNodes.push_back(start_vertex_id);
     }
 
-    float cur_sqr = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+    float cur_sqr = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
     for (;;) {
         const_iterator I, E;
         begin(cur_vertex_id, I, E);
@@ -409,7 +409,7 @@ bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& star
                 Fvector2 temp;
                 temp.add(box.min, box.max);
                 temp.mul(.5f);
-                float dist = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+                float dist = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
                 if (dist > cur_sqr)
                     continue;
 
@@ -508,7 +508,7 @@ bool CLevelGraph::neighbour_in_direction(const Fvector& direction, u32 start_ver
     Fvector2 temp;
     unpack_xz(vertex(start_vertex_id), temp.x, temp.y);
 
-    float cur_sqr = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+    float cur_sqr = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
     const_iterator I, E;
     begin(cur_vertex_id, I, E);
     for (; I != E; ++I) {
@@ -522,7 +522,7 @@ bool CLevelGraph::neighbour_in_direction(const Fvector& direction, u32 start_ver
             Fvector2 temp;
             temp.add(box.min, box.max);
             temp.mul(.5f);
-            float dist = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+            float dist = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
             if (dist > cur_sqr)
                 continue;
             return (true);

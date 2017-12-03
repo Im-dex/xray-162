@@ -30,7 +30,7 @@ IC void CNearestVertexPathManager::setup(const _Graph* _graph, _DataStorage* _da
     inherited::setup(_graph, _data_storage, _path, _start_node_index, _goal_node_index, parameters);
 
     this->graph->unpack_xz(*this->graph->vertex(_start_node_index), x0, y0);
-    max_range_sqr = iFloor(_sqr(this->max_range) / this->m_sqr_distance_xz + .5f);
+    max_range_sqr = iFloor(xr::sqr(this->max_range) / this->m_sqr_distance_xz + .5f);
     m_cell_dist = this->graph->header().cell_size();
 
     m_target_position = parameters.m_target_position;
@@ -76,7 +76,7 @@ IC bool CNearestVertexPathManager::is_accessible(const _index_type& vertex_id) c
 
     int x4, y4;
     this->graph->unpack_xz(this->graph->vertex(vertex_id), x4, y4);
-    return (u32(_sqr(x0 - x4) + _sqr(y0 - y4)) <= max_range_sqr);
+    return (u32(xr::sqr(x0 - x4) + xr::sqr(y0 - y4)) <= max_range_sqr);
 }
 
 TEMPLATE_SPECIALIZATION

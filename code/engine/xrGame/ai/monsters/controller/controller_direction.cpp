@@ -77,7 +77,7 @@ void CControllerDirection::head_look_point(const Fvector& look_point) {
     // установить параметры вращения по heading
     float cur_yaw = m_man->direction().get_heading_current();
     float dy =
-        _abs(angle_normalize_signed(dir_yaw - cur_yaw)); // дельта, на которую нужно поворачиваться
+        xr::abs(angle_normalize_signed(dir_yaw - cur_yaw)); // дельта, на которую нужно поворачиваться
 
     bone_angle_head = _pmt_head_bone_limit / (_pmt_head_bone_limit + _pmt_torso_bone_limit) * dy;
     bone_angle_torso = _pmt_torso_bone_limit / (_pmt_head_bone_limit + _pmt_torso_bone_limit) * dy;
@@ -95,14 +95,14 @@ void CControllerDirection::head_look_point(const Fvector& look_point) {
     bonesAxis& x_spine = m_bones.GetBoneParams(m_bone_spine, AXIS_X);
     bonesAxis& x_head = m_bones.GetBoneParams(m_bone_head, AXIS_X);
 
-    float target_dy = _abs(bone_angle_head + bone_angle_torso);
+    float target_dy = xr::abs(bone_angle_head + bone_angle_torso);
     if (fis_zero(target_dy))
         bone_speed = _pmt_min_speed;
     else
         bone_speed =
             _pmt_min_speed +
             _pmt_rotation_speed *
-                (_abs((x_spine.cur_yaw + x_head.cur_yaw) - (bone_angle_head + bone_angle_torso)) /
+                (xr::abs((x_spine.cur_yaw + x_head.cur_yaw) - (bone_angle_head + bone_angle_torso)) /
                  (2 * (_pmt_head_bone_limit + _pmt_torso_bone_limit)));
     // set motion
     m_bones.SetMotion(m_bone_spine, AXIS_X, bone_angle_torso, bone_speed, 1000);

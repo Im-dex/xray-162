@@ -383,7 +383,7 @@ void dx103DFluidRenderer::SetScreenSize(int width, int height) {
 }
 
 void dx103DFluidRenderer::CalculateRenderTextureSize(int screenWidth, int screenHeight) {
-    int maxProjectedSide = int(3.0 * _sqrt(3.0) * m_fMaxDim);
+    int maxProjectedSide = int(3.0 * std::sqrt(3.0) * m_fMaxDim);
     int maxScreenDim = std::max(screenWidth, screenHeight);
 
     float screenAspectRatio = ((float)screenWidth) / screenHeight;

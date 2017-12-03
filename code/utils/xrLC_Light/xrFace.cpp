@@ -166,7 +166,7 @@ void Face::Failure() {
 void Face::Verify() {
     // 1st :: area
     float _a = CalcArea();
-    if (!_valid(_a) || (_a < EPS)) {
+    if (!xr::valid(_a) || (_a < EPS)) {
         Failure();
         return;
     }
@@ -178,14 +178,14 @@ void Face::Verify() {
     float e1 = tc[1].distance_to(tc[2]);
     float e2 = tc[2].distance_to(tc[0]);
     float p = e0 + e1 + e2;
-    if (!_valid(_a) || (p < eps)) {
+    if (!xr::valid(_a) || (p < eps)) {
         Failure();
         return;
     }
 
     // 3rd :: possibility to calc normal
     CalcNormal();
-    if (!_valid(N)) {
+    if (!xr::valid(N)) {
         Failure();
         return;
     }

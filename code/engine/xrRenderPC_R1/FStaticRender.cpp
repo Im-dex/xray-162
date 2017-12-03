@@ -46,7 +46,7 @@ ShaderElement* CRender::rimp_select_sh_dynamic(dxRender_Visual* pVisual, float c
 ShaderElement* CRender::rimp_select_sh_static(dxRender_Visual* pVisual, float cdist_sq) {
     switch (phase) {
     case PHASE_NORMAL:
-        return (((_sqrt(cdist_sq) - pVisual->vis.sphere.R) < 44)
+        return (((std::sqrt(cdist_sq) - pVisual->vis.sphere.R) < 44)
                     ? pVisual->shader->E[SE_R1_NORMAL_HQ]
                     : pVisual->shader->E[SE_R1_NORMAL_LQ])
             ._get();
@@ -384,15 +384,15 @@ void CRender::Calculate() {
 
     // Transfer to global space to avoid deep pointer access
     IRender_Target* T = getTarget();
-    float fov_factor = _sqr(90.f / Device.fFOV);
+    float fov_factor = xr::sqr(90.f / Device.fFOV);
     g_fSCREEN = float(T->get_width() * T->get_height()) * fov_factor * (EPS_S + ps_r__LOD);
-    r_ssaDISCARD = _sqr(ps_r__ssaDISCARD) / g_fSCREEN;
-    r_ssaDONTSORT = _sqr(ps_r__ssaDONTSORT / 3) / g_fSCREEN;
-    r_ssaLOD_A = _sqr(ps_r1_ssaLOD_A / 3) / g_fSCREEN;
-    r_ssaLOD_B = _sqr(ps_r1_ssaLOD_B / 3) / g_fSCREEN;
-    r_ssaGLOD_start = _sqr(ps_r__GLOD_ssa_start / 3) / g_fSCREEN;
-    r_ssaGLOD_end = _sqr(ps_r__GLOD_ssa_end / 3) / g_fSCREEN;
-    r_ssaHZBvsTEX = _sqr(ps_r__ssaHZBvsTEX / 3) / g_fSCREEN;
+    r_ssaDISCARD = xr::sqr(ps_r__ssaDISCARD) / g_fSCREEN;
+    r_ssaDONTSORT = xr::sqr(ps_r__ssaDONTSORT / 3) / g_fSCREEN;
+    r_ssaLOD_A = xr::sqr(ps_r1_ssaLOD_A / 3) / g_fSCREEN;
+    r_ssaLOD_B = xr::sqr(ps_r1_ssaLOD_B / 3) / g_fSCREEN;
+    r_ssaGLOD_start = xr::sqr(ps_r__GLOD_ssa_start / 3) / g_fSCREEN;
+    r_ssaGLOD_end = xr::sqr(ps_r__GLOD_ssa_end / 3) / g_fSCREEN;
+    r_ssaHZBvsTEX = xr::sqr(ps_r__ssaHZBvsTEX / 3) / g_fSCREEN;
 
     // Frustum & HOM rendering
     ViewBase.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);

@@ -10,7 +10,7 @@ static void trajectory_get_position(Fvector& result, const Fvector& start_positi
                                     const Fvector& velocity, const Fvector& gravity,
                                     const float& time) {
     // result = start_position + velocity*t + gravity*t^2/2
-    result.mad(start_position, velocity, time).mad(gravity, _sqr(time) * .5f);
+    result.mad(start_position, velocity, time).mad(gravity, xr::sqr(time) * .5f);
 }
 
 inline static float trajectory_max_error_time(float t0, float t1) { return ((t1 + t0) * .5f); }
@@ -33,7 +33,7 @@ static float trajectory_pick_error(float low, float high, const Fvector& positio
     start_to_max_error.mul(1.f / magnitude);
     Fvector start_to_target = Fvector().sub(target, start).normalize();
     float cosine_alpha = start_to_max_error.dotproduct(start_to_target);
-    float sine_alpha = _sqrt(1.f - _sqr(cosine_alpha));
+    float sine_alpha = std::sqrt(1.f - xr::sqr(cosine_alpha));
     return (magnitude * sine_alpha);
 }
 
@@ -109,7 +109,7 @@ static bool trajectory_check_collision(float low, float high, Fvector const& pos
         Fvector const box_z_axis = start_to_target;
         Fvector box_y_axis;
         Fvector box_x_axis;
-        if (_abs(box_z_axis.x) > epsilon || _abs(box_z_axis.z) > epsilon) {
+        if (xr::abs(box_z_axis.x) > epsilon || xr::abs(box_z_axis.z) > epsilon) {
 
             Fvector const down = { 0, -1, 0 };
             Fvector box_x_axis;

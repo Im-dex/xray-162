@@ -252,7 +252,7 @@ void CLightR_Manager::render_spot(u32 _priority) {
         L_dir.set(L->direction);
         L_dir.normalize();
         L_up.set(0, 1, 0);
-        if (_abs(L_up.dotproduct(L_dir)) > .99f)
+        if (xr::abs(L_up.dotproduct(L_dir)) > .99f)
             L_up.set(0, 0, 1);
         L_right.crossproduct(L_up, L_dir);
         L_right.normalize();

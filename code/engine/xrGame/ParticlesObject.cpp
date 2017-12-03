@@ -68,7 +68,7 @@ CParticlesObject::~CParticlesObject() {
 void CParticlesObject::UpdateSpatial() {
     // spatial	(+ workaround occasional bug inside particle-system)
     vis_data& vis = renderable.visual->getVisData();
-    if (_valid(vis.sphere)) {
+    if (xr::valid(vis.sphere)) {
         Fvector P;
         float R;
         renderable.xform.transform_tiny(P, vis.sphere.P);
@@ -140,7 +140,7 @@ void CParticlesObject::shedule_Update(u32 _dt) {
         return;
     u32 dt = Device.dwTimeGlobal - dwLastTime;
     if (dt) {
-        if (0) { //.psDeviceFlags.test(mtParticles))	{    //. AlexMX comment this line// NO
+        if constexpr (false) { //.psDeviceFlags.test(mtParticles))	{    //. AlexMX comment this line// NO
                  //UNCOMMENT - DON'T WORK PROPERLY
             mt_dt = dt;
             fastdelegate::FastDelegate0<> delegate(this, &CParticlesObject::PerformAllTheWork_mt);

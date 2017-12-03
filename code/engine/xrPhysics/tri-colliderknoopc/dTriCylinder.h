@@ -15,7 +15,7 @@ IC float dcTriListCollider::dCylProj(dxGeom* cylinder, const dReal* normal) {
     hlz *= 0.5f;
     float cos1 = dFabs(dDOT14(normal, R + 1));
     cos1 = cos1 < REAL(1.) ? cos1 : REAL(1.); // cos1 may slightly exeed 1.f
-    float sin1 = _sqrt(REAL(1.) - cos1 * cos1);
+    float sin1 = std::sqrt(REAL(1.) - cos1 * cos1);
     //////////////////////////////
     return cos1 * hlz + sin1 * radius;
 }

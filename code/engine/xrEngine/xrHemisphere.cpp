@@ -188,7 +188,7 @@ void ECORE_API xrHemisphereBuild(int quality, float energy, xrHemisphereIterator
         float x = -float(hemi[i][0]);
         float y = -float(hemi[i][1]);
         float z = -float(hemi[i][2]);
-        float mag = _sqrt(x * x + y * y + z * z);
+        float mag = std::sqrt(x * x + y * y + z * z);
         x /= mag;
         y /= mag;
         z /= mag;

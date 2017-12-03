@@ -135,14 +135,14 @@ void character_hit_animation_controller::PlayHitMotion(const Fvector& dir, const
 
     dr.mul(g_params.power_factor);
     if (dr.y > g_params.side_sensitivity_threshold)
-        play_cycle(CA, rthit_motion, 2, block_blends[0], _abs(dr.y));
+        play_cycle(CA, rthit_motion, 2, block_blends[0], xr::abs(dr.y));
     else if (dr.y < -g_params.side_sensitivity_threshold)
-        play_cycle(CA, lthit_motion, 2, block_blends[1], _abs(dr.y));
+        play_cycle(CA, lthit_motion, 2, block_blends[1], xr::abs(dr.y));
 
     if (dr.z < 0.f)
-        play_cycle(CA, fvhit_motion, 2, block_blends[2], _abs(dr.z));
+        play_cycle(CA, fvhit_motion, 2, block_blends[2], xr::abs(dr.z));
     else
-        play_cycle(CA, bkhit_motion, 2, block_blends[3], _abs(dr.z));
+        play_cycle(CA, bkhit_motion, 2, block_blends[3], xr::abs(dr.z));
 
     CA->LL_SetChannelFactor(2, g_params.anim_channel_factor);
 }

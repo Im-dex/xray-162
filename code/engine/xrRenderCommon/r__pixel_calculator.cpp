@@ -34,7 +34,7 @@ static Fvector cmDir[6] = { { 1.f, 0.f, 0.f },  { -1.f, 0.f, 0.f }, { 0.f, 1.f, 
 
 r_aabb_ssa r_pixel_calculator::calculate(dxRender_Visual* V) {
     r_aabb_ssa result = { 0 };
-    float area = float(_sqr(rt_dimensions));
+    float area = float(xr::sqr(rt_dimensions));
 
     //
     u32 id[6];

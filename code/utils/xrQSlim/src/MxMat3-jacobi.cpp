@@ -8,7 +8,8 @@
         seems to have been adapted directly from Numerical Recipes in C.
         See Hoppe's Recon software for an alternative adaptation of the
         Numerical Recipes code.
-  
+  
+
   $Id: MxMat3-jacobi.cxx,v 1.11 2000/12/14 17:48:24 garland Exp $
 
  ************************************************************************/
@@ -52,7 +53,7 @@ static bool internal_jacobi(double a[3][3], double w[3], double v[3][3]) {
         sm = 0.0;
         for (ip = 0; ip < 2; ip++) {
             for (iq = ip + 1; iq < 3; iq++)
-                sm += _abs(a[ip][iq]);
+                sm += xr::abs(a[ip][iq]);
         }
         if (sm == 0.0)
             break;
@@ -64,20 +65,20 @@ static bool internal_jacobi(double a[3][3], double w[3], double v[3][3]) {
 
         for (ip = 0; ip < 2; ip++) {
             for (iq = ip + 1; iq < 3; iq++) {
-                g = 100.0 * _abs(a[ip][iq]);
-                if (i > 4 && (_abs(w[ip]) + g) == _abs(w[ip]) && (_abs(w[iq]) + g) == _abs(w[iq])) {
+                g = 100.0 * xr::abs(a[ip][iq]);
+                if (i > 4 && (xr::abs(w[ip]) + g) == xr::abs(w[ip]) && (xr::abs(w[iq]) + g) == xr::abs(w[iq])) {
                     a[ip][iq] = 0.0;
-                } else if (_abs(a[ip][iq]) > tresh) {
+                } else if (xr::abs(a[ip][iq]) > tresh) {
                     h = w[iq] - w[ip];
-                    if ((_abs(h) + g) == _abs(h))
+                    if ((xr::abs(h) + g) == xr::abs(h))
                         t = (a[ip][iq]) / h;
                     else {
                         theta = 0.5 * h / (a[ip][iq]);
-                        t = 1.0 / (_abs(theta) + _sqrt(1.0 + theta * theta));
+                        t = 1.0 / (xr::abs(theta) + std::sqrt(1.0 + theta * theta));
                         if (theta < 0.0)
                             t = -t;
                     }
-                    c = 1.0 / _sqrt(1 + t * t);
+                    c = 1.0 / std::sqrt(1 + t * t);
                     s = t * c;
                     tau = s / (1.0 + c);
                     h = t * a[ip][iq];

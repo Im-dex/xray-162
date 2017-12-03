@@ -3,12 +3,12 @@
   NxN Matrix class
 
   Copyright (C) 1998 Michael Garland.  See "COPYING.txt" for details.
-  
+  
+
   $Id: mixmops.cxx,v 1.7 1998/10/26 21:09:38 garland Exp $
 
  ************************************************************************/
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "MxMatrix.h"
 
@@ -40,8 +40,8 @@ static double internal_solve(double* _a, double* b, const int N) {
     for (i = 0; i < N; i++) { /* eliminate in column i */
         max = -1.0;
         for (k = i; k < N; k++) /* find pivot for column i */
-            if (_abs(A(k, i)) > max) {
-                max = _abs(A(k, i));
+            if (xr::abs(A(k, i)) > max) {
+                max = xr::abs(A(k, i));
                 j = k;
             }
         if (max <= 0.)
@@ -98,8 +98,8 @@ static double internal_invert(double* _a, double* _b, const int N) {
     for (i = 0; i < (unsigned int)N; i++) { /* eliminate in column i, below diag */
         max = -1.;
         for (k = i; k < (unsigned int)N; k++) /* find pivot for column i */
-            if (_abs(A(k, i)) > max) {
-                max = _abs(A(k, i));
+            if (xr::abs(A(k, i)) > max) {
+                max = xr::abs(A(k, i));
                 j = k;
             }
         if (max <= 0.)
@@ -198,7 +198,7 @@ int mxm_cholesky(double* U, const double* A, const int N) {
             sum -= mxm_ref(U, j, i, N) * mxm_ref(U, j, i, N);
 
         if (sum > 0) {
-            mxm_ref(U, i, i, N) = _sqrt(sum);
+            mxm_ref(U, i, i, N) = std::sqrt(sum);
 
             /* Now find elements U[i][k], k > i. */
             for (int k = (i + 1); k < N; k++) {

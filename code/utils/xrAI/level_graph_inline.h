@@ -152,7 +152,7 @@ IC bool CLevelGraph::inside(const CLevelGraph::CVertex& vertex,
                             const CLevelGraph::CPosition& _vertex_position,
                             const float epsilon) const {
     return (inside(vertex, _vertex_position) &&
-            (_abs(vertex_position(vertex).y - vertex_position(_vertex_position).y) <= epsilon));
+            (xr::abs(vertex_position(vertex).y - vertex_position(_vertex_position).y) <= epsilon));
 }
 
 IC bool CLevelGraph::inside(const CLevelGraph::CVertex& vertex, const Fvector& position,

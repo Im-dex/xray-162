@@ -32,7 +32,7 @@ float CEnvModifier::sum(CEnvModifier& M, Fvector3& view) {
     if (_dist_sq >= (M.radius * M.radius))
         return 0;
 
-    float _att = 1 - _sqrt(_dist_sq) / M.radius; //[0..1];
+    float _att = 1 - std::sqrt(_dist_sq) / M.radius; //[0..1];
     float _power = M.power * _att;
 
     if (M.use_flags.test(eViewDist)) {
@@ -263,7 +263,7 @@ void CEnvDescriptor::load(CEnvironment& environment, CInifile& config) {
     //	if (config.line_exist(m_identifier.c_str(),"sun_altitude"))
     sun_dir.setHP(deg2rad(config.r_float(m_identifier.c_str(), "sun_altitude")),
                   deg2rad(config.r_float(m_identifier.c_str(), "sun_longitude")));
-    R_ASSERT(_valid(sun_dir));
+    R_ASSERT(xr::valid(sun_dir));
     //	else
     //		sun_dir.setHP			(
     //			deg2rad(config.r_fvector2(m_identifier.c_str(),"sun_dir").y),
@@ -459,10 +459,10 @@ void CEnvDescriptorMixer::lerp(CEnvironment*, CEnvDescriptor& A, CEnvDescriptor&
 
     sun_color.lerp(A.sun_color, B.sun_color, f);
 
-    R_ASSERT(_valid(A.sun_dir));
-    R_ASSERT(_valid(B.sun_dir));
+    R_ASSERT(xr::valid(A.sun_dir));
+    R_ASSERT(xr::valid(B.sun_dir));
     sun_dir.lerp(A.sun_dir, B.sun_dir, f).normalize();
-    R_ASSERT(_valid(sun_dir));
+    R_ASSERT(xr::valid(sun_dir));
 
     VERIFY2(sun_dir.y < 0, "Invalid sun direction settings while lerp");
 }

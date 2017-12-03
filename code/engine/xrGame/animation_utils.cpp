@@ -26,7 +26,7 @@ void anim_bone_fix::callback(CBoneInstance* BI) {
     //{
     //	int i=0;i++;
     //}
-    R_ASSERT2(_valid(BI->mTransform), "anim_bone_fix::	callback");
+    R_ASSERT2(xr::valid(BI->mTransform), "anim_bone_fix::	callback");
 }
 
 void anim_bone_fix::fix(u16 bone_id, IKinematics& K) {

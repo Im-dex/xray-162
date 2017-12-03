@@ -73,8 +73,8 @@ BOOL CEffectorBobbing::ProcessCam(SCamEffectorInfo& info) {
             ST = m_fSpeedWalk * fTime * k;
         }
 
-        float _sinA = _abs(_sin(ST) * A) * fReminderFactor;
-        float _cosA = _cos(ST) * A * fReminderFactor;
+        float _sinA = xr::abs(std::sin(ST) * A) * fReminderFactor;
+        float _cosA = std::cos(ST) * A * fReminderFactor;
 
         info.p.y += _sinA;
         dangle.x = _cosA;

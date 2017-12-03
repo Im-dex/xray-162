@@ -166,7 +166,7 @@ void CBuild::xrPhase_MergeLM() {
                 lmap->Capture(Layer[it], rT.a.x, rT.a.y, rT.SizeX(), rT.SizeY(), bRotated);
                 Layer[it]->bMerged = TRUE;
             }
-            Progress(_sqrt(float(it) / float(merge_count)));
+            Progress(std::sqrt(float(it) / float(merge_count)));
         }
         Progress(1.f);
 
@@ -313,7 +313,8 @@ void InitMergeThreads()
 {
         if ( mergelm_threads_initialized )
                 return;
-        
+        
+
         SYSTEM_INFO SystemInfo;
         GetSystemInfo( &SystemInfo );
         mergelm_threads_count = SystemInfo.dwNumberOfProcessors;
@@ -381,7 +382,8 @@ void MergeLM_process_threads( u32 m_count , vecDefl* pLayer , CLightmap* lmap )
         for ( u32 i = 0 ; i < mergelm_threads_count ; i++ ) {
                 mergelm_params[ i ].Layer = pLayer;
                 mergelm_params[ i ].lmap = lmap;
-                
+                
+
                 mergelm_params[ i ].m_from = i * m_range;
                 mergelm_params[ i ].m_to = ( i == ( mergelm_threads_count - 1 ) ) ? m_count :
 mergelm_params[ i ].m_from + m_range;

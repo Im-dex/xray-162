@@ -628,12 +628,14 @@ angular_tolerance );
                         m = r;
                         return false;
                 }
-        
+        
+
         } else
         {
                 Fmatrix fm =  m1.get() ;
                 ret = clamp_change( fm, m0.get(), cd.l, cd.a );
-                
+                
+
                 ik_goal_matrix r;
                 r.set( fm, m0.collide_state( ) );
                 m_foot.GetFootStepMatrix( r, fm, collide_data, true, true );
@@ -929,7 +931,7 @@ float CIKLimb::ObjShiftDown(float current_shift, const SCalculateData& cd) const
     Fvector g;
     g.sub(m_foot.ref_bone_to_foot(m, cd.state.goal.get()).c, hip);
     float l = m_limb.Length();
-    return -g.y - _sqrt(l * l - g.x * g.x - g.z * g.z);
+    return -g.y - std::sqrt(l * l - g.x * g.x - g.z * g.z);
 }
 
 float CIKLimb::get_time_to_step_begin(const CBlend& B) const {

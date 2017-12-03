@@ -111,13 +111,13 @@ void base::aim_at_position(Fvector const& bone_position, Fvector const& object_p
     Fvector const center2projection_direction = projection2circle_center.normalize();
     VERIFY(_valid(center2projection_direction));
 
-    float circle_radius_sqr = sphere_radius_sqr - _sqr(to_circle_center);
+    float circle_radius_sqr = sphere_radius_sqr - xr::sqr(to_circle_center);
     VERIFY(_valid(circle_radius_sqr));
     if (circle_radius_sqr < 0.f)
         circle_radius_sqr = 0.f;
     VERIFY(_valid(circle_radius_sqr));
 
-    float const circle_radius = _sqrt(circle_radius_sqr);
+    float const circle_radius = std::sqrt(circle_radius_sqr);
     VERIFY(_valid(circle_radius));
     Fvector const target_point =
         Fvector().mad(circle_center, center2projection_direction, circle_radius);
@@ -145,7 +145,7 @@ void base::aim_at_position(Fvector const& bone_position, Fvector const& object_p
         } else {
             float const dot_product =
                 clampr(current_direction.dotproduct(target_direction), -1.f, 1.f);
-            if (fsimilar(_abs(dot_product), 0.f))
+            if (fsimilar(xr::abs(dot_product), 0.f))
                 transform0.identity();
             else {
                 VERIFY(fsimilar(_abs(dot_product), 1.f));
@@ -180,7 +180,7 @@ void base::aim_at_position(Fvector const& bone_position, Fvector const& object_p
         } else {
             float const dot_product =
                 clampr(current_direction.dotproduct(target_direction), -1.f, 1.f);
-            if (fsimilar(_abs(dot_product), 0.f))
+            if (fsimilar(xr::abs(dot_product), 0.f))
                 transform1.identity();
             else {
                 VERIFY(fsimilar(_abs(dot_product), 1.f));

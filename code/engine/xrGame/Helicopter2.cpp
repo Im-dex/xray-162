@@ -375,7 +375,7 @@ void SHeliBodyState::load(IReader& input_packet) {
 }
 
 float t_xx(float V0, float V1, float a0, float a1, float d, float fSign) {
-    return (V1 + _sqrt(V1 * V1 - (a1 / (a1 - a0)) * (V1 * V1 - V0 * V0 - 2 * a0 * d)) * fSign) / a1;
+    return (V1 + std::sqrt(V1 * V1 - (a1 / (a1 - a0)) * (V1 * V1 - V0 * V0 - 2 * a0 * d)) * fSign) / a1;
 }
 
 float t_1(float t10, float t11) {

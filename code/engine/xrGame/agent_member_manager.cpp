@@ -226,8 +226,8 @@ bool CAgentMemberManager::can_throw_grenade(const Fvector& location) const {
         return (false);
 
     typedef CAgentMemberManager::MEMBER_STORAGE MEMBER_STORAGE;
-    const float member_danger_radius_sqr = _sqr(5.f);
-    const float cover_danger_radius_sqr = _sqr(5.f);
+    const float member_danger_radius_sqr = xr::sqr(5.f);
+    const float cover_danger_radius_sqr = xr::sqr(5.f);
     MEMBER_STORAGE::const_iterator I = members().begin();
     MEMBER_STORAGE::const_iterator E = members().end();
     for (; I != E; ++I) {

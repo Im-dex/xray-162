@@ -152,7 +152,7 @@ IC bool CLevelGraph::inside(const CLevelGraph::CVertex& vertex,
                             const CLevelGraph::CPosition& _vertex_position,
                             const float epsilon) const {
     return (inside(vertex, _vertex_position) &&
-            (_abs(vertex_position(vertex).y - vertex_position(_vertex_position).y) <= epsilon));
+            (xr::abs(vertex_position(vertex).y - vertex_position(_vertex_position).y) <= epsilon));
 }
 
 IC bool CLevelGraph::inside(const CLevelGraph::CVertex& vertex, const Fvector& position,
@@ -362,7 +362,7 @@ IC bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& s
         return (true);
     }
 
-    float cur_sqr = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+    float cur_sqr = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
     for (;;) {
         const_iterator I, E;
         begin(cur_vertex_id, I, E);
@@ -379,7 +379,7 @@ IC bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& s
                 Fvector2 temp;
                 temp.add(box.min, box.max);
                 temp.mul(.5f);
-                float dist = _sqr(temp.x - dest.x) + _sqr(temp.y - dest.y);
+                float dist = xr::sqr(temp.x - dest.x) + xr::sqr(temp.y - dest.y);
                 if ((dist > cur_sqr) && (dest_xz != v->position().xz()))
                     continue;
 

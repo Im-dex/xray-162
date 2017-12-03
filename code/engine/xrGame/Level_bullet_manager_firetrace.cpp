@@ -350,7 +350,7 @@ bool CBulletManager::ObjectHit(SBullet_Hit* hit_res, SBullet* bullet, const Fvec
                 hit_normal.sub(end_point, e_center);
             float len = hit_normal.square_magnitude();
             if (!fis_zero(len))
-                hit_normal.div(_sqrt(len));
+                hit_normal.div(std::sqrt(len));
             else
                 hit_normal.invert(bullet->dir);
         }
@@ -443,7 +443,7 @@ bool CBulletManager::ObjectHit(SBullet_Hit* hit_res, SBullet* bullet, const Fvec
         // уменьшение скорости полета в зависимости от угла падения пули (чем прямее угол, тем
         // больше потеря)
         bullet->flags.allow_ricochet = 0;
-        float scale = 1.0f - _abs(bullet->dir.dotproduct(hit_normal)) * m_fCollisionEnergyMin;
+        float scale = 1.0f - xr::abs(bullet->dir.dotproduct(hit_normal)) * m_fCollisionEnergyMin;
         clamp(scale, 0.0f, m_fCollisionEnergyMax);
         speed_scale = scale;
 

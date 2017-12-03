@@ -39,11 +39,11 @@
 #define AINT_EPSILON (1e-5f)
 #define AINT_BIG_EPSILON (.01f)
 
-inline int equal(float x, float y, const float eps = AINT_EPSILON) { return (_abs(x - y) < eps); }
+inline int equal(float x, float y, const float eps = AINT_EPSILON) { return (xr::abs(x - y) < eps); }
 
 inline int istwopi(float x, const float eps = AINT_EPSILON) { return equal(x, 2.0f * M_PI, eps); }
 
-inline int iszero(float x, const float eps = AINT_EPSILON) { return _abs(x) < eps; }
+inline int iszero(float x, const float eps = AINT_EPSILON) { return xr::abs(x) < eps; }
 
 inline int le(float x, float y, const float eps = AINT_EPSILON) {
     return (x < y) || equal(x, y, eps);
@@ -139,14 +139,14 @@ public:
     float High() const { return high; }
 
     int IsFullRange(float eps = AINT_BIG_EPSILON) const {
-        return _abs(high - 2 * M_PI) < eps && _abs(low) < eps;
+        return xr::abs(high - 2 * M_PI) < eps && xr::abs(low) < eps;
     }
 
     int IsEmpty(float eps = AINT_BIG_EPSILON) const {
         if (low <= high)
-            return (_abs(low - high) < eps);
+            return (xr::abs(low - high) < eps);
         else
-            return (_abs(low - 2 * M_PI) + _abs(high) < eps);
+            return (xr::abs(low - 2 * M_PI) + xr::abs(high) < eps);
     }
 
     // returns T if a is in the angle range

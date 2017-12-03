@@ -1,33 +1,30 @@
-#ifndef ODE_REDEFINE
-#define ODE_REDEFINE
+#pragma once
 
 #ifdef XRPHYSICS_EXPORTS
 
 #ifdef dSqrt
 #undef dSqrt
-#define dSqrt(x) ((float)_sqrt(x)) /* square root */
+#define dSqrt(x) ((float)std::sqrt(x)) /* square root */
 #endif
 
 #ifdef dRecipSqrt
 #undef dRecipSqrt
-#define dRecipSqrt(x) ((float)(1.0f / _sqrt(x))) /* reciprocal square root */
+#define dRecipSqrt(x) ((float)(1.0f / std::sqrt(x))) /* reciprocal square root */
 #endif
 
 #ifdef dSin
 #undef dSin
-#define dSin(x) ((float)_sin(x)) /* sine */
+#define dSin(x) ((float)std::sin(x)) /* sine */
 #endif
 
 #ifdef dCos
 #undef dCos
-#define dCos(x) ((float)_cos(x)) /* cosine */
+#define dCos(x) ((float)std::cos(x)) /* cosine */
 #endif
 
 #ifdef dFabs
 #undef dFabs
-#define dFabs(x) ((float)_abs(x)) /* absolute value */
+#define dFabs(x) ((float)xr::abs(x)) /* absolute value */
 #endif
 
 #endif // XRGAME_EXPORTS
-
-#endif // ODE_REDEFINE

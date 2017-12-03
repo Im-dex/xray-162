@@ -151,7 +151,7 @@ void CPhantom::SwitchToState_internal(EState new_state) {
             Fvector vE, vP;
             m_enemy->Center(vE);
             Center(vP);
-            if (vP.distance_to_sqr(vE) < _sqr(Radius())) {
+            if (vP.distance_to_sqr(vE) < xr::sqr(Radius())) {
                 // hit enemy
                 PsyHit(m_enemy, fContactHit);
             }
@@ -210,7 +210,7 @@ void CPhantom::OnFlyState() {
         Fvector vE, vP;
         m_enemy->Center(vE);
         Center(vP);
-        if (vP.distance_to_sqr(vE) < _sqr(Radius() + m_enemy->Radius())) {
+        if (vP.distance_to_sqr(vE) < xr::sqr(Radius() + m_enemy->Radius())) {
             SwitchToState(stContact);
             float power = 1000.0f;
             float impulse = 100.0f;

@@ -1,12 +1,12 @@
 /************************************************************************
 
   4x4 Matrix class
-  
+  
+
   $Id: mat4.cxx,v 1.4 2000/12/04 06:18:37 garland Exp $
 
  ************************************************************************/
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "mat4.h"
 
@@ -23,7 +23,7 @@ Mat4 scaling_matrix(const Vec3& s) {
 }
 
 Mat4 rotation_matrix_rad(double theta, const Vec3& axis) {
-    double c = _cos(theta), s = _sin(theta), xx = axis[0] * axis[0], yy = axis[1] * axis[1],
+    double c = std::cos(theta), s = std::sin(theta), xx = axis[0] * axis[0], yy = axis[1] * axis[1],
            zz = axis[2] * axis[2], xy = axis[0] * axis[1], yz = axis[1] * axis[2],
            xz = axis[0] * axis[2];
 
@@ -155,8 +155,8 @@ double invert(Mat4& B, const Mat4& m) {
     for (i = 0; i < 4; i++) { /* eliminate in column i, below diag */
         max = -1.;
         for (k = i; k < 4; k++) /* find pivot for column i */
-            if (_abs(A(k, i)) > max) {
-                max = _abs(A(k, i));
+            if (std::abs(A(k, i)) > max) {
+                max = std::abs(A(k, i));
                 j = k;
             }
         if (max <= 0.)

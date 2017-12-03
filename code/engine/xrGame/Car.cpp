@@ -326,7 +326,8 @@ void CCar::RestoreNetState(CSE_PHSkeleton* po) {
             replace.mul(sof,inv);
     ////////////////////////////////////////////////////////////////////
             {
-                    
+                    
+
                     PKinematics(Visual())->CalculateBones_Invalidate();
                     PKinematics(Visual())->CalculateBones();
                     PPhysicsShell()->DisableCollision();
@@ -1256,7 +1257,7 @@ float CCar::EffectiveGravity() {
 }
 float CCar::AntiGravityAccel() { return physics_world()->Gravity() - EffectiveGravity(); }
 float CCar::GravityFactorImpulse() {
-    return _sqrt(EffectiveGravity() / physics_world()->Gravity());
+    return std::sqrt(EffectiveGravity() / physics_world()->Gravity());
 }
 void CCar::UpdateBack() {
     if (b_breaks) {
@@ -1410,7 +1411,7 @@ void CCar::InitParabola() {
 
     m_a = expf((m_power_rpm - m_torque_rpm) / (2.f * m_power_rpm)) * m_max_power / m_power_rpm;
     m_b = m_torque_rpm;
-    m_c = _sqrt(2.f * m_power_rpm * (m_power_rpm - m_torque_rpm));
+    m_c = std::sqrt(2.f * m_power_rpm * (m_power_rpm - m_torque_rpm));
 }
 float CCar::Parabola(float rpm) {
     // float rpm_2=rpm*rpm;

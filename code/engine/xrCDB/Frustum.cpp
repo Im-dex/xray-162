@@ -66,7 +66,7 @@ EFC_Visible CFrustum::testSphere(Fvector& c, float r, u32& test_mask) const {
                 test_mask = 0;
                 return fcvNone;
             } // none  - return
-            if (_abs(cls) >= r)
+            if (xr::abs(cls) >= r)
                 test_mask &= ~bit; // fully - no need to test this plane
         }
     }
@@ -146,7 +146,7 @@ EFC_Visible CFrustum::testSAABB(Fvector& c, float r, const float* mM, u32& test_
                 test_mask = 0;
                 return fcvNone;
             } // none  - return
-            if (_abs(cls) >= r)
+            if (xr::abs(cls) >= r)
                 test_mask &= ~bit; // fully - no need to test this plane
             else {
                 EFC_Visible r = AABB_OverlapPlane(planes[i], mM);
@@ -241,7 +241,7 @@ void CFrustum::SimplifyPoly_AABB(sPoly* poly, Fplane& plane) {
     Fvector from, up, right, y;
     from.set((*poly)[0]);
     y.set(0, 1, 0);
-    if (_abs(plane.n.y) > 0.99f)
+    if (xr::abs(plane.n.y) > 0.99f)
         y.set(1, 0, 0);
     right.crossproduct(y, plane.n);
     up.crossproduct(plane.n, right);
@@ -286,7 +286,7 @@ void CFrustum::CreateOccluder(Fvector* p, int count, Fvector& vBase, CFrustum& c
         // classify all points relative to plane #i
         fplane& P = clip.planes[i];
         for (int j = 0; j < count; j++)
-            cls[j] = _abs(P.classify(p[j]));
+            cls[j] = xr::abs(P.classify(p[j]));
 
         // test edges to see which lies directly on plane
         for (int j = 0; j < count; j++) {

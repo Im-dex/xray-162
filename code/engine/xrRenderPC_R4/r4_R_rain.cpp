@@ -135,7 +135,7 @@ void CRender::render_rain() {
         L_pos.set(RainLight.position);
         L_dir.set(RainLight.direction).normalize();
         L_right.set(1, 0, 0);
-        if (_abs(L_right.dotproduct(L_dir)) > .99f)
+        if (xr::abs(L_right.dotproduct(L_dir)) > .99f)
             L_right.set(0, 0, 1);
         L_up.crossproduct(L_dir, L_right).normalize();
         L_right.crossproduct(L_up, L_dir).normalize();

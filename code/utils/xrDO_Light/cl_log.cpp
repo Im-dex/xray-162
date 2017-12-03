@@ -177,7 +177,7 @@ void logThread(void* dummy) {
             }
         }
 
-        if (_abs(PrSave - progress) > EPS_L) {
+        if (xr::abs(PrSave - progress) > EPS_L) {
             bWasChanges = TRUE;
             PrSave = progress;
             SendMessage(hwProgress, PBM_SETPOS, u32(progress * 1000.f), 0);

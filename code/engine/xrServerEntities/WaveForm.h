@@ -13,17 +13,17 @@ struct WaveForm {
         fINVSAWTOOTH,
         fFORCE32 = u32(-1)
     };
-    IC float signf(float t) { return t / _abs(t); }
-    IC float Func(float t) {
+    float signf(float t) { return t / xr::abs(t); }
+    float Func(float t) {
         switch (F) {
         case fCONSTANT:
             return 0;
         case fSIN:
-            return _sin(t * PI_MUL_2);
+            return std::sin(t * PI_MUL_2);
         case fTRIANGLE:
-            return asinf(_sin((t - 0.25f) * PI_MUL_2)) / PI_DIV_2;
+            return asinf(std::sin((t - 0.25f) * PI_MUL_2)) / PI_DIV_2;
         case fSQUARE:
-            return signf(_cos(t * PI));
+            return signf(std::cos(t * PI));
         case fSAWTOOTH:
             return atanf(tanf((t + 0.5f) * PI)) / PI_DIV_2;
         case fINVSAWTOOTH:

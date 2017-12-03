@@ -73,7 +73,7 @@ ICF void accurate_normalize(float* a) {
 }
 
 IC bool dVectorLimit(const float* v, float l, float* lv) {
-    float mag = _sqrt(dDOT(v, v));
+    float mag = std::sqrt(dDOT(v, v));
     if (mag > l) {
         float f = mag / l;
         lv[0] = v[0] / f;

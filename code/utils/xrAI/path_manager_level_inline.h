@@ -29,7 +29,7 @@ IC void CLevelPathManager::setup(const _Graph* _graph, _DataStorage* _data_stora
                                  const _Parameters& parameters) {
     inherited::setup(_graph, _data_storage, _path, _start_node_index, _goal_node_index, parameters);
     m_distance_xz = this->graph->header().cell_size();
-    m_sqr_distance_xz = _sqr(this->graph->header().cell_size());
+    m_sqr_distance_xz = xr::sqr(this->graph->header().cell_size());
     //		square_size_y			= _sqr((float)(graph->header().factor_y()/32767.0));
     //		size_y					=
     //(float)(graph->header().factor_y()/32767.0);
@@ -70,7 +70,7 @@ IC _dist_type CLevelPathManager::estimate(const _index_type& node_index) const {
     //		return					(_sqrt((float)(m_sqr_distance_xz*float(_sqr(x3 - x1) + _sqr(z3 - z1)) +
     //square_size_y*(float)_sqr(y3 - y1))));
     return (2 * m_distance_xz *
-            _dist_type(_abs(x3 - x1) + _abs(z3 - z1))); // + _abs(y3 - y1)*size_y);
+            _dist_type(xr::abs(x3 - x1) + xr::abs(z3 - z1))); // + _abs(y3 - y1)*size_y);
     //		int						x = _abs(x3 - x1);
     //		int						z = _abs(z3 - z1);
     //		return					(m_distance_xz*_dist_type(_min(x,z)*3 + 2*_abs(x -

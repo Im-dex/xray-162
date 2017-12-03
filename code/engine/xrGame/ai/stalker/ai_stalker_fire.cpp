@@ -717,7 +717,7 @@ bool CAI_Stalker::fire_make_sense() {
     if ((pick_distance() + PRECISE_DISTANCE) < Position().distance_to(enemy->Position()))
         return (false);
 
-    if (_abs(Position().y - enemy->Position().y) > FLOOR_DISTANCE)
+    if (xr::abs(Position().y - enemy->Position().y) > FLOOR_DISTANCE)
         return (false);
 
     if (pick_distance() < NEAR_DISTANCE)
@@ -866,7 +866,7 @@ void CAI_Stalker::compute_throw_miss(u32 const vertex_id) {
 
 void CAI_Stalker::throw_target_impl(const Fvector& position, CObject* throw_ignore_object) {
     float distance_to_sqr = position.distance_to_sqr(m_throw_target_position);
-    m_throw_actual = m_throw_actual && (distance_to_sqr < _sqr(.1f));
+    m_throw_actual = m_throw_actual && (distance_to_sqr < xr::sqr(.1f));
     m_throw_target_position = position;
     m_throw_ignore_object = throw_ignore_object;
 }

@@ -100,7 +100,7 @@ void CMonsterEnemyManager::update() {
         dist_now = position.distance_to(monster->Position());
         dist_prev = prev_enemy_position.distance_to(monster->Position());
 
-        if (_abs(dist_now - dist_prev) < 0.2f)
+        if (xr::abs(dist_now - dist_prev) < 0.2f)
             flags.or_(FLAG_ENEMY_STANDING);
         else {
             if (dist_now < dist_prev)
@@ -108,7 +108,7 @@ void CMonsterEnemyManager::update() {
             else
                 flags.or_(FLAG_ENEMY_GO_FARTHER);
 
-            if (_abs(dist_now - dist_prev) < 1.2f) {
+            if (xr::abs(dist_now - dist_prev) < 1.2f) {
                 if (dist_now < dist_prev)
                     flags.or_(FLAG_ENEMY_GO_CLOSER_FAST);
                 else
@@ -229,7 +229,7 @@ bool CMonsterEnemyManager::is_faced(const CEntityAlive* object0, const CEntityAl
     fRange = object0->ffGetRange();
 
     fYawFov = angle_normalize_signed(
-        (_abs(fYawFov) + _abs(atanf(1.f / tPosition.distance_to(object1->Position())))) / 2.f);
+        (xr::abs(fYawFov) + xr::abs(atanf(1.f / tPosition.distance_to(object1->Position())))) / 2.f);
     fPitchFov = angle_normalize_signed(fYawFov * 1.f);
     tPosition.sub(object1->Position());
     tPosition.mul(-1);

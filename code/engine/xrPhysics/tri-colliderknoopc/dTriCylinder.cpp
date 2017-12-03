@@ -34,8 +34,8 @@ bool dcTriListCollider::circleLineIntersection(const dReal* cn, const dReal* cp,
         return false;
 
     } else {
-        t1 = -B_A - _sqrt(D);
-        t2 = -B_A + _sqrt(D);
+        t1 = -B_A - std::sqrt(D);
+        t2 = -B_A + std::sqrt(D);
 
         dVector3 O1 = { lp[0] + lv[0] * t1, lp[1] + lv[1] * t1, lp[2] + lv[2] * t1 };
         dVector3 O2 = { lp[0] + lv[0] * t2, lp[1] + lv[1] * t2, lp[2] + lv[2] * t2 };
@@ -101,7 +101,7 @@ int dcTriListCollider::dSortedTriCyl(const dReal* triSideAx0, const dReal* triSi
     ////////////////////////
     // another way //////////
     cos1 = cos1 < REAL(1.) ? cos1 : REAL(1.); // cos1 may slightly exeed 1.f
-    sin1 = _sqrt(REAL(1.) - cos1 * cos1);
+    sin1 = std::sqrt(REAL(1.) - cos1 * cos1);
     //////////////////////////////
 
     dReal sidePr = cos1 * hlz + sin1 * radius;
@@ -127,7 +127,7 @@ int dcTriListCollider::dSortedTriCyl(const dReal* triSideAx0, const dReal* triSi
         dReal Q1 = signum * dDOT14(triAx, R + 0);
         dReal Q2 = signum * dDOT14(triAx, R + 1);
         dReal Q3 = signum * dDOT14(triAx, R + 2);
-        dReal factor = _sqrt(Q1 * Q1 + Q3 * Q3);
+        dReal factor = std::sqrt(Q1 * Q1 + Q3 * Q3);
         dReal C1, C3;
         dReal centerDepth; // depth in the cirle centre
         if (factor > 0.f) {
@@ -308,7 +308,7 @@ int dcTriListCollider::dTriCyl(const dReal* v0, const dReal* v1, const dReal* v2
     ////////////////////////
     // another way //////////
     cos1 = cos1 < REAL(1.) ? cos1 : REAL(1.); // cos1 may slightly exeed 1.f
-    sin1 = _sqrt(REAL(1.) - cos1 * cos1);
+    sin1 = std::sqrt(REAL(1.) - cos1 * cos1);
     //////////////////////////////
 
     dReal sidePr = cos1 * hlz + sin1 * radius;
@@ -589,7 +589,7 @@ cos2 = dDOT14(axis, R + 2);                                                     
             \
 \
 \
-sin1 = _sqrt(cos0 * cos0 + cos2 * cos2);                                            \
+sin1 = std::sqrt(cos0 * cos0 + cos2 * cos2);                                        \
             \
 \
 sidePr = cos1 * hlz + sin1 * radius;                                                \
@@ -658,7 +658,7 @@ depth##ox = sidePr - dFabs(dist##ox);                                           
         dReal Q1 = dDOT14(norm, R + 0);
         dReal Q2 = dDOT14(norm, R + 1);
         dReal Q3 = dDOT14(norm, R + 2);
-        dReal factor = _sqrt(Q1 * Q1 + Q3 * Q3);
+        dReal factor = std::sqrt(Q1 * Q1 + Q3 * Q3);
         dReal C1, C3;
         dReal centerDepth; // depth in the cirle centre
         if (factor > 0.f) {

@@ -6,7 +6,6 @@
 
  ************************************************************************/
 #include "stdafx.h"
-#pragma hdrstop
 
 #include "MxDefines.h"
 #include "mat2.h"
@@ -55,7 +54,7 @@ bool eigenvalues(const Mat2& M, Vec2& evals) {
     if (dis < FEQ_EPS)
         return false;
     else {
-        double s = _sqrt(dis);
+        double s = std::sqrt(dis);
 
         evals[0] = 0.5 * (-B + s);
         evals[1] = 0.5 * (-B - s);

@@ -321,7 +321,7 @@ void CBuild::xrPhase_MergeGeometry() {
             xr_delete(g_XSplit[selected]);
             g_XSplit.erase(g_XSplit.begin() + selected);
         }
-        Progress(_sqrt(_sqrt(float(split) / float(g_XSplit.size()))));
+        Progress(std::sqrt(std::sqrt(float(split) / float(g_XSplit.size()))));
     }
     clMsg("%d subdivisions.", g_XSplit.size());
     validate_splits();

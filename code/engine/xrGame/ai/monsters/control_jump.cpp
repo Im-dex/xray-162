@@ -625,7 +625,7 @@ bool CControlJump::can_jump(Fvector const& target, bool const aggressive_jump) {
         return false;
 
     // check if target on the same floor etc
-    if (_abs(target_position.y - source_position.y) > m_max_height)
+    if (xr::abs(target_position.y - source_position.y) > m_max_height)
         return false;
 
     // проверка prepare

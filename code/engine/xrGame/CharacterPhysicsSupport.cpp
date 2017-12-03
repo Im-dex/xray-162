@@ -385,7 +385,7 @@ bool is_similar(const Fmatrix& m0, const Fmatrix& m1, float param) {
     Fquaternion q;
     q.set(tmp2);
     q.get_axis_angle(ax, ang);
-    return _abs(ang) < M_PI / 2.f;
+    return xr::abs(ang) < M_PI / 2.f;
 }
 
 // static struct callback_tracks_disable: public IUpdateTracksCallback
@@ -598,7 +598,8 @@ void CCharacterPhysicsSupport::in_UpdateCL() {
                         if(Fvector().sub(mh.c,mp.c).magnitude() < 0.3f||d<0.7 )//||
            Fvector().sub(me.c,mn.c) < 0.5
                         {
-                                
+                                
+
                                 K->CalculateBones_Invalidate();
                                 K->CalculateBones();
                                 ;
@@ -718,7 +719,8 @@ void reset_root_bone_start_pose( CPhysicsShell& shell )
 
         IKinematics * K = shell.PKinematics();
         VERIFY( K );
-        
+        
+
         u16	animation_root_bone_id = K->LL_GetBoneRoot();
 
         CODEGeom	*physics_root_bone_geom = physics_root_element->geometry( 0 );
@@ -785,7 +787,7 @@ void CCharacterPhysicsSupport::update_animation_collision() {
 BOOL dbg_draw_ragdoll_spawn = FALSE;
 #endif
 void CCharacterPhysicsSupport::ActivateShell(CObject* who) {
-    R_ASSERT(_valid(m_EntityAlife.Position()));
+    R_ASSERT(xr::valid(m_EntityAlife.Position()));
     Fvector start;
     start.set(m_EntityAlife.Position());
     Fvector velocity;

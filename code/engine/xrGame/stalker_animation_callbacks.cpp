@@ -17,7 +17,7 @@
 typedef CStalkerAnimationManager::callback_params callback_params;
 
 static void _BCL callback_rotation(CBoneInstance* bone) {
-    R_ASSERT(_valid(bone->mTransform));
+    R_ASSERT(xr::valid(bone->mTransform));
     callback_params* parameter = static_cast<callback_params*>(bone->callback_param());
     VERIFY(parameter);
     VERIFY(parameter->m_rotation);
@@ -28,12 +28,12 @@ static void _BCL callback_rotation(CBoneInstance* bone) {
         return;
 
     Fvector position = bone->mTransform.c;
-    R_ASSERT(_valid(*parameter->m_rotation));
+    R_ASSERT(xr::valid(*parameter->m_rotation));
     bone->mTransform.mulA_43(*parameter->m_rotation);
     CWeaponShotEffector& effector = object->weapon_shot_effector();
     if (!effector.IsActive()) {
         bone->mTransform.c = position;
-        R_ASSERT(_valid(bone->mTransform));
+        R_ASSERT(xr::valid(bone->mTransform));
         return;
     }
 
@@ -50,14 +50,14 @@ static void _BCL callback_rotation(CBoneInstance* bone) {
 
     Fmatrix effector_transform;
     effector_transform.setXYZ(angles);
-    R_ASSERT(_valid(effector_transform));
+    R_ASSERT(xr::valid(effector_transform));
     bone->mTransform.mulA_43(effector_transform);
     bone->mTransform.c = position;
-    R_ASSERT(_valid(bone->mTransform));
+    R_ASSERT(xr::valid(bone->mTransform));
 }
 
 static void _BCL callback_rotation_blend(CBoneInstance* const bone) {
-    R_ASSERT(_valid(bone->mTransform));
+    R_ASSERT(xr::valid(bone->mTransform));
 
     callback_params* parameter = static_cast<callback_params*>(bone->callback_param());
     VERIFY(parameter);
@@ -98,10 +98,10 @@ static void _BCL callback_rotation_blend(CBoneInstance* const bone) {
 #endif // #if 0
 
     Fvector position = bone->mTransform.c;
-    R_ASSERT(_valid(rotation));
+    R_ASSERT(xr::valid(rotation));
     bone->mTransform.mulA_43(rotation);
     bone->mTransform.c = position;
-    R_ASSERT(_valid(bone->mTransform));
+    R_ASSERT(xr::valid(bone->mTransform));
 }
 
 void CStalkerAnimationManager::assign_bone_callbacks() {

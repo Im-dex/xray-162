@@ -173,7 +173,7 @@ BOOL CreateNode(Fvector& vAt, vertex& N) {
 
     // *** Validate results
     vNorm.set(0, 1, 0);
-    if (vNorm.dotproduct(N.Plane.n) < _cos(deg2rad(60.f)))
+    if (vNorm.dotproduct(N.Plane.n) < std::cos(deg2rad(60.f)))
         return FALSE;
 
     float y_old = vAt.y;
@@ -299,7 +299,7 @@ BOOL CanTravel(Fvector& _from, Fvector& _at) {
     float eps = 0.1f;
     float eps_y = g_params.fPatchSize * 1.5f; // * tan(56) = 1.5
     Fvector Result;
-    float radius = g_params.fPatchSize / _sqrt(2.f);
+    float radius = g_params.fPatchSize / std::sqrt(2.f);
 
     // 1
     msimulator_Simulate(Result, _from, _at, radius, 0.7f);

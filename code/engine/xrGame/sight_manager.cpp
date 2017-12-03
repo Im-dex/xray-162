@@ -55,7 +55,7 @@ void CSightManager::vfValidateAngleDependency(float x1, float& x2, float x3) {
     if (_x2 * _x3 >= 0.f)
         return;
 
-    if (_abs(_x2) + _abs(_x3) <= PI)
+    if (xr::abs(_x2) + xr::abs(_x3) <= PI)
         return;
 
     x2 = x3;
@@ -224,7 +224,7 @@ void CSightManager::Exec_Look(float time_delta) {
 
     Fmatrix& m = m_object->XFORM();
     float h = -body.current.yaw;
-    float _sh = _sin(h), _ch = _cos(h);
+    float _sh = std::sin(h), _ch = std::cos(h);
     m.i.set(_ch, 0.f, _sh);
     m._14_ = 0.f;
     m.j.set(0.f, 1.f, 0.f);
@@ -715,7 +715,7 @@ static void slerp_rotations(float const time_delta, float const angular_speed, F
         return;
     }
 
-    float const test_angle = clampr(_abs(angle), EPS_L, PI);
+    float const test_angle = clampr(xr::abs(angle), EPS_L, PI);
     float speed = angular_speed;
     float const test_speed = PI / 36.f;
     float const min_speed = PI / 180.f;

@@ -4,9 +4,7 @@
  *  by Oles Shishkovtsov (c) 1999-2000
  *
  */
-
-#ifndef PROGRESSIVE_MESH_H
-#define PROGRESSIVE_MESH_H
+#pragma once
 
 #ifdef XRPROGRESSIVE_EXPORTS
 #define PM_API __declspec(dllexport)
@@ -24,7 +22,7 @@ class PM_API P_UV {
 public:
     float u, v;
 
-    IC float dist(P_UV& p) { return _sqrt((u - p.u) * (u - p.u) + (v - p.v) * (v - p.v)); }
+    float dist(P_UV& p) { return std::sqrt((u - p.u) * (u - p.u) + (v - p.v) * (v - p.v)); }
 };
 #pragma pack(pop)
 
@@ -71,5 +69,3 @@ PM_API int __cdecl PM_Convert(WORD* pIndices, u32 idxCount, PM_Result* RESULT);
 //		if (res>=0)	Permute & Enjoy! :)
 //		else		progressive convert failed
 }
-
-#endif

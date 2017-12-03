@@ -1,8 +1,4 @@
-#ifndef GFXVEC3_INCLUDED // -*- C++ -*-
-#define GFXVEC3_INCLUDED
-#if !defined(__GNUC__)
 #pragma once
-#endif
 
 /************************************************************************
 
@@ -16,7 +12,6 @@
 
 template <class T>
 class TVec3 {
-private:
     T elt[3];
 
 public:
@@ -70,10 +65,10 @@ public:
 
     // Assignment and in-place arithmetic methods
     //
-    inline TVec3& operator+=(const TVec3& v);
-    inline TVec3& operator-=(const TVec3& v);
-    inline TVec3& operator*=(T s);
-    inline TVec3& operator/=(T s);
+    TVec3& operator+=(const TVec3& v);
+    TVec3& operator-=(const TVec3& v);
+    TVec3& operator*=(T s);
+    TVec3& operator/=(T s);
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -82,7 +77,7 @@ public:
 //
 
 template <class T>
-inline TVec3<T>& TVec3<T>::operator+=(const TVec3<T>& v) {
+TVec3<T>& TVec3<T>::operator+=(const TVec3<T>& v) {
     elt[0] += v[0];
     elt[1] += v[1];
     elt[2] += v[2];
@@ -90,7 +85,7 @@ inline TVec3<T>& TVec3<T>::operator+=(const TVec3<T>& v) {
 }
 
 template <class T>
-inline TVec3<T>& TVec3<T>::operator-=(const TVec3<T>& v) {
+TVec3<T>& TVec3<T>::operator-=(const TVec3<T>& v) {
     elt[0] -= v[0];
     elt[1] -= v[1];
     elt[2] -= v[2];
@@ -98,7 +93,7 @@ inline TVec3<T>& TVec3<T>::operator-=(const TVec3<T>& v) {
 }
 
 template <class T>
-inline TVec3<T>& TVec3<T>::operator*=(T s) {
+TVec3<T>& TVec3<T>::operator*=(T s) {
     elt[0] *= s;
     elt[1] *= s;
     elt[2] *= s;
@@ -106,7 +101,7 @@ inline TVec3<T>& TVec3<T>::operator*=(T s) {
 }
 
 template <class T>
-inline TVec3<T>& TVec3<T>::operator/=(T s) {
+TVec3<T>& TVec3<T>::operator/=(T s) {
     elt[0] /= s;
     elt[1] /= s;
     elt[2] /= s;
@@ -119,70 +114,47 @@ inline TVec3<T>& TVec3<T>::operator/=(T s) {
 //
 
 template <class T>
-inline TVec3<T> operator+(const TVec3<T>& u, const TVec3<T>& v) {
+TVec3<T> operator+(const TVec3<T>& u, const TVec3<T>& v) {
     return TVec3<T>(u[0] + v[0], u[1] + v[1], u[2] + v[2]);
 }
 
 template <class T>
-inline TVec3<T> operator-(const TVec3<T>& u, const TVec3<T>& v) {
+TVec3<T> operator-(const TVec3<T>& u, const TVec3<T>& v) {
     return TVec3<T>(u[0] - v[0], u[1] - v[1], u[2] - v[2]);
 }
 
 template <class T>
-inline TVec3<T> operator-(const TVec3<T>& v) {
+TVec3<T> operator-(const TVec3<T>& v) {
     return TVec3<T>(-v[0], -v[1], -v[2]);
 }
 
-#if _MSC_VER >= 1200
-// Normally, we use the <class T, class N> construct below to allow the scalar
-// argument to be different than the template type.  This, for example, allows
-// the user to write things like v/2.  Unfortunately, Microsoft VC6.0 (aka
-// v1200) gets confused by this.  We used to include explicit versions for the
-// case of int's, but this was causing silent (and incorrect) coercion of
-// floats to ints.
-//
 template <class T>
-inline TVec3<T> operator*(T s, const TVec3<T>& v) {
+TVec3<T> operator*(T s, const TVec3<T>& v) {
     return TVec3<T>(v[0] * s, v[1] * s, v[2] * s);
 }
 template <class T>
-inline TVec3<T> operator*(const TVec3<T>& v, T s) {
+TVec3<T> operator*(const TVec3<T>& v, T s) {
     return s * v;
 }
 
 template <class T>
-inline TVec3<T> operator/(const TVec3<T>& v, T s) {
+TVec3<T> operator/(const TVec3<T>& v, T s) {
     return TVec3<T>(v[0] / s, v[1] / s, v[2] / s);
 }
-#else
-template <class T, class N>
-inline TVec3<T> operator*(N s, const TVec3<T>& v) {
-    return TVec3<T>(v[0] * s, v[1] * s, v[2] * s);
-}
-template <class T, class N>
-inline TVec3<T> operator*(const TVec3<T>& v, N s) {
-    return s * v;
-}
-
-template <class T, class N>
-inline TVec3<T> operator/(const TVec3<T>& v, N s) {
-    return TVec3<T>(v[0] / s, v[1] / s, v[2] / s);
-}
-#endif
 
 template <class T>
-inline T operator*(const TVec3<T>& u, const TVec3<T>& v) {
+T operator*(const TVec3<T>& u, const TVec3<T>& v) {
     return u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
 }
 
 template <class T>
-inline TVec3<T> cross(const TVec3<T>& u, const TVec3<T>& v) {
+TVec3<T> cross(const TVec3<T>& u, const TVec3<T>& v) {
     return TVec3<T>(u[1] * v[2] - v[1] * u[2], -u[0] * v[2] + v[0] * u[2],
                     u[0] * v[1] - v[0] * u[1]);
 }
 
 template <class T>
-inline TVec3<T> operator^(const TVec3<T>& u, const TVec3<T>& v) {
+TVec3<T> operator^(const TVec3<T>& u, const TVec3<T>& v) {
     return cross(u, v);
 }
 
@@ -201,23 +173,23 @@ inline std::istream &operator>>(std::istream &in, TVec3<T>& v)
 //
 
 template <class T>
-inline T norm2(const TVec3<T>& v) {
+T norm2(const TVec3<T>& v) {
     return v * v;
 }
 template <class T>
-inline T norm(const TVec3<T>& v) {
-    return _sqrt(norm2(v));
+T norm(const TVec3<T>& v) {
+    return std::sqrt(norm2(v));
 }
 
 template <class T>
-inline void unitize(TVec3<T>& v) {
+void unitize(TVec3<T>& v) {
     T l = norm2(v);
     if (l != 1.0 && l != 0.0)
-        v /= _sqrt(l);
+        v /= std::sqrt(l);
 }
 
 template <class T>
-inline TVec2<T> proj(const TVec3<T>& v) {
+TVec2<T> proj(const TVec3<T>& v) {
     TVec2<T> u(v[0], v[1]);
     if (v[2] != 1.0 && v[2] != 0.0)
         u /= v[2];
@@ -226,6 +198,3 @@ inline TVec2<T> proj(const TVec3<T>& v) {
 
 typedef TVec3<double> Vec3;
 typedef TVec3<float> Vec3f;
-
-// GFXVEC3_INCLUDED
-#endif

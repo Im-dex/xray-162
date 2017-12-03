@@ -61,13 +61,13 @@ int dcTriListCollider::CollideCylinder(dxGeom* Cylinder, int Flags, dContactGeom
     dReal* R = const_cast<dReal*>(dGeomGetRotation(Cylinder));
 
     AABB.x = REAL(0.5) * dFabs(R[1] * CylinderLength) +
-             (_sqrt(R[0] * R[0] + R[2] * R[2]) * CylinderRadius);
+             (std::sqrt(R[0] * R[0] + R[2] * R[2]) * CylinderRadius);
 
     AABB.y = REAL(0.5) * dFabs(R[5] * CylinderLength) +
-             (_sqrt(R[4] * R[4] + R[6] * R[6]) * CylinderRadius);
+             (std::sqrt(R[4] * R[4] + R[6] * R[6]) * CylinderRadius);
 
     AABB.z = REAL(0.5) * dFabs(R[9] * CylinderLength) +
-             (_sqrt(R[8] * R[8] + R[10] * R[10]) * CylinderRadius);
+             (std::sqrt(R[8] * R[8] + R[10] * R[10]) * CylinderRadius);
 
     const dReal* velocity = dBodyGetLinearVel(dGeomGetBody(Cylinder));
     AABB.x += dFabs(velocity[0]) * 0.04f;

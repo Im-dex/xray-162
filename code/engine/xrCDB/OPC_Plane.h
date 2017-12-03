@@ -51,10 +51,10 @@ public:
     }
     Plane& Set(const Point& p0, const Point& p1, const Point& p2);
 
-    inline_ float Distance(const Point& p) const { return (p | n) + d; }
-    inline_ bool Belongs(const Point& p) const { return _abs(Distance(p)) < PLANE_EPSILON; }
+    float Distance(const Point& p) const { return (p | n) + d; }
+    bool Belongs(const Point& p) const { return xr::abs(Distance(p)) < PLANE_EPSILON; }
 
-    inline_ void Normalize() {
+    void Normalize() {
         float Denom = 1.0f / n.Magnitude();
         n.x *= Denom;
         n.y *= Denom;

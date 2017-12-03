@@ -230,7 +230,7 @@ void CLightShadows::calculate() {
             if (p_far < (p_near + eps))
                 continue;
             //	Igor: make check here instead of assertion in buil_projection_hat
-            if (!(_abs(p_far - p_near) > eps))
+            if (!(xr::abs(p_far - p_near) > eps))
                 continue;
             if (p_hat > 0.9f)
                 continue;
@@ -252,7 +252,7 @@ void CLightShadows::calculate() {
             Fvector v_D, v_N, v_R;
             v_D.sub(C.C, Lpos);
             v_D.normalize();
-            if (1 - _abs(v_D.y) < EPS)
+            if (1 - xr::abs(v_D.y) < EPS)
                 v_N.set(1, 0, 0);
             else
                 v_N.set(0, 1, 0);
@@ -362,7 +362,7 @@ IC float PLC_energy(Fvector& P, Fvector& N, light* L, float E) {
             return 0;
 
         // Trace Light
-        float R = _sqrt(sqD);
+        float R = std::sqrt(sqD);
         float att = 1 - (1 / (1 + R));
         return (E * att);
     }
@@ -486,7 +486,7 @@ void CLightShadows::render() {
                 mag = n.square_magnitude();
                 if (mag < EPS_S)
                     continue;
-                n.mul(1.f / _sqrt(mag));
+                n.mul(1.f / std::sqrt(mag));
                 P.build_unit_normal(A[0], n);
                 float DOT_Fade = P.classify(S.L->position);
                 if (DOT_Fade < 0)

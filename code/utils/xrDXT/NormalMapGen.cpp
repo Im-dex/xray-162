@@ -59,11 +59,11 @@ Ivector vpack(Fvector src) {
             for (int z = std::max(bz - d, 0); z <= std::min(bz + d, 255); z++) {
                 _v = vunpack(x, y, z);
                 float m = _v.magnitude();
-                float me = _abs(m - 1.f);
+                float me = xr::abs(m - 1.f);
                 if (me > 0.03f)
                     continue;
                 _v.div(m);
-                float e = _abs(src.dotproduct(_v) - 1.f);
+                float e = xr::abs(src.dotproduct(_v) - 1.f);
                 if (e < e_best) {
                     e_best = e;
                     r = x, g = y, b = z;
@@ -128,7 +128,7 @@ void CalculateNormalMap(NVI_Image* pSrc, ConvolutionKernel* pKernels, int num_ke
             // cross product gives (-du, -dv, 1.0) as normal
 
             float mag = du * du + dv * dv + 1.0f;
-            mag = (float)_sqrt(mag);
+            mag = (float)std::sqrt(mag);
 
             // Get alpha as height
             height = (char)(pArray[j * size_x + i]) >> 24;
@@ -304,8 +304,8 @@ void ConvertAlphaToNormalMap_5x5(NVI_Image* pSrc, float scale, bool wrap) {
     float usum, vsum;
     usum = vsum = 0.0f;
     for (i = 0; i < numelem; i++) {
-        usum += (float)_abs(du_elem[i].weight);
-        vsum += (float)_abs(dv_elem[i].weight);
+        usum += (float)xr::abs(du_elem[i].weight);
+        vsum += (float)xr::abs(dv_elem[i].weight);
     }
     for (i = 0; i < numelem; i++) {
         du_elem[i].weight /= usum;
@@ -458,8 +458,8 @@ void ConvertAlphaToNormalMap_7x7(NVI_Image* pSrc, float scale, bool wrap) {
     usum = vsum = 0.0f;
 
     for (i = 0; i < numelem; i++) {
-        usum += (float)_abs(du_elem[i].weight);
-        vsum += (float)_abs(dv_elem[i].weight);
+        usum += (float)xr::abs(du_elem[i].weight);
+        vsum += (float)xr::abs(dv_elem[i].weight);
     }
 
     for (i = 0; i < numelem; i++) {
@@ -528,8 +528,8 @@ void ConvertAlphaToNormalMap_9x9(NVI_Image* pSrc, float scale, bool wrap) {
     usum = vsum = 0.0f;
 
     for (i = 0; i < numelem; i++) {
-        usum += (float)_abs(du_elem[i].weight);
-        vsum += (float)_abs(dv_elem[i].weight);
+        usum += (float)xr::abs(du_elem[i].weight);
+        vsum += (float)xr::abs(dv_elem[i].weight);
     }
     for (i = 0; i < numelem; i++) {
         du_elem[i].weight /= usum;
@@ -684,7 +684,7 @@ int DXTCompressBump(LPCSTR out_name, u8* T_height_gloss, u8* T_normal_map, u32 w
             // Rescale by virtual height
             float h_scale = powf(fmt->bump_virtual_height / 0.05f, 0.75f); // move towards 1.0f
             if (h_scale > 1.f)
-                h_scale = _sqrt(h_scale);
+                h_scale = std::sqrt(h_scale);
             {
                 for (u32 y = 0; y < h; y++) {
                     for (u32 x = 0; x < w; x++) {

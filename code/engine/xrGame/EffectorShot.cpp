@@ -71,8 +71,8 @@ void CWeaponShotEffector::Shot2(float angle) {
 }
 
 void CWeaponShotEffector::Relax() {
-    float time_to_relax = _abs(m_angle_vert) / m_cam_recoil.RelaxSpeed;
-    float relax_speed_horz = (fis_zero(time_to_relax)) ? 0.0f : _abs(m_angle_horz) / time_to_relax;
+    float time_to_relax = xr::abs(m_angle_vert) / m_cam_recoil.RelaxSpeed;
+    float relax_speed_horz = (fis_zero(time_to_relax)) ? 0.0f : xr::abs(m_angle_horz) / time_to_relax;
 
     float dt = Device.fTimeDelta;
 

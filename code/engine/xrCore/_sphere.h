@@ -1,21 +1,19 @@
-#ifndef _F_SPHERE_H_
-#define _F_SPHERE_H_
+#pragma once
 
 template <class T>
 struct _sphere {
     _vector3<T> P;
     T R;
 
-public:
-    IC void set(const _vector3<T>& _P, T _R) {
+    void set(const _vector3<T>& _P, T _R) {
         P.set(_P);
         R = _R;
     }
-    IC void set(const _sphere<T>& S) {
+    void set(const _sphere<T>& S) {
         P.set(S.P);
         R = S.R;
     }
-    IC void identity() {
+    void identity() {
         P.set(0, 0, 0);
         R = 1;
     }
@@ -27,7 +25,7 @@ public:
         fcv_forcedword = u32(-1)
     };
     // Ray-sphere intersection
-    ICF ERP_Result intersect(const _vector3<T>& S, const _vector3<T>& D, T range, int& quantity,
+    ERP_Result intersect(const _vector3<T>& S, const _vector3<T>& D, T range, int& quantity,
                              T afT[2]) const {
         // set up quadratic Q(t) = a*t^2 + 2*b*t + c
         _vector3<T> kDiff;
@@ -41,7 +39,7 @@ public:
         if (fDiscr < (T)0.0) {
             quantity = 0;
         } else if (fDiscr > (T)0.0) {
-            T fRoot = _sqrt(fDiscr);
+            T fRoot = std::sqrt(fDiscr);
             T fInvA = ((T)1.0) / fA;
             afT[0] = range * (-fB - fRoot) * fInvA;
             afT[1] = range * (-fB + fRoot) * fInvA;
@@ -79,7 +77,7 @@ public:
                                             range2			=range*range;
                                     }
     */
-    ICF ERP_Result intersect_full(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const {
+    ERP_Result intersect_full(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const {
         int quantity;
         float afT[2];
         typename Fsphere::ERP_Result result = intersect(start, dir, dist, quantity, afT);
@@ -98,7 +96,7 @@ public:
         return result;
     }
 
-    ICF ERP_Result intersect(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const {
+    ERP_Result intersect(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const {
         int quantity;
         T afT[2];
         ERP_Result result = intersect(start, dir, dist, quantity, afT);
@@ -112,7 +110,7 @@ public:
         return rpNone;
     }
 
-    IC ERP_Result intersect2(const _vector3<T>& S, const _vector3<T>& D, T& range) const {
+    ERP_Result intersect2(const _vector3<T>& S, const _vector3<T>& D, T& range) const {
         _vector3<T> Q;
         Q.sub(P, S);
 
@@ -122,7 +120,7 @@ public:
         T d = R2 - (c2 - v * v);
 
         if (d > 0.f) {
-            T _range = v - _sqrt(d);
+            T _range = v - std::sqrt(d);
             if (_range < range) {
                 range = _range;
                 return (c2 < R2) ? rpOriginInside : rpOriginOutside;
@@ -130,7 +128,7 @@ public:
         }
         return rpNone;
     }
-    ICF BOOL intersect(const _vector3<T>& S, const _vector3<T>& D) const {
+    BOOL intersect(const _vector3<T>& S, const _vector3<T>& D) const {
         _vector3<T> Q;
         Q.sub(P, S);
 
@@ -139,16 +137,16 @@ public:
         T d = R * R - (c * c - v * v);
         return (d > 0);
     }
-    ICF BOOL intersect(const _sphere<T>& S) const {
+    BOOL intersect(const _sphere<T>& S) const {
         T SumR = R + S.R;
         return P.distance_to_sqr(S.P) < SumR * SumR;
     }
-    IC BOOL contains(const _vector3<T>& PT) const {
+    BOOL contains(const _vector3<T>& PT) const {
         return P.distance_to_sqr(PT) <= (R * R + EPS_S);
     }
 
     // returns true if this wholly contains the argument sphere
-    IC BOOL contains(const _sphere<T>& S) const {
+    BOOL contains(const _sphere<T>& S) const {
         // can't contain a sphere that's bigger than me !
         const T RDiff = R - S.R;
         if (RDiff < 0)
@@ -158,17 +156,19 @@ public:
     }
 
     // return's volume of sphere
-    IC T volume() const { return T(PI_MUL_4 / 3) * (R * R * R); }
+    T volume() const { return T(PI_MUL_4 / 3) * (R * R * R); }
 };
 
 typedef _sphere<float> Fsphere;
 typedef _sphere<double> Dsphere;
 
+namespace xr {
+
 template <class T>
-BOOL _valid(const _sphere<T>& s) {
-    return _valid(s.P) && _valid(s.R);
+bool valid(const _sphere<T>& s) {
+    return valid(s.P) && valid(s.R);
 }
 
-void XRCORE_API Fsphere_compute(Fsphere& dest, const Fvector* verts, int count);
+} // xr namespace
 
-#endif
+void XRCORE_API Fsphere_compute(Fsphere& dest, const Fvector* verts, int count);

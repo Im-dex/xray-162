@@ -21,7 +21,7 @@ float PAPI::NRand(float sigma) {
     float y;
     do {
         y = -logf(drand48());
-    } while (drand48() > expf(-_sqr(y - 1.0f) * 0.5f));
+    } while (drand48() > expf(-xr::sqr(y - 1.0f) * 0.5f));
 
     if (rand() & 0x1)
         return y * sigma * ONE_OVER_SIGMA_EXP;
@@ -140,7 +140,7 @@ pDomain::pDomain(PDomainEnum dtype, float a0, float a1, float a2, float a3, floa
             radius1 = a7;
             radius2 = a6;
         }
-        radius1Sqr = _sqr(radius1);
+        radius1Sqr = xr::sqr(radius1);
 
         // Given an arbitrary nonzero vector3 n, make two orthonormal
         // vectors u and v forming a frame [u,v,n.normalize()].
@@ -154,7 +154,7 @@ pDomain::pDomain(PDomainEnum dtype, float a0, float a1, float a2, float a3, floa
 
         // Find a vector3 orthogonal to n.
         pVector basis(1.0f, 0.0f, 0.0f);
-        if (_abs(basis * n) > 0.999)
+        if (xr::abs(basis * n) > 0.999)
             basis = pVector(0.0f, 1.0f, 0.0f);
 
         // Project away N component, normalize and cross to get
@@ -167,7 +167,7 @@ pDomain::pDomain(PDomainEnum dtype, float a0, float a1, float a2, float a3, floa
         p1 = pVector(a0, a1, a2);
         radius1 = a3;
         float tmp = 1.f / radius1;
-        radius2Sqr = -0.5f * _sqr(tmp);
+        radius2Sqr = -0.5f * xr::sqr(tmp);
         radius2 = ONEOVERSQRT2PI * tmp;
     } break;
     case PDDisc: {
@@ -185,7 +185,7 @@ pDomain::pDomain(PDomainEnum dtype, float a0, float a1, float a2, float a3, floa
 
         // Find a vector3 orthogonal to n.
         pVector basis(1.0f, 0.0f, 0.0f);
-        if (_abs(basis * p2) > 0.999)
+        if (xr::abs(basis * p2) > 0.999)
             basis = pVector(0.0f, 1.0f, 0.0f);
 
         // Project away N component, normalize and cross to get
@@ -239,9 +239,9 @@ BOOL pDomain::Within(const pVector& pos) const {
         float rSqr = xrad.length2();
 
         if (type == PDCone)
-            return (rSqr <= _sqr(dist * radius1) && rSqr >= _sqr(dist * radius2));
+            return (rSqr <= xr::sqr(dist * radius1) && rSqr >= xr::sqr(dist * radius2));
         else
-            return (rSqr <= radius1Sqr && rSqr >= _sqr(radius2));
+            return (rSqr <= radius1Sqr && rSqr >= xr::sqr(radius2));
     }
     case PDBlob: {
         pVector x(pos - p1);
@@ -308,8 +308,8 @@ void pDomain::Generate(pVector& pos) const {
         // Distance from axis
         float r = radius2 + drand48() * (radius1 - radius2);
 
-        float x = r * _cos(theta); // Weighting of each frame vector3
-        float y = r * _sin(theta);
+        float x = r * std::cos(theta); // Weighting of each frame vector3
+        float y = r * std::sin(theta);
 
         // Scale radius along axis for cones
         if (type == PDCone) {
@@ -330,8 +330,8 @@ void pDomain::Generate(pVector& pos) const {
         // Distance from center
         float r = radius2 + drand48() * (radius1 - radius2);
 
-        float x = r * _cos(theta); // Weighting of each frame vector3
-        float y = r * _sin(theta);
+        float x = r * std::cos(theta); // Weighting of each frame vector3
+        float y = r * std::sin(theta);
 
         pos = p1 + u * x + v * y;
     } break;

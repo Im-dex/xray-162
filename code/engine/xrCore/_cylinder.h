@@ -1,5 +1,4 @@
-#ifndef _CYLINDER_H
-#define _CYLINDER_H
+#pragma once
 
 template <class T>
 class _cylinder {
@@ -9,14 +8,12 @@ public:
     typedef Self& SelfRef;
     typedef const Self& SelfCRef;
 
-public:
     _vector3<T> m_center;
     _vector3<T> m_direction;
     T m_height;
     T m_radius;
 
-public:
-    IC SelfRef invalidate() {
+    SelfRef invalidate() {
         m_center.set(0, 0, 0);
         m_direction.set(0, 0, 0);
         m_height = 0;
@@ -24,7 +21,7 @@ public:
         return *this;
     }
     enum ecode { cyl_cap, cyl_wall, cyl_none };
-    IC int intersect(const _vector3<T>& start, const _vector3<T>& dir, T afT[2],
+    int intersect(const _vector3<T>& start, const _vector3<T>& dir, T afT[2],
                      ecode code[2]) const {
         T fEpsilon = 1e-12f;
 
@@ -53,7 +50,7 @@ public:
 
         T fInv, fA, fB, fC, fDiscr, fRoot, fT, fT0, fT1, fTmp0, fTmp1;
 
-        if (_abs(kD.z) >= 1.0f - fEpsilon) {
+        if (xr::abs(kD.z) >= 1.0f - fEpsilon) {
             // line is parallel to cylinder axis
             if (kP.x * kP.x + kP.y * kP.y <= fRadiusSqr) {
                 fTmp0 = fInvDLength / kD.z;
@@ -67,9 +64,9 @@ public:
             }
         }
 
-        if (_abs(kD.z) <= fEpsilon) {
+        if (xr::abs(kD.z) <= fEpsilon) {
             // line is perpendicular to axis of cylinder
-            if (_abs(kP.z) > fHalfHeight) {
+            if (xr::abs(kP.z) > fHalfHeight) {
                 // line is outside the planar caps of cylinder
                 return 0;
             }
@@ -82,7 +79,7 @@ public:
                 // line does not intersect cylinder wall
                 return 0;
             } else if (fDiscr > 0.0f) {
-                fRoot = _sqrt(fDiscr);
+                fRoot = std::sqrt(fDiscr);
                 fTmp0 = fInvDLength / fA;
                 afT[0] = (-fB - fRoot) * fTmp0;
                 afT[1] = (-fB + fRoot) * fTmp0;
@@ -134,7 +131,7 @@ public:
             // VERIFY( iQuantity == 0 );
             return 0;
         } else if (fDiscr > 0.0f) {
-            fRoot = _sqrt(fDiscr);
+            fRoot = std::sqrt(fDiscr);
             fInv = 1.0f / fA;
             fT = (-fB - fRoot) * fInv;
             if (fT0 <= fT1) {
@@ -190,7 +187,7 @@ public:
         rpOriginOutside = 2,
         fcv_forcedword = u32(-1)
     };
-    IC ERP_Result intersect(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const {
+    ERP_Result intersect(const _vector3<T>& start, const _vector3<T>& dir, T& dist) const {
         T afT[2];
         ecode code[2];
         int cnt;
@@ -220,8 +217,6 @@ typedef _cylinder<float> Fcylinder;
 typedef _cylinder<double> Dcylinder;
 
 template <class T>
-BOOL _valid(const _cylinder<T>& c) {
-    return _valid(c.m_center) && _valid(c.m_direction) && _valid(c.m_height) && _valid(c.m_height);
+bool _valid(const _cylinder<T>& c) {
+    return xr::valid(c.m_center) && xr::valid(c.m_direction) && xr::valid(c.m_height) && xr::valid(c.m_height);
 }
-
-#endif // _DEBUG

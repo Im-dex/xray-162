@@ -409,7 +409,7 @@ void CWeaponKnife::OnRender() {
 #endif
 
 static bool intersect(Fsphere const& bone, Fsphere const& query) {
-    return bone.P.distance_to_sqr(query.P) < _sqr(bone.R + query.R);
+    return bone.P.distance_to_sqr(query.P) < xr::sqr(bone.R + query.R);
 }
 
 static bool intersect(Fobb bone, Fsphere const& query) {
@@ -429,18 +429,18 @@ static bool intersect(Fcylinder const& bone, Fsphere const& query) {
     Fvector const bone2query = Fvector().sub(query.P, bone.m_center);
     float const axe_projection = bone2query.dotproduct(bone.m_direction);
     float const half_height = bone.m_height / 2.f;
-    if (_abs(axe_projection) > half_height + query.R)
+    if (xr::abs(axe_projection) > half_height + query.R)
         return false;
 
-    VERIFY(bone2query.square_magnitude() >= _sqr(axe_projection));
-    float const axe_projection2_sqr = bone2query.square_magnitude() - _sqr(axe_projection);
-    if (axe_projection2_sqr > _sqr(bone.m_radius + query.R))
+    VERIFY(bone2query.square_magnitude() >= xr::sqr(axe_projection));
+    float const axe_projection2_sqr = bone2query.square_magnitude() - xr::sqr(axe_projection);
+    if (axe_projection2_sqr > xr::sqr(bone.m_radius + query.R))
         return false;
 
-    if (_abs(axe_projection) <= half_height)
+    if (xr::abs(axe_projection) <= half_height)
         return true;
 
-    if (axe_projection2_sqr <= _sqr(bone.m_radius))
+    if (axe_projection2_sqr <= xr::sqr(bone.m_radius))
         return true;
 
     Fvector const center_direction =
@@ -449,11 +449,11 @@ static bool intersect(Fcylinder const& bone, Fsphere const& query) {
     Fvector const circle2sphere = Fvector().sub(query.P, circle_center);
     float const distance2plane = circle2sphere.dotproduct(center_direction);
     VERIFY(distance2plane > 0.f);
-    VERIFY(_sqr(query.R) >= _sqr(distance2plane));
-    float const circle_radius = _sqrt(_sqr(query.R) - _sqr(distance2plane));
+    VERIFY(xr::sqr(query.R) >= xr::sqr(distance2plane));
+    float const circle_radius = std::sqrt(xr::sqr(query.R) - xr::sqr(distance2plane));
     Fvector const sphere_circle_center = Fvector(query.P).mad(center_direction, -distance2plane);
     float const distance2center_sqr = circle_center.distance_to_sqr(sphere_circle_center);
-    return distance2center_sqr <= _sqr(bone.m_radius + circle_radius);
+    return distance2center_sqr <= xr::sqr(bone.m_radius + circle_radius);
 }
 
 void CWeaponKnife::GetVictimPos(CEntityAlive* victim, Fvector& pos_dest) {

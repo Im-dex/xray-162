@@ -153,11 +153,11 @@ void CPhysicsShellHolder::correct_spawn_pos() {
     Fvector c;
     get_box(PPhysicsShell(), XFORM(), size, c);
 
-    R_ASSERT2(_valid(c),
+    R_ASSERT2(xr::valid(c),
               make_string("object: %s model: %s ", cName().c_str(), cNameVisual().c_str()));
-    R_ASSERT2(_valid(size),
+    R_ASSERT2(xr::valid(size),
               make_string("object: %s model: %s ", cName().c_str(), cNameVisual().c_str()));
-    R_ASSERT2(_valid(XFORM()),
+    R_ASSERT2(xr::valid(XFORM()),
               make_string("object: %s model: %s ", cName().c_str(), cNameVisual().c_str()));
     PPhysicsShell()->DisableCollision();
 

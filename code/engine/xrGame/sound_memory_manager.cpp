@@ -34,7 +34,7 @@
 #define SAVE_FRIEND_SOUNDS
 //#define SAVE_VISIBLE_OBJECT_SOUNDS
 
-const float COMBAT_SOUND_PERCEIVE_RADIUS_SQR = _sqr(5.f);
+const float COMBAT_SOUND_PERCEIVE_RADIUS_SQR = xr::sqr(5.f);
 
 CSoundMemoryManager::~CSoundMemoryManager() {
     clear_delayed_objects();

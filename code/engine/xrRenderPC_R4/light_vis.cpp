@@ -25,9 +25,9 @@ void light::vis_prepare() {
     {
         float a0 = deg2rad(Device.fFOV * Device.fASPECT / 2.f);
         float a1 = deg2rad(Device.fFOV / 2.f);
-        float x0 = VIEWPORT_NEAR / _cos(a0);
-        float x1 = VIEWPORT_NEAR / _cos(a1);
-        float c = _sqrt(x0 * x0 + x1 * x1);
+        float x0 = VIEWPORT_NEAR / std::cos(a0);
+        float x1 = VIEWPORT_NEAR / std::cos(a1);
+        float c = std::sqrt(x0 * x0 + x1 * x1);
         safe_area = std::max(std::max(VIEWPORT_NEAR, std::max(x0, x1)), c);
     }
 

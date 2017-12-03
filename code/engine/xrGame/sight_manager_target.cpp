@@ -178,8 +178,8 @@ void CSightManager::SetLessCoverLook(const CLevelGraph::CVertex* tpNode, float f
                 ai().level_graph().compute_high_square(-fIncrement, fAngleOfView, tpNextNode);
             if ((fSquare1 - fSquare0 > fMaxSquare) ||
                 (fsimilar(fSquare1 - fSquare0, fMaxSquare, EPS_L) &&
-                 (_abs(fIncrement - object().movement().m_body.target.yaw) <
-                  _abs(fBestAngle - object().movement().m_body.target.yaw)))) {
+                 (xr::abs(fIncrement - object().movement().m_body.target.yaw) <
+                  xr::abs(fBestAngle - object().movement().m_body.target.yaw)))) {
                 fMaxSquare = fSquare1 - fSquare0;
                 fBestAngle = fIncrement;
             }
@@ -189,7 +189,7 @@ void CSightManager::SetLessCoverLook(const CLevelGraph::CVertex* tpNode, float f
                 fSingleIncrement = fIncrement;
             }
         }
-        if (_sqrt(fMaxSquare) < 0 * PI_DIV_6)
+        if (std::sqrt(fMaxSquare) < 0 * PI_DIV_6)
             fBestAngle = fSingleIncrement;
     }
 

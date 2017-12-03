@@ -67,7 +67,8 @@ static void ActivateTestDepthCallback(bool& do_colide, bool bo1, dContact& c, SG
             CPHObject* self = static_cast<CPHObject*> ( (
        (CPHActivationShape*)(PHRetrieveGeomUserData( bo1 ? c.geom.g1 : c.geom.g2 )->callback_data) )
        ); VERIFY( self );
-            
+            
+
             if( cl_statics )
             {
                     c.surface.soft_cfm=static_cfm;
@@ -81,12 +82,15 @@ static void ActivateTestDepthCallback(bool& do_colide, bool bo1, dContact& c, SG
 
             c.surface.soft_cfm=dynamic_cfm;
             c.surface.soft_erp=dynamic_erp;
-            
+            
+
             dxGeomUserData* data_oposite =  retrieveGeomUserData( bo1 ? c.geom.g2 : c.geom.g1 );
-            
+            
+
             if( !data_oposite || !data_oposite->ph_object )
                     return;
-            
+            
+
             CPHObject* obj1 = 0, *obj2 = 0;
             if(bo1)
             {
@@ -97,7 +101,8 @@ static void ActivateTestDepthCallback(bool& do_colide, bool bo1, dContact& c, SG
                     obj2 = self;
                     obj1 = data_oposite->ph_object;
             }
-            
+            
+
             do_colide = false;
 
             VERIFY( obj1 && obj2 );
@@ -107,7 +112,8 @@ static void ActivateTestDepthCallback(bool& do_colide, bool bo1, dContact& c, SG
                     return;
             if( max_contacts < 1 )
                     return;
-            
+            
+
             dJointID contact_joint	= dJointCreateContactSpecial( 0, ContactGroup, &c );
             obj1->DActiveIsland()->ConnectJoint(contact_joint);
             dJointAttach			(contact_joint, dGeomGetBody(c.geom.g1),
@@ -172,8 +178,8 @@ CPHActivationShape::~CPHActivationShape() { VERIFY(!m_body && !m_geom); }
 void CPHActivationShape::Create(const Fvector start_pos, const Fvector start_size,
                                 IPhysicsShellHolder* ref_obj, EType _type /*=etBox*/, u16 flags) {
     VERIFY(ref_obj);
-    R_ASSERT(_valid(start_pos));
-    R_ASSERT(_valid(start_size));
+    R_ASSERT(xr::valid(start_pos));
+    R_ASSERT(xr::valid(start_size));
 
     m_body = dBodyCreate(0);
     dMass m;

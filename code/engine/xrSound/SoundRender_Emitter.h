@@ -87,7 +87,7 @@ public:
         p_source.max_distance = max;
     }
     virtual void set_volume(float vol) {
-        if (!_valid(vol))
+        if (!xr::valid(vol))
             vol = 0.0f;
         p_source.volume = vol;
     }

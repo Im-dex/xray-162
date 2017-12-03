@@ -118,18 +118,18 @@ public:
             CRandom random;
             random.seed(0x12071980);
             float factor =
-                _sqrt(src.range / gi_optimal_range); // smaller lights get smaller amount of photons
+                std::sqrt(src.range / gi_optimal_range); // smaller lights get smaller amount of photons
             if (factor > 1)
                 factor = 1;
             if (LT_SECONDARY == src.type)
                 factor /= powf(2.f, float(src.level)); // secondary lights get half the photons
-            factor *= _sqrt(src.energy);               // 2.f is optimal energy = baseline
+            factor *= std::sqrt(src.energy);               // 2.f is optimal energy = baseline
             // factor	= _sqrt (factor);								// move towards 1.0
             // (one)
             int count = iCeil(factor * float(gi_num_photons));
             // count		= gi_num_photons;
-            float _clip = (_sqrt(src.energy) / 10.f + gi_clip) / 2.f;
-            float _scale = 1.f / _sqrt(factor);
+            float _clip = (std::sqrt(src.energy) / 10.f + gi_clip) / 2.f;
+            float _scale = 1.f / std::sqrt(factor);
             // clMsg	("src_LER[%d/%f/%f] -> factor(%f), count(%d), clip(%f)",
             //	src.level, src.energy, src.range, factor, count, _clip
             //	);
@@ -170,7 +170,7 @@ public:
                 {
                     float _e = (dst.diffuse.x + dst.diffuse.y + dst.diffuse.z) / 3.f;
                     Fvector _c = { dst.diffuse.x, dst.diffuse.y, dst.diffuse.z };
-                    if (_abs(_e) > EPS_S)
+                    if (xr::abs(_e) > EPS_S)
                         _c.div(_e);
                     else {
                         _c.set(0, 0, 0);
@@ -183,7 +183,7 @@ public:
                     continue;
 
                 // scale range in proportion with energy
-                float _r1 = src.range * _sqrt(dst.energy / src.energy);
+                float _r1 = src.range * std::sqrt(dst.energy / src.energy);
                 float _r2 = (dst.energy - _clip) / _clip;
                 float _r3 = src.range;
                 dst.range = 1 * ((1.f * _r1 + 3.f * _r2 + 3.f * _r3) / 7.f); // empirical

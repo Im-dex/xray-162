@@ -230,7 +230,7 @@ void xrLoad(LPCSTR name, bool draft_mode) {
                 R_Light RL;
                 F->r(&temp, sizeof(temp));
                 Flight& L = temp.data;
-                if (_abs(L.range) > 10000.f) {
+                if (xr::abs(L.range) > 10000.f) {
                     Msg("! BAD light range : %f", L.range);
                     L.range = L.range > 0.f ? 10000.f : -10000.f;
                 }

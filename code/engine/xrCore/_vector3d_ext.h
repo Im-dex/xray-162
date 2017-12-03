@@ -1,5 +1,4 @@
-#ifndef VECTOR3D_EXT_INCLUDED
-#define VECTOR3D_EXT_INCLUDED
+#pragma once
 
 #include "_vector3d.h"
 
@@ -42,23 +41,27 @@ inline Fvector operator/(const Fvector& v, float f) {
     return cr_fvector3(v.x * repr_f, v.y * repr_f, v.z * repr_f);
 }
 
-inline Fvector _min(const Fvector& v1, const Fvector& v2) {
+namespace xr {
+
+inline Fvector min(const Fvector& v1, const Fvector& v2) {
     Fvector r;
     r.min(v1, v2);
     return r;
 }
 
-inline Fvector _max(const Fvector& v1, const Fvector& v2) {
+inline Fvector max(const Fvector& v1, const Fvector& v2) {
     Fvector r;
     r.max(v1, v2);
     return r;
 }
 
-inline Fvector _abs(const Fvector& v) {
+inline Fvector abs(const Fvector& v) {
     Fvector r;
     r.abs(v);
     return r;
 }
+
+} // xr namespace
 
 inline Fvector normalize(const Fvector& v) {
     Fvector r(v);
@@ -82,7 +85,7 @@ inline Fvector crossproduct(const Fvector& v1, const Fvector& v2) {
 }
 
 inline Fvector cr_vectorHP(float h, float p) {
-    float ch = _cos(h), cp = _cos(p), sh = _sin(h), sp = _sin(p);
+    const float ch = std::cos(h), cp = std::cos(p), sh = std::sin(h), sp = std::sin(p);
     Fvector r;
     r.x = -cp * sh;
     r.y = sp;
@@ -108,11 +111,9 @@ inline float angle_between_vectors(Fvector const v1, Fvector const v2) {
 }
 
 inline Fvector rotate_point(Fvector const& point, float const angle) {
-    float const cos_alpha = _cos(angle);
-    float const sin_alpha = _sin(angle);
+    float const cos_alpha = std::cos(angle);
+    float const sin_alpha = std::sin(angle);
 
     return Fvector().set(point.x * cos_alpha - point.z * sin_alpha, 0,
                          point.x * sin_alpha + point.z * cos_alpha);
 }
-
-#endif // VECTOR3D_EXT_INCLUDED

@@ -202,7 +202,7 @@ IC float intersectRaySphere(const Fvector& rO, const Fvector& rV, const Fvector&
         return (-1.0f);
 
     // Return the distance to the [first] intersecting point
-    return (v - _sqrt(d));
+    return (v - std::sqrt(d));
 }
 IC float intersectRayIdentitySphere(const Fvector& rO, const Fvector& rV) {
     Fvector Q;
@@ -217,7 +217,7 @@ IC float intersectRayIdentitySphere(const Fvector& rO, const Fvector& rV) {
         return (-1.0f);
 
     // Return the distance to the [first] intersecting point
-    return (v - _sqrt(d));
+    return (v - std::sqrt(d));
 }
 // ----------------------------------------------------------------------
 // Name  : CheckPointInSphere()

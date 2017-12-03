@@ -174,7 +174,7 @@ void CWallmarksEngine::BuildMatrix(Fmatrix& mView, float invsz, const Fvector& f
     Fvector at, up, right, y;
     at.sub(from, sml_normal);
     y.set(0, 1, 0);
-    if (_abs(sml_normal.y) > .99f)
+    if (xr::abs(sml_normal.y) > .99f)
         y.set(1, 0, 0);
     right.crossproduct(y, sml_normal);
     up.crossproduct(sml_normal, right);
@@ -277,7 +277,7 @@ void CWallmarksEngine::AddStaticWallmark(CDB::TRI* pTri, const Fvector* pVerts,
                                          const Fvector& contact_point, ref_shader hShader,
                                          float sz) {
     // optimization cheat: don't allow wallmarks more than 100 m from viewer/actor
-    if (contact_point.distance_to_sqr(Device.vCameraPosition) > _sqr(100.f))
+    if (contact_point.distance_to_sqr(Device.vCameraPosition) > xr::sqr(100.f))
         return;
 
     // Physics may add wallmarks in parallel with rendering
@@ -290,7 +290,7 @@ void CWallmarksEngine::AddSkeletonWallmark(const Fmatrix* xf, CKinematics* obj, 
     if (0 == g_r || ::RImplementation.phase != CRender::PHASE_NORMAL)
         return;
     // optimization cheat: don't allow wallmarks more than 50 m from viewer/actor
-    if (xf->c.distance_to_sqr(Device.vCameraPosition) > _sqr(50.f))
+    if (xf->c.distance_to_sqr(Device.vCameraPosition) > xr::sqr(50.f))
         return;
 
     VERIFY(obj && xf && (size > EPS_L));

@@ -278,8 +278,8 @@ void ATTACK_ON_RUN_STATE::update_movement_target() {
         float const offs_angle =
             std::max(deg2rad(30.f), offs_length / far_radius) * (m_prepare_side == left ? -1 : +1);
 
-        float const cos_alpha = _cos(offs_angle);
-        float const sin_alpha = _sin(offs_angle);
+        float const cos_alpha = std::cos(offs_angle);
+        float const sin_alpha = std::sin(offs_angle);
 
         Fvector const predicted2self = -self2predicted;
 
@@ -292,7 +292,7 @@ void ATTACK_ON_RUN_STATE::update_movement_target() {
     } else if (self2predicted_mag > attack_radius) {
         // 90 deg triangle: (self, enemy, atack-point)
         float const dist2atack_point =
-            _sqrt(self2predicted_mag * self2predicted_mag - attack_radius * attack_radius);
+            std::sqrt(self2predicted_mag * self2predicted_mag - attack_radius * attack_radius);
 
         // alpha is the angle between (self, enemy) and (self, atack-point)
         float const cos_alpha = dist2atack_point / self2predicted_mag;
@@ -319,7 +319,7 @@ void ATTACK_ON_RUN_STATE::update_movement_target() {
         }
 
         float const self2target_mag =
-            _sqrt(far_radius * far_radius - self2predicted_mag * self2predicted_mag);
+            std::sqrt(far_radius * far_radius - self2predicted_mag * self2predicted_mag);
         self2target = normalize(dir2target) * self2target_mag;
     }
 

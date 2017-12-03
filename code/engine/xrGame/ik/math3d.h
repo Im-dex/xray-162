@@ -81,7 +81,7 @@ inline float unitize(float u[]) {
     //    }
 
     if (f != 0.0) {
-        m = (float)_sqrt(f);
+        m = (float)std::sqrt(f);
 
         u[0] = u[0] / m;
         u[1] = u[1] / m;

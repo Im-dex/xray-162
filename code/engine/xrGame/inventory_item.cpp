@@ -393,7 +393,8 @@ void CInventoryItem::net_Import(NET_Packet& P) {
     net_update_IItem			N;
     N.State.force.set			(0.f,0.f,0.f);
     N.State.torque.set			(0.f,0.f,0.f);
-    
+    
+
     P.r_vec3					(N.State.position);
 
     N.State.quaternion.x		= P.r_float_q8(-1.f, 1.f);
@@ -436,7 +437,8 @@ void CInventoryItem::net_Import(NET_Packet& P) {
             //}
             //m_flags.set				(FInInterpolate, TRUE);
     }
-    
+    
+
     Level().AddObject_To_Objects4CrPr		(m_object);
     object().CrPr_SetActivated				(false);
     object().CrPr_SetActivationStep			(0);
@@ -500,7 +502,7 @@ void CInventoryItem::net_Export_PH_Params(NET_Packet& P, SPHNetState& State,
     // Msg("Export State.position.y:%4.6f",State.position.y);
     // Msg("Export State.enabled:%i",int(State.enabled));
 
-    float magnitude = _sqrt(State.quaternion.magnitude());
+    float magnitude = std::sqrt(State.quaternion.magnitude());
     if (fis_zero(magnitude)) {
         magnitude = 1;
         State.quaternion.x = 0.f;
@@ -643,7 +645,8 @@ void CInventoryItem::net_Export(NET_Packet& P) {
     }
     else {
             float				invert_magnitude = 1.f/magnitude;
-            
+            
+
             State.quaternion.x	*= invert_magnitude;
             State.quaternion.y	*= invert_magnitude;
             State.quaternion.z	*= invert_magnitude;
@@ -1031,7 +1034,8 @@ void CInventoryItem::OnRender() {
 
                                 ///////////////////////////////////////////////////////////////////////////
                                 Fvector point0 = IStartPos, point1;
-                                
+                                
+
                                 float c = 0;
                                 for (float i=0.1f; i<1.1f; i+= 0.1f)
                                 {

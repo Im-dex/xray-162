@@ -104,7 +104,7 @@ void CLightProjector::setup(int id) {
     recv& R = cache[id];
     float Rd = R.O->renderable.visual->getVisData().sphere.R;
     float dist = R.C.distance_to(Device.vCameraPosition) + Rd;
-    float factor = _sqr(dist / clipD(Rd)) * (1 - ps_r1_lmodel_lerp) + ps_r1_lmodel_lerp;
+    float factor = xr::sqr(dist / clipD(Rd)) * (1 - ps_r1_lmodel_lerp) + ps_r1_lmodel_lerp;
     RCache.set_c(c_xform, R.UVgen);
     Fvector& m = R.UVclamp_min;
     RCache.set_ca(c_clamp, 0, m.x, m.y, m.z, factor);
@@ -372,7 +372,8 @@ void CLightProjector::render() {
             p0.set					(.5f/P_rt_size, .5f/P_rt_size);
             p1.set					((P_rt_size+.5f)/P_rt_size,
     (P_rt_size+.5f)/P_rt_size);
-            
+            
+
             // Fill vertex buffer
             u32 C			=	0xffffffff, Offset;
             u32 _w		=	P_rt_size/2, _h = P_rt_size/2;
@@ -382,7 +383,8 @@ void CLightProjector::render() {
     pv++; pv->set(float(_w),	float(_h),	.0001f,.9999f, C, p1.x, p1.y);	pv++;
             pv->set(float(_w),	0,			.0001f,.9999f, C, p1.x, p0.y);	pv++;
             geom_Screen->Unlock			(4);
-            
+            
+
             // Actual rendering
             RCache.set_Shader(sh_Screen);
             RCache.Draw	(geom_Screen,4,2,Offset,Device.Streams_QuadIB);

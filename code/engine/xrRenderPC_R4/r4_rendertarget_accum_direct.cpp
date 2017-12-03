@@ -73,7 +73,7 @@ void CRenderTarget::accum_direct(u32 sub_phase) {
         float intensity =
             0.3f * fuckingsun->color.r + 0.48f * fuckingsun->color.g + 0.22f * fuckingsun->color.b;
         Fvector dir = L_dir;
-        dir.normalize().mul(-_sqrt(intensity + EPS));
+        dir.normalize().mul(-std::sqrt(intensity + EPS));
         RCache.set_Element(s_accum_mask->E[SE_MASK_DIRECT]); // masker
         RCache.set_c("Ldynamic_dir", dir.x, dir.y, dir.z, 0);
 
@@ -379,7 +379,7 @@ void CRenderTarget::accum_direct_cascade(u32 sub_phase, Fmatrix& xform, Fmatrix&
         float intensity =
             0.3f * fuckingsun->color.r + 0.48f * fuckingsun->color.g + 0.22f * fuckingsun->color.b;
         Fvector dir = L_dir;
-        dir.normalize().mul(-_sqrt(intensity + EPS));
+        dir.normalize().mul(-std::sqrt(intensity + EPS));
         RCache.set_Element(s_accum_mask->E[SE_MASK_DIRECT]); // masker
         RCache.set_c("Ldynamic_dir", dir.x, dir.y, dir.z, 0);
 
@@ -828,7 +828,7 @@ void CRenderTarget::accum_direct_f(u32 sub_phase) {
         float intensity =
             0.3f * fuckingsun->color.r + 0.48f * fuckingsun->color.g + 0.22f * fuckingsun->color.b;
         Fvector dir = L_dir;
-        dir.normalize().mul(-_sqrt(intensity + EPS));
+        dir.normalize().mul(-std::sqrt(intensity + EPS));
         RCache.set_Element(s_accum_mask->E[SE_MASK_DIRECT]); // masker
         RCache.set_c("Ldynamic_dir", dir.x, dir.y, dir.z, 0);
 

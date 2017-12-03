@@ -71,7 +71,7 @@ float LightPoint(CDB::COLLIDER& DB, Fvector& P, Fvector& N, LSelection& SEL) {
                 continue;
 
             // Raypick
-            float R = _sqrt(sqD);
+            float R = std::sqrt(sqD);
             if (!RayPick(DB, Pnew, Ldir, R, *L))
                 amount += (D * L->amount) /
                           (L->attenuation0 + L->attenuation1 * R + L->attenuation2 * sqD);
@@ -162,10 +162,12 @@ void xrLight() {
             {
                     vertex&	Base		= Old[N];
                     vertex&	Dest		= g_nodes[N];
-                    
+                    
+
                     float	val			= 2*Base.LightLevel;
                     float	cnt			= 2;
-                    
+                    
+
                     for (int nid=0; nid<4; nid++) {
                             if (Base.n[nid]!=InvalidNode) {
                                     val		+=  Old[Base.n[nid]].LightLevel;

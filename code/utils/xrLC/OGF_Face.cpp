@@ -17,7 +17,7 @@ void set_status(char* N, int id, int f, int v) {
 }
 
 BOOL OGF_Vertex::similar(OGF* ogf, OGF_Vertex& V) {
-    const float ntb = _cos(deg2rad(5.f));
+    const float ntb = std::cos(deg2rad(5.f));
     if (!P.similar(V.P))
         return FALSE;
     if (!N.similar(V.N))

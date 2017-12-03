@@ -266,7 +266,7 @@ void CEffect_Thunderbolt::OnFrame(const std::string& id, const float period, con
         environment.CurrentEnv->fog_color.mad(fClr, environment.p_fog_color);
 
         if (::Render->get_generation() == IRender_interface::GENERATION_R2) {
-            R_ASSERT(_valid(current_direction));
+            R_ASSERT(xr::valid(current_direction));
             g_pGamePersistent->Environment().CurrentEnv->sun_dir = current_direction;
             VERIFY2(g_pGamePersistent->Environment().CurrentEnv->sun_dir.y < 0,
                     "Invalid sun direction settings while CEffect_Thunderbolt");

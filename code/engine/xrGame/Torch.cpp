@@ -225,7 +225,7 @@ BOOL CTorch::net_Spawn(CSE_Abstract* DC) {
     // else
     //	SwitchNightVision	(false, false);
 
-    m_delta_h = PI_DIV_2 - atan((range * 0.5f) / _abs(TORCH_OFFSET.x));
+    m_delta_h = PI_DIV_2 - atan((range * 0.5f) / xr::abs(TORCH_OFFSET.x));
 
     return (TRUE);
 }
@@ -266,7 +266,7 @@ void CTorch::UpdateCL() {
             smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones_Invalidate();
 
         if (H_Parent()->XFORM().c.distance_to_sqr(Device.vCameraPosition) <
-                _sqr(OPTIMIZATION_DISTANCE) ||
+                xr::sqr(OPTIMIZATION_DISTANCE) ||
             GameID() != eGameIDSingle) {
             // near camera
             smart_cast<IKinematics*>(H_Parent()->Visual())->CalculateBones();

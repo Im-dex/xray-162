@@ -87,7 +87,7 @@ struct BoundingBox {
 BOOL LineIntersection2D(D3DXVECTOR2* result, const D3DXVECTOR2* lineA, const D3DXVECTOR2* lineB) {
     //  if the lines are parallel, the lines will not intersect in a point
     //  NOTE: assumes the rays are already normalized!!!!
-    VERIFY(_abs(D3DXVec2Dot(&lineA[1], &lineB[1])) < 1.f);
+    VERIFY(xr::abs(D3DXVec2Dot(&lineA[1], &lineB[1])) < 1.f);
 
     float x[2] = { lineA[0].x, lineB[0].x };
     float y[2] = { lineA[0].y, lineB[0].y };
@@ -162,7 +162,7 @@ Frustum::Frustum(const D3DXMATRIX* matrix) {
     {
         float dot =
             planes[p].x * planes[p].x + planes[p].y * planes[p].y + planes[p].z * planes[p].z;
-        dot = 1.f / _sqrt(dot);
+        dot = 1.f / std::sqrt(dot);
         planes[p] = planes[p] * dot;
     }
 
@@ -786,7 +786,7 @@ void CRender::render_sun() {
         L_pos.set(fuckingsun->position);
         L_dir.set(fuckingsun->direction).normalize();
         L_up.set(0, 1, 0);
-        if (_abs(L_up.dotproduct(L_dir)) > .99f)
+        if (xr::abs(L_up.dotproduct(L_dir)) > .99f)
             L_up.set(0, 0, 1);
         L_right.crossproduct(L_up, L_dir).normalize();
         L_up.crossproduct(L_dir, L_right).normalize();
@@ -852,7 +852,7 @@ void CRender::render_sun() {
 
     // Compute REAL sheared xform based on receivers/casters information
     FPU::m64r();
-    if (_abs(m_fCosGamma) < 0.99f && ps_r2_ls_flags.test(R2FLAG_SUN_TSM)) {
+    if (xr::abs(m_fCosGamma) < 0.99f && ps_r2_ls_flags.test(R2FLAG_SUN_TSM)) {
         //  get the near and the far plane (points) in eye space.
         D3DXVECTOR3 frustumPnts[8];
 
@@ -975,8 +975,8 @@ void CRender::render_sun() {
 
         BoundingBox frustumAABB2D(frustumPnts, sizeof(frustumPnts) / sizeof(D3DXVECTOR3));
 
-        float x_scale = max(_abs(frustumAABB2D.maxPt.x), _abs(frustumAABB2D.minPt.x));
-        float y_scale = max(_abs(frustumAABB2D.maxPt.y), _abs(frustumAABB2D.minPt.y));
+        float x_scale = max(xr::abs(frustumAABB2D.maxPt.x), xr::abs(frustumAABB2D.minPt.x));
+        float y_scale = max(xr::abs(frustumAABB2D.maxPt.y), xr::abs(frustumAABB2D.minPt.y));
         x_scale = 1.f / x_scale;
         y_scale = 1.f / y_scale;
 
@@ -1026,7 +1026,7 @@ void CRender::render_sun() {
         //  this shear balances the "trapezoid" around the y=0 axis (no change to the projection pt
         //  position) since we are redistributing the trapezoid, this affects the projection field
         //  of view (shear_amt)
-        float shear_amt = (max_slope + _abs(min_slope)) * 0.5f - max_slope;
+        float shear_amt = (max_slope + xr::abs(min_slope)) * 0.5f - max_slope;
         max_slope = max_slope + shear_amt;
 
         D3DXMATRIX trapezoid_shear(1.f, shear_amt, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f,
@@ -1264,7 +1264,7 @@ void CRender::render_sun_near() {
         L_pos.set(fuckingsun->position);
         L_dir.set(fuckingsun->direction).normalize();
         L_right.set(1, 0, 0);
-        if (_abs(L_right.dotproduct(L_dir)) > .99f)
+        if (xr::abs(L_right.dotproduct(L_dir)) > .99f)
             L_right.set(0, 0, 1);
         L_up.crossproduct(L_dir, L_right).normalize();
         L_right.crossproduct(L_up, L_dir).normalize();
@@ -1515,7 +1515,7 @@ void CRender::render_sun_cascade(u32 cascade_ind) {
         L_pos.set(fuckingsun->position);
         L_dir.set(fuckingsun->direction).normalize();
         L_right.set(1, 0, 0);
-        if (_abs(L_right.dotproduct(L_dir)) > .99f)
+        if (xr::abs(L_right.dotproduct(L_dir)) > .99f)
             L_right.set(0, 0, 1);
         L_up.crossproduct(L_dir, L_right).normalize();
         L_right.crossproduct(L_up, L_dir).normalize();

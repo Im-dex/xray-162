@@ -19,7 +19,7 @@ void vfComputeLinearRegression(xr_vector<T>& A, xr_vector<T>& B, T2& C, T2& D) {
     sxy = std::inner_product(A.begin(), A.end(), B.begin(), sxy);
     sx2 = std::inner_product(A.begin(), A.end(), A.begin(), sx2);
     l_tDenominator = T(N) * sx2 - sx * sx;
-    if (_abs(l_tDenominator) > EPS_S)
+    if (xr::abs(l_tDenominator) > EPS_S)
         C = T2((T(N) * sxy - sx * sy) / l_tDenominator);
     else
         C = T2(0);

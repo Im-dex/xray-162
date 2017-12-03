@@ -108,7 +108,7 @@ public:
     // Geometry xform
     virtual void Center(Fvector& C) const;
     IC const Fmatrix& XFORM() const {
-        VERIFY(_valid(renderable.xform));
+        VERIFY(xr::valid(renderable.xform));
         return renderable.xform;
     }
     ICF Fmatrix& XFORM() { return renderable.xform; }

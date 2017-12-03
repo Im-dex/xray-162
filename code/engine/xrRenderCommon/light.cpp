@@ -169,7 +169,7 @@ void light::spatial_move() {
             spatial.sphere.R = range * tanf(cone / 2.f);
         } else {
             // acute-angled
-            spatial.sphere.R = range / (2.f * _sqr(_cos(cone / 2.f)));
+            spatial.sphere.R = range / (2.f * xr::sqr(std::cos(cone / 2.f)));
             spatial.sphere.P.mad(position, direction, spatial.sphere.R);
         }
     } break;
@@ -218,7 +218,7 @@ void light::xform_calc() {
     // dir
     L_dir.set(direction);
     float l_dir_m = L_dir.magnitude();
-    if (_valid(l_dir_m) && l_dir_m > EPS_S)
+    if (xr::valid(l_dir_m) && l_dir_m > EPS_S)
         L_dir.div(l_dir_m);
     else
         L_dir.set(0, 0, 1);
@@ -235,7 +235,7 @@ void light::xform_calc() {
     } else {
         // auto find 'up' and 'right' vectors
         L_up.set(0, 1, 0);
-        if (_abs(L_up.dotproduct(L_dir)) > .99f)
+        if (xr::abs(L_up.dotproduct(L_dir)) > .99f)
             L_up.set(0, 0, 1);
         L_right.crossproduct(L_up, L_dir);
         L_right.normalize();
@@ -370,6 +370,6 @@ float light::get_LOD() {
         return 1;
     float distSQ = Device.vCameraPosition.distance_to_sqr(spatial.sphere.P) + EPS;
     float ssa = ps_r2_slight_fade * spatial.sphere.R / distSQ;
-    float lod = _sqrt(clampr((ssa - r_ssaGLOD_end) / (r_ssaGLOD_start - r_ssaGLOD_end), 0.f, 1.f));
+    float lod = std::sqrt(clampr((ssa - r_ssaGLOD_end) / (r_ssaGLOD_start - r_ssaGLOD_end), 0.f, 1.f));
     return lod;
 }

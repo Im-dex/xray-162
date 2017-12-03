@@ -112,7 +112,7 @@ float CIKLimbsController::StaticObjectShift(const SCalculateData cd[max_size]) {
     else
         shift = shift_up;
     VERIFY(_valid(shift));
-    _object_shift.set_taget(shift, _abs(current_shift - shift) / static_shift_object_speed);
+    _object_shift.set_taget(shift, xr::abs(current_shift - shift) / static_shift_object_speed);
     return shift;
 }
 static float doun_shift_to_correct = 0.3f;
@@ -339,7 +339,8 @@ void CIKLimbsController::Update() {
 
     DBG_DrawMatrix( m_object->XFORM(), 1 );
     DBG_DrawMatrix( predict, 1 );
-    
+    
+
     _pose_extrapolation.extrapolate( predict, Device.fTimeGlobal + 1  );
     DBG_DrawMatrix( predict, 1 );
     */

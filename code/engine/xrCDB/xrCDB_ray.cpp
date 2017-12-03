@@ -212,13 +212,13 @@ public:
         rRange2 = R * R;
         if (!bUseSSE) {
             // for FPU - zero out inf
-            if (_abs(D.x) > flt_eps) {
+            if (xr::abs(D.x) > flt_eps) {
             } else
                 ray.inv_dir.x = 0;
-            if (_abs(D.y) > flt_eps) {
+            if (xr::abs(D.y) > flt_eps) {
             } else
                 ray.inv_dir.y = 0;
-            if (_abs(D.z) > flt_eps) {
+            if (xr::abs(D.z) > flt_eps) {
             } else
                 ray.inv_dir.z = 0;
         }

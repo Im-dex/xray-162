@@ -80,7 +80,7 @@ void CAI_Trader::BoneCallback(CBoneInstance* B) {
     CAI_Trader* this_class = static_cast<CAI_Trader*>(B->callback_param());
 
     this_class->LookAtActor(B);
-    R_ASSERT2(_valid(B->mTransform), "CAI_Trader::BoneCallback");
+    R_ASSERT2(xr::valid(B->mTransform), "CAI_Trader::BoneCallback");
 }
 
 void CAI_Trader::LookAtActor(CBoneInstance* B) {
@@ -93,7 +93,7 @@ void CAI_Trader::LookAtActor(CBoneInstance* B) {
     float h, p, b;
     XFORM().getHPB(h, p, b);
     float cur_yaw = h;
-    float dy = _abs(angle_normalize_signed(yaw - cur_yaw));
+    float dy = xr::abs(angle_normalize_signed(yaw - cur_yaw));
 
     if (angle_normalize_signed(yaw - cur_yaw) > 0)
         dy *= -1.f;

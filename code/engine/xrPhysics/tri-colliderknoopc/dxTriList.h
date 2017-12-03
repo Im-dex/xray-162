@@ -223,7 +223,7 @@ struct dcVector3 {
 
     float MagnitudeSq() const { return DotProduct(*this); }
 
-    float Magnitude() const { return _sqrt(MagnitudeSq()); }
+    float Magnitude() const { return std::sqrt(MagnitudeSq()); }
 
     void Normalize() { operator/=(Magnitude()); }
 

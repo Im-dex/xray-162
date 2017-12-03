@@ -112,8 +112,8 @@ void CUIStaticItem::RenderInternal(float angle) {
     Fvector2 pivot, offset, SZ;
     SZ.set(vSize);
 
-    float cosA = _cos(angle);
-    float sinA = _sin(angle);
+    float cosA = std::cos(angle);
+    float sinA = std::sin(angle);
 
     // Rotation
     if (!uFlags.test(flValidHeadingPivot))

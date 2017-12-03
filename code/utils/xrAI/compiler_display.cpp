@@ -124,7 +124,7 @@ void ShowNormals(HWND hw) {
             u32 C = RGB(0, 127, 0);
             if (T.N) {
                 Fvector N = T.N->Plane.n;
-                C = RGB(iFloor(_abs(N.x) * 255), iFloor(_abs(N.y) * 255), iFloor(_abs(N.z) * 255));
+                C = RGB(iFloor(xr::abs(N.x) * 255), iFloor(xr::abs(N.y) * 255), iFloor(xr::abs(N.z) * 255));
             }
             pixel(dc, x, z, C);
         }

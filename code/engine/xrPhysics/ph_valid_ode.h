@@ -3,19 +3,20 @@
 #include "ode/include/ode/common.h"
 #include "ode/include/ode/mass.h"
 #include "ode/include/ode/objects.h"
-IC BOOL dV_valid(const dReal* v) { return _valid(v[0]) && _valid(v[1]) && _valid(v[2]); }
 
-IC BOOL dM_valid(const dReal* m) {
-    return _valid(m[0]) && _valid(m[1]) && _valid(m[2]) && _valid(m[4]) && _valid(m[5]) &&
-           _valid(m[6]) && _valid(m[8]) && _valid(m[9]) && _valid(m[10]);
+inline bool dV_valid(const dReal* v) { return xr::valid(v[0]) && xr::valid(v[1]) && xr::valid(v[2]); }
+
+inline bool dM_valid(const dReal* m) {
+    return xr::valid(m[0]) && xr::valid(m[1]) && xr::valid(m[2]) && xr::valid(m[4]) && xr::valid(m[5]) &&
+           xr::valid(m[6]) && xr::valid(m[8]) && xr::valid(m[9]) && xr::valid(m[10]);
 }
 
-IC BOOL dV4_valid(const dReal* v4) {
-    return _valid(v4[0]) && _valid(v4[1]) && _valid(v4[2]) && _valid(v4[3]);
+inline bool dV4_valid(const dReal* v4) {
+    return xr::valid(v4[0]) && xr::valid(v4[1]) && xr::valid(v4[2]) && xr::valid(v4[3]);
 }
-IC BOOL dQ_valid(const dReal* q) { return dV4_valid(q); }
-IC BOOL dMass_valide(const dMass* m) { return _valid(m->mass) && dV_valid(m->c) && dM_valid(m->I); }
-IC BOOL dBodyStateValide(const dBodyID body) {
+inline bool dQ_valid(const dReal* q) { return dV4_valid(q); }
+inline bool dMass_valide(const dMass* m) { return xr::valid(m->mass) && dV_valid(m->c) && dM_valid(m->I); }
+inline bool dBodyStateValide(const dBodyID body) {
     return dM_valid(dBodyGetRotation(body)) && dV_valid(dBodyGetPosition(body)) &&
            dV_valid(dBodyGetLinearVel(body)) && dV_valid(dBodyGetAngularVel(body)) &&
            dV_valid(dBodyGetTorque(body)) && dV_valid(dBodyGetForce(body));

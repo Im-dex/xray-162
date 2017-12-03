@@ -30,12 +30,12 @@ class CSafeValue {
 
 public:
     CSafeValue(float val) {
-        R_ASSERT(_valid(val));
+        R_ASSERT(xr::valid(val));
         m_safe_value = val;
     }
     CSafeValue() { m_safe_value = 0.f; }
-    IC void new_val(float& val) {
-        if (_valid(val))
+    void new_val(float& val) {
+        if (xr::valid(val))
             m_safe_value = val;
         else
             val = m_safe_value;

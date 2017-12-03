@@ -188,7 +188,7 @@ u8 fpack(float v) {
     return u8(_v);
 }
 u8 fpackZ(float v) {
-    s32 _v = iFloor(_abs(v) * 255.f + .5f);
+    s32 _v = iFloor(xr::abs(v) * 255.f + .5f);
     clamp(_v, 0, 255);
     return u8(_v);
 }
@@ -218,11 +218,11 @@ Ivector vpack(Fvector src) {
             for (int z = std::max(bz - d, 0); z <= std::min(bz + d, 255); z++) {
                 _v = vunpack(x, y, z);
                 float m = _v.magnitude();
-                float me = _abs(m - 1.f);
+                float me = xr::abs(m - 1.f);
                 if (me > 0.03f)
                     continue;
                 _v.div(m);
-                float e = _abs(src.dotproduct(_v) - 1.f);
+                float e = xr::abs(src.dotproduct(_v) - 1.f);
                 if (e < e_best) {
                     e_best = e;
                     r = x, g = y, b = z;
@@ -241,7 +241,7 @@ void generate_jitter(DWORD* dest, u32 elem_count) {
         test.set(::Random.randI(0, 256), ::Random.randI(0, 256));
         BOOL valid = TRUE;
         for (u32 t = 0; t < samples.size(); t++) {
-            int dist = _abs(test.x - samples[t].x) + _abs(test.y - samples[t].y);
+            int dist = xr::abs(test.x - samples[t].x) + xr::abs(test.y - samples[t].y);
             if (dist < 32) {
                 valid = FALSE;
                 break;
@@ -738,9 +738,9 @@ CRenderTarget::CRenderTarget() {
                             fs = powf(ls * 1.01f, 128.f);
                         } break;
                         case 3: { // looks like Metal
-                            float s0 = _abs(1 - _abs(0.05f * _sin(33.f * ld) + ld - ls));
-                            float s1 = _abs(1 - _abs(0.05f * _cos(33.f * ld * ls) + ld - ls));
-                            float s2 = _abs(1 - _abs(ld - ls));
+                            float s0 = xr::abs(1 - xr::abs(0.05f * std::sin(33.f * ld) + ld - ls));
+                            float s1 = xr::abs(1 - xr::abs(0.05f * std::cos(33.f * ld * ls) + ld - ls));
+                            float s2 = xr::abs(1 - xr::abs(ld - ls));
                             fd = ld; // 1.0
                             fs = powf(std::max(std::max(s0, s1), s2), 24.f);
                             fs *= powf(ld, 1 / 7.f);
@@ -889,8 +889,8 @@ CRenderTarget::CRenderTarget() {
 
                     float* p = (float*)(LPBYTE(subData[it].pSysMem) + y * subData[it].SysMemPitch +
                                         x * 4 * sizeof(float));
-                    *p = (float)(_cos(angle));
-                    *(p + 1) = (float)(_sin(angle));
+                    *p = (float)(std::cos(angle));
+                    *(p + 1) = (float)(std::sin(angle));
                     *(p + 2) = (float)(dist);
                     *(p + 3) = 0;
                 }

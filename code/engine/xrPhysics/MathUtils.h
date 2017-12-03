@@ -1,5 +1,4 @@
-#ifndef MATH_UTILS_H
-#define MATH_UTILS_H
+#pragma once
 
 extern XRPHYSICS_API const float phInfinity;
 
@@ -10,12 +9,12 @@ IC Fvector& cast_fv(float* fp) { return *((Fvector*)fp); }
 
 IC const Fvector& cast_fv(const float* fp) { return *((const Fvector*)fp); }
 
-IC float dXZMag(const float* v) { return _sqrt(v[0] * v[0] + v[2] * v[2]); }
+IC float dXZMag(const float* v) { return std::sqrt(v[0] * v[0] + v[2] * v[2]); }
 IC float dXZMag(const Fvector& v) { return dXZMag(cast_fp(v)); }
 IC float dXZDot(const float* v0, const float* v1) { return v0[0] * v1[0] + v0[2] * v1[2]; }
 IC float dXZDotNormalized(const Fvector& v0, const Fvector& v1) {
     return (v0.x * v1.x + v0.z * v1.z) /
-           _sqrt((v0.x * v0.x + v0.z * v0.z) * (v1.x * v1.x + v1.z * v1.z));
+           std::sqrt((v0.x * v0.x + v0.z * v0.z) * (v1.x * v1.x + v1.z * v1.z));
 }
 IC float dXZDotNormalized(const float* v0, const float* v1) {
     return dXZDotNormalized(cast_fv(v0), cast_fv(v1));
@@ -146,7 +145,7 @@ IC void twoq_2w(const Fquaternion& q1, const Fquaternion& q2, float dt, Fvector&
     w.add(v1);
     float sinus_2 = 1.f - cosinus * cosinus, k = 2.f / dt;
     if (sinus_2 > EPS)
-        k *= acos(cosinus) / _sqrt(sinus_2);
+        k *= acos(cosinus) / std::sqrt(sinus_2);
     w.mul(k);
 }
 
@@ -230,7 +229,7 @@ IC void TransferenceToThrowVel(Fvector& in_transference_out_vel, float time, flo
     in_transference_out_vel.y += time * gravity_accel / 2.f;
 }
 IC float ThrowMinVelTime(const Fvector& transference, float gravity_accel) {
-    return _sqrt(2.f * transference.magnitude() / gravity_accel);
+    return std::sqrt(2.f * transference.magnitude() / gravity_accel);
 }
 // returns num result, tgA result tangents of throw angle
 IC u8 TransferenceAndThrowVelToTgA(const Fvector& transference, float throw_vel,
@@ -241,13 +240,13 @@ IC u8 TransferenceAndThrowVelToTgA(const Fvector& transference, float throw_vel,
         1.f - gravity_accel / (sqv * sqv) * (2.f * transference.y * sqv + gravity_accel * sqx);
     if (sqD4 < 0.f)
         return 0;
-    s = _sqrt(sqx);
+    s = std::sqrt(sqx);
     float mlt = sqv / (gravity_accel * s);
     if (sqD4 == 0.f) {
         tgA.x = tgA.y = mlt;
         return 1;
     }
-    float D4 = _sqrt(sqD4);
+    float D4 = std::sqrt(sqD4);
     tgA.x = mlt * (1.f - D4);
     tgA.y = mlt * (1.f + D4);
     return 2;
@@ -419,5 +418,4 @@ const float DET_CHECK_FATAL_EPS = 0.8f; // scale -35%  !? ;)
     };
 #else
 #define VERIFY_RMATRIX(M)
-#endif
 #endif

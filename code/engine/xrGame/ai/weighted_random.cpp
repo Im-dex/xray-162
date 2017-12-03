@@ -65,7 +65,7 @@ float weighted_random::generate() {
         float random1 = (rand() % RAND_MAX) / (RAND_MAX - 1.f);
         float random2 = (rand() % RAND_MAX) / (RAND_MAX - 1.f);
 
-        float delta_weight = _abs(a_weight - b_weight);
+        float delta_weight = xr::abs(a_weight - b_weight);
 
         if (delta_weight < epsilon) {
             return a_val + (b_val - a_val) * random1;

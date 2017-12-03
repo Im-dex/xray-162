@@ -308,11 +308,11 @@ public:
     }
 
     //! Computes square magnitude
-    inline_ float SquareMagnitude() const { return x * x + y * y + z * z; }
+    float SquareMagnitude() const { return x * x + y * y + z * z; }
     //! Computes magnitude
-    inline_ float Magnitude() const { return _sqrt(x * x + y * y + z * z); }
+    float Magnitude() const { return std::sqrt(x * x + y * y + z * z); }
     //! Computes volume
-    inline_ float Volume() const { return x * y * z; }
+    float Volume() const { return x * y * z; }
 
     //! Checks the point is near zero
     bool ApproxZero() const { return SquareMagnitude() < EPSILON2; }
@@ -374,7 +374,7 @@ public:
     inline_ Point& Normalize() {
         float M = x * x + y * y + z * z;
         if (M) {
-            M = 1.0f / _sqrt(M);
+            M = 1.0f / std::sqrt(M);
             x *= M;
             y *= M;
             z *= M;
@@ -392,8 +392,8 @@ public:
     }
 
     //! Computes distance to another point
-    inline_ float Distance(const Point& b) const {
-        return _sqrt((x - b.x) * (x - b.x) + (y - b.y) * (y - b.y) + (z - b.z) * (z - b.z));
+    float Distance(const Point& b) const {
+        return std::sqrt((x - b.x) * (x - b.x) + (y - b.y) * (y - b.y) + (z - b.z) * (z - b.z));
     }
 
     //! Computes square distance to another point

@@ -271,7 +271,7 @@ void CGlowManager::render_selected() {
             dir.sub(Device.vCameraPosition, G.position);
             dist_sq = dir.square_magnitude();
             if (G.direction.square_magnitude() > EPS) {
-                dir.div(_sqrt(dist_sq));
+                dir.div(std::sqrt(dist_sq));
                 scale = dir.dotproduct(G.direction);
             }
             if (G.fade * scale <= 1.f)

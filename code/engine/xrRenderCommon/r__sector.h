@@ -48,7 +48,7 @@ public:
         else
             return pFace;
     }
-    float distance(const Fvector& V) { return _abs(P.classify(V)); }
+    float distance(const Fvector& V) { return xr::abs(P.classify(V)); }
 
     CPortal();
     virtual ~CPortal();

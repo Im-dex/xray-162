@@ -98,7 +98,8 @@ void CPhysicObject::create_collision_model() {
             case epotSkeleton  :	collidable.model = xr_new<CCF_Skeleton>(this);	break;
 
             default: NODEFAULT;
-            
+            
+
     }
     */
 }
@@ -502,7 +503,7 @@ void CPhysicObject::net_Export_PH_Params(NET_Packet& P, SPHNetState& State,
     // Msg("Export State.position.y:%4.6f",State.position.y);
     // Msg("Export State.enabled:%i",int(State.enabled));
 
-    float magnitude = _sqrt(State.quaternion.magnitude());
+    float magnitude = std::sqrt(State.quaternion.magnitude());
     if (fis_zero(magnitude)) {
         magnitude = 1;
         State.quaternion.x = 0.f;

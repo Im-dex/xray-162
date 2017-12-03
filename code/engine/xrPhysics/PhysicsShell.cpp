@@ -310,7 +310,7 @@ bool __stdcall can_create_phys_shell(string1024& reason, IPhysicsShellHolder& O)
                               .c_str());
         return false;
     }
-    if (!_valid(O.ObjectXFORM())) {
+    if (!xr::valid(O.ObjectXFORM())) {
         xr_strcpy(reason, make_string("create physics shell: object matrix is not valid").c_str());
         return false;
     }

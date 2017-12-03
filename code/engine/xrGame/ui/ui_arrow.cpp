@@ -26,9 +26,9 @@ void UI_Arrow::init_from_xml(CUIXml& xml, LPCSTR path, CUIWindow* parent) {
     m_ang_velocity = xml.ReadAttribFlt(path, 0, "ang_velocity", 1.0f);
     bool arrow_clockwise = (xml.ReadAttribInt(path, 0, "clockwise", 1) == 1) ? true : false;
     if (arrow_clockwise) {
-        m_angle_range = -_abs(m_angle_end - m_angle_begin);
+        m_angle_range = -xr::abs(m_angle_end - m_angle_begin);
     } else {
-        m_angle_range = _abs(m_angle_end - m_angle_begin);
+        m_angle_range = xr::abs(m_angle_end - m_angle_begin);
     }
 }
 
@@ -41,7 +41,7 @@ void UI_Arrow::SetNewValue(float new_value) {
         float dif = m_temp_pos - m_pos;
         float val = m_ang_velocity * Device.fTimeDelta;
 
-        val = std::min(_abs(val), _abs(dif));
+        val = std::min(xr::abs(val), xr::abs(dif));
         val *= (dif > 0.0f) ? +1.0f : -1.0f;
         m_pos += val;
     }

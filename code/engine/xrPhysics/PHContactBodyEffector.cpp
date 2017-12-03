@@ -21,7 +21,7 @@ void CPHContactBodyEffector::Merge(const dContact& contact, SGameMtl* material) 
 void CPHContactBodyEffector::Apply() {
     const dReal* linear_velocity = dBodyGetLinearVel(m_body);
     dReal linear_velocity_smag = dDOT(linear_velocity, linear_velocity);
-    dReal linear_velocity_mag = _sqrt(linear_velocity_smag);
+    dReal linear_velocity_mag = std::sqrt(linear_velocity_smag);
     dReal effect = 10000.f * m_recip_flotation * m_recip_flotation;
     dMass mass;
     dBodyGetMass(m_body, &mass);

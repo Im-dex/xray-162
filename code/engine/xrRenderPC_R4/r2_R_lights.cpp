@@ -235,7 +235,7 @@ void CRender::render_indirect(light* L) {
         // geometric
         Fvector L_up, L_right;
         L_up.set(0, 1, 0);
-        if (_abs(L_up.dotproduct(LI.D)) > .99f)
+        if (xr::abs(L_up.dotproduct(LI.D)) > .99f)
             L_up.set(0, 0, 1);
         L_right.crossproduct(L_up, LI.D).normalize();
         LIGEN.spatial.sector = LI.S;

@@ -107,7 +107,7 @@ struct too_far_predicate {
 
     IC too_far_predicate(const Fvector& position, const float& radius) {
         m_position = position;
-        m_radius_sqr = _sqr(radius);
+        m_radius_sqr = xr::sqr(radius);
     }
 
     IC bool operator()(const std::pair<const CGameObject*, u32>& object) const {

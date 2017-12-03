@@ -226,8 +226,8 @@ void CParticleEffect::OnDeviceDestroy() {
 IC void FillSprite_fpu(FVF::LIT*& pv, const Fvector& T, const Fvector& R, const Fvector& pos,
                        const Fvector2& lt, const Fvector2& rb, float r1, float r2, u32 clr,
                        float angle) {
-    float sa = _sin(angle);
-    float ca = _cos(angle);
+    float sa = std::sin(angle);
+    float ca = std::cos(angle);
 
     Fvector Vr, Vt;
 
@@ -470,7 +470,7 @@ void ParticleRenderStream(LPVOID lpvParams) {
                 M.identity();
                 M.k.div(m.vel, speed);
                 M.j.set(0, 1, 0);
-                if (_abs(M.j.dotproduct(M.k)) > .99f)
+                if (xr::abs(M.j.dotproduct(M.k)) > .99f)
                     M.j.set(0, 0, 1);
                 M.i.crossproduct(M.j, M.k);
                 M.i.normalize();

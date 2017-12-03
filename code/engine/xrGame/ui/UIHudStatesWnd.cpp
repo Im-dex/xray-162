@@ -227,7 +227,7 @@ void CUIHudStatesWnd::UpdateHealth(CActor* actor) {
 
     float cur_health = actor->GetfHealth();
     m_ui_health_bar->SetProgressPos(iCeil(cur_health * 100.0f * 35.f) / 35.f);
-    if (_abs(cur_health - m_last_health) > m_health_blink) {
+    if (xr::abs(cur_health - m_last_health) > m_health_blink) {
         m_last_health = cur_health;
         m_ui_health_bar->m_UIProgressItem.ResetColorAnimation();
     }
@@ -263,13 +263,16 @@ void CUIHudStatesWnd::UpdateHealth(CActor* actor) {
             m_bleeding_lev2->Show(true);
     else
             m_bleeding_lev2->Show(false);
-    
+    
+
     if(bleeding_speed > 0.7f)
             m_bleeding_lev3->Show(true);
     else
             m_bleeding_lev3->Show(false);
-    
-    
+    
+
+    
+
     if(m_radia_self > 0.01f)
             m_radiation_lev1->Show(true);
     else
@@ -279,7 +282,8 @@ void CUIHudStatesWnd::UpdateHealth(CActor* actor) {
             m_radiation_lev2->Show(true);
     else
             m_radiation_lev2->Show(false);
-    
+    
+
     if(m_radia_self > 0.7f)
             m_radiation_lev3->Show(true);
     else

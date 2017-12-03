@@ -222,7 +222,7 @@ static bool enemy_inaccessible(CBaseMonster* const object) {
         ai().level_graph().vertex_position(enemy->ai_location().level_vertex_id());
 
     float const xz_dist_to_vertex = enemy_vert_pos.distance_to_xz(enemy_pos);
-    float const y_dist_to_vertex = _abs(enemy_vert_pos.y - enemy_pos.y);
+    float const y_dist_to_vertex = xr::abs(enemy_vert_pos.y - enemy_pos.y);
 
     if (xz_dist_to_vertex > 0.5f && y_dist_to_vertex > 3.f)
         return true;
@@ -520,19 +520,19 @@ void CBaseMonster::set_state_sound(u32 type, bool once) {
                 // check distance to actor
 
                 if (Actor()->Position().distance_to(Position()) > db().m_fDistantIdleSndRange) {
-                    delay = u32(float(db().m_dwDistantIdleSndDelay) * _sqrt(float(objects_count)));
+                    delay = u32(float(db().m_dwDistantIdleSndDelay) * std::sqrt(float(objects_count)));
                     type = MonsterSound::eMonsterSoundIdleDistant;
                 } else {
-                    delay = u32(float(db().m_dwIdleSndDelay) * _sqrt(float(objects_count)));
+                    delay = u32(float(db().m_dwIdleSndDelay) * std::sqrt(float(objects_count)));
                 }
 
                 break;
             case MonsterSound::eMonsterSoundEat:
-                delay = u32(float(db().m_dwEatSndDelay) * _sqrt(float(objects_count)));
+                delay = u32(float(db().m_dwEatSndDelay) * std::sqrt(float(objects_count)));
                 break;
             case MonsterSound::eMonsterSoundAggressive:
             case MonsterSound::eMonsterSoundPanic:
-                delay = u32(float(db().m_dwAttackSndDelay) * _sqrt(float(objects_count)));
+                delay = u32(float(db().m_dwAttackSndDelay) * std::sqrt(float(objects_count)));
                 break;
             }
 
@@ -933,7 +933,7 @@ float CBaseMonster::get_screen_space_coverage_diagonal() {
     float const width = mx.x - mn.x;
     float const height = mx.y - mn.y;
 
-    float const average_diagonal = _sqrt(width * height);
+    float const average_diagonal = std::sqrt(width * height);
     return average_diagonal;
 }
 

@@ -13,7 +13,7 @@ namespace { //	namespace start
 inline void ComputeRowColsForFlat3DTexture(int depth, int* outCols, int* outRows) {
     // Compute # of m_iRows and m_iCols for a "flat 3D-texture" configuration
     // (in this configuration all the slices in the volume are spread in a single 2D texture)
-    int m_iRows = (int)floorf(_sqrt((float)depth));
+    int m_iRows = (int)floorf(std::sqrt((float)depth));
     int m_iCols = m_iRows;
     while (m_iRows * m_iCols < depth) {
         m_iCols++;

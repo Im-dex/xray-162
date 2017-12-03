@@ -66,11 +66,11 @@ BOOL CRenderTarget::u_need_PP() {
     bool _cbase = false;
     {
         int _r = color_get_R(param_color_base);
-        _r = _abs(_r - int(0x7f));
+        _r = xr::abs(_r - int(0x7f));
         int _g = color_get_G(param_color_base);
-        _g = _abs(_g - int(0x7f));
+        _g = xr::abs(_g - int(0x7f));
         int _b = color_get_B(param_color_base);
-        _b = _abs(_b - int(0x7f));
+        _b = xr::abs(_b - int(0x7f));
         if (_r > 2 || _g > 2 || _b > 2)
             _cbase = true;
     }
@@ -80,9 +80,9 @@ BOOL CRenderTarget::u_need_PP() {
         // int		_g	= color_get_G(param_color_add)	;
         // int		_b	= color_get_B(param_color_add)	;
         // if (_r>2 || _g>2 || _b>2)	_cadd	= true	;
-        int _r = _abs((int)(param_color_add.x * 255));
-        int _g = _abs((int)(param_color_add.y * 255));
-        int _b = _abs((int)(param_color_add.z * 255));
+        int _r = xr::abs((int)(param_color_add.x * 255));
+        int _g = xr::abs((int)(param_color_add.y * 255));
+        int _b = xr::abs((int)(param_color_add.z * 255));
         if (_r > 2 || _g > 2 || _b > 2)
             _cadd = true;
     }

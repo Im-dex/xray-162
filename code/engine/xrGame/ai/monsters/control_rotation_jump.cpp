@@ -183,7 +183,7 @@ void CControlRotationJump::build_line_first() {
             (SControlMovementData*)m_man->data(this, ControlCom::eControlMovement);
         VERIFY(ctrl_move);
         ctrl_move->velocity_target = m_target_velocity;
-        ctrl_move->acc = _abs(m_accel);
+        ctrl_move->acc = xr::abs(m_accel);
 
         // start new animation
         SControlAnimationData* ctrl_data =
