@@ -117,6 +117,12 @@ void xrDebug::gather_info(const std::string_view expression, const std::string_v
         // TODO: [imdex] use string_view
         os_clipboard::copy_to_clipboard(writer.c_str());
     }
+
+    if (writer.size() < assertion_info_size) {
+        assertion_info[writer.size()] = '\0';
+    } else {
+        assertion_info[assertion_info_size - 1] = '\0';
+    }
 }
 
 [[noreturn]] void xrDebug::do_exit(const std::string& message) {
@@ -161,7 +167,7 @@ void xrDebug::backend(const std::string_view expression, const std::string_view 
 
 #ifdef USE_OWN_ERROR_MESSAGE_WINDOW
     const auto result = MessageBox(
-        /*GetTopWindow(NULL)*/ nullptr, assertion_info, "Fatal Error",
+        /*GetTopWindow(NULL)*/ nullptr, writer.c_str(), "Fatal Error",
         MB_CANCELTRYCONTINUE | MB_ICONERROR | MB_SYSTEMMODAL);
 
     switch (result) {
