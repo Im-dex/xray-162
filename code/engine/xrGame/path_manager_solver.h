@@ -36,7 +36,7 @@ public:
                   const _Parameters& params);
     IC bool is_goal_reached(const _index_type& vertex_id) const;
     IC const _index_type& get_value(const_iterator& i,
-                                    bool reverse_search = typename _Graph::reverse_search) const;
+                                    bool reverse_search = _Graph::reverse_search) const;
     IC const _edge_type& edge(const_iterator& i) const;
     IC _dist_type evaluate(const _index_type& node_index1, const _index_type& node_index2,
                            const const_iterator& i) const;

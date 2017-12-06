@@ -22,8 +22,8 @@ endif()
 configure_file(code/engine/xr_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/xr_config.h @ONLY)
 
 if (MSVC)
-    if(MSVC_VERSION EQUAL 1911) # MSVS 2017.3
-        execute_process(COMMAND "vswhere" "-version" "15.3" "-property" "installationPath"
+    if(MSVC_VERSION EQUAL 1912) # MSVS 2017.5
+        execute_process(COMMAND "vswhere" "-version" "15.5" "-property" "installationPath"
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extras
                         OUTPUT_VARIABLE VS_TOOLS_PATH
                         OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -31,7 +31,7 @@ if (MSVC)
         add_compile_options(/std:c++latest /await /permissive-)
         add_compile_options("$<$<CONFIG:RELWITHDEBINFO>:/Oi>")
     else()
-        message(FATAL_ERROR "Only MSVC 15.3 (MSVS 2017) and higher is supported")
+        message(FATAL_ERROR "Only MSVC 15.5 (MSVS 2017) and higher is supported")
     endif()
 else()
     message(FATAL_ERROR "Only MSVC compiler is supported")

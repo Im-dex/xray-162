@@ -22,7 +22,7 @@ IC CSGraphEdge::CEdgeBase(const _edge_weight_type& weight, _vertex_type* vertex)
 }
 
 TEMPLATE_SPECIALIZATION
-IC typename const CSGraphEdge::_edge_weight_type& CSGraphEdge::weight() const { return (m_weight); }
+IC const typename CSGraphEdge::_edge_weight_type& CSGraphEdge::weight() const { return (m_weight); }
 
 TEMPLATE_SPECIALIZATION
 IC typename CSGraphEdge::_vertex_type* CSGraphEdge::vertex() const { return (m_vertex); }
@@ -86,7 +86,7 @@ IC CSGraphEdge::CEdge(const _edge_weight_type& weight, _vertex_type* vertex)
     : inherited(weight, vertex) {}
 
 TEMPLATE_SPECIALIZATION
-IC bool CSGraphEdge::operator==(const _vertex_id_type& vertex_id) const {
+IC bool CSGraphEdge::operator==(const typename inherited::_vertex_id_type& vertex_id) const {
     return (this->vertex()->vertex_id() == vertex_id);
 }
 

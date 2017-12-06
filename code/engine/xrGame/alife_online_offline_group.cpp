@@ -75,7 +75,7 @@ void CSE_ALifeOnlineOfflineGroup::register_member(ALife::_OBJECT_ID member_id) {
     VERIFY(monster);
     VERIFY(monster->g_Alive());
 
-    bool empty = m_members.empty();
+    const bool empty = m_members.empty();
     if (!object->m_bOnline) {
         if (m_bOnline) {
             object->switch_online();
@@ -279,13 +279,9 @@ void CSE_ALifeOnlineOfflineGroup::on_after_game_load() {
         (ALife::_OBJECT_ID*)_alloca(m_members.size() * sizeof(ALife::_OBJECT_ID));
     ALife::_OBJECT_ID *i = temp, *e = temp + m_members.size();
 
-    {
-        MEMBERS::const_iterator I = m_members.begin();
-        MEMBERS::const_iterator E = m_members.end();
-        for (; I != E; ++I, ++i) {
-            VERIFY(!(*I).second);
-            *i = (*I).first;
-        }
+    for (const auto& memberPair : m_members) {
+        VERIFY(!memberPair.second);
+        *(i++) = memberPair.first;
     }
 
     m_members.clear();
