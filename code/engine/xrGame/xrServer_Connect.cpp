@@ -100,6 +100,12 @@ void xrServer::AttachNewClient(IClient* CL) {
     SendTo_LL(SV_Client->ID, &msgConfig, sizeof(msgConfig), net_flags(TRUE, TRUE, TRUE, TRUE));
 
     RequestClientDigest(CL);
+    
+    NET_Packet NP;
+    NP.w_begin(M_CREATE_PLAYER_STATE);
+    game_PlayerState tmp_player_state(nullptr);
+    tmp_player_state.net_Export(NP, TRUE);
+    Level().Send(NP, net_flags(TRUE, TRUE, TRUE, TRUE));
 
     // xrClientData * CL_D=(xrClientData*)(CL);
     // ip_address				ClAddress;
