@@ -91,11 +91,6 @@ bool game_PlayerState::HasOldID(u16 ID) {
     return false;
 }
 
-game_TeamState::game_TeamState() {
-    score = 0;
-    num_targets = 0;
-}
-
 game_GameState::game_GameState() {
     m_type = EGameIDs(u32(0));
     m_phase = GAME_PHASE_NONE;

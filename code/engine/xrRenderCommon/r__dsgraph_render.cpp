@@ -25,7 +25,7 @@ IC bool cmp_normal_items(const _NormalItem& N1, const _NormalItem& N2) { return 
 void __fastcall mapNormal_Render(mapNormalItems& N) {
     // *** DIRECT ***
     std::sort(N.begin(), N.end(), cmp_normal_items);
-    _NormalItem *I = &*N.begin(), *E = &*N.end();
+    _NormalItem *I = std::data(N), *E = std::data(N) + std::size(N);
     for (; I != E; I++) {
         _NormalItem& Ni = *I;
         float LOD = calcLOD(Ni.ssa, Ni.pVisual->vis.sphere.R);
@@ -42,7 +42,7 @@ IC bool cmp_matrix_items(const _MatrixItem& N1, const _MatrixItem& N2) { return 
 void __fastcall mapMatrix_Render(mapMatrixItems& N) {
     // *** DIRECT ***
     std::sort(N.begin(), N.end(), cmp_matrix_items);
-    _MatrixItem *I = &*N.begin(), *E = &*N.end();
+    _MatrixItem *I = std::data(N), *E = std::data(N) + std::size(N);
     for (; I != E; I++) {
         _MatrixItem& Ni = *I;
         RCache.set_xform_world(Ni.Matrix);
@@ -738,7 +738,7 @@ void R_dsgraph_structure::r_dsgraph_render_subspace(IRender_Sector* _sector, CFr
         for (u32 o_it = 0; o_it < lstRenderables.size(); o_it++) {
             ISpatial* spatial = lstRenderables[o_it];
             CSector* sector = (CSector*)spatial->spatial.sector;
-            if (0 == sector)
+            if (!sector)
                 continue; // disassociated from S/P structure
             if (PortalTraverser.i_marker != sector->r_marker)
                 continue; // inactive (untouched) sector
@@ -749,7 +749,7 @@ void R_dsgraph_structure::r_dsgraph_render_subspace(IRender_Sector* _sector, CFr
 
                 // renderable
                 IRenderable* renderable = spatial->dcast_Renderable();
-                if (0 == renderable)
+                if (!renderable)
                     continue; // unknown, but renderable object (r1_glow???)
 
                 renderable->renderable_Render();
@@ -759,7 +759,7 @@ void R_dsgraph_structure::r_dsgraph_render_subspace(IRender_Sector* _sector, CFr
 
     // Restore
     ViewBase = ViewSave;
-    View = 0;
+    View = nullptr;
 }
 
 #include "fhierrarhyvisual.h"

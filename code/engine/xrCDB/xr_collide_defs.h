@@ -95,14 +95,14 @@ struct rq_result {
         } else
             return FALSE;
     }
-    IC BOOL set_if_less(rq_result* R) {
+    BOOL set_if_less(rq_result* R) {
         if (R->range < range) {
             set(R->O, R->range, R->element);
             return TRUE;
         } else
             return FALSE;
     }
-    IC BOOL set_if_less(CObject* _who, float _range, int _element) {
+    BOOL set_if_less(CObject* _who, float _range, int _element) {
         if (_range < range) {
             set(_who, _range, _element);
             return TRUE;
@@ -137,14 +137,14 @@ public:
         rq.O = _who;
         return TRUE;
     }
-    IC void append_result(rq_result& res) {
+    void append_result(rq_result& res) {
         if (0 == results.capacity())
             results.reserve(8);
         results.push_back(res);
     }
     IC int r_count() { return results.size(); }
-    IC rq_result* r_begin() { return &*results.begin(); }
-    IC rq_result* r_end() { return &*results.end(); }
+    IC rq_result* r_begin() { return std::data(results); }
+    IC rq_result* r_end() { return std::data(results) + std::size(results); }
     IC void r_clear() { results.clear(); }
     IC void r_sort() { std::sort(results.begin(), results.end(), r_sort_pred); }
     IC rqVec& r_results() { return results; }

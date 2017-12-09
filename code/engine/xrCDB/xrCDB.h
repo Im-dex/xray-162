@@ -125,23 +125,23 @@ public:
     COLLIDER();
     ~COLLIDER();
 
-    ICF void ray_options(u32 f) { ray_mode = f; }
+    void ray_options(u32 f) { ray_mode = f; }
     void ray_query(const MODEL* m_def, const Fvector& r_start, const Fvector& r_dir,
                    float r_range = 10000.f);
 
-    ICF void box_options(u32 f) { box_mode = f; }
+    void box_options(u32 f) { box_mode = f; }
     void box_query(const MODEL* m_def, const Fvector& b_center, const Fvector& b_dim);
 
-    ICF void frustum_options(u32 f) { frustum_mode = f; }
+    void frustum_options(u32 f) { frustum_mode = f; }
     void frustum_query(const MODEL* m_def, const CFrustum& F);
 
-    ICF RESULT* r_begin() { return &*rd.begin(); };
-    ICF RESULT* r_end() { return &*rd.end(); };
+    RESULT* r_begin() { return std::data(rd); }
+    RESULT* r_end() { return std::data(rd) + std::size(rd); }
     RESULT& r_add();
     void r_free();
-    ICF int r_count() { return rd.size(); };
-    ICF void r_clear() { rd.clear(); };
-    ICF void r_clear_compact() { rd.clear(); };
+    int r_count() { return rd.size(); }
+    void r_clear() { rd.clear(); }
+    void r_clear_compact() { rd.clear(); }
 };
 
 //
