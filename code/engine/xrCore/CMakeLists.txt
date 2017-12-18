@@ -15,7 +15,8 @@ set_source_files_properties(xrDebug.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 
 set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp
        FS_internal.h LocatorAPI.h LocatorAPI.cpp LocatorAPI_defs.h
-       LocatorAPI_defs.cpp log.h log.cpp NET_utils.cpp net_utils.h Xr_ini.cpp xr_ini.h)
+       LocatorAPI_defs.cpp log.h log.cpp NET_utils.cpp net_utils.h Xr_ini.cpp xr_ini.h
+       ini.h ini.cpp)
 set(FS_STREAM_READER stream_reader.h stream_reader.cpp)
 set(FS_FILE_STREAM_READER file_stream_reader.h file_stream_reader.cpp)
 
