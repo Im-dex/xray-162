@@ -99,7 +99,7 @@ public:
     virtual void Init(int stage){};
 
     virtual void Render();
-    virtual void _BCL OnFrame();
+    virtual void OnFrame();
 
     IC CUIActorMenu& ActorMenu() const { return *m_ActorMenu; }
     IC CUIPdaWnd& PdaMenu() const { return *m_PdaMenu; }

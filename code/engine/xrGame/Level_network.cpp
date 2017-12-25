@@ -277,7 +277,7 @@ void CLevel::net_Update() {
 }
 
 struct _NetworkProcessor : public pureFrame {
-    virtual void _BCL OnFrame() {
+    virtual void OnFrame() {
         if (g_pGameLevel && !Device.Paused())
             g_pGameLevel->net_Update();
     }

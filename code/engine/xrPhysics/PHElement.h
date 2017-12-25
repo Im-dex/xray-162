@@ -182,7 +182,7 @@ public:                      //
                                    Flags32 flags = Flags32().assign(0)) const;
 #endif
     void SetBoneCallbackOverwrite(bool v);
-    void _BCL BonesCallBack(CBoneInstance* B); // called from updateCL visual influent
+    void BonesCallBack(CBoneInstance* B); // called from updateCL visual influent
     void StataticRootBonesCallBack(CBoneInstance* B);
     void PhDataUpdate(dReal step); // ph update
     void PhTune(dReal step);       // ph update
@@ -217,7 +217,7 @@ public:                      //
     virtual void applyImpulse(const Fvector& dir, float val); // aux
     virtual void applyImpulseVsMC(const Fvector& pos, const Fvector& dir, float val); //
     virtual void applyImpulseVsGF(const Fvector& pos, const Fvector& dir, float val); //
-    virtual void _BCL applyGravityAccel(const Fvector& accel);
+    virtual void applyGravityAccel(const Fvector& accel);
     virtual void getForce(Fvector& force);
     virtual void getTorque(Fvector& torque);
     virtual void get_LinearVel(Fvector& velocity) const;  // aux
@@ -244,7 +244,7 @@ public:                      //
     virtual void GetGlobalPositionDynamic(Fvector* v);                                    //
     virtual void cv2obj_Xfrom(const Fquaternion& q, const Fvector& pos, Fmatrix& xform);  //
     virtual void cv2bone_Xfrom(const Fquaternion& q, const Fvector& pos, Fmatrix& xform); //
-    virtual void _BCL InterpolateGlobalTransform(Fmatrix* m); // called UpdateCL vis influent
+    virtual void InterpolateGlobalTransform(Fmatrix* m); // called UpdateCL vis influent
     virtual void InterpolateGlobalPosition(Fvector* v);       // aux
     virtual void GetGlobalTransformDynamic(Fmatrix* m) const; // aux
     IC void InverceLocalForm(Fmatrix&);

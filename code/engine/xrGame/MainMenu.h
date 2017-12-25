@@ -121,7 +121,7 @@ public:
     void OnRenderPPUI_PP();
 
     virtual void OnRender();
-    virtual void _BCL OnFrame(void);
+    virtual void OnFrame(void);
 
     virtual bool UseIndicators() { return false; }
 

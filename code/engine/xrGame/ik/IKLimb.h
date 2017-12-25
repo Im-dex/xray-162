@@ -86,9 +86,9 @@ private:
     void DBGDrawSetNewGoal(SCalculateData& cd, const SIKCollideData& cld);
 #endif
 private:
-    static void _BCL BonesCallback0(CBoneInstance* B);
-    static void _BCL BonesCallback1(CBoneInstance* B);
-    static void _BCL BonesCallback2(CBoneInstance* B);
+    static void BonesCallback0(CBoneInstance* B);
+    static void BonesCallback1(CBoneInstance* B);
+    static void BonesCallback2(CBoneInstance* B);
 
 private:
     Limb m_limb;

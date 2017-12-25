@@ -958,7 +958,7 @@ struct ssaved_callback {
     const u32 callback_type;
     CBoneInstance& _bi;
 };
-static void _BCL get_matrix(CBoneInstance* P) {
+static void get_matrix(CBoneInstance* P) {
     VERIFY(xr::valid(P->mTransform));
     *((Fmatrix*)P->callback_param()) = P->mTransform;
 }

@@ -75,7 +75,7 @@ public:
     CInput(BOOL bExclusive = true, int deviceForInit = default_key);
     ~CInput();
 
-    virtual void _BCL OnFrame(void);
+    virtual void OnFrame(void);
     virtual void OnAppActivate(void);
     virtual void OnAppDeactivate(void);
 

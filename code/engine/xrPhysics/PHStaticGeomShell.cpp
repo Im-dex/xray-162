@@ -39,7 +39,7 @@ void CPHStaticGeomShell::Deactivate() {
 
 CPHStaticGeomShell::CPHStaticGeomShell() { spatial.type |= STYPE_PHYSIC; }
 
-void _BCL cb(CBoneInstance* B) {}
+void cb(CBoneInstance* B) {}
 
 void P_BuildStaticGeomShell(CPHStaticGeomShell* pUnbrokenObject, IPhysicsShellHolder* obj,
                             ObjectContactCallbackFun* object_contact_callback, const Fobb& b) {

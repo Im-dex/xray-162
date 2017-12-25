@@ -241,7 +241,7 @@ public:
 
     // Events
     virtual void OnEvent(EVENT E, u64 P1, u64 P2);
-    virtual void _BCL OnFrame(void);
+    virtual void OnFrame(void);
     virtual void OnRender();
 
     virtual shared_str OpenDemoFile(LPCSTR demo_file_name);
