@@ -10,7 +10,6 @@
 #include "script_storage.h"
 #include "script_thread.h"
 #include <stdarg.h>
-#include "../xrCore/doug_lea_allocator.h"
 
 #ifndef DEBUG
 #include "opt.lua.h"
@@ -64,7 +63,6 @@ LPCSTR file_header = 0;
 //#	endif // USE_MEMORY_MONITOR
 #endif // PURE_ALLOC
 
-#ifndef USE_DL_ALLOCATOR
 static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
     (void)ud;
     (void)osize;
@@ -78,53 +76,6 @@ static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
         return Memory.mem_realloc(ptr, nsize);
 #endif // DEBUG_MEMORY_MANAGER
 }
-#else // USE_DL_ALLOCATOR
-
-#include "../xrCore/memory_allocator_options.h"
-
-#ifdef USE_ARENA_ALLOCATOR
-static const u32 s_arena_size = 96 * 1024 * 1024;
-static char s_fake_array[s_arena_size];
-static doug_lea_allocator s_allocator(s_fake_array, s_arena_size, "lua");
-#else  // #ifdef USE_ARENA_ALLOCATOR
-static doug_lea_allocator s_allocator(0, 0, "lua");
-#endif // #ifdef USE_ARENA_ALLOCATOR
-
-static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
-#ifndef USE_MEMORY_MONITOR
-    (void)ud;
-    (void)osize;
-    if (!nsize) {
-        s_allocator.free_impl(ptr);
-        return 0;
-    }
-
-    if (!ptr)
-        return s_allocator.malloc_impl((u32)nsize);
-
-    return s_allocator.realloc_impl(ptr, (u32)nsize);
-#else  // #ifndef USE_MEMORY_MONITOR
-    if (!nsize) {
-        memory_monitor::monitor_free(ptr);
-        s_allocator.free_impl(ptr);
-        return NULL;
-    }
-
-    if (!ptr) {
-        void* const result = s_allocator.malloc_impl((u32)nsize);
-        memory_monitor::monitor_alloc(result, nsize, "LUA");
-        return result;
-    }
-
-    memory_monitor::monitor_free(ptr);
-    void* const result = s_allocator.realloc_impl(ptr, (u32)nsize);
-    memory_monitor::monitor_alloc(result, nsize, "LUA");
-    return result;
-#endif // #ifndef USE_MEMORY_MONITOR
-}
-
-u32 game_lua_memory_usage() { return (s_allocator.get_allocated_size()); }
-#endif // USE_DL_ALLOCATOR
 
 static LPVOID __cdecl luabind_allocator(luabind::memory_allocation_function_parameter const,
                                         void const* const pointer, size_t const size) {
