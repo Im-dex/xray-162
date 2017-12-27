@@ -1,5 +1,3 @@
-#ifndef xrCPU_PipeH
-#define xrCPU_PipeH
 #pragma once
 
 // Forward references
@@ -26,7 +24,6 @@ typedef void __stdcall xrSkin4W(vertRender* D, vertBoned4W* S, u32 vCount, CBone
 typedef void __stdcall xrPLC_calc3(int& c0, int& c1, int& c2, CRenderDevice& Device, Fvector* P,
                                    Fvector& N, light* L, float energy, Fvector& O);
 
-#pragma pack(push, 8)
 struct xrDispatchTable {
     xrSkin1W* skin1W;
     xrSkin2W* skin2W;
@@ -34,10 +31,7 @@ struct xrDispatchTable {
     xrSkin4W* skin4W;
     xrPLC_calc3* PLC_calc3;
 };
-#pragma pack(pop)
 
 // Binder
 // NOTE: Engine calls function named "_xrBindPSGP"
 typedef void __cdecl xrBinder(xrDispatchTable* T, processor_info* ID);
-
-#endif

@@ -252,7 +252,7 @@ public:
     // Multi-threading
     std::recursive_mutex mt_csEnter;
     std::recursive_mutex mt_csLeave;
-    volatile BOOL mt_bMustExit;
+    volatile bool mt_bMustExit;
 
     ICF void remove_from_seq_parallel(const fastdelegate::FastDelegate0<>& delegate) {
         xr_vector<fastdelegate::FastDelegate0<>>::iterator I =

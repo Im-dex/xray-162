@@ -11,7 +11,7 @@
 //#pragma comment(lib,"IMAGEHLP.LIB")
 //#pragma comment(lib,"FreeImage.lib")
 
-extern void logThread(void* dummy);
+extern void logThread();
 extern volatile BOOL bClose;
 
 static const char* h_str = "The following keys are supported / required:\n"
@@ -43,7 +43,7 @@ void Startup(LPSTR lpCmdLine) {
         bNet = true;
     // Give a LOG-thread a chance to startup
     InitCommonControls();
-    thread_spawn(logThread, "log-update", 1024 * 1024, 0);
+	std::thread log_thread(logThread);
     Sleep(150);
 
     // Load project

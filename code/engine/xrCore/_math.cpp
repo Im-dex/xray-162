@@ -148,8 +148,6 @@ void Detect() {
 
 } // namespace CPU
 
-bool g_initialize_cpu_called = false;
-
 //------------------------------------------------------------------------------------
 void _initialize_cpu() {
     Msg("* Detected CPU: %s [%s], F%d/M%d/S%d, 'rdtsc'", CPU::ID.modelName,
@@ -201,91 +199,51 @@ void _initialize_cpu() {
     Didentity.identity();  // Identity matrix
     pvInitializeStatics(); // Lookup table for compressed normals
     FPU::initialize();
-    _initialize_cpu_thread();
-
-    g_initialize_cpu_called = true;
 }
 
-// per-thread initialization
-#include <xmmintrin.h>
-#define _MM_DENORMALS_ZERO_MASK 0x0040
-#define _MM_DENORMALS_ZERO_ON 0x0040
-#define _MM_FLUSH_ZERO_MASK 0x8000
-#define _MM_FLUSH_ZERO_ON 0x8000
-#define _MM_SET_FLUSH_ZERO_MODE(mode) _mm_setcsr((_mm_getcsr() & ~_MM_FLUSH_ZERO_MASK) | (mode))
-#define _MM_SET_DENORMALS_ZERO_MODE(mode) \
-    _mm_setcsr((_mm_getcsr() & ~_MM_DENORMALS_ZERO_MASK) | (mode))
-static BOOL _denormals_are_zero_supported = TRUE;
-extern void __cdecl _terminate();
-void debug_on_thread_spawn();
+#ifdef _WIN32
+static const DWORD MS_VC_EXCEPTION = 0x406D1388;
 
-void _initialize_cpu_thread() {
-    debug_on_thread_spawn();
-#ifndef XRCORE_STATIC
-    // fpu & sse
-    FPU::m24r();
-#endif // XRCORE_STATIC
-    if (CPU::ID.hasFeature(CpuFeature::Sse)) {
-        //_mm_setcsr ( _mm_getcsr() | (_MM_FLUSH_ZERO_ON+_MM_DENORMALS_ZERO_ON) );
-        _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-        if (_denormals_are_zero_supported) {
-            __try {
-                _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
-            } __except (EXCEPTION_EXECUTE_HANDLER) {
-                _denormals_are_zero_supported = FALSE;
-            }
-        }
-    }
-}
-
-// threading API
 #pragma pack(push, 8)
-struct THREAD_NAME {
-    DWORD dwType;
-    LPCSTR szName;
-    DWORD dwThreadID;
-    DWORD dwFlags;
-};
-void thread_name(const char* name) {
-    THREAD_NAME tn;
-    tn.dwType = 0x1000;
-    tn.szName = name;
-    tn.dwThreadID = DWORD(-1);
-    tn.dwFlags = 0;
-    __try {
-        RaiseException(0x406D1388, 0, sizeof(tn) / sizeof(DWORD), (ULONG_PTR*)&tn);
-    } __except (EXCEPTION_CONTINUE_EXECUTION) {
-    }
-}
+typedef struct tagTHREADNAME_INFO {
+    DWORD dwType;     // Must be 0x1000.
+    LPCSTR szName;    // Pointer to name (in user addr space).
+    DWORD dwThreadID; // Thread ID (-1=caller thread).
+    DWORD dwFlags;    // Reserved for future use, must be zero.
+} THREADNAME_INFO;
 #pragma pack(pop)
 
-struct THREAD_STARTUP {
-    thread_t* entry;
-    char* name;
-    void* args;
-};
-void __cdecl thread_entry(void* _params) {
-    // initialize
-    THREAD_STARTUP* startup = (THREAD_STARTUP*)_params;
-    thread_name(startup->name);
-    thread_t* entry = startup->entry;
-    void* arglist = startup->args;
-    xr_delete(startup);
-    _initialize_cpu_thread();
+static void set_thread_name(DWORD dwThreadID, const char* threadName) {
+    // DWORD dwThreadID = ::GetThreadId( static_cast<HANDLE>( t.native_handle() ) );
 
-    // call
-    entry(arglist);
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = threadName;
+    info.dwThreadID = dwThreadID;
+    info.dwFlags = 0;
+
+    __try {
+        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+    }
+}
+void set_current_thread_name(const char* threadName) { set_thread_name(GetCurrentThreadId(), threadName); }
+
+void set_thread_name(const char* threadName, std::thread& thread) {
+    DWORD threadId = ::GetThreadId(static_cast<HANDLE>(thread.native_handle()));
+    set_thread_name(threadId, threadName);
 }
 
-void thread_spawn(thread_t* entry, const char* name, unsigned stack, void* arglist) {
-    Debug._initialize();
-
-    THREAD_STARTUP* startup = xr_new<THREAD_STARTUP>();
-    startup->entry = entry;
-    startup->name = (char*)name;
-    startup->args = arglist;
-    _beginthread(thread_entry, stack, startup);
+#else
+void set_thread_name(const char* threadName, std::thread& thread) {
+    auto handle = thread.native_handle();
+    pthread_setname_np(handle, threadName);
 }
+
+#include <sys/prctl.h>
+void set_current_thread_name(const char* threadName) { prctl(PR_SET_NAME, threadName, 0, 0, 0); }
+
+#endif
 
 void spline1(float t, Fvector* p, Fvector* ret) {
     float t2 = t * t;
@@ -307,41 +265,44 @@ void spline1(float t, Fvector* p, Fvector* ret) {
     }
 }
 
-void spline2(float t, Fvector* p, Fvector* ret) {
-    float s = 1.0f - t;
-    float t2 = t * t;
-    float t3 = t2 * t;
-    float m[4];
 
-    m[0] = s * s * s;
-    m[1] = 3.0f * t3 - 6.0f * t2 + 4.0f;
-    m[2] = -3.0f * t3 + 3.0f * t2 + 3.0f * t + 1;
-    m[3] = t3;
+//	Unused code
 
-    ret->x = (p[0].x * m[0] + p[1].x * m[1] + p[2].x * m[2] + p[3].x * m[3]) / 6.0f;
-    ret->y = (p[0].y * m[0] + p[1].y * m[1] + p[2].y * m[2] + p[3].y * m[3]) / 6.0f;
-    ret->z = (p[0].z * m[0] + p[1].z * m[1] + p[2].z * m[2] + p[3].z * m[3]) / 6.0f;
-}
-
-#define beta1 1.0f
-#define beta2 0.8f
-
-void spline3(float t, Fvector* p, Fvector* ret) {
-    float s = 1.0f - t;
-    float t2 = t * t;
-    float t3 = t2 * t;
-    float b12 = beta1 * beta2;
-    float b13 = b12 * beta1;
-    float delta = 2.0f - b13 + 4.0f * b12 + 4.0f * beta1 + beta2 + 2.0f;
-    float d = 1.0f / delta;
-    float b0 = 2.0f * b13 * d * s * s * s;
-    float b3 = 2.0f * t3 * d;
-    float b1 = d * (2 * b13 * t * (t2 - 3 * t + 3) + 2 * b12 * (t3 - 3 * t2 + 2) +
-                    2 * beta1 * (t3 - 3 * t + 2) + beta2 * (2 * t3 - 3 * t2 + 1));
-    float b2 = d * (2 * b12 * t2 * (-t + 3) + 2 * beta1 * t * (-t2 + 3) +
-                    beta2 * t2 * (-2 * t + 3) + 2 * (-t3 + 1));
-
-    ret->x = p[0].x * b0 + p[1].x * b1 + p[2].x * b2 + p[3].x * b3;
-    ret->y = p[0].y * b0 + p[1].y * b1 + p[2].y * b2 + p[3].y * b3;
-    ret->z = p[0].z * b0 + p[1].z * b1 + p[2].z * b2 + p[3].z * b3;
-}
+//void spline2(float t, Fvector* p, Fvector* ret) {
+//    float s = 1.0f - t;
+//    float t2 = t * t;
+//    float t3 = t2 * t;
+//    float m[4];
+//
+//    m[0] = s * s * s;
+//    m[1] = 3.0f * t3 - 6.0f * t2 + 4.0f;
+//    m[2] = -3.0f * t3 + 3.0f * t2 + 3.0f * t + 1;
+//    m[3] = t3;
+//
+//    ret->x = (p[0].x * m[0] + p[1].x * m[1] + p[2].x * m[2] + p[3].x * m[3]) / 6.0f;
+//    ret->y = (p[0].y * m[0] + p[1].y * m[1] + p[2].y * m[2] + p[3].y * m[3]) / 6.0f;
+//    ret->z = (p[0].z * m[0] + p[1].z * m[1] + p[2].z * m[2] + p[3].z * m[3]) / 6.0f;
+//}
+//
+//#define beta1 1.0f
+//#define beta2 0.8f
+//
+//void spline3(float t, Fvector* p, Fvector* ret) {
+//    float s = 1.0f - t;
+//    float t2 = t * t;
+//    float t3 = t2 * t;
+//    float b12 = beta1 * beta2;
+//    float b13 = b12 * beta1;
+//    float delta = 2.0f - b13 + 4.0f * b12 + 4.0f * beta1 + beta2 + 2.0f;
+//    float d = 1.0f / delta;
+//    float b0 = 2.0f * b13 * d * s * s * s;
+//    float b3 = 2.0f * t3 * d;
+//    float b1 = d * (2 * b13 * t * (t2 - 3 * t + 3) + 2 * b12 * (t3 - 3 * t2 + 2) +
+//                    2 * beta1 * (t3 - 3 * t + 2) + beta2 * (2 * t3 - 3 * t2 + 1));
+//    float b2 = d * (2 * b12 * t2 * (-t + 3) + 2 * beta1 * t * (-t2 + 3) +
+//                    beta2 * t2 * (-2 * t + 3) + 2 * (-t3 + 1));
+//
+//    ret->x = p[0].x * b0 + p[1].x * b1 + p[2].x * b2 + p[3].x * b3;
+//    ret->y = p[0].y * b0 + p[1].y * b1 + p[2].y * b2 + p[3].y * b3;
+//    ret->z = p[0].z * b0 + p[1].z * b1 + p[2].z * b2 + p[3].z * b3;
+//}

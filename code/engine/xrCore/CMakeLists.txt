@@ -40,7 +40,7 @@ set(MATH_STLEXT FixedMap.h FixedSet.h FixedVector.h xrPool.h)
 
 set(MEM_MGR memory_allocation_stats.cpp memory_usage.cpp xrMemory.cpp xrMemory.h xrMemory_align.h
             xrMemory_align.cpp xrMemory_debug.cpp xrMemory_POOL.cpp xrMEMORY_POOL.h xrMemory_pure.h
-            xrMemory_subst_msvc.h xrMemory_subst_msvc.cpp)
+            xrMemory_subst_msvc.h)
 
 set(MEM_MONITOR memory_monitor.h memory_monitor.cpp)
 

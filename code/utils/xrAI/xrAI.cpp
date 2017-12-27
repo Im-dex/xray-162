@@ -19,7 +19,7 @@
 extern LPCSTR LEVEL_GRAPH_NAME;
 
 extern void xrCompiler(LPCSTR name, bool draft_mode, bool pure_covers, LPCSTR out_name);
-extern void logThread(void* dummy);
+extern void logThread();
 extern volatile BOOL bClose;
 extern void test_smooth_path(LPCSTR name);
 extern void test_hierarchy(LPCSTR name);
@@ -140,7 +140,7 @@ void Startup(LPSTR lpCmdLine) {
     // Give a LOG-thread a chance to startup
     InitCommonControls();
     Sleep(150);
-    thread_spawn(logThread, "log-update", 1024 * 1024, 0);
+	std::thread log_thread(logThread);
     while (!logWindow)
         Sleep(150);
 

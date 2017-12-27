@@ -14,11 +14,11 @@ set(RESOURCES resource.h
 set(PLC PLC.cpp)
 
 set(SKINNING xrSkin2W.cpp
-             xrSkin2W_SSE.cpp
              xrSkin2W_thread.cpp)
 
 set(TTAPI ttapi.cpp
-          ttapi.h)
+          ttapi.h
+          thread_pool.h)
 
 source_group("Kernel" FILES ${KERNEL})
 source_group("Headers" FILES ${HEADERS})

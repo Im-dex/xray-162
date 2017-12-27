@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#pragma hdrstop
 
 extern xrSkin4W* skin4W_func;
 
@@ -11,10 +10,6 @@ struct SKIN_PARAMS {
 };
 
 void Skin4W_Stream(LPVOID lpvParams) {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("xrSkin4W_Stream()");
-#endif // _GPA_ENABLED
-
     SKIN_PARAMS* sp = (SKIN_PARAMS*)lpvParams;
 
     vertRender* D = (vertRender*)sp->Dest;
@@ -26,11 +21,8 @@ void Skin4W_Stream(LPVOID lpvParams) {
 }
 
 void __stdcall xrSkin4W_thread(vertRender* D, vertBoned4W* S, u32 vCount, CBoneInstance* Bones) {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("xrSkin4W()");
-#endif // _GPA_ENABLED
 
-    u32 nWorkers = ttapi_GetWorkersCount();
+    size_t nWorkers = ttapi.threads.size();
 
     if (vCount < (nWorkers * 64)) {
         skin4W_func(D, S, vCount, Bones);
@@ -52,8 +44,8 @@ void __stdcall xrSkin4W_thread(vertRender* D, vertBoned4W* S, u32 vCount, CBoneI
         sknParams[i].Count = (i == (nWorkers - 1)) ? nLast : nStep;
         sknParams[i].Data = (LPVOID)Bones;
 
-        ttapi_AddWorker(Skin4W_Stream, (LPVOID)&sknParams[i]);
+        ttapi.threads[i]->addJob([=] { Skin4W_Stream((void*)&sknParams[i]); });
     }
 
-    ttapi_RunAllWorkers();
+    ttapi.wait();
 }

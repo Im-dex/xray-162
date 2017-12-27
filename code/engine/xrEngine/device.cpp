@@ -86,8 +86,6 @@ if (FAILED(_hr))
 
 void CRenderDevice::Clear() { m_pRender->Clear(); }
 
-extern void CheckPrivilegySlowdown();
-
 void CRenderDevice::End(void) {
 #ifdef INGAME_EDITOR
     bool load_finished = false;
@@ -115,8 +113,6 @@ void CRenderDevice::End(void) {
             Memory.mem_compact();
             Msg("* MEMORY USAGE: %d K", Memory.mem_usage() / 1024);
             Msg("* End of synchronization A[%d] R[%d]", b_is_Active, b_is_Ready);
-
-            CheckPrivilegySlowdown();
 
             if (g_pGamePersistent->GameType() == 1) // haCk
             {
@@ -147,13 +143,14 @@ void CRenderDevice::End(void) {
 }
 
 volatile u32 mt_Thread_marker = 0x12345678;
-void mt_Thread(void* ptr) {
+void mt_Thread() {
+    set_current_thread_name("X-RAY Secondary thread");
     while (true) {
         // waiting for Device permission to execute
         Device.mt_csEnter.lock();
 
         if (Device.mt_bMustExit) {
-            Device.mt_bMustExit = FALSE; // Important!!!
+            Device.mt_bMustExit = false; // Important!!!
             Device.mt_csEnter.unlock();  // Important!!!
             return;
         }
@@ -314,11 +311,9 @@ void CRenderDevice::message_loop() {
 }
 
 void CRenderDevice::Run() {
-    //	DUMP_PHASE;
     g_bLoaded = FALSE;
     Log("Starting engine...");
-    thread_name("X-RAY Primary thread");
-
+    set_current_thread_name("X-RAY Primary thread");
     // Startup timers and calculate timer delta
     dwTimeGlobal = 0;
     Timer_MM_Delta = 0;
@@ -332,11 +327,10 @@ void CRenderDevice::Run() {
     }
 
     // Start all threads
-    //	InitializeCriticalSection	(&mt_csEnter);
-    //	InitializeCriticalSection	(&mt_csLeave);
     mt_csEnter.lock();
-    mt_bMustExit = FALSE;
-    thread_spawn(mt_Thread, "X-RAY Secondary thread", 0, 0);
+    mt_bMustExit = false;
+
+    std::thread second_thread(mt_Thread);
 
     // Message cycle
     seqAppStart.Process(rp_AppStart);
@@ -349,12 +343,10 @@ void CRenderDevice::Run() {
     seqAppEnd.Process(rp_AppEnd);
 
     // Stop Balance-Thread
-    mt_bMustExit = TRUE;
+    mt_bMustExit = true;
     mt_csEnter.unlock();
-    while (mt_bMustExit)
-        Sleep(0);
-    //	DeleteCriticalSection	(&mt_csEnter);
-    //	DeleteCriticalSection	(&mt_csLeave);
+
+    second_thread.join();
 }
 
 u32 app_inactive_time = 0;
