@@ -1349,7 +1349,7 @@ struct callback_param {
     u16 bone_id;
 };
 
-static void _BCL test_callback(CBoneInstance* B) {
+static void test_callback(CBoneInstance* B) {
     VERIFY(B);
 
     callback_param* params = static_cast<callback_param*>(B->callback_param());

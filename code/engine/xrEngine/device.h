@@ -33,9 +33,9 @@ class engine_impl;
 
 class IRenderDevice {
 public:
-    virtual CStatsPhysics* _BCL StatPhysics() = 0;
-    virtual void _BCL AddSeqFrame(pureFrame* f, bool mt) = 0;
-    virtual void _BCL RemoveSeqFrame(pureFrame* f) = 0;
+    virtual CStatsPhysics* StatPhysics() = 0;
+    virtual void AddSeqFrame(pureFrame* f, bool mt) = 0;
+    virtual void RemoveSeqFrame(pureFrame* f) = 0;
 };
 
 class ENGINE_API CRenderDeviceData {
@@ -267,9 +267,9 @@ public:
 
 private:
     void message_loop();
-    virtual void _BCL AddSeqFrame(pureFrame* f, bool mt);
-    virtual void _BCL RemoveSeqFrame(pureFrame* f);
-    virtual CStatsPhysics* _BCL StatPhysics() { return Statistic; }
+    virtual void AddSeqFrame(pureFrame* f, bool mt);
+    virtual void RemoveSeqFrame(pureFrame* f);
+    virtual CStatsPhysics* StatPhysics() { return Statistic; }
 #ifdef INGAME_EDITOR
 public:
     IC editor::ide* editor() const { return m_editor; }

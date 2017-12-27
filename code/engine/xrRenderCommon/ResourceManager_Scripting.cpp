@@ -200,13 +200,6 @@ void LuaLog(LPCSTR caMessage) {
 }
 void LuaError(lua_State* L) { Debug.fatal(DEBUG_INFO, "LUA error: %s", lua_tostring(L, -1)); }
 
-#ifndef PURE_ALLOC
-//#	ifndef USE_MEMORY_MONITOR
-#define USE_DL_ALLOCATOR
-//#	endif // USE_MEMORY_MONITOR
-#endif // PURE_ALLOC
-
-#ifndef USE_DL_ALLOCATOR
 static void* lua_alloc_dl(void* ud, void* ptr, size_t osize, size_t nsize) {
     (void)ud;
     (void)osize;
@@ -220,51 +213,6 @@ static void* lua_alloc_dl(void* ud, void* ptr, size_t osize, size_t nsize) {
         return Memory.mem_realloc(ptr, nsize);
 #endif // DEBUG_MEMORY_MANAGER
 }
-#else // USE_DL_ALLOCATOR
-
-#include "xrCore/memory_allocator_options.h"
-
-#ifdef USE_ARENA_ALLOCATOR
-static const u32 s_arena_size = 8 * 1024 * 1024;
-static char s_fake_array[s_arena_size];
-doug_lea_allocator g_render_lua_allocator(s_fake_array, s_arena_size, "render:lua");
-#else // #ifdef USE_ARENA_ALLOCATOR
-
-#endif // #ifdef USE_ARENA_ALLOCATOR
-
-static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
-#ifndef USE_MEMORY_MONITOR
-    (void)ud;
-    (void)osize;
-    if (!nsize) {
-        RenderAllocHolder::get().free_impl(ptr);
-        return nullptr;
-    }
-
-    if (!ptr)
-        return RenderAllocHolder::get().malloc_impl((u32)nsize);
-
-    return RenderAllocHolder::get().realloc_impl(ptr, (u32)nsize);
-#else  // #ifndef USE_MEMORY_MONITOR
-    if (!nsize) {
-        memory_monitor::monitor_free(ptr);
-        RenderAllocHolder::get().free_impl(ptr);
-        return nullptr;
-    }
-
-    if (!ptr) {
-        void* const result = RenderAllocHolder::get().malloc_impl((u32)nsize);
-        memory_monitor::monitor_alloc(result, nsize, "render:LUA");
-        return result;
-    }
-
-    memory_monitor::monitor_free(ptr);
-    void* const result = RenderAllocHolder::get().realloc_impl(ptr, (u32)nsize);
-    memory_monitor::monitor_alloc(result, nsize, "render:LUA");
-    return result;
-#endif // #ifndef USE_MEMORY_MONITOR
-}
-#endif // USE_DL_ALLOCATOR
 
 // export
 void CResourceManager::LS_Load() {

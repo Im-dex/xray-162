@@ -170,10 +170,6 @@ set(GAME_API_OBJECTS IGame_ObjectPool.h
                      xr_object.cpp
                      xr_object_list.cpp)
 
-set(RENDERREF_DOUG_LEA_MEMORY_ALLOCATOR doug_lea_memory_allocator.h
-                                        doug_lea_memory_allocator.c)
-set_source_files_properties(doug_lea_memory_allocator.c PROPERTIES COMPILE_FLAGS /Y-)
-
 set(EDITOR_ENVIRONMENT_SUNS_MANAGER_SUN_GRADIENT editor_environment_suns_gradient.hpp
                                                  editor_environment_suns_gradient.cpp)
 
@@ -346,7 +342,6 @@ source_group("Engine\\text_editor\\edit_actions" FILES ${ENGINE_TEXT_EDITOR_EDIT
 source_group("General\\Resources" FILES ${GENERAL_RESOURCES})
 source_group("Engine\\Console" FILES ${ENGINE_CONSOLE})
 source_group("Game API\\Objects" FILES ${GAME_API_OBJECTS})
-source_group("RenderRef\\doug_lea_memory_allocator" FILES ${RENDERREF_DOUG_LEA_MEMORY_ALLOCATOR})
 source_group("editor\\environment\\suns_manager\\sun\\gradient" FILES ${EDITOR_ENVIRONMENT_SUNS_MANAGER_SUN_GRADIENT})
 source_group("Engine\\Console\\commands" FILES ${ENGINE_CONSOLE_COMMANDS})
 source_group("Interfaces\\Render\\Execution &amp; 3D\\TextConsole" FILES ${INTERFACES_RENDER_EXECUTION__AND__3D_TEXTCONSOLE})

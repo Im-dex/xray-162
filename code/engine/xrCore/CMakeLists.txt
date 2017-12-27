@@ -41,9 +41,6 @@ set(MATH_STLEXT FixedMap.h FixedSet.h FixedVector.h xrPool.h)
 set(MEM_MGR memory_allocation_stats.cpp memory_usage.cpp xrMemory.cpp xrMemory.h xrMemory_align.h
             xrMemory_align.cpp xrMemory_debug.cpp xrMemory_POOL.cpp xrMEMORY_POOL.h xrMemory_pure.h
             xrMemory_subst_msvc.h xrMemory_subst_msvc.cpp)
-set(MEM_MGR_DLMALLOC_ALLOCATOR ptmalloc3/malloc.c ptmalloc3/malloc-2.8.3.h ptmalloc3/sysdeps/win32/win32.c)
-set_source_files_properties(ptmalloc3/malloc.c ptmalloc3/sysdeps/win32/win32.c PROPERTIES COMPILE_FLAGS /Y-)
-set(MEM_MGR_DLMALLOC_WRAPPER doug_lea_allocator.h doug_lea_allocator.cpp memory_allocator_options.h)
 
 set(MEM_MONITOR memory_monitor.h memory_monitor.cpp)
 
@@ -73,8 +70,6 @@ source_group("Math\\Extensions\\buffer_vector" FILES ${MATH_EXT_BUFFER_VECTOR})
 source_group("Math\\STLext" FILES ${MATH_STLEXT})
 
 source_group("Memory manager" FILES ${MEM_MGR})
-source_group("Memory manager\\dlmalloc\\allocator" FILES ${MEM_MGR_DLMALLOC_ALLOCATOR})
-source_group("Memory manager\\dlmalloc\\wrapper" FILES ${MEM_MGR_DLMALLOC_WRAPPER})
 
 source_group("memory_monitor" FILES ${MEM_MONITOR})
 
@@ -100,7 +95,7 @@ add_library(xrCore SHARED ${COMPRESSOR_LZ} ${COMPRESSOR_LZO} ${COMPRESSOR_RT}
                           ${MATH_} ${MATH_CPU} ${MATH_EXT} ${MATH_EXT_BUFFER_VECTOR}
                           ${MATH_STLEXT}
                           
-                          ${MEM_MGR} ${MEM_MGR_DLMALLOC_ALLOCATOR} ${MEM_MGR_DLMALLOC_WRAPPER}
+                          ${MEM_MGR}
                           
                           ${MEM_MONITOR}
                           

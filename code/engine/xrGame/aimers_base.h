@@ -33,7 +33,7 @@ protected:
                          Fvector object_direction, Fmatrix& result);
     void aim_at_direction(Fvector const& bone_position, Fvector const& object_position,
                           Fvector const& object_direction, Fmatrix& result);
-    static void _BCL callback(CBoneInstance* bone);
+    static void callback(CBoneInstance* bone);
 
 protected:
     Fmatrix m_start_transform;

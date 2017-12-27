@@ -97,7 +97,7 @@ public:
     virtual BOOL Load_GameSpecific_After() { return TRUE; };  // after object loading
     virtual void Load_GameSpecific_CFORM(CDB::TRI* T, u32 count) = 0;
 
-    virtual void _BCL OnFrame(void);
+    virtual void OnFrame(void);
     virtual void OnRender(void);
 
     virtual shared_str OpenDemoFile(LPCSTR demo_file_name) = 0;
