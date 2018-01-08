@@ -43,45 +43,12 @@ MODEL::~MODEL() {
     verts_count = 0;
 }
 
-struct BTHREAD_params {
-    MODEL* M;
-    Fvector* V;
-    int Vcnt;
-    TRI* T;
-    int Tcnt;
-    build_callback* BC;
-    void* BCP;
-};
-
-void MODEL::build_thread(void* params) {
-    _initialize_cpu_thread();
-    FPU::m64r();
-    BTHREAD_params P = *((BTHREAD_params*)params);
-    std::lock_guard<std::recursive_mutex> lock(P.M->cs);
-    P.M->build_internal(P.V, P.Vcnt, P.T, P.Tcnt, P.BC, P.BCP);
-    P.M->status = S_READY;
-    // Msg						("* xrCDB: cform build completed, memory usage: %d
-    // K",P.M->memory()/1024);
-}
-
 void MODEL::build(Fvector* V, int Vcnt, TRI* T, int Tcnt, build_callback* bc, void* bcp) {
     R_ASSERT(S_INIT == status);
     R_ASSERT((Vcnt >= 4) && (Tcnt >= 2));
 
-    _initialize_cpu_thread();
-#ifdef _EDITOR
-    build_internal(V, Vcnt, T, Tcnt, bc, bcp);
-#else
-    if (!strstr(Core.Params, "-mt_cdb")) {
-        build_internal(V, Vcnt, T, Tcnt, bc, bcp);
-        status = S_READY;
-    } else {
-        BTHREAD_params P = { this, V, Vcnt, T, Tcnt, bc, bcp };
-        thread_spawn(build_thread, "CDB-construction", 0, &P);
-        while (S_INIT == status)
-            Sleep(5);
-    }
-#endif
+	build_internal(V, Vcnt, T, Tcnt, bc, bcp);
+	status = S_READY;
 }
 
 void MODEL::build_internal(Fvector* V, int Vcnt, TRI* T, int Tcnt, build_callback* bc, void* bcp) {

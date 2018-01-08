@@ -8,10 +8,6 @@
 #include "xrEngine/xr_object.h"
 #include "xrRenderCommon/lighttrack.h"
 
-#ifndef _EDITOR
-#include "xrCPU_Pipe/ttapi.h"
-#endif
-
 // tir2.xrdemo		-> 45.2
 // tir2.xrdemo		-> 61.8
 

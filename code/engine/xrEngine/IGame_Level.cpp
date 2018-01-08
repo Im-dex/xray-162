@@ -128,10 +128,6 @@ BOOL IGame_Level::Load(u32 dwNum) {
     return TRUE;
 }
 
-#ifndef _EDITOR
-#include "../xrCPU_Pipe/ttapi.h"
-#endif
-
 void IGame_Level::OnRender() {
 //	if (_abs(Device.fTimeDelta)<EPS_S) return;
 

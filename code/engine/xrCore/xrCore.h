@@ -9,7 +9,6 @@
 //#define BENCHMARK_BUILD
 
 #ifdef BENCHMARK_BUILD
-#define BENCH_SEC_CALLCONV __stdcall
 #define BENCH_SEC_SCRAMBLEVTBL1 \
     virtual int GetFlags() { return 1; }
 #define BENCH_SEC_SCRAMBLEVTBL2 \
@@ -20,7 +19,6 @@
 #define BENCH_SEC_SCRAMBLEMEMBER1 float m_fSrambleMember1;
 #define BENCH_SEC_SCRAMBLEMEMBER2 float m_fSrambleMember2;
 #else //	BENCHMARK_BUILD
-#define BENCH_SEC_CALLCONV
 #define BENCH_SEC_SCRAMBLEVTBL1
 #define BENCH_SEC_SCRAMBLEVTBL2
 #define BENCH_SEC_SCRAMBLEVTBL3
@@ -131,7 +129,7 @@
 #include <filesystem>
 #include <cinttypes>
 #include <chrono>
-
+#include <thread>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -162,7 +160,6 @@ using namespace std::string_view_literals;
 
 #include "clsid.h"
 #include "xrMemory.h"
-#include "xrDebug.h"
 
 #include "_stl_extensions.h"
 #include "xrsharedmem.h"

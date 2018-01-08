@@ -1,20 +1,6 @@
-#ifndef _TTAPI_H_INCLUDED_
-#define _TTAPI_H_INCLUDED_
+#pragma once
 
-#include <windows.h>
-
-/*
-        Trivial (and dumb) Threads API
-*/
-
-//#define _GPA_ENABLED
-
-#ifdef _GPA_ENABLED
-#include <tal.h>
-#endif // _GPA_ENABLED
-
-typedef VOID (*PTTAPI_WORKER_FUNC)(LPVOID lpWorkerParameters);
-typedef PTTAPI_WORKER_FUNC LPPTTAPI_WORKER_FUNC;
+#include "thread_pool.h"
 
 #ifdef XRCPU_PIPE_EXPORTS
 #define TTAPI __declspec(dllexport)
@@ -22,24 +8,4 @@ typedef PTTAPI_WORKER_FUNC LPPTTAPI_WORKER_FUNC;
 #define TTAPI __declspec(dllimport)
 #endif // XRCPU_PIPE_EXPORTS
 
-extern "C" {
-
-// Initializes subsystem
-// Returns zero for error, and number of workers on success
-DWORD TTAPI ttapi_Init(processor_info* ID);
-
-// Destroys subsystem
-VOID TTAPI ttapi_Done();
-
-// Return number of workers
-DWORD TTAPI ttapi_GetWorkersCount();
-
-// Adds new task
-// No more than TTAPI_HARDCODED_THREADS should be added
-VOID TTAPI ttapi_AddWorker(LPPTTAPI_WORKER_FUNC lpWorkerFunc, LPVOID lpvWorkerFuncParams);
-
-// Runs and wait for all workers to complete job
-VOID TTAPI ttapi_RunAllWorkers();
-}
-
-#endif // _TTAPI_H_INCLUDED_
+extern ThreadPool TTAPI ttapi;

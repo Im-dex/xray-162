@@ -53,8 +53,6 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
 
         Memory._initialize(strstr(Params, "-mem_debug") ? TRUE : FALSE);
 
-        DUMP_PHASE;
-
         InitLog();
         _initialize_cpu();
 

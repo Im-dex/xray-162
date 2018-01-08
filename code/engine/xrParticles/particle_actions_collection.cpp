@@ -1600,7 +1600,7 @@ void PATurbulence::Execute(ParticleEffect* effect, const float dt, float& tm_max
     if (!p_cnt)
         return;
 
-    u32 nWorkers = ttapi_GetWorkersCount();
+    size_t nWorkers = ttapi.threads.size();
 
     if (p_cnt < nWorkers * 20)
         nWorkers = 1;
@@ -1627,11 +1627,10 @@ void PATurbulence::Execute(ParticleEffect* effect, const float dt, float& tm_max
         tesParams[i].frequency = frequency;
         tesParams[i].octaves = octaves;
         tesParams[i].magnitude = magnitude;
-
-        ttapi_AddWorker(PATurbulenceExecuteStream, (LPVOID)&tesParams[i]);
+        ttapi.threads[i]->addJob([=] { PATurbulenceExecuteStream((void*)&tesParams[i]); });
     }
 
-    ttapi_RunAllWorkers();
+    ttapi.wait();
 }
 
 #else

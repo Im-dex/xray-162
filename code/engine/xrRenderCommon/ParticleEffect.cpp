@@ -265,9 +265,6 @@ inline void fsincos(const float angle, float& sine, float& cosine) {
 IC void FillSprite(FVF::LIT*& pv, const Fvector& T, const Fvector& R, const Fvector& pos,
                    const Fvector2& lt, const Fvector2& rb, float r1, float r2, u32 clr, float sina,
                    float cosa) {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("FillSprite()");
-#endif // _GPA_ENABLED
 
     __m128 Vr, Vt, _T, _R, _pos, _zz, _sa, _ca, a, b, c, d;
 
@@ -325,9 +322,6 @@ IC void FillSprite(FVF::LIT*& pv, const Fvector& T, const Fvector& R, const Fvec
 
 IC void FillSprite(FVF::LIT*& pv, const Fvector& pos, const Fvector& dir, const Fvector2& lt,
                    const Fvector2& rb, float r1, float r2, u32 clr, float sina, float cosa) {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("FillSpriteTransform()");
-#endif // _GPA_ENABLED
 
     const Fvector& T = dir;
     Fvector R;
@@ -401,14 +395,7 @@ inline void magnitude_sse(Fvector& vec, float& res) {
     _mm_store_ss((float*)&res, tv);
 }
 
-void ParticleRenderStream(LPVOID lpvParams) {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("ParticleRenderStream()");
-
-    TAL_ID rtID = TAL_MakeID(1, Core.dwFrame, 0);
-    TAL_AddRelationThis(TAL_RELATION_IS_CHILD_OF, rtID);
-#endif // _GPA_ENABLED
-
+void ParticleRenderStream(void* lpvParams) {
     float sina = 0.0f, cosa = 0.0f;
     DWORD angle = 0xFFFFFFFF;
 
@@ -442,11 +429,11 @@ void ParticleRenderStream(LPVOID lpvParams) {
         float r_x = m.size.x * 0.5f;
         float r_y = m.size.y * 0.5f;
         float speed = 0.0f;
-        BOOL speed_calculated = FALSE;
+        bool speed_calculated = false;
 
         if (pPE.m_Def->m_Flags.is(CPEDef::dfVelocityScale)) {
             magnitude_sse(m.vel, speed);
-            speed_calculated = TRUE;
+            speed_calculated = true;
             r_x += speed * pPE.m_Def->m_VelocityScale.x;
             r_y += speed * pPE.m_Def->m_VelocityScale.y;
         }
@@ -514,25 +501,19 @@ void ParticleRenderStream(LPVOID lpvParams) {
 }
 
 void CParticleEffect::Render(float) {
-#ifdef _GPA_ENABLED
-    TAL_SCOPED_TASK_NAMED("CParticleEffect::Render()");
-#endif // _GPA_ENABLED
-
     u32 dwOffset, dwCount;
     // Get a pointer to the particles in gp memory
     PAPI::Particle* particles;
     u32 p_cnt;
     ParticleManager()->GetParticles(m_HandleEffect, particles, p_cnt);
 
-    if (p_cnt) 
-	{
-        if (m_Def && m_Def->m_Flags.is(CPEDef::dfSprite)) 
-		{
+    if (p_cnt) {
+        if (m_Def && m_Def->m_Flags.is(CPEDef::dfSprite)) {
             FVF::LIT* pv_start =
                 (FVF::LIT*)RCache.Vertex.Lock(p_cnt * 4 * 4, geom->vb_stride, dwOffset);
             FVF::LIT* pv = pv_start;
 
-            u32 nWorkers = ttapi_GetWorkersCount();
+            size_t nWorkers = ttapi.threads.size();
 
             if (p_cnt < nWorkers * 20)
                 nWorkers = 1;
@@ -554,10 +535,10 @@ void CParticleEffect::Render(float) {
                 prsParams[i].p_to = (i == (nWorkers - 1)) ? p_cnt : (prsParams[i].p_from + nStep);
                 prsParams[i].particles = particles;
                 prsParams[i].pPE = this;
-                ttapi_AddWorker(ParticleRenderStream, (LPVOID)&prsParams[i]);
+                ttapi.threads[i]->addJob([=] { ParticleRenderStream((void*)&prsParams[i]); });
             }
 
-            ttapi_RunAllWorkers();
+            ttapi.wait();
 
             dwCount = p_cnt << 2;
 

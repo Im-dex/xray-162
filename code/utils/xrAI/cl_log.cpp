@@ -109,7 +109,8 @@ void Phase(const char* phase_name) {
 }
 
 HWND logWindow = 0;
-void logThread(void* dummy) {
+void logThread() {
+    set_current_thread_name("log-update");
     SetProcessPriorityBoost(GetCurrentProcess(), TRUE);
 
     logWindow =
