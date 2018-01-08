@@ -90,12 +90,7 @@ bool file_handle_internal(const char* file_name, size_t& size, int& file_handle)
 }
 
 void* FileDownload(const char* file_name, const int& file_handle, size_t& file_size) {
-    void* buffer = Memory.mem_alloc(file_size
-#ifdef DEBUG_MEMORY_NAME
-                                    ,
-                                    "FILE in memory"
-#endif // DEBUG_MEMORY_NAME
-    );
+    void* buffer = xr_malloc(file_size);
 
     const auto r_bytes = _read(file_handle, buffer, file_size);
     R_ASSERT3(file_size == static_cast<size_t>(r_bytes), "can't read from file : ", file_name);
@@ -165,19 +160,9 @@ void CMemoryWriter::w(const void* ptr, const size_t count) {
         while (mem_size <= (position + count))
             mem_size *= 2;
         if (!data)
-            data = static_cast<u8*>(Memory.mem_alloc(mem_size
-#ifdef DEBUG_MEMORY_NAME
-                                           ,
-                                           "CMemoryWriter - storage"
-#endif // DEBUG_MEMORY_NAME
-            ));
+            data = static_cast<u8*>(xr_malloc(mem_size));
         else
-            data = static_cast<u8*>(Memory.mem_realloc(data, mem_size
-#ifdef DEBUG_MEMORY_NAME
-                                             ,
-                                             "CMemoryWriter - storage"
-#endif // DEBUG_MEMORY_NAME
-            ));
+            data = static_cast<u8*>(xr_realloc(data, mem_size));
     }
     std::memcpy(data + position, ptr, count);
     position += count;

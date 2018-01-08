@@ -121,10 +121,6 @@ str_value* str_container::dock(str_c value) {
 
     std::lock_guard<decltype(cs)> lock(cs);
 
-#ifdef DEBUG_MEMORY_MANAGER
-    Memory.stat_strdock++;
-#endif // DEBUG_MEMORY_MANAGER
-
     str_value* result = 0;
 
     // calc len
@@ -153,12 +149,7 @@ str_value* str_container::dock(str_c value) {
 #endif // DEBUG
     ) {
 
-        result = (str_value*)Memory.mem_alloc(HEADER + s_len_with_zero
-#ifdef DEBUG_MEMORY_NAME
-                                              ,
-                                              "storage: sstring"
-#endif // DEBUG_MEMORY_NAME
-        );
+        result = (str_value*)xr_malloc(HEADER + s_len_with_zero);
 
 #ifdef DEBUG
         static int num_leaked_string = 0;
@@ -240,10 +231,6 @@ str_value* str_container::dock(str_c value) {
 // 		g_find_chunk_counter.flush();
 // 	}
 
-#ifdef DEBUG_MEMORY_MANAGER
-    Memory.stat_strdock++;
-#endif // DEBUG_MEMORY_MANAGER
-
     str_value* result = 0;
 
     // calc len
@@ -282,12 +269,7 @@ str_value* str_container::dock(str_c value) {
         // Insert string
         //		DUMP_PHASE;
 
-        result = (str_value*)Memory.mem_alloc(HEADER + s_len_with_zero
-#ifdef DEBUG_MEMORY_NAME
-                                              ,
-                                              "storage: sstring"
-#endif // DEBUG_MEMORY_NAME
-        );
+        result = (str_value*)xr_malloc(HEADER + s_len_with_zero);
 
         static int num11 = 0;
 
