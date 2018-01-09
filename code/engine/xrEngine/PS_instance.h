@@ -8,8 +8,8 @@
 class ENGINE_API CPS_Instance : public ISpatial, public ISheduled, public IRenderable {
     friend class IGame_Persistent;
 
-    template <bool _is_pm, typename T>
-    friend struct xr_special_free;
+    template <class T>
+    void xr_delete(T*& ptr);
 
 private:
     bool m_destroy_on_game_load;

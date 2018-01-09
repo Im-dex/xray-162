@@ -44,17 +44,3 @@ char* xr_strdup(const char* string) {
     std::memcpy(memory, string, len);
     return memory;
 }
-
-void* xrMemory::mem_alloc(size_t size) {
-    void* ptr = malloc(size);
-    return ptr;
-}
-
-void xrMemory::mem_free(void* ptr) {
-    free(ptr);
-}
-
-void* xrMemory::mem_realloc(void* ptr, size_t size) {
-    void* result = realloc(ptr, size);
-    return result;
-}
