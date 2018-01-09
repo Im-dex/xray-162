@@ -42,7 +42,7 @@ void type_motion::set_motion( IKinematicsAnimated* k, CInifile* ini, LPCSTR type
 edirection id_dir )
 {
         if( ini->line_exist( type, dir ) )
-                        anims[ u16( id_dir ) ] = xr_new<rnd_motion>()->setup( k, ini->r_string(
+                        anims[ u16( id_dir ) ] = new rnd_motion()->setup( k, ini->r_string(
 type, dir ) );
 }
 */
@@ -60,7 +60,7 @@ void type_motion::set_motion(IKinematicsAnimated* k, u16 id_motion, LPCSTR dir_a
     //_GetItem( dir_anim, 0, sdir, '-' );
     //_GetItem( dir_anim, 1, sanim, '-' );
     // u16( get_token_id ( motion_dirs, sdir  ) )
-    anims[id_motion] = xr_new<rnd_motion>()->setup(k, dir_anim);
+    anims[id_motion] = (new rnd_motion())->setup(k, dir_anim);
 }
 
 type_motion* type_motion::setup(IKinematicsAnimated* k, CInifile const* ini, LPCSTR section,

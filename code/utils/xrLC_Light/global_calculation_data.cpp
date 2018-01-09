@@ -28,7 +28,7 @@ extern void Surface_Init();
 void global_claculation_data::xrLoad() {
     string_path N;
     FS.update_path(N, "$game_data$", "shaders_xrlc.xr");
-    g_shaders_xrlc = xr_new<Shader_xrLC_LIB>();
+    g_shaders_xrlc = new Shader_xrLC_LIB();
     g_shaders_xrlc->Load(N);
 
     // Load CFORM
@@ -197,7 +197,7 @@ void global_claculation_data::read(INetReader& r) {
 
     g_lights.read(r);
     R_ASSERT(!g_shaders_xrlc);
-    g_shaders_xrlc = xr_new<Shader_xrLC_LIB>();
+    g_shaders_xrlc = new Shader_xrLC_LIB();
     r_pod_vector(r, g_shaders_xrlc->Library());
     r_pod(r, g_params);
     r_pod_vector(r, g_materials);

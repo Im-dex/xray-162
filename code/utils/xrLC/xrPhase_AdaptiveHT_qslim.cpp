@@ -112,7 +112,8 @@ void GSaveAsSMF					(LPCSTR fname)
                 xr_sprintf			(tmp,"c %f %f %f",h,h,h);
                 W->w_string		(tmp);
         }
-        
+        
+
         FS.w_close	(W);
 }
 
@@ -222,7 +223,7 @@ pBuild->L_static, LP_dont_rgb+LP_dont_sun,0); V->C._set			(vC);
         }
 
         // prepare model
-        MxStdModel* mdl			= xr_new<MxStdModel>(g_vertices.size(),g_faces.size());
+        MxStdModel* mdl			= new MxStdModel(g_vertices.size(),g_faces.size());
 
         // transfer vertices
         mdl->color_binding	(MX_PERVERTEX);
@@ -243,7 +244,7 @@ pBuild->L_static, LP_dont_rgb+LP_dont_sun,0); V->C._set			(vC);
         }
 
         // create and initialize qslim
-        MxPropSlim* slim		= xr_new<MxPropSlim>(mdl);
+        MxPropSlim* slim		= new MxPropSlim(mdl);
         slim->boundary_weight	= 1000.f;
         slim->compactness_ratio	= 0;
         slim->meshing_penalty	= 1000.f;
@@ -257,7 +258,8 @@ MX_PLACE_OPTIMAL; slim->weighting_policy	= MX_WEIGHT_AREA; slim->initialize		();
         mdl->compact_vertices	();
 
         GSaveAsSMF				(mdl,"hemi_simple_color.smf");
-        
+        
+
 
         xr_delete				(mdl);
         xr_delete				(slim);

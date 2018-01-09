@@ -241,7 +241,7 @@ static vecDW* HASH[HDIM_X + 1][HDIM_Z + 1];
 void hash_Initialize() {
     for (int i = 0; i <= HDIM_X; i++) {
         for (int j = 0; j < HDIM_Z; j++) {
-            HASH[i][j] = xr_new<vecDW>();
+            HASH[i][j] = new vecDW();
             HASH[i][j]->reserve(64);
         }
     }

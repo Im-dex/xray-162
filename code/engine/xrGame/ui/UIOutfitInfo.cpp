@@ -85,14 +85,14 @@ void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc) {
     CUIXmlInit::InitWindow(xml_doc, base_str, 0, this);
 
     string128 buf;
-    // m_caption = xr_new<CUIStatic>();
+    // m_caption = new CUIStatic();
     // AttachChild( m_caption );
     // m_caption->SetAutoDelete( true );
     // string128 buf;
     // strconcat( sizeof(buf), buf, base_str, ":caption" );
     // CUIXmlInit::InitStatic( xml_doc, buf, 0, m_caption );
 
-    m_Prop_line = xr_new<CUIStatic>();
+    m_Prop_line = new CUIStatic();
     AttachChild(m_Prop_line);
     m_Prop_line->SetAutoDelete(true);
     strconcat(sizeof(buf), buf, base_str, ":", "prop_line");
@@ -102,7 +102,7 @@ void CUIOutfitInfo::InitFromXml(CUIXml& xml_doc) {
     pos.set(0.0f, m_Prop_line->GetWndPos().y + m_Prop_line->GetWndSize().y);
 
     for (u32 i = 0; i < max_count; ++i) {
-        m_items[i] = xr_new<CUIOutfitImmunity>();
+        m_items[i] = new CUIOutfitImmunity();
         m_items[i]->InitFromXml(xml_doc, base_str, i);
         AttachChild(m_items[i]);
         m_items[i]->SetWndPos(pos);

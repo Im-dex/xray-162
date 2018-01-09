@@ -156,7 +156,7 @@ void CCustomZone::Load(LPCSTR section) {
                          pSettings->r_bool(section, "idle_particles_dont_stop"));
 
     if (pSettings->line_exist(section, "postprocess")) {
-        m_actor_effector = xr_new<CZoneEffector>();
+        m_actor_effector = new CZoneEffector();
         m_actor_effector->Load(pSettings->r_string(section, "postprocess"));
     };
 

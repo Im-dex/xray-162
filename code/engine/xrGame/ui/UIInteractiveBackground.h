@@ -63,7 +63,7 @@ void CUIInteractiveBackground<T>::InitState(IBState state, LPCSTR texture) {
     Fvector2 size = GetWndSize();
 
     if (!m_states[state]) {
-        m_states[state] = xr_new<T>();
+        m_states[state] = new T();
         m_states[state]->SetAutoDelete(true);
         AttachChild(m_states[state]);
     }

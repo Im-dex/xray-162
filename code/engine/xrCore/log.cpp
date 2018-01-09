@@ -153,7 +153,7 @@ LPCSTR log_name() { return (log_file_name); }
 
 void InitLog() {
     R_ASSERT(LogFile == NULL);
-    LogFile = xr_new<xr_vector<std::string>>();
+    LogFile = new xr_vector<std::string>();
     LogFile->reserve(1000);
 }
 

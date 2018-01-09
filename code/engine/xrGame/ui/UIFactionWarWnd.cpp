@@ -66,7 +66,8 @@ void CUIFactionWarWnd::Init()
         m_td_pos				= m_target_desc->GetWndPos();
 
         m_state_static			= UIHelper::CreateStatic( xml, "state_static", this );
-        
+        
+
         m_our_icon				= UIHelper::CreateStatic( xml, "static_our_icon",
 this ); m_our_icon_over			= UIHelper::CreateStatic( xml,
 "static_our_icon_over", this ); m_our_name				= UIHelper::CreateStatic(
@@ -74,7 +75,8 @@ xml, "static_our_name", this ); m_st_our_frac_info		= UIHelper::CreateStatic( xm
 "static_our_frac_info", this ); m_st_our_mem_count		= UIHelper::CreateStatic( xml,
 "static_our_mem_count", this ); m_st_our_resource		= UIHelper::CreateStatic( xml,
 "static_our_resource", this );
-        
+        
+
         m_pb_our_state			= UIHelper::CreateProgressBar( xml,
 "progress_our_state", this ); m_pb_our_mem_count		= UIHelper::CreateProgressBar( xml,
 "progress_our_mem_count", this ); m_pb_our_resource		= UIHelper::CreateProgressBar( xml,
@@ -101,7 +103,7 @@ this ); m_pb_enemy_resource		= UIHelper::CreateProgressBar( xml,
 ); m_static_line_right		= UIHelper::CreateFrameLine( xml, "static_line_right", this );
 
         VERIFY( hint_wnd );
-        m_war_states_parent = xr_new<CUIWindow>();
+        m_war_states_parent = new CUIWindow();
         m_war_states_parent->SetAutoDelete( true );
         AttachChild( m_war_states_parent );
         Fvector2 pos;
@@ -111,11 +113,12 @@ this ); m_pb_enemy_resource		= UIHelper::CreateProgressBar( xml,
 
         for ( u8 i = 0; i < max_war_state; ++i )
         {
-                m_war_state[i] = xr_new<UIWarState>();
+                m_war_state[i] = new UIWarState();
                 m_war_state[i]->InitXML( xml, "static_vs_state", m_war_states_parent );
                 m_war_state[i]->set_hint_wnd( hint_wnd );
         }
-        
+        
+
         float dx = xml.ReadAttribFlt( "static_vs_state", 0, "dx" );
         m_war_states_dx = dx;
         m_war_states_xcenter = xml.ReadAttribFlt( "static_vs_state", 0, "xcenter", 511.0f );
@@ -192,7 +195,8 @@ void CUIFactionWarWnd::ShowInfo( bool status )
         m_pb_enemy_resource->Show( status );
 
         m_war_states_parent->Show( status );
-        
+        
+
         for ( u8 i = 0; i < max_bonuce; ++i )
         {
                 m_our_bonuces[i]->Show( status );
@@ -239,8 +243,10 @@ bool CUIFactionWarWnd::InitFactions()
         {
                 return false;
         }
-        
-        
+        
+
+        
+
         /*
         shared_str const& actor_team = Actor()->CharacterInfo().Community().id();
 
@@ -278,7 +284,8 @@ void CUIFactionWarWnd::UpdateInfo()
         m_max_member_count = get_max_member_count();
         m_max_resource     = get_max_resource();
         m_max_power        = get_max_power();
-                
+                
+
         m_our_faction.update_info();
 
         m_target_caption->SetText( m_our_faction.get_target() );
@@ -324,10 +331,12 @@ xr_strlen( m_our_faction.get_name() )==0 )
 
         m_pb_enemy_mem_count->SetRange( 0.0f, (float)m_max_member_count );
         m_pb_enemy_mem_count->SetProgressPos( (float)m_enemy_faction.member_count );
-        
+        
+
         m_pb_enemy_resource->SetRange( 0.0f, m_max_resource );
         m_pb_enemy_resource->SetProgressPos(  m_enemy_faction.resource );
-        
+        
+
         set_amount_enemy_bonus( m_enemy_faction.bonus );
 }
 

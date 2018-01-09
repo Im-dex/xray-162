@@ -7,11 +7,10 @@
 
 #include "../xrCore/xrCore.h"
 
-#define CNEW(type) new (xr_alloc<type>(1)) type
-#define CDELETE(ptr) xr_delete(ptr)
-#define CFREE(ptr) xr_free(ptr)
-#define CMALLOC(size) xr_malloc(size)
-#define CALLOC(type, count) xr_alloc<type>(count)
+#define CNEW(type) new type
+#define CDELETE(ptr) delete ptr
+#define CFREE(ptr) delete[] ptr
+#define CALLOC(type, count) new type[count]
 
 #define ENGINE_API
 #include "opcode.h"

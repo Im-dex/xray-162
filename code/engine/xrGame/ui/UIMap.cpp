@@ -28,7 +28,7 @@ void CUICustomMap::Initialize(std::string name, LPCSTR sh_name) {
         // TODO: [imdex] use string_view
         strconcat(sizeof(fname), fname, name.c_str(), "\\level.ltx");
         FS.update_path(map_cfg_fn, "$game_levels$", fname);
-        levelIni = xr_new<CInifile>(map_cfg_fn);
+        levelIni = new CInifile(map_cfg_fn);
     }
 
     if (levelIni->section_exist("level_map")) {

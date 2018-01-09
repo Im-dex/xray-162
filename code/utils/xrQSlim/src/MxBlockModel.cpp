@@ -3,7 +3,8 @@
   MxBlockModel
 
   Copyright (C) 1998 Michael Garland.  See "COPYING.txt" for details.
-  
+  
+
   $Id: MxBlockModel.cxx,v 1.27 2000/11/20 20:36:38 garland Exp $
 
  ************************************************************************/
@@ -20,7 +21,7 @@
 
 MxBlockModel* MxBlockModel::clone(MxBlockModel* m) {
     if (!m)
-        m = xr_new<MxBlockModel>(vert_count(), face_count());
+        m = new MxBlockModel(vert_count(), face_count());
 
     unsigned int i;
 
@@ -175,7 +176,7 @@ void MxBlockModel::color_binding(unsigned char b) {
         if (colors)
             colors->reset();
         else
-            colors = xr_new<MxDynBlock<MxColor>>(size);
+            colors = new MxDynBlock<MxColor>(size);
         binding_mask |= MX_COLOR_MASK;
     }
 
@@ -194,7 +195,7 @@ void MxBlockModel::normal_binding(unsigned char b) {
         if (normals)
             normals->reset();
         else
-            normals = xr_new<MxDynBlock<MxNormal>>(size);
+            normals = new MxDynBlock<MxNormal>(size);
         binding_mask |= MX_NORMAL_MASK;
     }
 
@@ -209,7 +210,7 @@ void MxBlockModel::texcoord_binding(unsigned char b) {
     if (tcoords)
         tcoords->reset();
     else
-        tcoords = xr_new<MxDynBlock<MxTexCoord>>(size);
+        tcoords = new MxDynBlock<MxTexCoord>(size);
 
     tbinding = b;
 }

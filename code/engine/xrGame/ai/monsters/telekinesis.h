@@ -69,7 +69,7 @@ public:
     void remove_links(CObject* O);
 
 protected:
-    virtual CTelekineticObject* alloc_tele_object() { return xr_new<CTelekineticObject>(); }
+    virtual CTelekineticObject* alloc_tele_object() { return new CTelekineticObject(); }
 
 private:
     // обновление на шагах физики

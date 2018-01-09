@@ -63,7 +63,7 @@ void CLevelSpawnConstructor::init() {
     // TODO: [imdex] use string_view
     FS.update_path(file_name, "$game_levels$", m_level.name().c_str());
     xr_strcat(file_name, "\\");
-    m_level_graph = xr_new<CLevelGraph>(file_name);
+    m_level_graph = new CLevelGraph(file_name);
 
     // loading cross table
     // TODO: [imdex] use string_view
@@ -140,7 +140,7 @@ void CLevelSpawnConstructor::add_space_restrictor(CSE_ALifeDynamicObject* dynami
     if (!space_restrictor->m_flags.test(CSE_ALifeObject::flCheckForSeparator))
         return;
 
-    m_space_restrictors.push_back(xr_new<CSpaceRestrictorWrapper>(space_restrictor));
+    m_space_restrictors.push_back(new CSpaceRestrictorWrapper(space_restrictor));
 }
 
 void CLevelSpawnConstructor::add_level_changer(CSE_Abstract* abstract) {
@@ -159,7 +159,7 @@ void CLevelSpawnConstructor::add_free_object(CSE_Abstract* abstract) {
 //{
 //	SPAWN_GRPOUP_OBJECTS::iterator	I = m_spawn_objects.find(group_section);
 //	if (I == m_spawn_objects.end()) {
-//		xr_vector<CSE_Abstract*>	*temp = xr_new<GROUP_OBJECTS>();
+//		xr_vector<CSE_Abstract*>	*temp = new GROUP_OBJECTS();
 //		temp->clear					();
 //		temp->push_back				(abstract);
 //		m_spawn_objects.insert		(std::make_pair(group_section,temp));
@@ -448,7 +448,7 @@ public:
 void CLevelSpawnConstructor::generate_artefact_spawn_positions() {
     // create graph engine
     VERIFY(!m_graph_engine);
-    m_graph_engine = xr_new<CGraphEngine>(m_level_graph->header().vertex_count());
+    m_graph_engine = new CGraphEngine(m_level_graph->header().vertex_count());
 
     xr_vector<u32> l_tpaStack;
     SPAWN_STORAGE zones;

@@ -190,7 +190,7 @@ void CActor::on_weapon_shot_start(CWeapon* weapon) {
         smart_cast<CCameraShotEffector*>(Cameras().GetCamEffector(eCEShot));
     if (!effector) {
         effector = (CCameraShotEffector*)Cameras().AddCamEffector(
-            xr_new<CCameraShotEffector>(camera_recoil));
+            new CCameraShotEffector(camera_recoil));
     } else {
         if (effector->m_WeaponID != weapon->ID()) {
             effector->Initialize(camera_recoil);

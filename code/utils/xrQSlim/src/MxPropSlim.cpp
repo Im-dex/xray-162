@@ -248,7 +248,7 @@ void MxPropSlim::compute_face_quadric(MxFaceID i, MxQuadric& Q) {
 
 void MxPropSlim::collect_quadrics() {
     for (unsigned int j = 0; j < quadric_count(); j++)
-        __quadrics[j] = xr_new<MxQuadric>(dim());
+        __quadrics[j] = new MxQuadric(dim());
 
     for (MxFaceID i = 0; i < m->face_count(); i++) {
         MxFace& f = m->face(i);
@@ -475,7 +475,7 @@ bool MxPropSlim::decimate(unsigned int target, float max_error, void* cb_params)
 // This is *very* close to the code in MxEdgeQSlim
 
 void MxPropSlim::create_edge(MxVertexID i, MxVertexID j) {
-    edge_info* info = xr_new<edge_info>(dim());
+    edge_info* info = new edge_info(dim());
 
     edge_links(i).add(info);
     edge_links(j).add(info);

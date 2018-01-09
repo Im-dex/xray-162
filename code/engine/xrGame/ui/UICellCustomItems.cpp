@@ -178,7 +178,7 @@ bool CUIWeaponCellItem::is_launcher() {
 void CUIWeaponCellItem::CreateIcon(eAddonType t) {
     if (m_addons[t])
         return;
-    m_addons[t] = xr_new<CUIStatic>();
+    m_addons[t] = new CUIStatic();
     m_addons[t]->SetAutoDelete(true);
     AttachChild(m_addons[t]);
     m_addons[t]->SetShader(InventoryUtilities::GetEquipmentIconsShader());
@@ -343,7 +343,7 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem() {
     CUIStatic* s = NULL;
 
     if (GetIcon(eSilencer)) {
-        s = xr_new<CUIStatic>();
+        s = new CUIStatic();
         s->SetAutoDelete(true);
         s->SetShader(InventoryUtilities::GetEquipmentIconsShader());
         InitAddon(s, *object()->GetSilencerName(), m_addon_offset[eSilencer], false);
@@ -352,7 +352,7 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem() {
     }
 
     if (GetIcon(eScope)) {
-        s = xr_new<CUIStatic>();
+        s = new CUIStatic();
         s->SetAutoDelete(true);
         s->SetShader(InventoryUtilities::GetEquipmentIconsShader());
         InitAddon(s, *object()->GetScopeName(), m_addon_offset[eScope], false);
@@ -361,7 +361,7 @@ CUIDragItem* CUIWeaponCellItem::CreateDragItem() {
     }
 
     if (GetIcon(eLauncher)) {
-        s = xr_new<CUIStatic>();
+        s = new CUIStatic();
         s->SetAutoDelete(true);
         s->SetShader(InventoryUtilities::GetEquipmentIconsShader());
         InitAddon(s, *object()->GetGrenadeLauncherName(), m_addon_offset[eLauncher], false);

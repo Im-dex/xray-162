@@ -7,7 +7,7 @@
 #include "../../xrEngine/xr_input.h"
 
 CUICustomEdit::CUICustomEdit() {
-    m_editor_control = xr_new<text_editor::line_edit_control>((u32)EDIT_BUF_SIZE);
+    m_editor_control = new text_editor::line_edit_control((u32)EDIT_BUF_SIZE);
     Init((u32)EDIT_BUF_SIZE);
 
     TextItemControl()->SetVTextAlignment(valCenter);

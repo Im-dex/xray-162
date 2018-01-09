@@ -81,7 +81,7 @@ void CWeaponStatMgun::AddShotEffector() {
 
         if (!S)
             S = (CCameraShotEffector*)OwnerActor()->Cameras().AddCamEffector(
-                xr_new<CCameraShotEffector>(camera_recoil));
+                new CCameraShotEffector(camera_recoil));
         R_ASSERT(S);
         S->Initialize(camera_recoil);
         S->Shot2(0.01f);

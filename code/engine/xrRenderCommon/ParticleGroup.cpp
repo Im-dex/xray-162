@@ -32,7 +32,7 @@ void CPGDef::Clone(CPGDef* source) {
     m_Effects.resize(source->m_Effects.size(), 0);
     for (EffectIt d_it = m_Effects.begin(), s_it = source->m_Effects.begin();
          s_it != source->m_Effects.end(); s_it++, d_it++)
-        *d_it = xr_new<SEffect>(**s_it);
+        *d_it = new SEffect(**s_it);
 }
 #endif
 
@@ -62,7 +62,7 @@ BOOL CPGDef::Load(IReader& F) {
     if (F.find_chunk(PGD_CHUNK_EFFECTS)) {
         m_Effects.resize(F.r_u32());
         for (auto it = m_Effects.begin(); it != m_Effects.end(); it++) {
-            *it = xr_new<SEffect>();
+            *it = new SEffect();
             F.r_stringZ((*it)->m_EffectName);
             F.r_stringZ((*it)->m_OnPlayChildName);
             F.r_stringZ((*it)->m_OnBirthChildName);
@@ -87,7 +87,7 @@ BOOL CPGDef::Load2(CInifile& ini) {
     u32 counter = 0;
     string256 buff;
     for (auto it = m_Effects.begin(); it != m_Effects.end(); ++it, ++counter) {
-        *it = xr_new<SEffect>();
+        *it = new SEffect();
 
         xr_sprintf(buff, sizeof(buff), "effect_%04d", counter);
 

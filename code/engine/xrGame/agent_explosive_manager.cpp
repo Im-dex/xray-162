@@ -61,7 +61,7 @@ void CAgentExplosiveManager::register_explosive(const CExplosive* explosive,
         interval = missile->destroy_time() - Device.dwTimeGlobal + AFTER_GRENADE_DESTROYED_INTERVAL;
 
     object().location().add(
-        xr_new<CDangerObjectLocation>(game_object, Device.dwTimeGlobal, interval, GRENADE_RADIUS));
+        new CDangerObjectLocation(game_object, Device.dwTimeGlobal, interval, GRENADE_RADIUS));
 }
 
 bool CAgentExplosiveManager::process_explosive(CMemberOrder& member) {

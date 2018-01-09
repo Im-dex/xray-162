@@ -171,5 +171,5 @@ void CAI_PseudoDog::debug_on_key(int key) {}
 #endif
 
 IStateManagerBase* CAI_PseudoDog::create_state_manager() {
-    return xr_new<CStateManagerPseudodog>(this);
+    return new CStateManagerPseudodog(this);
 }

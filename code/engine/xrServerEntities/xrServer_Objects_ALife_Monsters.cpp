@@ -1047,7 +1047,7 @@ CSE_ALifeMonsterAbstract::CSE_ALifeMonsterAbstract(LPCSTR caSection)
 CSE_ALifeMonsterAbstract::~CSE_ALifeMonsterAbstract() { xr_delete(m_brain); }
 
 CALifeMonsterBrain* CSE_ALifeMonsterAbstract::create_brain() {
-    return (xr_new<CALifeMonsterBrain>(this));
+    return (new CALifeMonsterBrain(this));
 }
 
 CSE_Abstract* CSE_ALifeMonsterAbstract::init() {
@@ -1758,7 +1758,7 @@ CSE_ALifeHumanAbstract::CSE_ALifeHumanAbstract(LPCSTR caSection)
 CSE_ALifeHumanAbstract::~CSE_ALifeHumanAbstract() {}
 
 CALifeMonsterBrain* CSE_ALifeHumanAbstract::create_brain() {
-    m_brain = xr_new<CALifeHumanBrain>(this);
+    m_brain = new CALifeHumanBrain(this);
     return (m_brain);
 }
 
@@ -1878,7 +1878,7 @@ CSE_Abstract* CSE_ALifeOnlineOfflineGroup::init() {
     inherited2::init();
 
 #ifdef XRGAME_EXPORTS
-    m_brain = xr_new<CALifeOnlineOfflineGroupBrain>(this);
+    m_brain = new CALifeOnlineOfflineGroupBrain(this);
 #endif
 
     VERIFY(m_members.empty());

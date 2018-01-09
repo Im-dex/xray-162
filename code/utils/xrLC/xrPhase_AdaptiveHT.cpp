@@ -114,7 +114,8 @@ void GSaveAsSMF					(LPCSTR fname)
                 xr_sprintf			(tmp,"c %f %f %f",h,h,h);
                 W->w_string		(tmp);
         }
-        
+        
+
         FS.w_close	(W);
 }
 */
@@ -200,10 +201,10 @@ void CBuild::xrPhase_AdaptiveHT() {
         get_intervals(8, lc_global_data()->g_vertices().size(), threads, stride, rest);
         for (u32 thID = 0; thID < threads; thID++)
             precalc_base_hemi.start(
-                xr_new<CPrecalcBaseHemiThread>(thID, thID * stride, thID * stride + stride));
+                new CPrecalcBaseHemiThread(thID, thID * stride, thID * stride + stride));
         if (rest > 0)
             precalc_base_hemi.start(
-                xr_new<CPrecalcBaseHemiThread>(threads, threads * stride, threads * stride + rest));
+                new CPrecalcBaseHemiThread(threads, threads * stride, threads * stride + rest));
         precalc_base_hemi.wait();
         // precalc_base_hemi
     }

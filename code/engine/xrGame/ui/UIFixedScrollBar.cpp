@@ -6,7 +6,7 @@
 #include "UIXmlInit.h"
 
 CUIFixedScrollBar::CUIFixedScrollBar() {
-    m_ScrollBox = xr_new<CUI3tButton>();
+    m_ScrollBox = new CUI3tButton();
     m_ScrollBox->SetAutoDelete(true);
     AttachChild(m_ScrollBox);
 }

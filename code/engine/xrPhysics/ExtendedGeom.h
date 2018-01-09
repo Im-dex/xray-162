@@ -37,7 +37,7 @@ public:
         if (next) {
             next->Add(c);
         } else {
-            next = xr_new<CObjectContactCallback>(c);
+            next = new CObjectContactCallback(c);
         }
     }
     bool HasCallback(ObjectContactCallbackFun* c) {
@@ -154,7 +154,7 @@ IC IPhysicsShellHolder* retrieveRefObject(dGeomID geom) {
 IC void dGeomCreateUserData(dxGeom* geom) {
     if (!geom)
         return;
-    dGeomSetData(geom, xr_new<dxGeomUserData>());
+    dGeomSetData(geom, new dxGeomUserData());
     (dGeomGetUserData(geom))->pushing_neg = false;
     (dGeomGetUserData(geom))->pushing_b_neg = false;
     (dGeomGetUserData(geom))->b_static_colide = true;
@@ -215,7 +215,7 @@ IC void dGeomUserDataSetObjectContactCallback(dxGeom* geom,
                                               ObjectContactCallbackFun* obj_callback) {
     xr_delete((dGeomGetUserData(geom))->object_callbacks);
     if (obj_callback)
-        (dGeomGetUserData(geom))->object_callbacks = xr_new<CObjectContactCallback>(obj_callback);
+        (dGeomGetUserData(geom))->object_callbacks = new CObjectContactCallback(obj_callback);
 }
 
 IC void dGeomUserDataAddObjectContactCallback(dxGeom* geom,

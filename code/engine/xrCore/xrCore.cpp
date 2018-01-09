@@ -60,7 +60,7 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
 
         rtc_initialize();
 
-        xr_FS = xr_new<CLocatorAPI>();
+        xr_FS = new CLocatorAPI();
         //.		R_ASSERT			(co_res==S_OK);
     }
     if (init_fs) {

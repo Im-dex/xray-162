@@ -126,9 +126,9 @@ LRESULT CScriptDebugger::DebugMessage(UINT nMsg, WPARAM wParam, LPARAM lParam) {
 BOOL CScriptDebugger::Active() { return m_bIdePresent; }
 
 CScriptDebugger::CScriptDebugger() {
-    m_threads = xr_new<CDbgScriptThreads>(this);
-    m_callStack = xr_new<CScriptCallStack>(this);
-    m_lua = xr_new<CDbgLuaHelper>(this);
+    m_threads = new CDbgScriptThreads(this);
+    m_callStack = new CScriptCallStack(this);
+    m_lua = new CDbgLuaHelper(this);
 
     std::memset(m_curr_connected_mslot, 0, sizeof(m_curr_connected_mslot));
     //	m_pDebugger					= this;

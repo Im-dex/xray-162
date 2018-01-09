@@ -15,14 +15,14 @@ static VIPM_Result* g_pResult = 0;
 ETOOLS_API void __stdcall VIPM_Init() {
     //.	OutputDebugString("VIPM_INIT-------------------\n");
     R_ASSERT2(0 == g_pObject, "VIPM already in use!");
-    g_pObject = xr_new<Object>();
-    g_pResult = xr_new<VIPM_Result>();
+    g_pObject = new Object();
+    g_pResult = new VIPM_Result();
     g_pObject->iNumCollapses = 0;
     g_pObject->iCurSlidingWindowLevel = 0;
 }
 
 ETOOLS_API void __stdcall VIPM_AppendVertex(const Fvector3& p, const Fvector2& uv) {
-    MeshPt* pt = xr_new<MeshPt>(&g_pObject->CurPtRoot);
+    MeshPt* pt = new MeshPt(&g_pObject->CurPtRoot);
     g_ppTempPts.push_back(pt);
     pt->mypt.vPos = p;
     pt->mypt.fU = uv.x;
@@ -31,7 +31,7 @@ ETOOLS_API void __stdcall VIPM_AppendVertex(const Fvector3& p, const Fvector2& u
 }
 
 ETOOLS_API void __stdcall VIPM_AppendFace(u16 v0, u16 v1, u16 v2) {
-    xr_new<MeshTri>(g_ppTempPts[v0], g_ppTempPts[v1], g_ppTempPts[v2], &g_pObject->CurTriRoot,
+    new MeshTri(g_ppTempPts[v0], g_ppTempPts[v1], g_ppTempPts[v2], &g_pObject->CurTriRoot,
                     &g_pObject->CurEdgeRoot);
 }
 

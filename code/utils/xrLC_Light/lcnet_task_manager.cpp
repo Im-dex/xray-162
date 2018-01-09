@@ -65,7 +65,7 @@ net_execution* task_manager::receive_task(u8& pool_id, IAgent* agent, DWORD sess
 
     pool_lock.lock();
     if (pools[pool_id] == 0)
-        pools[pool_id] = xr_new<exec_pool>(this);
+        pools[pool_id] = new exec_pool(this);
     pool_lock.unlock();
     return pools[pool_id]->receive_task(agent, sessionId, inStream);
 }
@@ -185,7 +185,7 @@ void task_manager::add_task(net_execution* task) {
     std::lock_guard<decltype(pool_lock)> lock(pool_lock);
 
     if (!pools[current_pool])
-        pools[current_pool] = xr_new<exec_pool>(start, this);
+        pools[current_pool] = new exec_pool(start, this);
 
     pools[current_pool]->add_task(task);
 }

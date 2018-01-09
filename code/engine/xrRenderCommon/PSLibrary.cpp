@@ -149,14 +149,14 @@ bool CPSLibrary::Load2() {
 
         xr_sprintf(_path, sizeof(_path), "%s%s", p_path, p_name);
         if (0 == stricmp(p_ext, ".pe")) {
-            PS::CPEDef* def = xr_new<PS::CPEDef>();
+            PS::CPEDef* def = new PS::CPEDef();
             def->m_Name = _path;
             if (def->Load2(ini))
                 m_PEDs.push_back(def);
             else
                 xr_delete(def);
         } else if (0 == stricmp(p_ext, ".pg")) {
-            PS::CPGDef* def = xr_new<PS::CPGDef>();
+            PS::CPGDef* def = new PS::CPGDef();
             def->m_Name = _path;
             if (def->Load2(ini))
                 m_PGDs.push_back(def);
@@ -199,7 +199,7 @@ bool CPSLibrary::Load(const char* nm) {
     if (OBJ) {
         IReader* O = OBJ->open_chunk(0);
         for (int count = 1; O; count++) {
-            PS::CPEDef* def = xr_new<PS::CPEDef>();
+            PS::CPEDef* def = new PS::CPEDef();
             if (def->Load(*O))
                 m_PEDs.push_back(def);
             else {
@@ -218,7 +218,7 @@ bool CPSLibrary::Load(const char* nm) {
     if (OBJ) {
         IReader* O = OBJ->open_chunk(0);
         for (int count = 1; O; count++) {
-            PS::CPGDef* def = xr_new<PS::CPGDef>();
+            PS::CPGDef* def = new PS::CPGDef();
             if (def->Load(*O))
                 m_PGDs.push_back(def);
             else {

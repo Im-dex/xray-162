@@ -4,7 +4,7 @@
 #include "UIFrameWindow.h"
 
 CUIEditBoxEx::CUIEditBoxEx() {
-    m_pFrameWindow = xr_new<CUIFrameWindow>();
+    m_pFrameWindow = new CUIFrameWindow();
     AttachChild(m_pFrameWindow);
 
     TextItemControl()->SetTextComplexMode(true);

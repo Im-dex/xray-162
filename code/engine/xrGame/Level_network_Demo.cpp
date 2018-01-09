@@ -141,7 +141,7 @@ bool CLevel::LoadDemoHeader() {
     u32 demo_info_start_pos = m_reader->tell();
 
     R_ASSERT(m_demo_info == NULL);
-    m_demo_info = xr_new<demo_info>();
+    m_demo_info = new demo_info();
     m_demo_info->read_from_file(m_reader);
 
     m_reader->seek(demo_info_start_pos + demo_info::max_demo_info_size);
@@ -204,13 +204,13 @@ float CLevel::GetDemoPlayPos() const {
 message_filter* CLevel::GetMessageFilter() {
     if (m_msg_filter)
         return m_msg_filter;
-    m_msg_filter = xr_new<message_filter>();
+    m_msg_filter = new message_filter();
     return m_msg_filter;
 }
 demoplay_control* CLevel::GetDemoPlayControl() {
     if (m_demoplay_control)
         return m_demoplay_control;
-    m_demoplay_control = xr_new<demoplay_control>();
+    m_demoplay_control = new demoplay_control();
     return m_demoplay_control;
 }
 /*
@@ -232,7 +232,8 @@ void CLevel::SetDemoPlayPos(float const pos)
                 Msg("! demo play position must be greater than current position");
                 return;
         }
-        
+        
+
         u32 old_file_pos = m_reader->tell();
 
         u32				file_pos = u32(float(m_reader->length()) * pos);
@@ -244,7 +245,8 @@ void CLevel::SetDemoPlayPos(float const pos)
 
         DemoPacket		tmp_hdr;
         u32				time_shift = 0;
-        
+        
+
         while (m_reader->tell() < file_pos)
         {
                 m_reader->r		(&tmp_hdr, sizeof(DemoPacket));

@@ -53,6 +53,6 @@ CStalkerAnimationDataStorage::object(IKinematicsAnimated* skeleton_animated) {
         return ((*I).second);
 
     m_objects.push_back(
-        std::make_pair(skeleton_animated, xr_new<CStalkerAnimationData>(skeleton_animated)));
+        std::make_pair(skeleton_animated, new CStalkerAnimationData(skeleton_animated)));
     return (m_objects.back().second);
 }

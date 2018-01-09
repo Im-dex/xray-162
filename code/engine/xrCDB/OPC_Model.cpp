@@ -247,6 +247,7 @@ bool OPCODE_Model::Build(const OPCODECREATE& create) {
     if (!create.KeepOriginal) {
         mSource->destroy(&TB);
         CDELETE(mSource);
+        mSource = nullptr;
     }
 
 #ifdef __MESHMERIZER_H__

@@ -23,7 +23,7 @@ void CControlPathBuilderBase::reinit() {
 
     if (!m_cover_approach)
         m_cover_approach =
-            xr_new<CCoverEvaluatorCloseToEnemy>(&m_man->path_builder().restrictions());
+            new CCoverEvaluatorCloseToEnemy(&m_man->path_builder().restrictions());
 
     reset();
 

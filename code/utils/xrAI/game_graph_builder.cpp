@@ -36,7 +36,7 @@ void CGameGraphBuilder::create_graph(const float& start, const float& amount) {
     Progress(start);
 
     VERIFY(!m_graph);
-    m_graph = xr_new<graph_type>();
+    m_graph = new graph_type();
 
     m_graph_guid = generate_guid();
 
@@ -50,7 +50,7 @@ void CGameGraphBuilder::load_level_graph(const float& start, const float& amount
 
     VERIFY(!m_level_graph);
     // TODO: [imdex] use string_view
-    m_level_graph = xr_new<CLevelGraph>(m_level_name.c_str());
+    m_level_graph = new CLevelGraph(m_level_name.c_str());
 
     LogMsg("{} nodes loaded", level_graph().header().vertex_count());
 
@@ -389,7 +389,7 @@ void CGameGraphBuilder::load_cross_table(const float& start, const float& amount
     Msg("Loading cross table");
 
     VERIFY(!m_cross_table);
-    m_cross_table = xr_new<CGameLevelCrossTable>(m_cross_table_name);
+    m_cross_table = new CGameLevelCrossTable(m_cross_table_name);
 
     Progress(start + amount);
 }
@@ -670,7 +670,7 @@ void CGameGraphBuilder::build_graph(const float& start, const float& amount) {
     CTimer timer;
     timer.Start();
 
-    m_graph_engine = xr_new<CGraphEngine>(level_graph().header().vertex_count());
+    m_graph_engine = new CGraphEngine(level_graph().header().vertex_count());
     Progress(start + 0.000000f * amount + amount * 0.067204f);
     //	Msg						("BG : %f",timer.GetElapsed_sec());
 

@@ -996,7 +996,8 @@ dJointGetSliderPosition(m_joint);break; case 1: ret= dJointGetAMotorAngle(m_join
                                                         };break;
                                                 default: R_ASSERT2( false, "type not supported" );
 break;
-        
+        
+
                                         }
 }
 */
@@ -1582,7 +1583,7 @@ CPhysicsElement* CPHJoint::PFirst_element() { return cast_PhysicsElement(pFirst_
 CPhysicsElement* CPHJoint::PSecond_element() { return cast_PhysicsElement(pSecond_element); }
 void CPHJoint::SetBreakable(float force, float torque) {
     if (!m_destroy_info)
-        m_destroy_info = xr_new<CPHJointDestroyInfo>(force, torque);
+        m_destroy_info = new CPHJointDestroyInfo(force, torque);
 }
 
 void CPHJoint::SetShell(CPHShell* p) {

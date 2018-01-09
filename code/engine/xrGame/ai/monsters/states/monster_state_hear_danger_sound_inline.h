@@ -14,13 +14,13 @@
 TEMPLATE_SPECIALIZATION
 CStateMonsterHearDangerousSoundAbstract::CStateMonsterHearDangerousSound(_Object* obj)
     : inherited(obj) {
-    this->add_state(eStateHearDangerousSound_Hide, xr_new<CStateMonsterHideFromPoint<_Object>>(obj));
+    this->add_state(eStateHearDangerousSound_Hide, new CStateMonsterHideFromPoint<_Object>(obj));
     this->add_state(eStateHearDangerousSound_FaceOpenPlace,
-                    xr_new<CStateMonsterLookToUnprotectedArea<_Object>>(obj));
+                    new CStateMonsterLookToUnprotectedArea<_Object>(obj));
     this->add_state(eStateHearDangerousSound_StandScared,
-                    xr_new<CStateMonsterCustomAction<_Object>>(obj));
+                    new CStateMonsterCustomAction<_Object>(obj));
     this->add_state(eStateHearDangerousSound_Home,
-                    xr_new<CStateMonsterDangerMoveToHomePoint<_Object>>(obj));
+                    new CStateMonsterDangerMoveToHomePoint<_Object>(obj));
 }
 
 TEMPLATE_SPECIALIZATION

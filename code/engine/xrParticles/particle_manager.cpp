@@ -42,7 +42,7 @@ int CParticleManager::CreateEffect(u32 max_particles) {
         effect_vec.push_back(0);
     }
 
-    effect_vec[eff_id] = xr_new<ParticleEffect>(max_particles);
+    effect_vec[eff_id] = new ParticleEffect(max_particles);
 
     return eff_id;
 }
@@ -64,7 +64,7 @@ int CParticleManager::CreateActionList() {
         m_alist_vec.push_back(0);
     }
 
-    m_alist_vec[list_id] = xr_new<ParticleActions>();
+    m_alist_vec[list_id] = new ParticleActions();
 
     return list_id;
 }
@@ -205,97 +205,97 @@ ParticleAction* CParticleManager::CreateAction(PActionEnum type) {
     ParticleAction* pa = 0;
     switch (type) {
     case PAAvoidID:
-        pa = xr_new<PAAvoid>();
+        pa = new PAAvoid();
         break;
     case PABounceID:
-        pa = xr_new<PABounce>();
+        pa = new PABounce();
         break;
     case PACopyVertexBID:
-        pa = xr_new<PACopyVertexB>();
+        pa = new PACopyVertexB();
         break;
     case PADampingID:
-        pa = xr_new<PADamping>();
+        pa = new PADamping();
         break;
     case PAExplosionID:
-        pa = xr_new<PAExplosion>();
+        pa = new PAExplosion();
         break;
     case PAFollowID:
-        pa = xr_new<PAFollow>();
+        pa = new PAFollow();
         break;
     case PAGravitateID:
-        pa = xr_new<PAGravitate>();
+        pa = new PAGravitate();
         break;
     case PAGravityID:
-        pa = xr_new<PAGravity>();
+        pa = new PAGravity();
         break;
     case PAJetID:
-        pa = xr_new<PAJet>();
+        pa = new PAJet();
         break;
     case PAKillOldID:
-        pa = xr_new<PAKillOld>();
+        pa = new PAKillOld();
         break;
     case PAMatchVelocityID:
-        pa = xr_new<PAMatchVelocity>();
+        pa = new PAMatchVelocity();
         break;
     case PAMoveID:
-        pa = xr_new<PAMove>();
+        pa = new PAMove();
         break;
     case PAOrbitLineID:
-        pa = xr_new<PAOrbitLine>();
+        pa = new PAOrbitLine();
         break;
     case PAOrbitPointID:
-        pa = xr_new<PAOrbitPoint>();
+        pa = new PAOrbitPoint();
         break;
     case PARandomAccelID:
-        pa = xr_new<PARandomAccel>();
+        pa = new PARandomAccel();
         break;
     case PARandomDisplaceID:
-        pa = xr_new<PARandomDisplace>();
+        pa = new PARandomDisplace();
         break;
     case PARandomVelocityID:
-        pa = xr_new<PARandomVelocity>();
+        pa = new PARandomVelocity();
         break;
     case PARestoreID:
-        pa = xr_new<PARestore>();
+        pa = new PARestore();
         break;
     case PASinkID:
-        pa = xr_new<PASink>();
+        pa = new PASink();
         break;
     case PASinkVelocityID:
-        pa = xr_new<PASinkVelocity>();
+        pa = new PASinkVelocity();
         break;
     case PASourceID:
-        pa = xr_new<PASource>();
+        pa = new PASource();
         break;
     case PASpeedLimitID:
-        pa = xr_new<PASpeedLimit>();
+        pa = new PASpeedLimit();
         break;
     case PATargetColorID:
-        pa = xr_new<PATargetColor>();
+        pa = new PATargetColor();
         break;
     case PATargetSizeID:
-        pa = xr_new<PATargetSize>();
+        pa = new PATargetSize();
         break;
     case PATargetRotateID:
-        pa = xr_new<PATargetRotate>();
+        pa = new PATargetRotate();
         break;
     case PATargetRotateDID:
-        pa = xr_new<PATargetRotate>();
+        pa = new PATargetRotate();
         break;
     case PATargetVelocityID:
-        pa = xr_new<PATargetVelocity>();
+        pa = new PATargetVelocity();
         break;
     case PATargetVelocityDID:
-        pa = xr_new<PATargetVelocity>();
+        pa = new PATargetVelocity();
         break;
     case PAVortexID:
-        pa = xr_new<PAVortex>();
+        pa = new PAVortex();
         break;
     case PATurbulenceID:
-        pa = xr_new<PATurbulence>();
+        pa = new PATurbulence();
         break;
     case PAScatterID:
-        pa = xr_new<PAScatter>();
+        pa = new PAScatter();
         break;
     default:
         NODEFAULT;

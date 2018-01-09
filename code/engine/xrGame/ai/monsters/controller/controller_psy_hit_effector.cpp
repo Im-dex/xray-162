@@ -31,7 +31,7 @@
 //
 // CPPEffectorControlled *CPsyHitEffectorPP::create_effector()
 //{
-//	return xr_new<CPPEffectorControlled>(this,m_state);
+//	return new CPPEffectorControlled(this,m_state);
 //}
 
 //////////////////////////////////////////////////////////////////////////

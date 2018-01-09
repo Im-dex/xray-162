@@ -243,7 +243,7 @@ void CAI_Stalker::Hit(SHit* pHDS) {
             const CCoverPoint* cover = agent_manager().member().member(this).cover();
             if (!invulnerable() && cover && HDS.initiator() && (HDS.initiator()->ID() != ID()) &&
                 !fis_zero(HDS.damage()) && brain().affect_cover()) {
-                agent_manager().location().add(xr_new<CDangerCoverLocation>(
+                agent_manager().location().add(new CDangerCoverLocation(
                     cover, Device.dwTimeGlobal, DANGER_INTERVAL, DANGER_DISTANCE));
             }
         }

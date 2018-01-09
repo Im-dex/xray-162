@@ -113,7 +113,7 @@ struct str_container_impl {
     }
 };
 
-str_container::str_container() { impl = xr_new<str_container_impl>(); }
+str_container::str_container() { impl = new str_container_impl(); }
 
 str_value* str_container::dock(str_c value) {
     if (0 == value)
@@ -216,7 +216,7 @@ struct str_container_impl {
     cdb container;
 };
 
-str_container::str_container() { impl = xr_new<str_container_impl>(); }
+str_container::str_container() { impl = new str_container_impl(); }
 
 str_value* str_container::dock(str_c value) {
     if (0 == value)

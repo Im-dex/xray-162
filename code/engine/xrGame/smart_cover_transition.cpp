@@ -54,7 +54,7 @@ void action::load_animations(luabind::object const& table) {
         MonsterSpace::EMovementType movement_type =
             (MonsterSpace::EMovementType)parse_int(tmp, "movement_type");
         animation_action* animation =
-            xr_new<animation_action>(pos, anim_id, body_state, movement_type);
+            new animation_action(pos, anim_id, body_state, movement_type);
         m_animations.push_back(animation);
     }
 }

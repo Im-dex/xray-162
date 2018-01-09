@@ -8,7 +8,7 @@
 #include "../control_movement_base.h"
 
 CAI_Boar::CAI_Boar() {
-    StateMan = xr_new<CStateManagerBoar>(this);
+    StateMan = new CStateManagerBoar(this);
 
     CControlled::init_external(this);
 }

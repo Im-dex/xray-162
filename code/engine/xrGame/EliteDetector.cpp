@@ -13,7 +13,7 @@ CEliteDetector::~CEliteDetector() {}
 
 void CEliteDetector::CreateUI() {
     R_ASSERT(NULL == m_ui);
-    m_ui = xr_new<CUIArtefactDetectorElite>();
+    m_ui = new CUIArtefactDetectorElite();
     ui().construct(this);
 }
 
@@ -83,7 +83,7 @@ void CUIArtefactDetectorElite::construct(CEliteDetector* p) {
 
     xml_init.InitWindow(uiXml, buff, 0, this);
 
-    m_wrk_area = xr_new<CUIWindow>();
+    m_wrk_area = new CUIWindow();
 
     xr_sprintf(buff, "%s:wrk_area", p->ui_xml_tag());
 
@@ -96,7 +96,7 @@ void CUIArtefactDetectorElite::construct(CEliteDetector* p) {
     XML_NODE pStoredRoot = uiXml.GetLocalRoot();
     uiXml.SetLocalRoot(uiXml.NavigateToNode(buff, 0));
     for (int idx = 0; idx < num; ++idx) {
-        CUIStatic* S = xr_new<CUIStatic>();
+        CUIStatic* S = new CUIStatic();
         shared_str name = uiXml.ReadAttrib("palette", idx, "id");
         m_palette[name] = S;
         xml_init.InitStatic(uiXml, "palette", idx, S);

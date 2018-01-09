@@ -58,9 +58,9 @@ const char* make_xrstr(ControlCom::EControlType e) {
 CControl_Manager::CControl_Manager(CBaseMonster* obj) {
     m_object = obj;
 
-    m_animation = xr_new<CControlAnimation>();
-    m_movement = xr_new<CControlMovement>();
-    m_direction = xr_new<CControlDirection>();
+    m_animation = new CControlAnimation();
+    m_movement = new CControlMovement();
+    m_direction = new CControlDirection();
 
     add(m_animation, ControlCom::eControlAnimation);
     add(m_direction, ControlCom::eControlDir);

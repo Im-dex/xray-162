@@ -117,23 +117,23 @@ PROTECT_API void InitSettings() {
 #ifdef DEBUG
     Msg("Updated path to system.ltx is %s", fname);
 #endif // #ifdef DEBUG
-    pSettings = xr_new<CInifile>(fname, TRUE);
+    pSettings = new CInifile(fname, TRUE);
     CHECK_OR_EXIT(
         0 != pSettings->section_count(),
         make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
 
     CInifile::allow_include_func_t tmp_functor;
     tmp_functor.bind([](LPCSTR) { return true; });
-    pSettingsAuth = xr_new<CInifile>(fname, TRUE, TRUE, FALSE, 0, tmp_functor);
+    pSettingsAuth = new CInifile(fname, TRUE, TRUE, FALSE, 0, tmp_functor);
 
     FS.update_path(fname, "$game_config$", "game.ltx");
-    pGameIni = xr_new<CInifile>(fname, TRUE);
+    pGameIni = new CInifile(fname, TRUE);
     CHECK_OR_EXIT(
         0 != pGameIni->section_count(),
         make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
 }
 PROTECT_API void InitConsole() {
-    Console = xr_new<CConsole>();
+    Console = new CConsole();
     Console->Initialize();
 
     xr_strcpy(Console->ConfigFile, "user.ltx");
@@ -147,7 +147,7 @@ PROTECT_API void InitConsole() {
 PROTECT_API void InitInput() {
     BOOL bCaptureInput = !strstr(Core.Params, "-i");
 
-    pInput = xr_new<CInput>(bCaptureInput);
+    pInput = new CInput(bCaptureInput);
 }
 void destroyInput() { xr_delete(pInput); }
 
@@ -201,10 +201,10 @@ void Startup() {
     Device.Create();
 
     LALib.OnCreate();
-    pApp = xr_new<CApplication>();
+    pApp = new CApplication();
     g_pGamePersistent = (IGame_Persistent*)NEW_INSTANCE(CLSID_GAME_PERSISTANT);
-    g_SpatialSpace = xr_new<ISpatial_DB>();
-    g_SpatialSpacePhysic = xr_new<ISpatial_DB>();
+    g_SpatialSpace = new ISpatial_DB();
+    g_SpatialSpacePhysic = new ISpatial_DB();
 
     // Destroy LOGO
     DestroyWindow(logoWindow);
@@ -612,7 +612,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* lp
         else if (strstr(Core.Params, "-r2"))
             Console->Execute("renderer renderer_r2");
         else {
-            CCC_LoadCFG_custom* pTmp = xr_new<CCC_LoadCFG_custom>("renderer ");
+            CCC_LoadCFG_custom* pTmp = new CCC_LoadCFG_custom("renderer ");
             pTmp->Execute(Console->ConfigFile);
             xr_delete(pTmp);
         }
@@ -706,7 +706,7 @@ void _InitializeFont(CGameFont*& F, LPCSTR section, u32 flags) {
 
     LPCSTR sh_name = pSettings->r_string(section, "shader");
     if (!F) {
-        F = xr_new<CGameFont>(sh_name, font_tex_name, flags);
+        F = new CGameFont(sh_name, font_tex_name, flags);
     } else
         F->Initialize(sh_name, font_tex_name);
 

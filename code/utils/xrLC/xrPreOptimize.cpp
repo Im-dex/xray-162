@@ -55,7 +55,7 @@ void CBuild::PreOptimize() {
         for (int ix = 0; ix < HDIM_X + 1; ix++)
             for (int iy = 0; iy < HDIM_Y + 1; iy++)
                 for (int iz = 0; iz < HDIM_Z + 1; iz++) {
-                    HASH[ix][iy][iz] = xr_new<vecVertex>();
+                    HASH[ix][iy][iz] = new vecVertex();
                     HASH[ix][iy][iz]->reserve(_average);
                 }
     }

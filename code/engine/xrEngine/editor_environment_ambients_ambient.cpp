@@ -33,7 +33,7 @@ void property_collection<ambient::effect_container_type, ambient>::display_name(
 
 template <>
 editor::property_holder* property_collection<ambient::effect_container_type, ambient>::create() {
-    effect_id* object = xr_new<effect_id>(m_holder.effects_manager(), "");
+    effect_id* object = new effect_id(m_holder.effects_manager(), "");
     object->fill(this);
     return (object->object());
 }
@@ -46,7 +46,7 @@ void property_collection<ambient::sound_container_type, ambient>::display_name(
 
 template <>
 editor::property_holder* property_collection<ambient::sound_container_type, ambient>::create() {
-    sound_id* object = xr_new<sound_id>(m_holder.sounds_manager(), "");
+    sound_id* object = new sound_id(m_holder.sounds_manager(), "");
     object->fill(this);
     return (object->object());
 }
@@ -54,8 +54,8 @@ editor::property_holder* property_collection<ambient::sound_container_type, ambi
 ambient::ambient(manager const& manager, std::string id)
     : m_manager(manager), m_property_holder(0), m_effects_collection(0), m_sounds_collection(0) {
     m_load_section = std::move(id);
-    m_effects_collection = xr_new<effect_collection_type>(&m_effects_ids, this);
-    m_sounds_collection = xr_new<sound_collection_type>(&m_sound_channels_ids, this);
+    m_effects_collection = new effect_collection_type(&m_effects_ids, this);
+    m_sounds_collection = new sound_collection_type(&m_sound_channels_ids, this);
 }
 
 ambient::~ambient() {
@@ -84,7 +84,7 @@ void ambient::load(CInifile& ambients_config, CInifile& sound_channels_config,
         for (u32 i = 0, n = _GetItemCount(effects_string); i < n; ++i) {
             string_path temp;
             effect_id* object =
-                xr_new<effect_id>(m_manager.effects_manager(), _GetItem(effects_string, i, temp));
+                new effect_id(m_manager.effects_manager(), _GetItem(effects_string, i, temp));
             object->fill(m_effects_collection);
             m_effects_ids.push_back(object);
         }
@@ -98,7 +98,7 @@ void ambient::load(CInifile& ambients_config, CInifile& sound_channels_config,
         for (u32 i = 0, n = _GetItemCount(sounds_string); i < n; ++i) {
             string_path temp;
             sound_id* object =
-                xr_new<sound_id>(m_manager.sounds_manager(), _GetItem(sounds_string, i, temp));
+                new sound_id(m_manager.sounds_manager(), _GetItem(sounds_string, i, temp));
             object->fill(m_sounds_collection);
             m_sound_channels_ids.push_back(object);
         }
@@ -206,14 +206,14 @@ ambient::property_holder_type* ambient::object() { return (m_property_holder); }
 }
 
 ambient::SEffect* ambient::create_effect(CInifile& config, LPCSTR id) {
-    effect* result = xr_new<effect>(m_manager.effects_manager(), id);
+    effect* result = new effect(m_manager.effects_manager(), id);
     result->load(config);
     result->fill(m_effects_collection);
     return (result);
 }
 
 ambient::SSndChannel* ambient::create_sound_channel(CInifile& config, LPCSTR id) {
-    channel* result = xr_new<channel>(m_manager.sounds_manager(), id);
+    channel* result = new channel(m_manager.sounds_manager(), id);
     result->load(config);
     result->fill(m_sounds_collection);
     return (result);

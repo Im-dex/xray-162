@@ -100,7 +100,7 @@ void CEnvAmbient::SSndChannel::load(CInifile& config, LPCSTR sect) {
 }
 
 CEnvAmbient::SEffect* CEnvAmbient::create_effect(CInifile& config, LPCSTR id) {
-    SEffect* result = xr_new<SEffect>();
+    SEffect* result = new SEffect();
     result->life_time = iFloor(config.r_float(id, "life_time") * 1000.f);
     // TODO: [imdex] remove shared_str (ini)
     result->particles = config.r_string(id, "particles");
@@ -129,7 +129,7 @@ CEnvAmbient::SEffect* CEnvAmbient::create_effect(CInifile& config, LPCSTR id) {
 }
 
 CEnvAmbient::SSndChannel* CEnvAmbient::create_sound_channel(CInifile& config, LPCSTR id) {
-    SSndChannel* result = xr_new<SSndChannel>();
+    SSndChannel* result = new SSndChannel();
     result->load(config, id);
     return (result);
 }
@@ -476,7 +476,7 @@ CEnvAmbient* CEnvironment::AppendEnvAmb(std::string sect) {
             return env;
     }
 
-    Ambients.push_back(xr_new<CEnvAmbient>());
+    Ambients.push_back(new CEnvAmbient());
     Ambients.back()->load(*m_ambients_config, *m_sound_channels_config, *m_effects_config, std::move(sect));
     return Ambients.back();
 }
@@ -517,7 +517,7 @@ void CEnvironment::load_level_specific_ambients() {
 
     string_path full_path;
     CInifile* level_ambients =
-        xr_new<CInifile>(FS.update_path(full_path, "$game_config$", path), TRUE, TRUE, FALSE);
+        new CInifile(FS.update_path(full_path, "$game_config$", path), TRUE, TRUE, FALSE);
 
     for (auto I = Ambients.begin(), E = Ambients.end(); I != E; ++I) {
         CEnvAmbient* ambient = *I;
@@ -541,7 +541,7 @@ void CEnvironment::load_level_specific_ambients() {
 }
 
 CEnvDescriptor* CEnvironment::create_descriptor(std::string identifier, CInifile* config) {
-    CEnvDescriptor* result = xr_new<CEnvDescriptor>(std::move(identifier));
+    CEnvDescriptor* result = new CEnvDescriptor(std::move(identifier));
     if (config)
         result->load(*this, *config);
     return (result);
@@ -656,8 +656,8 @@ void CEnvironment::load_weather_effects() {
 		LPCSTR weather, sect_w;
 		if (pSettings->r_line("weather_effects",w_idx,&weather,&sect_w)){
 			EnvVec& env		= WeatherFXs[weather];
-			env.push_back	(xr_new<CEnvDescriptor>("00:00:00")); env.back()->exec_time_loaded = 0;
-//. why?	env.push_back	(xr_new<CEnvDescriptor>("00:00:00")); env.back()->exec_time_loaded = 0;
+			env.push_back	(new CEnvDescriptor("00:00:00")); env.back()->exec_time_loaded = 0;
+//. why?	env.push_back	(new CEnvDescriptor("00:00:00")); env.back()->exec_time_loaded = 0;
 			int env_count	= pSettings->line_count(sect_w);
 			LPCSTR exec_tm, sect_e;
 			for (int env_idx=0; env_idx<env_count; env_idx++){
@@ -687,11 +687,11 @@ void CEnvironment::load() {
     // tonemap					= Device.Resources->_CreateTexture("$user$tonemap");	//.
     // hack
     if (!eff_Rain)
-        eff_Rain = xr_new<CEffect_Rain>();
+        eff_Rain = new CEffect_Rain();
     if (!eff_LensFlare)
-        eff_LensFlare = xr_new<CLensFlare>();
+        eff_LensFlare = new CLensFlare();
     if (!eff_Thunderbolt)
-        eff_Thunderbolt = xr_new<CEffect_Thunderbolt>();
+        eff_Thunderbolt = new CEffect_Thunderbolt();
 
     load_weathers();
     load_weather_effects();

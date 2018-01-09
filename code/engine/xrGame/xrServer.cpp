@@ -77,7 +77,7 @@ CSE_Abstract* xrServer::ID_to_entity(u16 ID) {
 }
 
 //--------------------------------------------------------------------
-IClient* xrServer::client_Create() { return xr_new<xrClientData>(); }
+IClient* xrServer::client_Create() { return new xrClientData(); }
 void xrServer::client_Replicate() {}
 
 IClient* xrServer::client_Find_Get(ClientID ID) {

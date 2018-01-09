@@ -135,11 +135,11 @@ void CStalkerActionMakeItemKilling::initialize() {
     object().sight().clear();
     object().sight().add_action(
         eSightActionTypeWatchItem,
-        xr_new<CSightControlAction>(1.f, 3000,
+        new CSightControlAction(1.f, 3000,
                                     CSightAction(SightManager::eSightTypePathDirection)));
     object().sight().add_action(
         eSightActionTypeWatchEnemy,
-        xr_new<CSightControlAction>(1.f, 3000,
+        new CSightControlAction(1.f, 3000,
                                     CSightAction(SightManager::eSightTypePosition,
                                                  object().memory().enemy().selected()->Position(),
                                                  false)));
@@ -743,7 +743,7 @@ void CStalkerActionDetourEnemy::initialize() {
             .member()
             .member(m_object)
             .cover())
-        object().agent_manager().location().add(xr_new<CDangerCoverLocation>(
+        object().agent_manager().location().add(new CDangerCoverLocation(
             object().agent_manager().member().member(m_object).cover(), Device.dwTimeGlobal,
             TEMP_DANGER_INTERVAL, TEMP_DANGER_DISTANCE,
             object().agent_manager().member().mask(&object())));

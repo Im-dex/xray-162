@@ -13,11 +13,11 @@
 TEMPLATE_SPECIALIZATION
 CStateMonsterFindEnemyLookAbstract::CStateMonsterFindEnemyLook(_Object* obj) : inherited(obj) {
     this->add_state(eStateFindEnemy_LookAround_MoveToPoint,
-                    xr_new<CStateMonsterMoveToPoint<_Object>>(obj));
+                    new CStateMonsterMoveToPoint<_Object>(obj));
     this->add_state(eStateFindEnemy_LookAround_LookAround,
-                    xr_new<CStateMonsterCustomAction<_Object>>(obj));
+                    new CStateMonsterCustomAction<_Object>(obj));
     this->add_state(eStateFindEnemy_LookAround_TurnToPoint,
-                    xr_new<CStateMonsterLookToPoint<_Object>>(obj));
+                    new CStateMonsterLookToPoint<_Object>(obj));
 }
 
 TEMPLATE_SPECIALIZATION

@@ -12,7 +12,7 @@
 
 TEMPLATE_SPECIALIZATION
 CStateMonsterTestStateAbstract::CStateMonsterTestState(_Object* obj) : inherited(obj) {
-    add_state(eStateCustom, xr_new<CStateMonsterMoveToPointEx<_Object>>(obj));
+    add_state(eStateCustom, new CStateMonsterMoveToPointEx<_Object>(obj));
 }
 
 TEMPLATE_SPECIALIZATION
@@ -56,8 +56,8 @@ void CStateMonsterTestStateAbstract::setup_substates() {
 
 TEMPLATE_SPECIALIZATION
 CStateMonsterTestCoverAbstract::CStateMonsterTestCover(_Object* obj) : inherited(obj) {
-    this->add_state(eStateAttack_HideInCover, xr_new<CStateMonsterMoveToPointEx<_Object>>(obj));
-    this->add_state(eStateAttack_CampInCover, xr_new<CStateMonsterCustomAction<_Object>>(obj));
+    this->add_state(eStateAttack_HideInCover, new CStateMonsterMoveToPointEx<_Object>(obj));
+    this->add_state(eStateAttack_CampInCover, new CStateMonsterCustomAction<_Object>(obj));
 }
 TEMPLATE_SPECIALIZATION
 void CStateMonsterTestCoverAbstract::initialize() {

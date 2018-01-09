@@ -5,7 +5,7 @@
 GameEventQueue::GameEventQueue() {
     unused.reserve(128);
     for (int i = 0; i < 16; i++)
-        unused.push_back(xr_new<GameEvent>());
+        unused.push_back(new GameEvent());
 }
 GameEventQueue::~GameEventQueue() {
     std::lock_guard<decltype(cs)> lock(cs);
@@ -21,7 +21,7 @@ GameEvent* GameEventQueue::Create() {
     GameEvent* ge = 0;
     std::lock_guard<decltype(cs)> lock(cs);
     if (unused.empty()) {
-        ready.push_back(xr_new<GameEvent>());
+        ready.push_back(new GameEvent());
         ge = ready.back();
 //---------------------------------------------
 #ifdef _DEBUG
@@ -53,7 +53,7 @@ GameEvent* GameEventQueue::Create(NET_Packet& P, u16 type, u32 time, ClientID cl
     GameEvent* ge = 0;
     std::lock_guard<decltype(cs)> lock(cs);
     if (unused.empty()) {
-        ready.push_back(xr_new<GameEvent>());
+        ready.push_back(new GameEvent());
         ge = ready.back();
 //---------------------------------------------
 #ifdef _DEBUG

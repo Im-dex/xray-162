@@ -11,7 +11,7 @@
 #include "../string_table.h"
 
 CUIStatic* init_static_field(CUIXml& uiXml, LPCSTR path, LPCSTR path2) {
-    CUIStatic* S = xr_new<CUIStatic>();
+    CUIStatic* S = new CUIStatic();
     string512 buff;
     S->SetAutoDelete(true);
     strconcat(sizeof(buff), buff, path, ":", path2);

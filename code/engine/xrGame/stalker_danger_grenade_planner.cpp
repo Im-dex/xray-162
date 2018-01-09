@@ -40,17 +40,17 @@ void CStalkerDangerGrenadePlanner::finalize() { inherited::finalize(); }
 
 void CStalkerDangerGrenadePlanner::add_evaluators() {
     add_evaluator(eWorldPropertyDanger,
-                  xr_new<CStalkerPropertyEvaluatorDangers>(m_object, "danger"));
+                  new CStalkerPropertyEvaluatorDangers(m_object, "danger"));
     add_evaluator(eWorldPropertyCoverActual,
-                  xr_new<CStalkerPropertyEvaluatorDangerUnknownCoverActual>(
+                  new CStalkerPropertyEvaluatorDangerUnknownCoverActual(
                       m_object, "danger grenade : cover actual"));
-    add_evaluator(eWorldPropertyCoverReached, xr_new<CStalkerPropertyEvaluatorMember>(
+    add_evaluator(eWorldPropertyCoverReached, new CStalkerPropertyEvaluatorMember(
                                                   (CPropertyStorage*)0, eWorldPropertyCoverReached,
                                                   true, true, "danger grenade : cover reached"));
     add_evaluator(
         eWorldPropertyGrenadeExploded,
-        xr_new<CStalkerPropertyEvaluatorDangerGrenadeExploded>(m_object, "grenade exploded"));
-    add_evaluator(eWorldPropertyLookedAround, xr_new<CStalkerPropertyEvaluatorMember>(
+        new CStalkerPropertyEvaluatorDangerGrenadeExploded(m_object, "grenade exploded"));
+    add_evaluator(eWorldPropertyLookedAround, new CStalkerPropertyEvaluatorMember(
                                                   (CPropertyStorage*)0, eWorldPropertyLookedAround,
                                                   true, true, "danger grenade : looked around"));
 }
@@ -58,26 +58,26 @@ void CStalkerDangerGrenadePlanner::add_evaluators() {
 void CStalkerDangerGrenadePlanner::add_actions() {
     CStalkerActionBase* action;
 
-    action = xr_new<CStalkerActionDangerGrenadeTakeCover>(m_object, "take cover");
+    action = new CStalkerActionDangerGrenadeTakeCover(m_object, "take cover");
     add_effect(action, eWorldPropertyCoverActual, true);
     add_effect(action, eWorldPropertyCoverReached, true);
     add_operator(eWorldOperatorDangerGrenadeTakeCover, action);
 
-    action = xr_new<CStalkerActionDangerGrenadeWaitForExplosion>(m_object, "wait for explosion");
+    action = new CStalkerActionDangerGrenadeWaitForExplosion(m_object, "wait for explosion");
     add_condition(action, eWorldPropertyCoverActual, true);
     add_condition(action, eWorldPropertyCoverReached, true);
     add_condition(action, eWorldPropertyGrenadeExploded, false);
     add_effect(action, eWorldPropertyGrenadeExploded, true);
     add_operator(eWorldOperatorDangerGrenadeWaitForExplosion, action);
 
-    action = xr_new<CStalkerActionDangerGrenadeTakeCoverAfterExplosion>(
+    action = new CStalkerActionDangerGrenadeTakeCoverAfterExplosion(
         m_object, "take cover after explosion");
     add_condition(action, eWorldPropertyGrenadeExploded, true);
     add_effect(action, eWorldPropertyCoverActual, true);
     add_effect(action, eWorldPropertyCoverReached, true);
     add_operator(eWorldOperatorDangerGrenadeTakeCoverAfterExplosion, action);
 
-    action = xr_new<CStalkerActionDangerGrenadeLookAround>(m_object, "look around");
+    action = new CStalkerActionDangerGrenadeLookAround(m_object, "look around");
     add_condition(action, eWorldPropertyGrenadeExploded, true);
     add_condition(action, eWorldPropertyCoverActual, true);
     add_condition(action, eWorldPropertyCoverReached, true);
@@ -85,7 +85,7 @@ void CStalkerDangerGrenadePlanner::add_actions() {
     add_effect(action, eWorldPropertyLookedAround, true);
     add_operator(eWorldOperatorDangerGrenadeLookAround, action);
 
-    action = xr_new<CStalkerActionDangerGrenadeSearch>(m_object, "search");
+    action = new CStalkerActionDangerGrenadeSearch(m_object, "search");
     add_condition(action, eWorldPropertyGrenadeExploded, true);
     add_condition(action, eWorldPropertyCoverActual, true);
     add_condition(action, eWorldPropertyCoverReached, true);

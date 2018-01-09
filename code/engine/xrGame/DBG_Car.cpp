@@ -67,7 +67,7 @@ void CCar::DbgCreatePlots() {
         }
     }
     //--------------------------------------
-    m_dbg_dynamic_plot = xr_new<CStatGraph>();
+    m_dbg_dynamic_plot = new CStatGraph();
     m_dbg_dynamic_plot->SetRect(0, y_pos, 500, y_w, D3DCOLOR_XRGB(255, 255, 255),
                                 D3DCOLOR_XRGB(255, 255, 255));
     m_dbg_dynamic_plot->SetMinMax(Parabola(m_min_rpm), m_max_power, 1000);

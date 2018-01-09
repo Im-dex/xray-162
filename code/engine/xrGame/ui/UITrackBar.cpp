@@ -10,7 +10,7 @@
 CUITrackBar::CUITrackBar()
     : m_f_min(0), m_f_max(1), m_f_val(0), m_f_opt_backup_value(0), m_f_step(0.01f),
       m_b_is_float(true), m_b_invert(false) {
-    m_pSlider = xr_new<CUI3tButton>();
+    m_pSlider = new CUI3tButton();
     AttachChild(m_pSlider);
     m_pSlider->SetAutoDelete(true);
     m_b_mouse_capturer = false;

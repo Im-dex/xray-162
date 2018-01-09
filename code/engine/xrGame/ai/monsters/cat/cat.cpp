@@ -6,7 +6,7 @@
 #include "../control_animation_base.h"
 #include "../control_movement_base.h"
 
-CCat::CCat() { StateMan = xr_new<CStateManagerCat>(this); }
+CCat::CCat() { StateMan = new CStateManagerCat(this); }
 
 CCat::~CCat() { xr_delete(StateMan); }
 

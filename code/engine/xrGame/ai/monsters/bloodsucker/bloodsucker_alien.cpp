@@ -211,10 +211,10 @@ void CBloodsuckerAlien::activate() {
 
     // Start effector
     m_effector_pp =
-        xr_new<CAlienEffectorPP>(m_object->pp_vampire_effector, EFFECTOR_ID_GEN(EEffectorPPType));
+        new CAlienEffectorPP(m_object->pp_vampire_effector, EFFECTOR_ID_GEN(EEffectorPPType));
     Actor()->Cameras().AddPPEffector(m_effector_pp);
 
-    m_effector = xr_new<CAlienEffector>(EFFECTOR_ID_GEN(ECamEffectorType), m_object);
+    m_effector = new CAlienEffector(EFFECTOR_ID_GEN(ECamEffectorType), m_object);
     Actor()->Cameras().AddCamEffector(m_effector);
 
     // make invisible

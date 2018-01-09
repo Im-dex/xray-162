@@ -28,14 +28,14 @@ void property_collection<manager::ambient_container_type, manager>::display_name
 
 template <>
 editor::property_holder* property_collection<manager::ambient_container_type, manager>::create() {
-    ambient* object = xr_new<ambient>(m_holder, generate_unique_id("ambient_unique_id_").c_str());
+    ambient* object = new ambient(m_holder, generate_unique_id("ambient_unique_id_").c_str());
     object->fill(this);
     return (object->object());
 }
 
 manager::manager(::editor::environment::manager const& manager)
     : m_manager(manager), m_property_holder(0), m_collection(0), m_changed(true) {
-    m_collection = xr_new<collection_type>(&m_ambients, this, &m_changed);
+    m_collection = new collection_type(&m_ambients, this, &m_changed);
 }
 
 manager::~manager() {
@@ -59,7 +59,7 @@ void manager::load() {
     sections_type::const_iterator e = sections.end();
     for (; i != e; ++i) {
         // TODO: [imdex] remove shared_str (ini)
-        ambient* object = xr_new<ambient>(*this, *(*i)->Name);
+        ambient* object = new ambient(*this, *(*i)->Name);
         object->load(*m_manager.m_ambients_config, *m_manager.m_sound_channels_config,
                      *m_manager.m_effects_config, *(*i)->Name);
         object->fill(m_collection);
@@ -70,7 +70,7 @@ void manager::load() {
 void manager::save() {
     string_path file_name;
     CInifile* config =
-        xr_new<CInifile>(FS.update_path(file_name, "$game_config$", "environment\\ambients.ltx"),
+        new CInifile(FS.update_path(file_name, "$game_config$", "environment\\ambients.ltx"),
                          FALSE, FALSE, TRUE);
 
     ambient_container_type::iterator i = m_ambients.begin();

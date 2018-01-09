@@ -17,9 +17,9 @@
 TEMPLATE_SPECIALIZATION
 CStateMonsterControlledFollowAbstract::CStateMonsterControlledFollow(_Object* obj)
     : inherited(obj) {
-    this->add_state(eStateControlled_Follow_Wait, xr_new<CStateMonsterCustomAction<_Object>>(obj));
+    this->add_state(eStateControlled_Follow_Wait, new CStateMonsterCustomAction<_Object>(obj));
     this->add_state(eStateControlled_Follow_WalkToObject,
-                    xr_new<CStateMonsterMoveToPointEx<_Object>>(obj));
+                    new CStateMonsterMoveToPointEx<_Object>(obj));
 }
 
 TEMPLATE_SPECIALIZATION

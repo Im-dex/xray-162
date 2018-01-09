@@ -9,7 +9,7 @@ class ENGINE_API CPS_Instance : public ISpatial, public ISheduled, public IRende
     friend class IGame_Persistent;
 
     template <class T>
-    void xr_delete(T*& ptr);
+    friend void xr_delete(T*& ptr);
 
 private:
     bool m_destroy_on_game_load;

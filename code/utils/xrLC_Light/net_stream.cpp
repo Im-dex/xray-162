@@ -108,7 +108,7 @@ void INetBlockReader::load_buffer(const char* fn) {
     mem_reader.free_buff();
     IReader* fs = FS.r_open(fn);
     if (fs) {
-        // mem_reader = xr_new<CReadMemoryBlock>( fs->length() );
+        // mem_reader = new CReadMemoryBlock( fs->length() );
         create_block(fs->length());
         fs->r(mem_reader.pdata(), fs->length());
         FS.r_close(fs); // ->close();
@@ -174,7 +174,7 @@ void INetBuffWriter::save_buffer(const char* fn) const {
 INetFileBuffWriter::INetFileBuffWriter(const char* file_name, const size_t block_size, const bool reopen)
     : INetBuffWriter() {
 
-    mem_writter = xr_new<CFileWriteBlock>(file_name, block_size, reopen);
+    mem_writter = new CFileWriteBlock(file_name, block_size, reopen);
 }
 
 INetFileBuffWriter::~INetFileBuffWriter() { xr_delete(mem_writter); }

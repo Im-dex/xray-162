@@ -273,7 +273,7 @@ void CActorCondition::UpdateCondition() {
 
     if (GetHealth() < 0.05f && m_death_effector == NULL && IsGameTypeSingle()) {
         if (pSettings->section_exist("actor_death_effector"))
-            m_death_effector = xr_new<CActorDeathEffector>(this, "actor_death_effector");
+            m_death_effector = new CActorDeathEffector(this, "actor_death_effector");
     }
     if (m_death_effector && m_death_effector->IsActual()) {
         m_death_effector->UpdateCL();

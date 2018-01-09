@@ -64,7 +64,8 @@ void item_respawn_manager::load_respawn_items(shared_str const section)
                 return;
 
         CInifile::Sect resp_sect	= level_ini_file->r_section(section.c_str());
-        
+        
+
         typedef CInifile::Items::iterator sect_iter;
         sect_iter ie				= resp_sect.Data.end();
         u32 temp_int;
@@ -190,7 +191,7 @@ item_respawn_manager::load_respawn_section(shared_str const& section_name) {
     u32 sections_count = _GetItemCount(section_name.c_str());
     string256 temp_section_name;
 
-    section_items* tmp_sect_items = xr_new<section_items>();
+    section_items* tmp_sect_items = new section_items();
 
     for (u32 is = 0; is < sections_count; ++is) {
         _GetItem(section_name.c_str(), is, temp_section_name);

@@ -464,7 +464,7 @@ void _LogCallback(LPCSTR string) {
 void CStats::OnDeviceCreate() {
     g_bDisableRedText = strstr(Core.Params, "-xclsx") ? TRUE : FALSE;
 
-    pFont = xr_new<CGameFont>("stat_font", CGameFont::fsDeviceIndependent);
+    pFont = new CGameFont("stat_font", CGameFont::fsDeviceIndependent);
 
     if (!pSettings->section_exist("evaluation") || !pSettings->line_exist("evaluation", "line1") ||
         !pSettings->line_exist("evaluation", "line2") ||

@@ -55,7 +55,7 @@ void CUI3tButton::PlaySoundH() {
 void CUI3tButton::InitButton(Fvector2 pos, Fvector2 size) {
     if (m_frameline_mode) {
         if (!m_back_frameline) {
-            m_back_frameline = xr_new<CUI_IB_FrameLineWnd>();
+            m_back_frameline = new CUI_IB_FrameLineWnd();
             m_back_frameline->SetAutoDelete(true);
             AttachChild(m_back_frameline);
         }
@@ -63,7 +63,7 @@ void CUI3tButton::InitButton(Fvector2 pos, Fvector2 size) {
         m_back_frameline->SetWndSize(size);
     } else {
         if (!m_background) {
-            m_background = xr_new<CUI_IB_Static>();
+            m_background = new CUI_IB_Static();
             m_background->SetAutoDelete(true);
             AttachChild(m_background);
         }

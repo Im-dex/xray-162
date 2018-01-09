@@ -2,8 +2,6 @@
 
 #include "xrsharedmem.h"
 
-#include <malloc.h>
-
 xrMemory Memory;
 bool shared_str_initialized = false;
 
@@ -11,9 +9,9 @@ bool shared_str_initialized = false;
 XRCORE_API bool g_allow_heap_min = true;
 
 void xrMemory::_initialize() {
-    g_pStringContainer = xr_new<str_container>();
+    g_pStringContainer = new str_container();
     shared_str_initialized = true;
-    g_pSharedMemoryContainer = xr_new<smem_container>();
+    g_pSharedMemoryContainer = new smem_container();
 }
 
 void xrMemory::_destroy() {

@@ -8,7 +8,7 @@ CUIMoneyIndicator::CUIMoneyIndicator() {
     AttachChild(&m_back);
     AttachChild(&m_money_amount);
     AttachChild(&m_money_change);
-    //	m_pAnimChange = xr_new<CUIColorAnimatorWrapper>("ui_mp_chat");
+    //	m_pAnimChange = new CUIColorAnimatorWrapper("ui_mp_chat");
     //	m_pAnimChange->Cyclic(false);
     //	m_pAnimChange->SetDone(true);
 }

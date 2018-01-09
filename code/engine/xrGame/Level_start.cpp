@@ -92,7 +92,7 @@ bool CLevel::net_start1() {
         params& p = g_pGamePersistent->m_game_params;
         // Connect
         if (!xr_strcmp(p.m_game_type, "single")) {
-            Server = xr_new<xrServer>();
+            Server = new xrServer();
         } else {
             g_allow_heap_min = false;
             Log("Unsupported game type: ", p.m_game_type);

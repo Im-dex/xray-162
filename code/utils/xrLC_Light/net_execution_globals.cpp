@@ -127,7 +127,7 @@ enum_table<e>::enum_table() {
     gl_table.resize(v_type<e>::last, 0);
 
     for (u32 i = v_type<e>::first; v_type<e>::last != i; ++i) {
-        gl_table[i] = xr_new<xr_vector<e_net_globals>>();
+        gl_table[i] = new xr_vector<e_net_globals>();
         for (u32 j = gl_cl_data; gl_last != j; ++j)
             gl_table[i]->push_back(e_net_globals(j));
     }

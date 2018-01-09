@@ -33,7 +33,7 @@ void CTeamBaseZone::Center(Fvector& C) const { XFORM().transform_tiny(C, CFORM()
 float CTeamBaseZone::Radius() const { return (CFORM()->getRadius()); }
 
 BOOL CTeamBaseZone::net_Spawn(CSE_Abstract* DC) {
-    CCF_Shape* l_pShape = xr_new<CCF_Shape>(this);
+    CCF_Shape* l_pShape = new CCF_Shape(this);
     collidable.model = l_pShape;
 
     CSE_Abstract* l_tpAbstract = (CSE_Abstract*)(DC);

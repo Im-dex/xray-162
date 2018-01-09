@@ -38,140 +38,140 @@ void CScriptXmlInit::InitWindow(LPCSTR path, int index, CUIWindow* pWnd) {
 }
 
 CUIFrameWindow* CScriptXmlInit::InitFrame(LPCSTR path, CUIWindow* parent) {
-    CUIFrameWindow* pWnd = xr_new<CUIFrameWindow>();
+    CUIFrameWindow* pWnd = new CUIFrameWindow();
     CUIXmlInit::InitFrameWindow(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIFrameLineWnd* CScriptXmlInit::InitFrameLine(LPCSTR path, CUIWindow* parent) {
-    CUIFrameLineWnd* pWnd = xr_new<CUIFrameLineWnd>();
+    CUIFrameLineWnd* pWnd = new CUIFrameLineWnd();
     CUIXmlInit::InitFrameLine(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIEditBox* CScriptXmlInit::InitEditBox(LPCSTR path, CUIWindow* parent) {
-    CUIEditBox* pWnd = xr_new<CUIEditBox>();
+    CUIEditBox* pWnd = new CUIEditBox();
     CUIXmlInit::InitEditBox(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIStatic* CScriptXmlInit::InitStatic(LPCSTR path, CUIWindow* parent) {
-    CUIStatic* pWnd = xr_new<CUIStatic>();
+    CUIStatic* pWnd = new CUIStatic();
     CUIXmlInit::InitStatic(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUITextWnd* CScriptXmlInit::InitTextWnd(LPCSTR path, CUIWindow* parent) {
-    CUITextWnd* pWnd = xr_new<CUITextWnd>();
+    CUITextWnd* pWnd = new CUITextWnd();
     CUIXmlInit::InitTextWnd(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIStatic* CScriptXmlInit::InitAnimStatic(LPCSTR path, CUIWindow* parent) {
-    CUIAnimatedStatic* pWnd = xr_new<CUIAnimatedStatic>();
+    CUIAnimatedStatic* pWnd = new CUIAnimatedStatic();
     CUIXmlInit::InitAnimatedStatic(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIStatic* CScriptXmlInit::InitSleepStatic(LPCSTR path, CUIWindow* parent) {
-    CUISleepStatic* pWnd = xr_new<CUISleepStatic>();
+    CUISleepStatic* pWnd = new CUISleepStatic();
     CUIXmlInit::InitSleepStatic(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIScrollView* CScriptXmlInit::InitScrollView(LPCSTR path, CUIWindow* parent) {
-    CUIScrollView* pWnd = xr_new<CUIScrollView>();
+    CUIScrollView* pWnd = new CUIScrollView();
     CUIXmlInit::InitScrollView(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIListBox* CScriptXmlInit::InitListBox(LPCSTR path, CUIWindow* parent) {
-    CUIListBox* pWnd = xr_new<CUIListBox>();
+    CUIListBox* pWnd = new CUIListBox();
     CUIXmlInit::InitListBox(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUICheckButton* CScriptXmlInit::InitCheck(LPCSTR path, CUIWindow* parent) {
-    CUICheckButton* pWnd = xr_new<CUICheckButton>();
+    CUICheckButton* pWnd = new CUICheckButton();
     CUIXmlInit::InitCheck(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUISpinNum* CScriptXmlInit::InitSpinNum(LPCSTR path, CUIWindow* parent) {
-    CUISpinNum* pWnd = xr_new<CUISpinNum>();
+    CUISpinNum* pWnd = new CUISpinNum();
     CUIXmlInit::InitSpin(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUISpinFlt* CScriptXmlInit::InitSpinFlt(LPCSTR path, CUIWindow* parent) {
-    CUISpinFlt* pWnd = xr_new<CUISpinFlt>();
+    CUISpinFlt* pWnd = new CUISpinFlt();
     CUIXmlInit::InitSpin(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUISpinText* CScriptXmlInit::InitSpinText(LPCSTR path, CUIWindow* parent) {
-    CUISpinText* pWnd = xr_new<CUISpinText>();
+    CUISpinText* pWnd = new CUISpinText();
     CUIXmlInit::InitSpin(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIComboBox* CScriptXmlInit::InitComboBox(LPCSTR path, CUIWindow* parent) {
-    CUIComboBox* pWnd = xr_new<CUIComboBox>();
+    CUIComboBox* pWnd = new CUIComboBox();
     CUIXmlInit::InitComboBox(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUI3tButton* CScriptXmlInit::Init3tButton(LPCSTR path, CUIWindow* parent) {
-    CUI3tButton* pWnd = xr_new<CUI3tButton>();
+    CUI3tButton* pWnd = new CUI3tButton();
     CUIXmlInit::Init3tButton(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUITabControl* CScriptXmlInit::InitTab(LPCSTR path, CUIWindow* parent) {
-    CUITabControl* pWnd = xr_new<CUITabControl>();
+    CUITabControl* pWnd = new CUITabControl();
     CUIXmlInit::InitTabControl(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIMMShniaga* CScriptXmlInit::InitMMShniaga(LPCSTR path, CUIWindow* parent) {
-    CUIMMShniaga* pWnd = xr_new<CUIMMShniaga>();
+    CUIMMShniaga* pWnd = new CUIMMShniaga();
     pWnd->InitShniaga(m_xml, path);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIWindow* CScriptXmlInit::InitKeyBinding(LPCSTR path, CUIWindow* parent) {
-    CUIKeyBinding* pWnd = xr_new<CUIKeyBinding>();
+    CUIKeyBinding* pWnd = new CUIKeyBinding();
     pWnd->InitFromXml(m_xml, path);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUITrackBar* CScriptXmlInit::InitTrackBar(LPCSTR path, CUIWindow* parent) {
-    CUITrackBar* pWnd = xr_new<CUITrackBar>();
+    CUITrackBar* pWnd = new CUITrackBar();
     CUIXmlInit::InitTrackBar(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;
 }
 
 CUIProgressBar* CScriptXmlInit::InitProgressBar(LPCSTR path, CUIWindow* parent) {
-    CUIProgressBar* pWnd = xr_new<CUIProgressBar>();
+    CUIProgressBar* pWnd = new CUIProgressBar();
     CUIXmlInit::InitProgressBar(m_xml, path, 0, pWnd);
     _attach_child(pWnd, parent);
     return pWnd;

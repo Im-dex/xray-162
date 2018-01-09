@@ -25,7 +25,7 @@ extern "C" bool __declspec(dllimport) __stdcall DXTCompress(LPCSTR out_name, u8*
 CLightmap::CLightmap() {}
 
 CLightmap::~CLightmap() {}
-CLightmap* CLightmap::read_create() { return xr_new<CLightmap>(); }
+CLightmap* CLightmap::read_create() { return new CLightmap(); }
 void CLightmap::Capture(CDeflector* D, int b_u, int b_v, int s_u, int s_v, BOOL bRotated) {
     // Allocate 512x512 texture if needed
     if (lm.surface.empty())

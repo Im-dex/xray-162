@@ -31,14 +31,14 @@ CInventoryOwner::CInventoryOwner() {
     m_pTrade = NULL;
     m_trade_parameters = 0;
 
-    m_inventory = xr_new<CInventory>();
-    m_pCharacterInfo = xr_new<CCharacterInfo>();
+    m_inventory = new CInventory();
+    m_pCharacterInfo = new CCharacterInfo();
 
     EnableTalk();
     EnableTrade();
     bDisableBreakDialog = false;
 
-    m_known_info_registry = xr_new<CInfoPortionWrapper>();
+    m_known_info_registry = new CInfoPortionWrapper();
     m_tmp_active_slot_num = NO_ACTIVE_SLOT;
     m_need_osoznanie_mode = FALSE;
 
@@ -96,12 +96,12 @@ void CInventoryOwner::reinit() {
 // call this after CGameObject::net_Spawn
 BOOL CInventoryOwner::net_Spawn(CSE_Abstract* DC) {
     if (!m_pTrade)
-        m_pTrade = xr_new<CTrade>(this);
+        m_pTrade = new CTrade(this);
 
     if (m_trade_parameters)
         xr_delete(m_trade_parameters);
 
-    m_trade_parameters = xr_new<CTradeParameters>(trade_section());
+    m_trade_parameters = new CTradeParameters(trade_section());
 
     //получить указатель на объект, InventoryOwner
     // m_inventory->setSlotsBlocked(false);
@@ -457,7 +457,7 @@ float CInventoryOwner::deficit_factor(const shared_str& section) const {
 
 void CInventoryOwner::buy_supplies(CInifile& ini_file, LPCSTR section) {
     if (!m_purchase_list)
-        m_purchase_list = xr_new<CPurchaseList>();
+        m_purchase_list = new CPurchaseList();
 
     m_purchase_list->process(ini_file, section, *this);
 }

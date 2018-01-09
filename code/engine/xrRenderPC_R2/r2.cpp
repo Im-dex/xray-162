@@ -280,9 +280,9 @@ void CRender::create() {
 
     m_bMakeAsyncSS = false;
 
-    Target = xr_new<CRenderTarget>(); // Main target
+    Target = new CRenderTarget(); // Main target
 
-    Models = xr_new<CModelPool>();
+    Models = new CModelPool();
     PSLibrary.OnCreate();
     HWOCC.occq_create(occq_size);
 
@@ -347,7 +347,7 @@ void CRender::reset_end() {
         R_CHK(HW.pDevice->CreateQuery(D3DQUERYTYPE_EVENT, &q_sync_point[i]));
     HWOCC.occq_create(occq_size);
 
-    Target = xr_new<CRenderTarget>();
+    Target = new CRenderTarget();
 
     xrRender_apply_tf();
 
@@ -378,7 +378,7 @@ void CRender::OnFrame() {
 }
 
 // Implementation
-IRender_ObjectSpecific* CRender::ros_create(IRenderable* parent) { return xr_new<CROS_impl>(); }
+IRender_ObjectSpecific* CRender::ros_create(IRenderable* parent) { return new CROS_impl(); }
 void CRender::ros_destroy(IRender_ObjectSpecific*& p) { xr_delete(p); }
 IRenderVisual* CRender::model_Create(LPCSTR name, IReader* data) {
     return Models->Create(name, data);
@@ -395,7 +395,7 @@ void CRender::model_Delete(IRenderVisual*& V, BOOL bDiscard) {
     V = 0;
 }
 IRender_DetailModel* CRender::model_CreateDM(IReader* F) {
-    CDetail* D = xr_new<CDetail>();
+    CDetail* D = new CDetail();
     D->Load(F);
     return D;
 }
@@ -476,7 +476,7 @@ FSlideWindowItem* CRender::getSWI(int id) {
 IRender_Target* CRender::getTarget() { return Target; }
 
 IRender_Light* CRender::light_create() { return Lights.Create(); }
-IRender_Glow* CRender::glow_create() { return xr_new<CGlow>(); }
+IRender_Glow* CRender::glow_create() { return new CGlow(); }
 
 void CRender::flush() { r_dsgraph_render_graph(0); }
 

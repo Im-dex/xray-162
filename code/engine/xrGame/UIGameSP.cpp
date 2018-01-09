@@ -22,8 +22,8 @@
 #include "ui/UIMessageBox.h"
 
 CUIGameSP::CUIGameSP() : m_game(NULL), m_game_objective(NULL) {
-    TalkMenu = xr_new<CUITalkWnd>();
-    UIChangeLevelWnd = xr_new<CChangeLevelWnd>();
+    TalkMenu = new CUITalkWnd();
+    UIChangeLevelWnd = new CChangeLevelWnd();
 }
 
 CUIGameSP::~CUIGameSP() {
@@ -214,7 +214,7 @@ void CUIGameSP::ChangeLevel(GameGraph::_GRAPH_ID game_vert_id, u32 level_vert_id
 }
 
 CChangeLevelWnd::CChangeLevelWnd() {
-    m_messageBox = xr_new<CUIMessageBox>();
+    m_messageBox = new CUIMessageBox();
     m_messageBox->SetAutoDelete(true);
     AttachChild(m_messageBox);
 }

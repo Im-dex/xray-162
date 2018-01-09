@@ -154,7 +154,7 @@ void SoundEnvironment_LIB::Load(LPCSTR name) {
     IReader* C;
     library.reserve(256);
     for (u32 chunk = 0; 0 != (C = F->open_chunk(chunk)); chunk++) {
-        CSoundRender_Environment* E = xr_new<CSoundRender_Environment>();
+        CSoundRender_Environment* E = new CSoundRender_Environment();
         if (E->load(C))
             library.push_back(E);
         C->close();
@@ -193,8 +193,8 @@ CSoundRender_Environment* SoundEnvironment_LIB::Get(LPCSTR name) {
 }
 CSoundRender_Environment* SoundEnvironment_LIB::Get(int id) { return library[id]; }
 CSoundRender_Environment* SoundEnvironment_LIB::Append(CSoundRender_Environment* parent) {
-    library.push_back(parent ? xr_new<CSoundRender_Environment>(*parent)
-                             : xr_new<CSoundRender_Environment>());
+    library.push_back(parent ? new CSoundRender_Environment(*parent)
+                             : new CSoundRender_Environment());
     return library.back();
 }
 void SoundEnvironment_LIB::Remove(LPCSTR name) {

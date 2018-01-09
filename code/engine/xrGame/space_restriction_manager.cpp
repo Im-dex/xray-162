@@ -21,7 +21,7 @@ struct CSpaceRestrictionManager::CClientRestriction {
     shared_str m_base_in_restrictions;
 };
 
-CSpaceRestrictionManager::CSpaceRestrictionManager() { m_clients = xr_new<CLIENT_RESTRICTIONS>(); }
+CSpaceRestrictionManager::CSpaceRestrictionManager() { m_clients = new CLIENT_RESTRICTIONS(); }
 
 CSpaceRestrictionManager::~CSpaceRestrictionManager() {
     xr_delete(m_clients);
@@ -165,7 +165,7 @@ CSpaceRestrictionManager::restriction(shared_str out_restrictors, shared_str in_
         return ((*I).second);
 
     CSpaceRestriction* client_restriction =
-        xr_new<CSpaceRestriction>(this, out_restrictors, in_restrictors);
+        new CSpaceRestriction(this, out_restrictors, in_restrictors);
     m_space_restrictions.insert(std::make_pair(space_restrictions, client_restriction));
     return (client_restriction);
 }

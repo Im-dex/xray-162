@@ -35,7 +35,7 @@ template <>
 editor::property_holder*
 property_collection<manager::thunderbolt_container_type, manager>::create() {
     thunderbolt* object =
-        xr_new<thunderbolt>(&m_holder, generate_unique_id("thunderbolt_unique_id_").c_str());
+        new thunderbolt(&m_holder, generate_unique_id("thunderbolt_unique_id_").c_str());
     object->fill(m_holder.environment(), this);
     return (object->object());
 }
@@ -49,7 +49,7 @@ void property_collection<manager::collection_container_type, manager>::display_n
 template <>
 editor::property_holder*
 property_collection<manager::collection_container_type, manager>::create() {
-    collection* object = xr_new<collection>(
+    collection* object = new collection(
         m_holder, generate_unique_id("thunderbolt_collection_unique_id_").c_str());
     object->fill(this);
     return (object->object());
@@ -59,9 +59,9 @@ manager::manager(::editor::environment::manager* environment)
     : m_thunderbolt_collection(0), m_thunderbolts_changed(true), m_collections_collection(0),
       m_collections_changed(true), m_property_holder(0), m_environment(*environment) {
     m_thunderbolt_collection =
-        xr_new<thunderbolt_collection_type>(&m_thunderbolts, this, &m_thunderbolts_changed);
+        new thunderbolt_collection_type(&m_thunderbolts, this, &m_thunderbolts_changed);
     m_collections_collection =
-        xr_new<collection_collection_type>(&m_collections, this, &m_collections_changed);
+        new collection_collection_type(&m_collections, this, &m_collections_changed);
 }
 
 manager::~manager() {
@@ -84,7 +84,7 @@ void manager::load_thunderbolts() {
     VERIFY(m_thunderbolts.empty());
 
     string_path file_name;
-    CInifile* config = xr_new<CInifile>(
+    CInifile* config = new CInifile(
         FS.update_path(file_name, "$game_config$", "environment\\thunderbolts.ltx"), TRUE, TRUE,
         FALSE);
 
@@ -94,7 +94,7 @@ void manager::load_thunderbolts() {
     sections_type::const_iterator i = sections.begin();
     sections_type::const_iterator e = sections.end();
     for (; i != e; ++i) {
-        thunderbolt* object = xr_new<thunderbolt>(this, (*i)->Name);
+        thunderbolt* object = new thunderbolt(this, (*i)->Name);
         object->load(*config);
         object->fill(m_environment, m_thunderbolt_collection);
         m_thunderbolts.push_back(object);
@@ -105,7 +105,7 @@ void manager::load_thunderbolts() {
 
 void manager::save_thunderbolts() {
     string_path file_name;
-    CInifile* config = xr_new<CInifile>(
+    CInifile* config = new CInifile(
         FS.update_path(file_name, "$game_config$", "environment\\thunderbolts.ltx"), FALSE, FALSE,
         TRUE);
 
@@ -121,7 +121,7 @@ void manager::load_collections() {
     VERIFY(m_collections.empty());
 
     string_path file_name;
-    CInifile* config = xr_new<CInifile>(
+    CInifile* config = new CInifile(
         FS.update_path(file_name, "$game_config$", "environment\\thunderbolt_collections.ltx"),
         TRUE, TRUE, FALSE);
 
@@ -132,7 +132,7 @@ void manager::load_collections() {
     sections_type::const_iterator e = sections.end();
     for (; i != e; ++i) {
         // TODO: [imdex] remove shared_str (ini)
-        collection* object = xr_new<collection>(*this, *(*i)->Name);
+        collection* object = new collection(*this, *(*i)->Name);
         object->load(*config);
         object->fill(m_thunderbolt_collection);
         m_collections.push_back(object);
@@ -143,7 +143,7 @@ void manager::load_collections() {
 
 void manager::save_collections() {
     string_path file_name;
-    CInifile* config = xr_new<CInifile>(
+    CInifile* config = new CInifile(
         FS.update_path(file_name, "$game_config$", "environment\\thunderbolt_collections.ltx"),
         FALSE, FALSE, TRUE);
 
@@ -166,7 +166,7 @@ void manager::save() {
 
     string_path file_name;
     CInifile* config =
-        xr_new<CInifile>(FS.update_path(file_name, "$game_config$", "environment\\environment.ltx"),
+        new CInifile(FS.update_path(file_name, "$game_config$", "environment\\environment.ltx"),
                          FALSE, FALSE, TRUE);
 
     CEnvironment& environment = g_pGamePersistent->Environment();

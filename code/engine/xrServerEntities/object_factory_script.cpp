@@ -30,7 +30,7 @@ void CObjectFactory::register_script_class(LPCSTR client_class, LPCSTR server_cl
         return;
     }
 
-    add(xr_new<CObjectItemScript>(
+    add(new CObjectItemScript(
 #ifndef NO_XR_GAME
         client,
 #endif
@@ -45,7 +45,7 @@ void CObjectFactory::register_script_class(LPCSTR unknown_class, LPCSTR clsid,
                                         unknown_class);
         return;
     }
-    add(xr_new<CObjectItemScript>(
+    add(new CObjectItemScript(
 #ifndef NO_XR_GAME
         creator,
 #endif

@@ -1375,7 +1375,7 @@ void CPHElement::PresetActive() {
 bool CPHElement::isBreakable() { return !!m_fratures_holder; }
 u16 CPHElement::setGeomFracturable(CPHFracture& fracture) {
     if (!m_fratures_holder)
-        m_fratures_holder = xr_new<CPHFracturesHolder>();
+        m_fratures_holder = new CPHFracturesHolder();
     return m_fratures_holder->AddFracture(fracture);
 }
 

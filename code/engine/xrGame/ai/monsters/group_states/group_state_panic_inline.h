@@ -14,11 +14,11 @@
 
 TEMPLATE_SPECIALIZATION
 CStateGroupPanicAbstract::CStateGroupPanic(_Object* obj) : inherited(obj) {
-    this->add_state(eStatePanic_Run, xr_new<CStateGroupPanicRun<_Object>>(obj));
+    this->add_state(eStatePanic_Run, new CStateGroupPanicRun<_Object>(obj));
     this->add_state(eStatePanic_FaceUnprotectedArea,
-                    xr_new<CStateMonsterLookToUnprotectedArea<_Object>>(obj));
+                    new CStateMonsterLookToUnprotectedArea<_Object>(obj));
     this->add_state(eStatePanic_MoveToHomePoint,
-                    xr_new<CStateMonsterAttackMoveToHomePoint<_Object>>(obj));
+                    new CStateMonsterAttackMoveToHomePoint<_Object>(obj));
 }
 
 TEMPLATE_SPECIALIZATION
