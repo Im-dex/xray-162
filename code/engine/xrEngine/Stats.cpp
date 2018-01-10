@@ -62,7 +62,6 @@ CStats::CStats() {
     fRFPS = 30.f;
     fTPS = 0;
     pFont = 0;
-    fMem_calls = 0;
     RenderDUMP_DT_Count = 0;
     Device.seqRender.Add(this, REG_PRIORITY_LOW - 1000);
 }
@@ -157,14 +156,6 @@ void CStats::Show() {
             fRFPS = fInv * fRFPS + fOne * 1000.f / RenderTOTAL.result;
         }
     }
-    {
-        float mem_count = float(Memory.stat_calls);
-        if (mem_count > fMem_calls)
-            fMem_calls = mem_count;
-        else
-            fMem_calls = .9f * fMem_calls + .1f * mem_count;
-        Memory.stat_calls = 0;
-    }
 
     ////////////////////////////////////////////////
     int frm = 2000;
@@ -231,7 +222,6 @@ void CStats::Show() {
 
 #define PPP(a) (100.f * float(a) / float(EngineTOTAL.result))
         F.OutNext("*** ENGINE:  %2.2fms", EngineTOTAL.result);
-        F.OutNext("Memory:      %2.2fa", fMem_calls);
         F.OutNext("uClients:    %2.2fms, %2.1f%%, crow(%d)/active(%d)/total(%d)",
                   UpdateClient.result, PPP(UpdateClient.result), UpdateClient_crows,
                   UpdateClient_active, UpdateClient_total);
@@ -305,18 +295,9 @@ void CStats::Show() {
         F.OutNext("TEST 1:      %2.2fms, %d", TEST1.result, TEST1.count);
         F.OutNext("TEST 2:      %2.2fms, %d", TEST2.result, TEST2.count);
         F.OutNext("TEST 3:      %2.2fms, %d", TEST3.result, TEST3.count);
-#ifdef DEBUG_MEMORY_MANAGER
-        F.OutSkip();
-        F.OutNext("str: cmp[%3d], dock[%3d], qpc[%3d]", Memory.stat_strcmp, Memory.stat_strdock,
-                  CPU::qpc_counter);
-        Memory.stat_strcmp = 0;
-        Memory.stat_strdock = 0;
-        CPU::qpc_counter = 0;
-#else   // DEBUG_MEMORY_MANAGER
         F.OutSkip();
         F.OutNext("qpc[%3d]", CPU::qpc_counter);
         CPU::qpc_counter = 0;
-#endif  // DEBUG_MEMORY_MANAGER
         //		F.OutSet	(640,0);
         F.OutSkip();
         m_pRender->OutData4(F);

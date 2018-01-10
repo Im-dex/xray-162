@@ -70,11 +70,7 @@ static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
         xr_free(ptr);
         return NULL;
     } else
-#ifdef DEBUG_MEMORY_NAME
-        return Memory.mem_realloc(ptr, nsize, "LUA");
-#else  // DEBUG_MEMORY_MANAGER
-        return Memory.mem_realloc(ptr, nsize);
-#endif // DEBUG_MEMORY_MANAGER
+        return xr_realloc(ptr, nsize);
 }
 
 static LPVOID __cdecl luabind_allocator(luabind::memory_allocation_function_parameter const,
@@ -86,19 +82,11 @@ static LPVOID __cdecl luabind_allocator(luabind::memory_allocation_function_para
     }
 
     if (!pointer) {
-#ifdef DEBUG
-        return (Memory.mem_alloc(size, "luabind"));
-#else  // #ifdef DEBUG
-        return (Memory.mem_alloc(size));
-#endif // #ifdef DEBUG
+        return (xr_malloc(size));
     }
 
     LPVOID non_const_pointer = const_cast<LPVOID>(pointer);
-#ifdef DEBUG
-    return (Memory.mem_realloc(non_const_pointer, size, "luabind"));
-#else  // #ifdef DEBUG
-    return (Memory.mem_realloc(non_const_pointer, size));
-#endif // #ifdef DEBUG
+    return (xr_realloc(non_const_pointer, size));
 }
 
 void setup_luabind_allocator() {
@@ -442,20 +430,16 @@ bool CScriptStorage::load_buffer(lua_State* L, LPCSTR caBuffer, size_t tSize, LP
                 script = (LPSTR)_alloca(total_size);
             else {
 #ifdef DEBUG
-                script = (LPSTR)Memory.mem_alloc(total_size, "lua script file");
+                script = (LPSTR)xr_malloc(total_size, "lua script file");
 #else  //#ifdef DEBUG
-                script = (LPSTR)Memory.mem_alloc(total_size);
+                script = (LPSTR)xr_malloc(total_size);
 #endif //#ifdef DEBUG
                 dynamic_allocation = true;
             }
         } __except (GetExceptionCode() == STATUS_STACK_OVERFLOW) {
             int errcode = _resetstkoflw();
             R_ASSERT2(errcode, "Could not reset the stack after \"Stack overflow\" exception!");
-#ifdef DEBUG
-            script = (LPSTR)Memory.mem_alloc(total_size, "lua script file (after exception)");
-#else  //#ifdef DEBUG
-            script = (LPSTR)Memory.mem_alloc(total_size);
-#endif //#ifdef DEBUG
+            script = (LPSTR)xr_malloc(total_size);
             dynamic_allocation = true;
         };
 

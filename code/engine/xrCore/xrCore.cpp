@@ -51,7 +51,7 @@ void xrCore::_initialize(const char* _ApplicationName, LogCallback cb, bool init
         // Mathematics & PSI detection
         CPU::Detect();
 
-        Memory._initialize(strstr(Params, "-mem_debug") ? TRUE : FALSE);
+        Memory._initialize();
 
         InitLog();
         _initialize_cpu();

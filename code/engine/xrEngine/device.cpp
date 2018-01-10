@@ -129,7 +129,6 @@ void CRenderDevice::End(void) {
     //	Present goes here
     m_pRender->End();
 // RCache.OnFrameEnd	();
-// Memory.dbg_check		();
 // CHK_DX				(HW.pDevice->EndScene());
 
 // HRESULT _hr		= HW.pDevice->Present( NULL, NULL, NULL, NULL );

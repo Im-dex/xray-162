@@ -13,12 +13,6 @@
 
 using namespace luabind;
 
-#ifdef DEBUG
-#define MDB Memory.dbg_check()
-#else
-#define MDB
-#endif
-
 // wrapper
 class adopt_sampler {
     CBlender_Compile* C;
@@ -195,7 +189,6 @@ public:
 };
 
 void LuaLog(LPCSTR caMessage) {
-    MDB;
     Lua::LuaOut(Lua::eLuaMessageTypeMessage, "%s", caMessage);
 }
 void LuaError(lua_State* L) { Debug.fatal(DEBUG_INFO, "LUA error: %s", lua_tostring(L, -1)); }
@@ -207,11 +200,7 @@ static void* lua_alloc_dl(void* ud, void* ptr, size_t osize, size_t nsize) {
         xr_free(ptr);
         return NULL;
     } else
-#ifdef DEBUG_MEMORY_NAME
-        return Memory.mem_realloc(ptr, nsize, "LUA");
-#else  // DEBUG_MEMORY_MANAGER
-        return Memory.mem_realloc(ptr, nsize);
-#endif // DEBUG_MEMORY_MANAGER
+        return xr_realloc(ptr, nsize);
 }
 
 // export

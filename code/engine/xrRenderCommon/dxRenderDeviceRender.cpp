@@ -286,7 +286,6 @@ void dxRenderDeviceRender::End() {
         overdrawEnd();
 
     RCache.OnFrameEnd();
-    Memory.dbg_check();
 
     DoAsyncScreenshot();
 

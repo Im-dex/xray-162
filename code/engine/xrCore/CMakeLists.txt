@@ -38,11 +38,7 @@ set(MATH_EXT _std_extensions.h _std_extensions.cpp _stl_extensions.h clsid.h cls
 set(MATH_EXT_BUFFER_VECTOR buffer_vector.h buffer_vector_inline.h)
 set(MATH_STLEXT FixedMap.h FixedSet.h FixedVector.h xrPool.h)
 
-set(MEM_MGR memory_allocation_stats.cpp memory_usage.cpp xrMemory.cpp xrMemory.h xrMemory_align.h
-            xrMemory_align.cpp xrMemory_debug.cpp xrMemory_POOL.cpp xrMEMORY_POOL.h xrMemory_pure.h
-            xrMemory_subst_msvc.h)
-
-set(MEM_MONITOR memory_monitor.h memory_monitor.cpp)
+set(MEMORY memory_usage.cpp xrMemory.cpp xrMemory.h)
 
 set(OS os_clipboard.h os_clipboard.cpp)
 
@@ -69,9 +65,7 @@ source_group("Math\\Extensions" FILES ${MATH_EXT})
 source_group("Math\\Extensions\\buffer_vector" FILES ${MATH_EXT_BUFFER_VECTOR})
 source_group("Math\\STLext" FILES ${MATH_STLEXT})
 
-source_group("Memory manager" FILES ${MEM_MGR})
-
-source_group("memory_monitor" FILES ${MEM_MONITOR})
+source_group("Memory" FILES ${MEMORY})
 
 source_group("OS" FILES ${OS})
 
@@ -95,9 +89,7 @@ add_library(xrCore SHARED ${COMPRESSOR_LZ} ${COMPRESSOR_LZO} ${COMPRESSOR_RT}
                           ${MATH_} ${MATH_CPU} ${MATH_EXT} ${MATH_EXT_BUFFER_VECTOR}
                           ${MATH_STLEXT}
                           
-                          ${MEM_MGR}
-                          
-                          ${MEM_MONITOR}
+                          ${MEMORY}
                           
                           ${OS}
                           

@@ -65,7 +65,8 @@ public:
     // ref and unref
     void Unref() {
         if (--m_refCount == 0) {
-            Memory.mem_free(this);
+            NvEdgeInfo* self = this;
+            xr_delete(self);
         }
     }
 

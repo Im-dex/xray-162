@@ -56,7 +56,7 @@ void INetBlockReader::create_block(const size_t size) {
 INetBlockReader::~INetBlockReader() {
     R_ASSERT(!mem_reader.allocated() || mem_reader.count() == 0);
     mem_reader.free_buff();
-    //	Memory.mem_free( _buffer );
+    //	xr_free( _buffer );
 }
 /*
         IC void			w_string(const char *p)			{
@@ -188,17 +188,13 @@ void CReadMemoryBlock::r(void* p, const size_t cnt) const {
 CReadMemoryBlock::CReadMemoryBlock(const size_t buff_size_, u8* buffer)
     : buf_size(buff_size_), file_size(0), position(0), _buffer(buffer) {
     /*
-            data = (u8*)	Memory.mem_alloc	(file_size_
-    #ifdef DEBUG_MEMORY_NAME
-                            ,		"CReadMemoryBlock - storage"
-    #endif // DEBUG_MEMORY_NAME
-                            );
+            data = (u8*)	xr_malloc	(file_size_);
     */
     // data = buffer;
 }
 
 CReadMemoryBlock::~CReadMemoryBlock() {
-    // Memory.mem_free( data );
+    // xr_free( data );
 }
 
 size_t INetReader::find_chunk(const u32 ID, bool* bCompressed) {
