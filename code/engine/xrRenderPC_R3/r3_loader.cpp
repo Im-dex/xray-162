@@ -156,7 +156,7 @@ void CRender::level_Unload() {
 
     //*** SWI
     for (I = 0; I < SWIs.size(); I++)
-        xr_free(SWIs[I].sw);
+        delete[] SWIs[I].sw;
     SWIs.clear();
 
     //*** VB/IB
@@ -246,11 +246,11 @@ void CRender::LoadBuffers(CStreamReader* base_fs, BOOL _alternative) {
             //_VB[i]->Unlock		();
             //	TODO: DX10: Check fragmentation.
             //	Check if buffer is less then 2048 kb
-            BYTE* pData = xr_alloc<BYTE>(vCount * vSize);
+            BYTE* pData = new BYTE[vCount * vSize];
             fs->r(pData, vCount * vSize);
             dx10BufferUtils::CreateVertexBuffer(&_VB[i], pData, vCount * vSize);
             HW.stats_manager.increment_stats_vb(_VB[i]);
-            xr_free(pData);
+            delete[] pData;
 
             //			fs->advance			(vCount*vSize);
         }
@@ -277,11 +277,11 @@ void CRender::LoadBuffers(CStreamReader* base_fs, BOOL _alternative) {
 
             //	TODO: DX10: Check fragmentation.
             //	Check if buffer is less then 2048 kb
-            BYTE* pData = xr_alloc<BYTE>(iCount * 2);
+            BYTE* pData = new BYTE[iCount * 2];
             fs->r(pData, iCount * 2);
             dx10BufferUtils::CreateIndexBuffer(&_IB[i], pData, iCount * 2);
             HW.stats_manager.increment_stats_ib(_IB[i]);
-            xr_free(pData);
+            delete[] pData;
 
             //			fs().advance		(iCount*2);
         }
@@ -387,7 +387,7 @@ void CRender::LoadSWIs(CStreamReader* base_fs) {
         xr_vector<FSlideWindowItem>::iterator it_e = SWIs.end();
 
         for (; it != it_e; ++it)
-            xr_free((*it).sw);
+            delete[] (*it).sw;
 
         SWIs.clear();
 
@@ -400,7 +400,7 @@ void CRender::LoadSWIs(CStreamReader* base_fs) {
             swi.reserved[3] = fs->r_u32();
             swi.count = fs->r_u32();
             VERIFY(NULL == swi.sw);
-            swi.sw = xr_alloc<FSlideWindow>(swi.count);
+            swi.sw = new FSlideWindow[swi.count];
             fs->r(swi.sw, sizeof(FSlideWindow) * swi.count);
         }
         fs->close();

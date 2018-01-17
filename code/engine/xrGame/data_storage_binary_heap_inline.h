@@ -15,17 +15,11 @@
 
 TEMPLATE_SPECIALIZATION
 IC CBinaryHeap::CDataStorage(const u32 vertex_count) : inherited(vertex_count) {
-    u32 memory_usage = 0;
-    u32 byte_count;
-
-    byte_count = vertex_count * sizeof(CGraphVertex*);
-    m_heap = xr_alloc<CGraphVertex*>(vertex_count);
-    std::memset(m_heap, 0, byte_count);
-    memory_usage += byte_count;
+    m_heap = new CGraphVertex*[vertex_count]();
 }
 
 TEMPLATE_SPECIALIZATION
-CBinaryHeap::~CDataStorage() { xr_free(m_heap); }
+CBinaryHeap::~CDataStorage() { delete[] m_heap; }
 
 TEMPLATE_SPECIALIZATION
 IC void CBinaryHeap::init() {

@@ -148,7 +148,7 @@ void CRender::level_Unload() {
 
     //*** SWI
     for (I = 0; I < SWIs.size(); I++)
-        xr_free(SWIs[I].sw);
+        delete[] SWIs[I].sw;
     SWIs.clear();
 
     //*** VB/IB
@@ -368,7 +368,7 @@ void CRender::LoadSWIs(CStreamReader* base_fs) {
         xr_vector<FSlideWindowItem>::iterator it_e = SWIs.end();
 
         for (; it != it_e; ++it)
-            xr_free((*it).sw);
+            delete[] (*it).sw;
 
         SWIs.clear();
 
@@ -381,7 +381,7 @@ void CRender::LoadSWIs(CStreamReader* base_fs) {
             swi.reserved[3] = fs->r_u32();
             swi.count = fs->r_u32();
             VERIFY(NULL == swi.sw);
-            swi.sw = xr_alloc<FSlideWindow>(swi.count);
+            swi.sw = new FSlideWindow[swi.count];
             fs->r(swi.sw, sizeof(FSlideWindow) * swi.count);
         }
         fs->close();

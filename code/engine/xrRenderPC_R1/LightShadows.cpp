@@ -511,10 +511,10 @@ void CLightShadows::render() {
             CI->Lp = CI->L->position;
             CI->tcnt = tess.size();
             // Msg						("---free--- %x",u32(CI->tris));
-            xr_free(CI->tris);
+            delete[] CI->tris;
             VERIFY(0 == CI->tris);
             if (tess.size()) {
-                CI->tris = xr_alloc<tess_tri>(CI->tcnt);
+                CI->tris = new tess_tri[CI->tcnt];
                 // Msg					("---alloc--- %x",u32(CI->tris));
                 std::memcpy(CI->tris, &*tess.begin(), CI->tcnt * sizeof(tess_tri));
             }
@@ -584,7 +584,8 @@ void CLightShadows::render() {
         u32 time = Device.dwTimeGlobal - ci.time;
         if (time > cache_old) {
             // Msg			("---free--- %x",u32(ci.tris));
-            xr_free(ci.tris);
+            delete[] ci.tris;
+            ci.tris = nullptr;
             VERIFY(0 == ci.tris);
             cache.erase(cache.begin() + cit);
             cit--;

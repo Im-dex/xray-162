@@ -110,15 +110,15 @@ void CKinematics::IBoneInstances_Create() {
     // VERIFY2				(bones->size() < 64, "More than 64 bones is a crazy
     // thing!");
     u32 size = bones->size();
-    bone_instances = xr_alloc<CBoneInstance>(size);
+    bone_instances = new CBoneInstance[size];
     for (u32 i = 0; i < size; i++)
         bone_instances[i].construct();
 }
 
 void CKinematics::IBoneInstances_Destroy() {
     if (bone_instances) {
-        xr_free(bone_instances);
-        bone_instances = NULL;
+        delete[] bone_instances;
+        bone_instances = nullptr;
     }
 }
 

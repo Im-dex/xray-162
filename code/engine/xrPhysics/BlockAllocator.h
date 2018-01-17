@@ -33,14 +33,14 @@ public:
     void clear() {
         auto i = blocks.begin(), e = blocks.end();
         for (; i != e; ++i)
-            xr_free(*i);
+            delete[] (*i);
         blocks.clear();
         init();
     }
 
 private:
     /////////////////////////////////////////////////////////////////
-    IC void add_block() { blocks.push_back(xr_alloc<T>(block_size)); };
+    IC void add_block() { blocks.push_back(new T[block_size]); };
     IC void next_block() {
 
         if (block_count == blocks.size())
@@ -65,7 +65,6 @@ public:
         for (j = 0; j < block_position; ++j) {
             pred.operator()(current_block + j);
         }
-        // for_each(blocks.begin(),block.end(),pred);
     }
 
 private:

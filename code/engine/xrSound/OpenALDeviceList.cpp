@@ -49,8 +49,8 @@ ALDeviceList::~ALDeviceList() {
     for (int i = 0; snd_devices_token[i].name; i++) {
         xr_free(snd_devices_token[i].name);
     }
-    xr_free(snd_devices_token);
-    snd_devices_token = NULL;
+    delete[] snd_devices_token;
+    snd_devices_token = nullptr;
 }
 
 void ALDeviceList::Enumerate() {
@@ -139,7 +139,7 @@ void ALDeviceList::Enumerate() {
 
     // make token
     u32 _cnt = GetNumDevices();
-    snd_devices_token = xr_alloc<xr_token>(_cnt + 1);
+    snd_devices_token = new xr_token[_cnt + 1];
     snd_devices_token[_cnt].id = -1;
     snd_devices_token[_cnt].name = NULL;
     for (u32 i = 0; i < _cnt; ++i) {

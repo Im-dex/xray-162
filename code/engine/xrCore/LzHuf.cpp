@@ -69,7 +69,7 @@ public:
     IC void _putb(int c) {
         if (out_iterator == out_end) {
             u32 out_size = u32(out_end - out_start);
-            out_start = (u8*)xr_realloc(out_start, out_size + 1024);
+            out_start = (u8*) realloc(out_start, out_size + 1024);
             out_iterator = out_start + out_size;
             out_end = out_iterator + 1024;
         }
@@ -93,7 +93,7 @@ public:
 
     void Init_Output(const int _rsize) {
         // output
-        out_start = (u8*)xr_malloc(_rsize);
+        out_start = new u8[_rsize];
         out_end = out_start + _rsize;
         out_iterator = out_start;
     }
@@ -101,8 +101,8 @@ public:
     IC u32 OutSize() { return u32(out_iterator - out_start); }
     IC u8* OutPointer() { return out_start; }
     IC void OutRelease() {
-        xr_free(out_start);
-        out_start = 0;
+        delete[] out_start;
+        out_start = nullptr;
         out_end = 0;
         out_iterator = 0;
     }
@@ -619,7 +619,7 @@ void _decompressLZ(u8** dest, unsigned* dest_sz, const void* src, const size_t s
 
 unsigned _readLZ(int hf, void*& d, unsigned size) {
     // Read file in memory
-    u8* data = (u8*)xr_malloc(size);
+    u8* data = new u8[size];
     _read(hf, data, size);
 
     fs.Init_Input(data, data + size);
@@ -628,7 +628,7 @@ unsigned _readLZ(int hf, void*& d, unsigned size) {
     Decode();
 
     // Flush cache
-    xr_free(data);
+    delete[] data;
     d = fs.OutPointer();
     return fs.OutSize();
 }

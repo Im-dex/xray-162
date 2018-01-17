@@ -29,8 +29,8 @@ CEngineAPI::~CEngineAPI() {
         for (int i = 0; vid_quality_token[i].name; i++) {
             xr_free(vid_quality_token[i].name);
         }
-        xr_free(vid_quality_token);
-        vid_quality_token = NULL;
+        delete[] vid_quality_token;
+        vid_quality_token = nullptr;
     }
 }
 
@@ -166,7 +166,7 @@ typedef bool _declspec(dllexport) SupportsDX11Rendering();
 
 void CEngineAPI::CreateRendererList() {
     //	TODO: ask renderers if they are supported!
-    if (vid_quality_token != NULL)
+    if (vid_quality_token != nullptr)
         return;
     bool bSupports_r2 = false;
     bool bSupports_r2_5 = false;
@@ -282,7 +282,7 @@ void CEngineAPI::CreateRendererList() {
         _tmp.back() = xr_strdup(val);
     }
     u32 _cnt = _tmp.size() + 1;
-    vid_quality_token = xr_alloc<xr_token>(_cnt);
+    vid_quality_token = new xr_token[_cnt];
 
     vid_quality_token[_cnt - 1].id = -1;
     vid_quality_token[_cnt - 1].name = NULL;

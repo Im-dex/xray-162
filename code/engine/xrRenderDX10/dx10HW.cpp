@@ -828,8 +828,8 @@ void free_vid_mode_list() {
     for (int i = 0; vid_mode_token[i].name; i++) {
         xr_free(vid_mode_token[i].name);
     }
-    xr_free(vid_mode_token);
-    vid_mode_token = NULL;
+    delete[] vid_mode_token;
+    vid_mode_token = nullptr;
 }
 
 void fill_vid_mode_list(CHW* _hw) {
@@ -877,7 +877,7 @@ void fill_vid_mode_list(CHW* _hw) {
 
     u32 _cnt = _tmp.size() + 1;
 
-    vid_mode_token = xr_alloc<xr_token>(_cnt);
+    vid_mode_token = new xr_token[_cnt];
 
     vid_mode_token[_cnt - 1].id = -1;
     vid_mode_token[_cnt - 1].name = NULL;

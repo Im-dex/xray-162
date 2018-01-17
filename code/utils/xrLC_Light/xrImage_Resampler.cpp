@@ -26,16 +26,14 @@ struct Image {
 
 Image* new_image(int xsize, int ysize) /* create a blank image */
 {
-    Image* image;
+    Image* image = new Image;
 
-    if ((0 != (image = (Image*)xr_malloc(sizeof(Image)))) &&
-        (0 != (image->data = (Pixel*)xr_malloc(ysize * xsize * sizeof(Pixel))))) {
-        std::memset(image->data, 0, ysize * xsize * sizeof(Pixel));
-        image->xsize = xsize;
-        image->ysize = ysize;
-        image->span = xsize;
-    }
-    return (image);
+    image->data = new Pixel[ysize * xsize]();
+    image->xsize = xsize;
+    image->ysize = ysize;
+    image->span = xsize;
+
+    return image;
 }
 
 void free_image(Image* image) {

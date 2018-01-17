@@ -57,36 +57,30 @@ LPCSTR file_header = 0;
 #include "script_debugger.h"
 #endif
 
-#ifndef PURE_ALLOC
-//#	ifndef USE_MEMORY_MONITOR
-#define USE_DL_ALLOCATOR
-//#	endif // USE_MEMORY_MONITOR
-#endif // PURE_ALLOC
-
 static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize) {
     (void)ud;
     (void)osize;
     if (nsize == 0) {
-        xr_free(ptr);
+        free(ptr);
         return NULL;
     } else
-        return xr_realloc(ptr, nsize);
+        return realloc(ptr, nsize);
 }
 
 static LPVOID __cdecl luabind_allocator(luabind::memory_allocation_function_parameter const,
                                         void const* const pointer, size_t const size) {
     if (!size) {
         LPVOID non_const_pointer = const_cast<LPVOID>(pointer);
-        xr_free(non_const_pointer);
+        free(non_const_pointer);
         return (0);
     }
 
     if (!pointer) {
-        return (xr_malloc(size));
+        return (malloc(size));
     }
 
     LPVOID non_const_pointer = const_cast<LPVOID>(pointer);
-    return (xr_realloc(non_const_pointer, size));
+    return (realloc(non_const_pointer, size));
 }
 
 void setup_luabind_allocator() {
@@ -422,34 +416,14 @@ bool CScriptStorage::load_buffer(lua_State* L, LPCSTR caBuffer, size_t tSize, LP
         xr_sprintf(insert, header, caNameSpaceName, a, b);
         u32 str_len = xr_strlen(insert);
         u32 const total_size = str_len + tSize;
-        LPSTR script = 0;
-        bool dynamic_allocation = false;
-
-        __try {
-            if (total_size < 768 * 1024)
-                script = (LPSTR)_alloca(total_size);
-            else {
-#ifdef DEBUG
-                script = (LPSTR)xr_malloc(total_size, "lua script file");
-#else  //#ifdef DEBUG
-                script = (LPSTR)xr_malloc(total_size);
-#endif //#ifdef DEBUG
-                dynamic_allocation = true;
-            }
-        } __except (GetExceptionCode() == STATUS_STACK_OVERFLOW) {
-            int errcode = _resetstkoflw();
-            R_ASSERT2(errcode, "Could not reset the stack after \"Stack overflow\" exception!");
-            script = (LPSTR)xr_malloc(total_size);
-            dynamic_allocation = true;
-        };
+        char* script = new char[total_size];
 
         xr_strcpy(script, total_size, insert);
         std::memcpy(script + str_len, caBuffer, u32(tSize));
 
         l_iErrorCode = luaL_loadbuffer(L, script, tSize + str_len, caScriptName);
 
-        if (dynamic_allocation)
-            xr_free(script);
+        delete[] script;
     } else {
         //		try
         { l_iErrorCode = luaL_loadbuffer(L, caBuffer, tSize, caScriptName); }

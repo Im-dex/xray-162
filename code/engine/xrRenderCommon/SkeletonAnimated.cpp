@@ -573,13 +573,13 @@ void CKinematicsAnimated::Release() {
 
 CKinematicsAnimated::~CKinematicsAnimated() { IBoneInstances_Destroy(); }
 CKinematicsAnimated::CKinematicsAnimated()
-    : CKinematics(), IKinematicsAnimated(), blend_instances(NULL), m_Partition(NULL),
+    : CKinematics(), IKinematicsAnimated(), blend_instances(nullptr), m_Partition(NULL),
       m_blend_destroy_callback(0), m_update_tracks_callback(0), Update_LastTime(0) {}
 
 void CKinematicsAnimated::IBoneInstances_Create() {
     inherited::IBoneInstances_Create();
     u32 size = bones->size();
-    blend_instances = xr_alloc<CBlendInstance>(size);
+    blend_instances = new CBlendInstance[size];
     for (u32 i = 0; i < size; i++)
         blend_instances[i].construct();
 }
@@ -587,8 +587,8 @@ void CKinematicsAnimated::IBoneInstances_Create() {
 void CKinematicsAnimated::IBoneInstances_Destroy() {
     inherited::IBoneInstances_Destroy();
     if (blend_instances) {
-        xr_free(blend_instances);
-        blend_instances = NULL;
+        delete[] blend_instances;
+        blend_instances = nullptr;
     }
 }
 
@@ -657,7 +657,7 @@ void CKinematicsAnimated::Load(const char* N, IReader* data, u32 dwFlags) {
     inherited::Load(N, data, dwFlags);
 
     // Globals
-    blend_instances = NULL;
+    blend_instances = nullptr;
     m_Partition = NULL;
     Update_LastTime = 0;
 

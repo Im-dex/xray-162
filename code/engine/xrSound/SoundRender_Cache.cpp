@@ -86,8 +86,8 @@ void CSoundRender_Cache::initialize(u32 _total_kb_approx, u32 bytes_per_line) {
     Msg("* sound : cache: %d kb, %d lines, %d bpl", _total / 1024, _count, _line);
 
     // alloc structs
-    data = xr_alloc<u8>(_total);
-    c_storage = xr_alloc<cache_line>(_count);
+    data = new u8[_total];
+    c_storage = new cache_line[_count];
 
     // format
     format();
@@ -127,10 +127,10 @@ void CSoundRender_Cache::purge() {
 
 void CSoundRender_Cache::destroy() {
     disconnect();
-    xr_free(data);
-    xr_free(c_storage);
-    c_begin = NULL;
-    c_end = NULL;
+    delete[] data;
+    delete[] c_storage;
+    c_begin = nullptr;
+    c_end = nullptr;
     _total = 0;
     _line = 0;
     _count = 0;
@@ -141,11 +141,11 @@ void CSoundRender_Cache::cat_create(cache_cat& cat, u32 bytes) {
     if (bytes % _line)
         cat.size += 1;
     u32 allocsize = (cat.size & 1) ? cat.size + 1 : cat.size;
-    cat.table = xr_alloc<u16>(allocsize);
+    cat.table = new u16[allocsize];
     std::memset(cat.table, 0xff, allocsize * 2); // fill32
 }
 
 void CSoundRender_Cache::cat_destroy(cache_cat& cat) {
-    xr_free(cat.table);
+    delete[] cat.table;
     cat.size = 0;
 }

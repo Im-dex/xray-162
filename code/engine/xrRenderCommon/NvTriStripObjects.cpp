@@ -638,8 +638,7 @@ void NvStripifier::RemoveSmallStrips(NvStripInfoVec& allStrips, NvStripInfoVec& 
         }
     }
 
-    bool* bVisitedList = xr_alloc<bool>(tempFaceList.size());
-    std::memset(bVisitedList, 0, tempFaceList.size() * sizeof(bool));
+    std::vector<bool> bVisitedList(tempFaceList.size());
 
     VertexCache* vcache = new VertexCache(cacheSize);
 
@@ -669,8 +668,7 @@ void NvStripifier::RemoveSmallStrips(NvStripInfoVec& allStrips, NvStripInfoVec& 
         faceList.push_back(tempFaceList[bestIndex]);
     }
 
-    xr_delete(vcache);
-    xr_free(bVisitedList);
+    delete vcache;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -970,7 +968,7 @@ void NvStripifier::SplitUpStripsAndOptimize(NvStripInfoVec& allStrips, NvStripIn
             outStrips.push_back(tempStrips2[bestIndex]);
         }
 
-        xr_delete(vcache);
+        delete vcache;
     }
 }
 

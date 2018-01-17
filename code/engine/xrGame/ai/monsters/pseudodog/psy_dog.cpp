@@ -20,12 +20,10 @@
 
 CPsyDog::CPsyDog() {
     m_aura = new CPsyDogAura(this);
-    m_max_phantoms_count = NULL;
-    m_phantoms_die_time = NULL;
+    m_max_phantoms_count = 0;
 }
 CPsyDog::~CPsyDog() {
-    xr_delete(m_aura);
-    xr_free(m_phantoms_die_time);
+    delete m_aura;
 }
 
 void CPsyDog::Load(LPCSTR section) {
@@ -34,8 +32,7 @@ void CPsyDog::Load(LPCSTR section) {
     m_aura->load(pSettings->r_string(section, "aura_effector"));
     m_max_phantoms_count = pSettings->r_u8(section, "Phantoms_Count");
 
-    xr_free(m_phantoms_die_time);
-    m_phantoms_die_time = xr_alloc<TTime>(m_max_phantoms_count);
+    m_phantoms_die_time.resize(m_max_phantoms_count);
 
     for (int i = 0; i < m_max_phantoms_count; ++i)
         m_phantoms_die_time[i] = s_phantom_immediate_respawn_flag;

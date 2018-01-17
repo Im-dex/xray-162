@@ -33,7 +33,7 @@ public:
         u32 m_max_object_count;
 
         IC CFixedStorage(u32 max_object_count) : m_max_object_count(max_object_count) {
-            m_objects = xr_alloc<T>(m_max_object_count);
+            m_objects = new T[m_max_object_count];
             T* B = 0;
             T* I = m_objects;
             T* E = m_objects + m_max_object_count;
@@ -42,7 +42,7 @@ public:
             m_free = E - 1;
         }
 
-        virtual ~CFixedStorage() { xr_free(m_objects); }
+        virtual ~CFixedStorage() { delete[] m_objects; }
 
         IC T* get_object() {
             VERIFY(m_free);

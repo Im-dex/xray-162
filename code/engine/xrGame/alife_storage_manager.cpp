@@ -65,7 +65,7 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name) {
         source_count = stream.tell();
         void* source_data = stream.pointer();
         dest_count = rtc_csize(source_count);
-        dest_data = xr_malloc(dest_count);
+        dest_data = malloc(dest_count);
         dest_count = rtc_compress(dest_data, dest_count, source_data, source_count);
     }
 
@@ -77,7 +77,7 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name) {
 
     writer->w_u32(source_count);
     writer->w(dest_data, dest_count);
-    xr_free(dest_data);
+    free(dest_data);
     FS.w_close(writer);
 #ifdef DEBUG
     Msg("* Game %s is successfully saved to file '%s' (%d bytes compressed to %d)", m_save_name,
@@ -170,12 +170,12 @@ bool CALifeStorageManager::load(LPCSTR save_name_no_check) {
     reload(m_section);
 
     u32 source_count = stream->r_u32();
-    void* source_data = xr_malloc(source_count);
+    void* source_data = malloc(source_count);
     rtc_decompress(source_data, source_count, stream->pointer(),
                    stream->length() - 3 * sizeof(u32));
     FS.r_close(stream);
     load(source_data, source_count, file_name);
-    xr_free(source_data);
+    free(source_data);
 
     groups().on_after_game_load();
 

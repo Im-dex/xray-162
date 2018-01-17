@@ -19,12 +19,11 @@ CAviPlayerCustom::~CAviPlayerCustom() {
     }
 
     if (m_pDecompressedBuf)
-        xr_free(m_pDecompressedBuf);
-
+        delete[] m_pDecompressedBuf;
     if (m_pMovieData)
-        xr_free(m_pMovieData);
+        delete[] m_pMovieData;
     if (m_pMovieIndex)
-        xr_free(m_pMovieIndex);
+        delete[] m_pMovieIndex;
 
     xr_delete(alpha);
 }
@@ -114,7 +113,7 @@ BOOL CAviPlayerCustom::Load(char* fname) {
 
     R_ASSERT(m_dwWidth && m_dwHeight);
 
-    m_pDecompressedBuf = (BYTE*)xr_malloc(m_dwWidth * m_dwHeight * 4 + 4);
+    m_pDecompressedBuf = new BYTE[m_dwWidth * m_dwHeight * 4 + 4];
 
     //++strf
     std::memset(&mmckinfoParent, 0, sizeof(mmckinfoParent));
@@ -192,7 +191,7 @@ BOOL CAviPlayerCustom::Load(char* fname) {
     mmioSeek(hmmioFile, mmckinfoSubchunk.dwDataOffset, SEEK_SET);
 
     // Выделить память под сжатые  данные всего клипа
-    m_pMovieData = (BYTE*)xr_malloc(mmckinfoSubchunk.cksize);
+    m_pMovieData = new BYTE[mmckinfoSubchunk.cksize];
     if (m_pMovieData == NULL) {
 
         mmioClose(hmmioFile, 0);
@@ -202,16 +201,16 @@ BOOL CAviPlayerCustom::Load(char* fname) {
     if (mmckinfoSubchunk.cksize !=
         (DWORD)mmioRead(hmmioFile, (HPSTR)m_pMovieData, mmckinfoSubchunk.cksize)) {
 
-        xr_free(m_pMovieData);
-        m_pMovieData = NULL;
+        delete[] m_pMovieData;
+        m_pMovieData = nullptr;
         mmioClose(hmmioFile, 0);
         return FALSE;
     }
 
     if (MMSYSERR_NOERROR != mmioAscend(hmmioFile, &mmckinfoSubchunk, 0)) {
 
-        xr_free(m_pMovieData);
-        m_pMovieData = NULL;
+        delete[] m_pMovieData;
+        m_pMovieData = nullptr;
         mmioClose(hmmioFile, 0);
         return FALSE;
     }
@@ -223,18 +222,18 @@ BOOL CAviPlayerCustom::Load(char* fname) {
     if (MMSYSERR_NOERROR !=
             (res = mmioDescend(hmmioFile, &mmckinfoSubchunk, NULL, MMIO_FINDCHUNK)) ||
         mmckinfoSubchunk.cksize <= 4) {
-        xr_free(m_pMovieData);
-        m_pMovieData = NULL;
+        delete[] m_pMovieData;
+        m_pMovieData = nullptr;
         mmioClose(hmmioFile, 0);
         return FALSE;
     }
 
     // Выделить память под индекс
-    m_pMovieIndex = (AVIINDEXENTRY*)xr_malloc(mmckinfoSubchunk.cksize);
+    m_pMovieIndex = new AVIINDEXENTRY[mmckinfoSubchunk.cksize /sizeof(AVIINDEXENTRY)];
     if (m_pMovieIndex == NULL) {
 
-        xr_free(m_pMovieData);
-        m_pMovieData = NULL;
+        delete[] m_pMovieData;
+        m_pMovieData = nullptr;
         mmioClose(hmmioFile, 0);
         return FALSE;
     }
@@ -242,10 +241,10 @@ BOOL CAviPlayerCustom::Load(char* fname) {
     if (mmckinfoSubchunk.cksize !=
         (DWORD)mmioRead(hmmioFile, (HPSTR)m_pMovieIndex, mmckinfoSubchunk.cksize)) {
 
-        xr_free(m_pMovieIndex);
-        m_pMovieIndex = NULL;
-        xr_free(m_pMovieData);
-        m_pMovieData = NULL;
+        delete[] m_pMovieIndex;
+        m_pMovieIndex = nullptr;
+        delete[] m_pMovieData;
+        m_pMovieData = nullptr;
         mmioClose(hmmioFile, 0);
         return FALSE;
     }

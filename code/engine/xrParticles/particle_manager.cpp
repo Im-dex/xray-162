@@ -192,7 +192,7 @@ void CParticleManager::SetCallback(int effect_id, OnBirthParticleCB b, OnDeadPar
 }
 void CParticleManager::GetParticles(int effect_id, Particle*& particles, u32& cnt) {
     ParticleEffect* pe = GetEffectPtr(effect_id);
-    particles = pe->particles;
+    particles = pe->particles.data();
     cnt = pe->p_count;
 }
 u32 CParticleManager::GetParticlesCount(int effect_id) {

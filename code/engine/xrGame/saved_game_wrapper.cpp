@@ -72,7 +72,7 @@ CSavedGameWrapper::CSavedGameWrapper(LPCSTR saved_game_name) {
     }
 
     u32 source_count = stream->r_u32();
-    void* source_data = xr_malloc(source_count);
+    void* source_data = malloc(source_count);
     rtc_decompress(source_data, source_count, stream->pointer(),
                    stream->length() - 3 * sizeof(u32));
     FS.r_close(stream);
@@ -160,5 +160,5 @@ CSavedGameWrapper::CSavedGameWrapper(LPCSTR saved_game_name) {
         F_entity_Destroy(object);
     }
 
-    xr_free(source_data);
+    free(source_data);
 }

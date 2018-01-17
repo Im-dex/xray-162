@@ -23,7 +23,7 @@ class CPsyDog : public CAI_PseudoDog {
     static u32 const s_phantom_immediate_respawn_flag = 0;
     static u32 const s_phantom_alive_flag = 1;
 
-    TTime* m_phantoms_die_time;
+    std::vector<TTime> m_phantoms_die_time;
 
 public:
     CPsyDog();

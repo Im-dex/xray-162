@@ -1,6 +1,5 @@
 //---------------------------------------------------------------------------
-#ifndef particle_effectH
-#define particle_effectH
+#pragma once
 
 namespace PAPI {
 // A effect of particles - Info and an array of Particles
@@ -8,8 +7,7 @@ struct ParticleEffect {
     u32 p_count;             // Number of particles currently existing.
     u32 max_particles;       // Max particles allowed in effect.
     u32 particles_allocated; // Actual allocated size.
-    Particle* particles;     // Actually, num_particles in size
-    void* real_ptr;          // Base, possible not aligned pointer
+    std::vector<Particle> particles;     // Actually, num_particles in size
     OnBirthParticleCB b_cb;
     OnDeadParticleCB d_cb;
     void* owner;
@@ -17,21 +15,16 @@ struct ParticleEffect {
 
 public:
     ParticleEffect(int mp) {
-        owner = nullptr;
-        param = 0;
-        b_cb = nullptr;
-        d_cb = nullptr;
-        p_count = 0;
+        owner = b_cb = d_cb = nullptr;
+        param = p_count = 0;
         max_particles = mp;
         particles_allocated = max_particles;
 
-        real_ptr = xr_malloc(sizeof(Particle) * (max_particles + 1));
-        particles = (Particle*)((uintptr_t)real_ptr + (64 - ((uintptr_t)real_ptr & 63)));
-        // particles = static_cast<Particle*>(real_ptr);
+        particles.resize(max_particles + 1);
         // Msg( "Allocated %u bytes (%u particles) with base address 0x%p" , max_particles * sizeof(
         // Particle ) , max_particles , particles );
     }
-    ~ParticleEffect() { xr_free(real_ptr); }
+    ~ParticleEffect() { }
     IC int Resize(u32 max_count) {
         // Reducing max.
         if (particles_allocated >= max_count) {
@@ -45,24 +38,9 @@ public:
         }
 
         // Allocate particles.
-        void* new_real_ptr = xr_malloc(sizeof(Particle) * (max_count + 1));
-
-        if (new_real_ptr == nullptr) {
-            // ERROR - Not enough memory. Just give all we've got.
-            max_particles = particles_allocated;
-            return max_particles;
-        }
-
-        Particle* new_particles =
-            (Particle*)((uintptr_t)new_real_ptr + (64 - ((uintptr_t)new_real_ptr & 63)));
+        particles.resize(max_count + 1);
         // Msg( "Re-allocated %u bytes (%u particles) with base address 0x%p" , max_count * sizeof(
         // Particle ) , max_count , new_particles );
-
-        std::memcpy(new_particles, particles, p_count * sizeof(Particle));
-        xr_free(real_ptr);
-
-        particles = new_particles;
-        real_ptr = new_real_ptr;
 
         max_particles = max_count;
         particles_allocated = max_count;
@@ -104,4 +82,3 @@ public:
 };
 }; // namespace PAPI
 //---------------------------------------------------------------------------
-#endif

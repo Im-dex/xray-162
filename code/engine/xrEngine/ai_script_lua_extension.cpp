@@ -236,11 +236,11 @@ bool Script::bfLoadBuffer(CLuaVirtualMachine* tpLuaVM, LPCSTR caBuffer, size_t t
         string256 insert;
         xr_sprintf(insert, sizeof(insert), "local this = %s\n", caNameSpaceName);
         size_t str_len = xr_strlen(insert);
-        LPSTR script = xr_alloc<char>(u32(str_len + tSize));
+        LPSTR script = new char[str_len + tSize];
         xr_strcpy(script, str_len + tSize, insert);
         std::memcpy(script + str_len, caBuffer, u32(tSize));
         l_iErrorCode = luaL_loadbuffer(tpLuaVM, script, tSize + str_len, caScriptName);
-        xr_free(script);
+        delete[] script;
     } else
         l_iErrorCode = luaL_loadbuffer(tpLuaVM, caBuffer, tSize, caScriptName);
 

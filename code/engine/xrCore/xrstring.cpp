@@ -203,7 +203,7 @@ u32 str_container::stat_economy() {
 str_container::~str_container() {
     clean();
     // dump ();
-    xr_delete(impl);
+    delete impl;
 }
 
 #else
@@ -362,7 +362,7 @@ u32 str_container::stat_economy() {
 str_container::~str_container() {
     clean();
     // dump ();
-    xr_delete(impl);
+    delete impl;
     // R_ASSERT(impl->container.empty());
 }
 #endif

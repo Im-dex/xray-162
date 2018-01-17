@@ -208,9 +208,7 @@ void RemapIndices(const xr_vector<PrimitiveGroup>& in_primGroups, const u16 numV
     remappedGroups.resize(numGroups);
 
     // caches oldIndex --> newIndex conversion
-    int* indexCache;
-    indexCache = xr_alloc<int>(numVerts);
-    std::memset(indexCache, -1, sizeof(int) * numVerts);
+    std::vector<int> indexCache(numVerts);
 
     // loop over primitive groups
     unsigned int indexCtr = 0;
@@ -237,6 +235,4 @@ void RemapIndices(const xr_vector<PrimitiveGroup>& in_primGroups, const u16 numV
             }
         }
     }
-
-    xr_free(indexCache);
 }

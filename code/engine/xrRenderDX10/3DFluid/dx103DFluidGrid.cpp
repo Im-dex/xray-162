@@ -67,22 +67,22 @@ void dx103DFluidGrid::CreateVertexBuffers() {
     // CreateLayout( layoutDesc, numElements, technique, &layout);
 
     int index = 0;
-    VS_INPUT_FLUIDSIM_STRUCT* renderQuad = NULL;
-    VS_INPUT_FLUIDSIM_STRUCT* slices = NULL;
-    VS_INPUT_FLUIDSIM_STRUCT* boundarySlices = NULL;
-    VS_INPUT_FLUIDSIM_STRUCT* boundaryLines = NULL;
+    VS_INPUT_FLUIDSIM_STRUCT* renderQuad = nullptr;
+    VS_INPUT_FLUIDSIM_STRUCT* slices = nullptr;
+    VS_INPUT_FLUIDSIM_STRUCT* boundarySlices = nullptr;
+    VS_INPUT_FLUIDSIM_STRUCT* boundaryLines = nullptr;
 
     m_iNumVerticesRenderQuad = VERTICES_PER_SLICE * m_vDim[2];
-    renderQuad = xr_alloc<VS_INPUT_FLUIDSIM_STRUCT>(m_iNumVerticesRenderQuad);
+    renderQuad = new VS_INPUT_FLUIDSIM_STRUCT[m_iNumVerticesRenderQuad];
 
     m_iNumVerticesSlices = VERTICES_PER_SLICE * (m_vDim[2] - 2);
-    slices = xr_alloc<VS_INPUT_FLUIDSIM_STRUCT>(m_iNumVerticesSlices);
+    slices = new VS_INPUT_FLUIDSIM_STRUCT[m_iNumVerticesSlices];
 
     m_iNumVerticesBoundarySlices = VERTICES_PER_SLICE * 2;
-    boundarySlices = xr_alloc<VS_INPUT_FLUIDSIM_STRUCT>(m_iNumVerticesBoundarySlices);
+    boundarySlices = new VS_INPUT_FLUIDSIM_STRUCT[m_iNumVerticesBoundarySlices];
 
     m_iNumVerticesBoundaryLines = VERTICES_PER_LINE * LINES_PER_SLICE * (m_vDim[2]);
-    boundaryLines = xr_alloc<VS_INPUT_FLUIDSIM_STRUCT>(m_iNumVerticesBoundaryLines);
+    boundaryLines = new VS_INPUT_FLUIDSIM_STRUCT[m_iNumVerticesBoundaryLines];
 
     VERIFY(renderQuad && m_iNumVerticesSlices && m_iNumVerticesBoundarySlices &&
            m_iNumVerticesBoundaryLines);
@@ -136,14 +136,14 @@ void dx103DFluidGrid::CreateVertexBuffers() {
     // cleanup:
     xr_free(renderQuad);
 
-    xr_free(slices);
-    slices = NULL;
+    delete[] slices;
+    slices = nullptr;
 
-    xr_free(boundarySlices);
-    boundarySlices = NULL;
+    delete[] boundarySlices;
+    boundarySlices = nullptr;
 
-    xr_free(boundaryLines);
-    boundaryLines = NULL;
+    delete[] boundaryLines;
+    boundaryLines = nullptr;
 }
 
 void dx103DFluidGrid::InitScreenSlice(VS_INPUT_FLUIDSIM_STRUCT** vertices, int z, int& index) {

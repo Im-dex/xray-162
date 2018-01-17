@@ -32,7 +32,6 @@ class exception;
     (ltx->line_exist(section, name)) ? ltx->method(section, name) : default_value
 
 #if XRAY_EXCEPTIONS
-IC xr_string string2xr_string(LPCSTR s) { return s ? s : ""; }
 #define THROW(expr)                                                                \
     do {                                                                           \
         if (!(expr)) {                                                             \

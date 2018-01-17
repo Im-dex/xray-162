@@ -84,7 +84,7 @@ void CHOM::Load() {
     CL.calc_adjacency(adjacency);
 
     // Create RASTER-triangles
-    m_pTris = xr_alloc<occTri>(u32(CL.getTS()));
+    m_pTris = new occTri[CL.getTS()];
     for (u32 it = 0; it < CL.getTS(); it++) {
         CDB::TRI& clT = CL.getT()[it];
         occTri& rT = m_pTris[it];
@@ -117,8 +117,10 @@ void CHOM::Load() {
 }
 
 void CHOM::Unload() {
-    xr_delete(m_pModel);
-    xr_free(m_pTris);
+    delete m_pModel;
+    m_pModel = nullptr;
+    delete[] m_pTris;
+    m_pTris = nullptr;
     bEnabled = FALSE;
 }
 

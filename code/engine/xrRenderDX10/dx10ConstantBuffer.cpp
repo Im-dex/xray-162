@@ -8,7 +8,7 @@ dx10ConstantBuffer::~dx10ConstantBuffer() {
     DEV->_DeleteConstantBuffer(this);
     //	Flush();
     _RELEASE(m_pBuffer);
-    xr_free(m_pBufferData);
+    free(m_pBufferData);
 }
 
 dx10ConstantBuffer::dx10ConstantBuffer(ID3DShaderReflectionConstantBuffer* pTable)
@@ -44,7 +44,7 @@ dx10ConstantBuffer::dx10ConstantBuffer(ID3DShaderReflectionConstantBuffer* pTabl
 
     R_CHK(dx10BufferUtils::CreateConstantBuffer(&m_pBuffer, Desc.Size));
     VERIFY(m_pBuffer);
-    m_pBufferData = xr_malloc(Desc.Size);
+    m_pBufferData = malloc(Desc.Size);
     VERIFY(m_pBufferData);
 }
 

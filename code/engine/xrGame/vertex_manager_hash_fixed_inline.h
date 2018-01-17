@@ -20,24 +20,14 @@
 TEMPLATE_SPECIALIZATION
 IC CHashFixedVertexManager::CDataStorage(const u32 vertex_count)
     : inherited(vertex_count), m_current_path_id(_path_id_type(0)) {
-    u32 memory_usage = 0;
-    u32 byte_count;
-
-    byte_count = (hash_size) * sizeof(CGraphIndexVertex*);
-    m_hash = xr_alloc<CGraphIndexVertex*>(hash_size);
-    std::memset(m_hash, 0, byte_count);
-    memory_usage += byte_count;
-
-    byte_count = (fix_size) * sizeof(CGraphIndexVertex);
-    m_vertices = xr_alloc<CGraphIndexVertex>(fix_size);
-    std::memset(m_vertices, 0, byte_count);
-    memory_usage += byte_count;
+    m_hash = new CGraphIndexVertex*[hash_size]();
+    m_vertices = new CGraphIndexVertex[fix_size]();
 }
 
 TEMPLATE_SPECIALIZATION
 CHashFixedVertexManager::~CDataStorage() {
-    xr_free(m_hash);
-    xr_free(m_vertices);
+    delete[] m_hash;
+    delete[] m_vertices;
 }
 
 TEMPLATE_SPECIALIZATION

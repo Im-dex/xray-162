@@ -62,13 +62,13 @@ static bool terminate_char(char c, bool check_space = false) {
 // -------------------------------------------------------------------------------------------------
 
 line_edit_control::line_edit_control(u32 str_buffer_size) {
-    m_edit_str = NULL;
-    m_inserted = NULL;
-    m_undo_buf = NULL;
-    m_buf0 = NULL;
-    m_buf1 = NULL;
-    m_buf2 = NULL;
-    m_buf3 = NULL;
+    m_edit_str = nullptr;
+    m_inserted = nullptr;
+    m_undo_buf = nullptr;
+    m_buf0 = nullptr;
+    m_buf1 = nullptr;
+    m_buf2 = nullptr;
+    m_buf3 = nullptr;
 
     for (u32 i = 0; i < DIK_COUNT; ++i) {
         m_actions[i] = NULL;
@@ -80,13 +80,13 @@ line_edit_control::line_edit_control(u32 str_buffer_size) {
 }
 
 line_edit_control::~line_edit_control() {
-    xr_free(m_edit_str);
-    xr_free(m_inserted);
-    xr_free(m_undo_buf);
-    xr_free(m_buf0);
-    xr_free(m_buf1);
-    xr_free(m_buf2);
-    xr_free(m_buf3);
+    delete[] m_edit_str;
+    delete[] m_inserted;
+    delete[] m_undo_buf;
+    delete[] m_buf0;
+    delete[] m_buf1;
+    delete[] m_buf2;
+    delete[] m_buf3;
 
     size_t const array_size = sizeof(m_actions) / sizeof(m_actions[0]);
     buffer_vector<Base*> actions(m_actions, array_size, &m_actions[0], &m_actions[0] + array_size);
@@ -133,10 +133,7 @@ void line_edit_control::clear_states() {
     clear_inserted();
     m_undo_buf[0] = 0;
 
-    m_buf0[0] = 0;
-    m_buf1[0] = 0;
-    m_buf2[0] = 0;
-    m_buf3[0] = 0;
+    m_buf0[0] = m_buf1[0] = m_buf2[0] = m_buf3[0] = 0;
 
     m_cur_pos = 0;
     m_select_start = 0;
@@ -165,21 +162,21 @@ void line_edit_control::init(u32 str_buffer_size, init_mode mode) {
     m_buffer_size = str_buffer_size;
     clamp(m_buffer_size, (int)MIN_BUF_SIZE, (int)MAX_BUF_SIZE);
 
-    xr_free(m_edit_str);
-    m_edit_str = (LPSTR)xr_malloc(m_buffer_size * sizeof(char));
-    xr_free(m_inserted);
-    m_inserted = (LPSTR)xr_malloc(m_buffer_size * sizeof(char));
-    xr_free(m_undo_buf);
-    m_undo_buf = (LPSTR)xr_malloc(m_buffer_size * sizeof(char));
+    delete[] m_edit_str;
+    m_edit_str = new char[m_buffer_size];
+    delete[] m_inserted;
+    m_inserted = new char[m_buffer_size];
+    delete[] m_undo_buf;
+    m_undo_buf = new char[m_buffer_size];
 
-    xr_free(m_buf0);
-    m_buf0 = (LPSTR)xr_malloc(m_buffer_size * sizeof(char));
-    xr_free(m_buf1);
-    m_buf1 = (LPSTR)xr_malloc(m_buffer_size * sizeof(char));
-    xr_free(m_buf2);
-    m_buf2 = (LPSTR)xr_malloc(m_buffer_size * sizeof(char));
-    xr_free(m_buf3);
-    m_buf3 = (LPSTR)xr_malloc(m_buffer_size * sizeof(char));
+    delete[] m_buf0;
+    m_buf0 = new char[m_buffer_size];
+    delete[] m_buf1;
+    m_buf1 = new char[m_buffer_size];
+    delete[]m_buf2;
+    m_buf2 = new char[m_buffer_size];
+    delete[] m_buf3;
+    m_buf3 = new char[m_buffer_size];
 
     clear_states();
 

@@ -70,7 +70,7 @@ void CDetailManager::hw_Load_Geom() {
         vertHW* pV;
 #if defined(USE_DX10) || defined(USE_DX11)
         vertHW* pVOriginal;
-        pVOriginal = xr_alloc<vertHW>(dwVerts);
+        pVOriginal = new vertHW[dwVerts];
         pV = pVOriginal;
 #else  //	USE_DX10
         R_CHK(hw_VB->Lock(0, 0, (void**)&pV, 0));
@@ -95,7 +95,7 @@ void CDetailManager::hw_Load_Geom() {
 #if defined(USE_DX10) || defined(USE_DX11)
         R_CHK(dx10BufferUtils::CreateVertexBuffer(&hw_VB, pVOriginal, dwVerts * vSize));
         HW.stats_manager.increment_stats_vb(hw_VB);
-        xr_free(pVOriginal);
+        delete[] pVOriginal;
 #else  //	USE_DX10
         R_CHK(hw_VB->Unlock());
 #endif //	USE_DX10

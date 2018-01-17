@@ -22,17 +22,11 @@ IC CFixedVertexManager::CDataStorage(const u32 vertex_count) : inherited(vertex_
     m_current_path_id = _path_id_type(0);
     m_max_node_count = vertex_count;
 
-    u32 memory_usage = 0;
-    u32 byte_count;
-
-    byte_count = (vertex_count) * sizeof(CGraphIndexVertex);
-    m_indexes = xr_alloc<CGraphIndexVertex>(vertex_count);
-    std::memset(m_indexes, 0, byte_count);
-    memory_usage += byte_count;
+    m_indexes = new CGraphIndexVertex[vertex_count]();
 }
 
 TEMPLATE_SPECIALIZATION
-CFixedVertexManager::~CDataStorage() { xr_free(m_indexes); }
+CFixedVertexManager::~CDataStorage() { delete[] m_indexes; }
 
 TEMPLATE_SPECIALIZATION
 IC void CFixedVertexManager::init() {

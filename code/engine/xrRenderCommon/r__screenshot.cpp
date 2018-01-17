@@ -425,7 +425,7 @@ void CRender::ScreenshotImpl(ScreenshotMode mode, LPCSTR name, CMemoryWriter* me
             goto _end_;
 
         // save
-        u32* data = (u32*)xr_malloc(Device.dwHeight * Device.dwHeight * 4);
+        u32* data = new u32[Device.dwHeight * Device.dwHeight];
         imf_Process(data, Device.dwHeight, Device.dwHeight, (u32*)D.pBits, Device.dwWidth,
                     Device.dwHeight, imf_lanczos3);
         p.scanlenght = Device.dwHeight * 4;
@@ -433,7 +433,7 @@ void CRender::ScreenshotImpl(ScreenshotMode mode, LPCSTR name, CMemoryWriter* me
         p.height = Device.dwHeight;
         p.data = data;
         p.maketga(*fs);
-        xr_free(data);
+        delete[] data;
 
         FS.w_close(fs);
     } break;

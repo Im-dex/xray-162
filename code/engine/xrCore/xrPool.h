@@ -13,7 +13,7 @@ private:
     void block_create() {
         // Allocate
         VERIFY(0 == list);
-        list = xr_alloc<T>(granularity);
+        list = new T[granularity];
         blocks.push_back(list);
 
         // Partition
@@ -28,7 +28,7 @@ public:
     poolSS() { list = 0; }
     ~poolSS() {
         for (u32 b = 0; b < blocks.size(); b++)
-            xr_free(blocks[b]);
+            delete[] blocks[b];
     }
     T* create() {
         if (0 == list)
@@ -42,12 +42,12 @@ public:
         P->~T();
         *access(P) = list;
         list = P;
-        P = NULL;
+        P = nullptr;
     }
     void clear() {
         list = 0;
         for (u32 b = 0; b < blocks.size(); b++)
-            xr_free(blocks[b]);
+            delete[] blocks[b];
         blocks.clear();
     }
 };

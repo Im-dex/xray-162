@@ -21,7 +21,8 @@ FProgressive::~FProgressive() {}
 
 void FProgressive::Release() {
     Fvisual::Release();
-    xr_free(nSWI.sw);
+    delete[] nSWI.sw;
+    nSWI.sw = nullptr;
     if (xSWI) {
         xr_free(xSWI->sw);
         xr_delete(xSWI);
@@ -39,7 +40,7 @@ void FProgressive::Load(const char* N, IReader* data, u32 dwFlags) {
     nSWI.reserved[3] = lods().r_u32();
     nSWI.count = lods().r_u32();
     VERIFY(NULL == nSWI.sw);
-    nSWI.sw = xr_alloc<FSlideWindow>(nSWI.count);
+    nSWI.sw = new FSlideWindow[nSWI.count];
     lods().r(nSWI.sw, nSWI.count * sizeof(FSlideWindow));
 
 // fast

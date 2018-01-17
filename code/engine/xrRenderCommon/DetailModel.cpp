@@ -6,12 +6,12 @@ CDetail::~CDetail() {}
 
 void CDetail::Unload() {
     if (vertices) {
-        xr_free(vertices);
-        vertices = 0;
+        delete[] vertices;
+        vertices = nullptr;
     }
     if (indices) {
-        xr_free(indices);
-        indices = 0;
+        delete[] indices;
+        indices = nullptr;
     }
     shader.destroy();
 }
@@ -89,14 +89,12 @@ void CDetail::Load(IReader* S) {
     R_ASSERT(0 == (number_indices % 3));
 
     // Vertices
-    u32 size_vertices = number_vertices * sizeof(fvfVertexIn);
-    vertices = xr_alloc<CDetail::fvfVertexIn>(number_vertices);
-    S->r(vertices, size_vertices);
+    vertices = new CDetail::fvfVertexIn[number_vertices];
+    S->r(vertices, number_vertices * sizeof(fvfVertexIn));
 
     // Indices
-    u32 size_indices = number_indices * sizeof(u16);
-    indices = xr_alloc<u16>(number_indices);
-    S->r(indices, size_indices);
+    indices = new u16[number_indices];
+    S->r(indices, number_indices * sizeof(u16));
 
 // Validate indices
 #ifdef DEBUG

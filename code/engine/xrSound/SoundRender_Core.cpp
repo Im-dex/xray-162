@@ -219,7 +219,7 @@ void CSoundRender_Core::set_geometry_env(IReader* I) {
     // Load geometry
     IReader* geom_ch = I->open_chunk(1);
 
-    u8* _data = (u8*)xr_malloc(geom_ch->length());
+    u8* _data = new u8[geom_ch->length() / sizeof(u8)];
 
     std::memcpy(_data, geom_ch->pointer(), geom_ch->length());
 
@@ -246,7 +246,8 @@ void CSoundRender_Core::set_geometry_env(IReader* I) {
 #endif
     geom_ch->close();
     geom->close();
-    xr_free(_data);
+
+    delete[] _data;
 }
 
 void CSoundRender_Core::create(ref_sound& S, const char* fName, esound_type sound_type,
