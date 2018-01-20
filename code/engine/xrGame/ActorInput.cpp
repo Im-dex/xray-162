@@ -566,9 +566,9 @@ void CActor::SwitchNightVision() {
     if (inventory().ItemFromSlot(INV_SLOT_3))
         wpn2 = smart_cast<CWeapon*>(inventory().ItemFromSlot(INV_SLOT_3));
 
-    xr_vector<CAttachableItem*> const& all = CAttachmentOwner::attached_objects();
-    xr_vector<CAttachableItem*>::const_iterator it = all.begin();
-    xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
+    std::vector<CAttachableItem*> const& all = CAttachmentOwner::attached_objects();
+    std::vector<CAttachableItem*>::const_iterator it = all.begin();
+    std::vector<CAttachableItem*>::const_iterator it_e = all.end();
     for (; it != it_e; ++it) {
         CTorch* torch = smart_cast<CTorch*>(*it);
         if (torch) {
@@ -585,9 +585,9 @@ void CActor::SwitchNightVision() {
 }
 
 void CActor::SwitchTorch() {
-    xr_vector<CAttachableItem*> const& all = CAttachmentOwner::attached_objects();
-    xr_vector<CAttachableItem*>::const_iterator it = all.begin();
-    xr_vector<CAttachableItem*>::const_iterator it_e = all.end();
+    std::vector<CAttachableItem*> const& all = CAttachmentOwner::attached_objects();
+    std::vector<CAttachableItem*>::const_iterator it = all.begin();
+    std::vector<CAttachableItem*>::const_iterator it_e = all.end();
     for (; it != it_e; ++it) {
         CTorch* torch = smart_cast<CTorch*>(*it);
         if (torch) {

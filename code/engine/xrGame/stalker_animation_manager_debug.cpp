@@ -36,7 +36,7 @@ struct animation_id_predicate {
 //	return		(_1._get() < _2._get());
 //}
 //
-// typedef xr_set<shared_str,shared_str_predicate>	VISUALS;
+// typedef std::set<shared_str,shared_str_predicate>	VISUALS;
 
 struct animation_stats {
     //	shared_str	m_visual_id;
@@ -50,7 +50,7 @@ struct animation_stats {
 };
 
 typedef std::pair<ANIMATION_ID, animation_stats> ANIMATION_STATS_PAIR;
-typedef xr_map<ANIMATION_ID, animation_stats, animation_id_predicate> ANIMATION_STATS;
+typedef std::map<ANIMATION_ID, animation_stats, animation_id_predicate> ANIMATION_STATS;
 static ANIMATION_STATS g_animation_stats;
 
 typedef std::pair<ANIMATION_ID, ANIMATION_ID> BLEND_ID;
@@ -75,7 +75,7 @@ struct blend_id_predicate {
 };
 
 typedef std::pair<BLEND_ID, u32> BLEND_STATS_PAIR;
-typedef xr_map<BLEND_ID, u32, blend_id_predicate> BLEND_STATS;
+typedef std::map<BLEND_ID, u32, blend_id_predicate> BLEND_STATS;
 static BLEND_STATS g_blend_stats;
 
 void show_animations() {

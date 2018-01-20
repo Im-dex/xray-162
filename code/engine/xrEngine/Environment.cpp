@@ -409,7 +409,7 @@ void CEnvironment::lerp(float& current_weight) {
 
     Fvector view = Device.vCameraPosition;
     float mpower = 0;
-    for (xr_vector<CEnvModifier>::iterator mit = Modifiers.begin(); mit != Modifiers.end(); mit++)
+    for (std::vector<CEnvModifier>::iterator mit = Modifiers.begin(); mit != Modifiers.end(); mit++)
         mpower += EM.sum(*mit, view);
 
     // final lerp
@@ -565,7 +565,7 @@ SThunderboltCollection* CEnvironment::thunderbolt_collection(CInifile* pIni, CIn
 }
 
 SThunderboltCollection*
-CEnvironment::thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection,
+CEnvironment::thunderbolt_collection(std::vector<SThunderboltCollection*>& collection,
                                      const std::string& id) {
     for (auto* item : collection) {
         if (item->section == id)
@@ -578,9 +578,9 @@ CEnvironment::thunderbolt_collection(xr_vector<SThunderboltCollection*>& collect
 #endif // #ifdef DEBUG
 }
 
-CLensFlareDescriptor* CEnvironment::add_flare(xr_vector<CLensFlareDescriptor*>& collection,
+CLensFlareDescriptor* CEnvironment::add_flare(std::vector<CLensFlareDescriptor*>& collection,
                                               const std::string& id) {
-    typedef xr_vector<CLensFlareDescriptor*> Flares;
+    typedef std::vector<CLensFlareDescriptor*> Flares;
 
     for (auto* flare : collection) {
         if (flare->section == id)

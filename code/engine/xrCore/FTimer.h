@@ -3,7 +3,7 @@
 class CTimer_paused;
 
 class XRCORE_API pauseMngr {
-    xr_vector<CTimer_paused*> m_timers;
+    std::vector<CTimer_paused*> m_timers;
     bool paused;
 public:
     pauseMngr();

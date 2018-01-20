@@ -142,8 +142,8 @@ float CLevelGraph::check_position_in_direction(u32 start_vertex_id, const Fvecto
 
 float CLevelGraph::mark_nodes_in_direction(u32 start_vertex_id, const Fvector& start_position,
                                            const Fvector& tDirection, float fDistance,
-                                           xr_vector<u32>& tpaStack,
-                                           xr_vector<bool>* tpaMarks) const {
+                                           std::vector<u32>& tpaStack,
+                                           std::vector<bool>* tpaMarks) const {
     Fvector finish_point, direction = tDirection;
     direction.normalize();
     finish_point.mul(direction, fDistance);
@@ -153,15 +153,15 @@ float CLevelGraph::mark_nodes_in_direction(u32 start_vertex_id, const Fvector& s
 }
 
 float CLevelGraph::mark_nodes_in_direction(u32 start_vertex_id, const Fvector& start_position,
-                                           u32 finish_vertex_id, xr_vector<u32>& tpaStack,
-                                           xr_vector<bool>* tpaMarks) const {
+                                           u32 finish_vertex_id, std::vector<u32>& tpaStack,
+                                           std::vector<bool>* tpaMarks) const {
     return (mark_nodes_in_direction(start_vertex_id, start_position,
                                     vertex_position(finish_vertex_id), tpaStack, tpaMarks));
 }
 
 float CLevelGraph::mark_nodes_in_direction(u32 start_vertex_id, const Fvector& start_point,
-                                           const Fvector& finish_point, xr_vector<u32>& tpaStack,
-                                           xr_vector<bool>* tpaMarks) const {
+                                           const Fvector& finish_point, std::vector<u32>& tpaStack,
+                                           std::vector<bool>* tpaMarks) const {
     SContour _contour;
     const_iterator I, E;
     int saved_index, iPrevIndex = -1, iNextNode;
@@ -197,7 +197,7 @@ float CLevelGraph::mark_nodes_in_direction(u32 start_vertex_id, const Fvector& s
 
 float CLevelGraph::farthest_vertex_in_direction(u32 start_vertex_id, const Fvector& start_point,
                                                 const Fvector& finish_point, u32& finish_vertex_id,
-                                                xr_vector<bool>* tpaMarks,
+                                                std::vector<bool>* tpaMarks,
                                                 bool check_accessability) const {
     SContour _contour;
     const_iterator I, E;
@@ -236,8 +236,8 @@ float CLevelGraph::farthest_vertex_in_direction(u32 start_vertex_id, const Fvect
 
 bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector& start_point,
                                        const Fvector& finish_point,
-                                       xr_vector<Fvector>& tpaOutputPoints,
-                                       xr_vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
+                                       std::vector<Fvector>& tpaOutputPoints,
+                                       std::vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
                                        bool bClearPath) const {
     return (create_straight_path(start_vertex_id, v2d(start_point), v2d(finish_point),
                                  tpaOutputPoints, tpaOutputNodes, bAddFirstPoint, bClearPath));
@@ -362,8 +362,8 @@ IC Fvector2 v2d(const Fvector& vector3d) { return (Fvector2().set(vector3d.x, ve
 
 bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& start_point,
                                        const Fvector2& finish_point,
-                                       xr_vector<Fvector>& tpaOutputPoints,
-                                       xr_vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
+                                       std::vector<Fvector>& tpaOutputPoints,
+                                       std::vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
                                        bool bClearPath) const {
     if (!valid_vertex_position(v3d(finish_point)))
         return (false);

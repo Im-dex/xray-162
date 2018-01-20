@@ -16,7 +16,7 @@ struct CFontManager : public pureDeviceReset {
     CFontManager();
     ~CFontManager();
 
-    typedef xr_vector<CGameFont**> FONTS_VEC;
+    typedef std::vector<CGameFont**> FONTS_VEC;
     typedef FONTS_VEC::iterator FONTS_VEC_IT;
     FONTS_VEC m_all_fonts;
     void Render();
@@ -57,7 +57,7 @@ class ui_core : public CDeviceResetNotifier {
     Fvector2* m_current_scale;
 
 public:
-    xr_stack<Frect> m_Scissors;
+    std::stack<Frect> m_Scissors;
 
     ui_core();
     ~ui_core();

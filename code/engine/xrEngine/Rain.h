@@ -50,11 +50,11 @@ private:
     */
 
     // Data and logic
-    xr_vector<Item> items;
+    std::vector<Item> items;
     States state;
 
     // Particles
-    xr_vector<Particle> particle_pool;
+    std::vector<Particle> particle_pool;
     Particle* particle_active;
     Particle* particle_idle;
 

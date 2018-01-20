@@ -161,7 +161,7 @@ void CLightShadows::calculate() {
 
         // Select lights and calc importance
         CROS_impl* LT = (CROS_impl*)C.O->renderable_ROS();
-        xr_vector<CROS_impl::Light>& lights = LT->lights;
+        std::vector<CROS_impl::Light>& lights = LT->lights;
 
         // iterate on lights
         for (u32 l_it = 0; (l_it < lights.size()) && (slot_id < slot_max); l_it++) {
@@ -425,7 +425,7 @@ void CLightShadows::render() {
         CI_what.O = S.O;
         CI_what.L = S.L;
         CI_what.tris = 0;
-        xr_vector<cache_item>::iterator CI_ptr =
+        std::vector<cache_item>::iterator CI_ptr =
             std::lower_bound(cache.begin(), cache.end(), CI_what, cache_search);
         if (CI_ptr == cache.end()) { // empty ?
             CI_ptr = cache.insert(CI_ptr, CI_what);

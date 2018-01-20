@@ -25,8 +25,8 @@ public:
     };
 
 public:
-    typedef xr_map<ALife::_OBJECT_ID, CSpawnCallback> REQUESTED_REGISTRY;
-    typedef xr_map<ALife::_OBJECT_ID, REQUESTED_REGISTRY> REQUEST_REGISTRY;
+    typedef std::map<ALife::_OBJECT_ID, CSpawnCallback> REQUESTED_REGISTRY;
+    typedef std::map<ALife::_OBJECT_ID, REQUESTED_REGISTRY> REQUEST_REGISTRY;
 
 private:
     REQUEST_REGISTRY m_registry;

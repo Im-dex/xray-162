@@ -17,7 +17,7 @@ private:
         IRenderable* O;
         Fvector C;
         float D;
-        xr_vector<NODE> nodes;
+        std::vector<NODE> nodes;
     };
     struct shadow {
 #ifdef DEBUG
@@ -54,11 +54,11 @@ public:
 
 private:
     IRenderable* current;
-    xr_vector<caster*> casters_pool;
-    xr_vector<caster*> casters;
-    xr_vector<shadow> shadows;
-    xr_vector<tess_tri> tess;
-    xr_vector<cache_item> cache;
+    std::vector<caster*> casters_pool;
+    std::vector<caster*> casters;
+    std::vector<shadow> shadows;
+    std::vector<tess_tri> tess;
+    std::vector<cache_item> cache;
     xrXRC xrc;
 
     ref_rt RT;

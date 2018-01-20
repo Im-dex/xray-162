@@ -50,8 +50,8 @@ public:
     sound_channels::manager const& sounds_manager() const;
 
 public:
-    typedef xr_vector<ambient*> ambient_container_type;
-    typedef xr_vector<LPSTR> ambients_ids_type;
+    typedef std::vector<ambient*> ambient_container_type;
+    typedef std::vector<LPSTR> ambients_ids_type;
 
 public:
     ambients_ids_type const& ambients_ids() const;

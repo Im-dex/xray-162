@@ -148,14 +148,14 @@ struct lm_line {
         height = lm.height;
 
         {
-            xr_vector<base_color>::const_iterator from = lm.surface.begin() + y * lm.width;
-            xr_vector<base_color>::const_iterator to = from + lm.width;
+            std::vector<base_color>::const_iterator from = lm.surface.begin() + y * lm.width;
+            std::vector<base_color>::const_iterator to = from + lm.width;
             surface.assign(from, to);
         }
 
         {
-            xr_vector<u8>::const_iterator from = lm.marker.begin() + y * lm.width;
-            xr_vector<u8>::const_iterator to = from + lm.width;
+            std::vector<u8>::const_iterator from = lm.marker.begin() + y * lm.width;
+            std::vector<u8>::const_iterator to = from + lm.width;
             marker.assign(from, to);
         }
 
@@ -597,17 +597,17 @@ BOOL __stdcall rms_test(lm_layer& lm, u32 w, u32 h, u32 rms) {
         return FALSE;
 
     // scale down(lanczos3) and up (bilinear, as video board) //.
-    xr_vector<u32> pOriginal_base;
+    std::vector<u32> pOriginal_base;
     lm.Pack(pOriginal_base);
-    xr_vector<u32> pScaled_base;
+    std::vector<u32> pScaled_base;
     pScaled_base.resize(w * h);
-    xr_vector<u32> pRestored_base;
+    std::vector<u32> pRestored_base;
     pRestored_base.resize(lm.width * lm.height);
-    xr_vector<u32> pOriginal_hemi;
+    std::vector<u32> pOriginal_hemi;
     lm.Pack_hemi(pOriginal_hemi);
-    xr_vector<u32> pScaled_hemi;
+    std::vector<u32> pScaled_hemi;
     pScaled_hemi.resize(w * h);
-    xr_vector<u32> pRestored_hemi;
+    std::vector<u32> pRestored_hemi;
     pRestored_hemi.resize(lm.width * lm.height);
 
     try {

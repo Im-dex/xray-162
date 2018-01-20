@@ -104,9 +104,9 @@ private:
 
         static inline LPCSTR string(shared_str const& string) { return (string.c_str()); }
 
-        static inline u32 length(xr_string const& string) { return (string.size()); }
+        static inline u32 length(std::string const& string) { return (string.size()); }
 
-        static inline LPCSTR string(xr_string const& string) { return (string.c_str()); }
+        static inline LPCSTR string(std::string const& string) { return (string.c_str()); }
 
         template <typename T>
         static inline void add_string(string_tupples& self, T p) {

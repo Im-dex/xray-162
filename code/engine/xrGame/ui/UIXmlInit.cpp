@@ -463,9 +463,9 @@ bool CUIXmlInit::InitDragDropListEx(CUIXml& xml_doc, LPCSTR path, int index,
     pWnd->SetVirtualCells(tmp != 0);
 
     if (tmp != 0) {
-        xr_string vc_vert_align = xml_doc.ReadAttrib(path, index, "vc_vert_align", "");
+        std::string vc_vert_align = xml_doc.ReadAttrib(path, index, "vc_vert_align", "");
         pWnd->SetCellsVertAlignment(vc_vert_align);
-        xr_string vc_horiz_align = xml_doc.ReadAttrib(path, index, "vc_horiz_align", "");
+        std::string vc_horiz_align = xml_doc.ReadAttrib(path, index, "vc_horiz_align", "");
         pWnd->SetCellsHorizAlignment(vc_horiz_align);
     }
 
@@ -983,7 +983,7 @@ void CUIXmlInit::ApplyAlign(float& x, float& y, u32 align) {
 
 bool CUIXmlInit::InitAlignment(CUIXml& xml_doc, const char* path, int index, float& x, float& y,
                                CUIWindow* pWnd) {
-    xr_string wnd_alignment = xml_doc.ReadAttrib(path, index, "alignment", "");
+    std::string wnd_alignment = xml_doc.ReadAttrib(path, index, "alignment", "");
 
     if (strchr(wnd_alignment.c_str(), 'c'))
         pWnd->SetAlignment(waCenter);

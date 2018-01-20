@@ -183,7 +183,7 @@ void CKinematics::Bone_Calculate(CBoneData* bd, Fmatrix* parent) {
     CBoneInstance& BONE_INST = LL_GetBoneInstance(SelfID);
     CLBone(bd, BONE_INST, parent, u8(-1));
     // Calculate children
-    for (xr_vector<CBoneData*>::iterator C = bd->children.begin(); C != bd->children.end(); C++)
+    for (std::vector<CBoneData*>::iterator C = bd->children.begin(); C != bd->children.end(); C++)
         Bone_Calculate(*C, &BONE_INST.mTransform);
 }
 

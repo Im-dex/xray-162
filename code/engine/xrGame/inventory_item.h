@@ -42,7 +42,7 @@ struct net_update_IItem {
 };
 
 struct net_updateInvData {
-    xr_deque<net_update_IItem> NET_IItem;
+    std::deque<net_update_IItem> NET_IItem;
     u32 m_dwIStartTime;
     u32 m_dwIEndTime;
 };
@@ -228,7 +228,7 @@ public:
     virtual void reinit();
     virtual bool can_kill() const;
     virtual CInventoryItem* can_kill(CInventory* inventory) const;
-    virtual const CInventoryItem* can_kill(const xr_vector<const CGameObject*>& items) const;
+    virtual const CInventoryItem* can_kill(const std::vector<const CGameObject*>& items) const;
     virtual CInventoryItem* can_make_killing(const CInventory* inventory) const;
     virtual bool ready_to_kill() const;
     IC bool useful_for_NPC() const;
@@ -273,7 +273,7 @@ public:
 
     ////////// upgrades //////////////////////////////////////////////////
 public:
-    typedef xr_vector<shared_str> Upgrades_type;
+    typedef std::vector<shared_str> Upgrades_type;
 
 protected:
     Upgrades_type m_upgrades;

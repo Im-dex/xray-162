@@ -107,9 +107,9 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
                          const float bSmoothCreaseAngleRadians, const float* pTextureMatrix,
                          const Option _FixTangents, const Option _FixCylindricalTexGen,
                          const Option _WeightNormalsByFaceSize) {
-    typedef xr_map<xr_string, unsigned int> Mapping;
-    typedef xr_set<Edge> EdgeSet;
-    typedef xr_vector<xr_set<unsigned int>> IdenticalVertices;
+    typedef std::map<std::string, unsigned int> Mapping;
+    typedef std::set<Edge> EdgeSet;
+    typedef std::vector<std::set<unsigned int>> IdenticalVertices;
 
     IdenticalVertices IdenticalVertices_;
 
@@ -161,7 +161,7 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
     VertexAttribute::FloatVector& positions = output[(*pos).second].floatVector_;
     vec3* pPositions = (vec3*)(&(positions[0]));
 
-    xr_set<unsigned int> EmptySet;
+    std::set<unsigned int> EmptySet;
 
     for (unsigned int i = 0; i < positions.size(); i += 3) {
         IdenticalVertices_.push_back(EmptySet);
@@ -587,7 +587,7 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
 
         vec3* tex = (vec3*)&(output[(*texIter).second].floatVector_[0]);
 
-        typedef xr_vector<vec3> VecVector;
+        typedef std::vector<vec3> VecVector;
 
         // create tangents
         want = outmap.find("tangent");
@@ -812,7 +812,7 @@ bool NVMeshMender::Munge(const NVMeshMender::VAVector& input, NVMeshMender::VAVe
         if (_FixCylindricalTexGen == FixCylindricalTexGen) {
             for (unsigned int v = 0; v < IdenticalVertices_.size(); ++v) {
                 // go through each vertex & sum up it's true neighbors
-                for (xr_set<unsigned int>::iterator iter = IdenticalVertices_[v].begin();
+                for (std::set<unsigned int>::iterator iter = IdenticalVertices_[v].begin();
                      iter != IdenticalVertices_[v].end(); ++iter) {
                     avgS[v] += avgS[*iter];
                     avgT[v] += avgT[*iter];

@@ -62,10 +62,10 @@ void CGameTask::CreateMapLocation(bool on_load) {
     }
 
     if (on_load) {
-        xr_vector<CMapLocation*> res;
+        std::vector<CMapLocation*> res;
         Level().MapManager().GetMapLocations(m_map_location, m_map_object_id, res);
-        xr_vector<CMapLocation*>::iterator it = res.begin();
-        xr_vector<CMapLocation*>::iterator it_e = res.end();
+        std::vector<CMapLocation*>::iterator it = res.begin();
+        std::vector<CMapLocation*>::iterator it_e = res.end();
         for (; it != it_e; ++it) {
             CMapLocation* ml = *it;
             if (ml->m_owner_task_id == m_ID) {
@@ -144,9 +144,9 @@ ETaskState CGameTask::UpdateState() {
     return GetTaskState();
 }
 
-bool CGameTask::CheckInfo(const xr_vector<shared_str>& v) const {
+bool CGameTask::CheckInfo(const std::vector<shared_str>& v) const {
     bool res = false;
-    xr_vector<shared_str>::const_iterator it = v.begin();
+    std::vector<shared_str>::const_iterator it = v.begin();
     for (; it != v.end(); ++it) {
         res = Actor()->HasInfo(*it);
         if (!res)
@@ -173,8 +173,8 @@ void CGameTask::CallAllFuncs(const task_state_functors& v) {
             (*it)(m_ID.c_str());
     }
 }
-void CGameTask::SendInfo(const xr_vector<shared_str>& v) {
-    xr_vector<shared_str>::const_iterator it = v.begin();
+void CGameTask::SendInfo(const std::vector<shared_str>& v) {
+    std::vector<shared_str>::const_iterator it = v.begin();
     for (; it != v.end(); ++it)
         Actor()->TransferInfo((*it), true);
 }
@@ -248,9 +248,9 @@ void CGameTask::AddOnFailFunc_script(LPCSTR _str) {
     m_pScriptHelper.m_s_lua_functions_on_fail.push_back(_str);
 }
 
-void SScriptTaskHelper::init_functors(xr_vector<shared_str>& v_src, task_state_functors& v_dest) {
-    xr_vector<shared_str>::iterator it = v_src.begin();
-    xr_vector<shared_str>::iterator it_e = v_src.end();
+void SScriptTaskHelper::init_functors(std::vector<shared_str>& v_src, task_state_functors& v_dest) {
+    std::vector<shared_str>::iterator it = v_src.begin();
+    std::vector<shared_str>::iterator it_e = v_src.end();
     v_dest.resize(v_src.size());
 
     for (u32 idx = 0; it != it_e; ++it, ++idx) {

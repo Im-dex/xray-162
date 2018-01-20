@@ -179,7 +179,7 @@ void dx103DFluidVolume::Render(
     // RCache.Render(D3DPT_TRIANGLELIST,dwOffset,0,dwCount,0,dwCount/2);
 
     //	Render obstacles
-    const xr_vector<Fmatrix>& Obstacles = m_FluidData.GetObstaclesList();
+    const std::vector<Fmatrix>& Obstacles = m_FluidData.GetObstaclesList();
     int iObstNum = Obstacles.size();
     for (int i = 0; i < iObstNum; ++i) {
         RCache.set_xform_world(Obstacles[i]);

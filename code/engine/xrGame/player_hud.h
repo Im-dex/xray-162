@@ -18,11 +18,11 @@ struct player_hud_motion {
     shared_str m_alias_name;
     shared_str m_base_name;
     shared_str m_additional_name;
-    xr_vector<motion_descr> m_animations;
+    std::vector<motion_descr> m_animations;
 };
 
 struct player_hud_motion_container {
-    xr_vector<player_hud_motion> m_anims;
+    std::vector<player_hud_motion> m_anims;
     player_hud_motion* find_motion(const shared_str& name);
     void load(IKinematicsAnimated* model, const shared_str& sect);
 };
@@ -141,9 +141,9 @@ private:
 
     Fmatrix m_transform;
     IKinematicsAnimated* m_model;
-    xr_vector<u16> m_ancors;
+    std::vector<u16> m_ancors;
     attachable_hud_item* m_attached_items[2];
-    xr_vector<attachable_hud_item*> m_pool;
+    std::vector<attachable_hud_item*> m_pool;
 };
 
 extern player_hud* g_player_hud;

@@ -21,7 +21,7 @@ TEMPLATE_SPECIALIZATION
 CConditionStateAbstract::~CConditionState() {}
 
 TEMPLATE_SPECIALIZATION
-IC const xr_vector<typename CConditionStateAbstract::COperatorCondition>&
+IC const std::vector<typename CConditionStateAbstract::COperatorCondition>&
 CConditionStateAbstract::conditions() const {
     return (m_conditions);
 }
@@ -35,7 +35,7 @@ IC void CConditionStateAbstract::add_condition_back(const COperatorCondition& co
 
 TEMPLATE_SPECIALIZATION
 IC void CConditionStateAbstract::add_condition(const COperatorCondition& condition) {
-    xr_vector<COperatorCondition>::iterator I =
+    std::vector<COperatorCondition>::iterator I =
         std::lower_bound(m_conditions.begin(), m_conditions.end(), condition);
     THROW((I == m_conditions.end()) || ((*I).condition() != condition.condition()));
     m_conditions.insert(I, condition);
@@ -45,7 +45,7 @@ IC void CConditionStateAbstract::add_condition(const COperatorCondition& conditi
 TEMPLATE_SPECIALIZATION
 IC void CConditionStateAbstract::remove_condition(
     const typename COperatorCondition::_condition_type& condition) {
-    xr_vector<COperatorCondition>::iterator I =
+    std::vector<COperatorCondition>::iterator I =
         std::lower_bound(m_conditions.begin(), m_conditions.end(),
                          COperatorCondition(condition, COperatorCondition::_value_type(0)));
     THROW((I != m_conditions.end()) && ((*I).condition() == condition));
@@ -55,7 +55,7 @@ IC void CConditionStateAbstract::remove_condition(
 
 TEMPLATE_SPECIALIZATION
 IC void
-CConditionStateAbstract::add_condition(typename xr_vector<COperatorCondition>::const_iterator& J,
+CConditionStateAbstract::add_condition(typename std::vector<COperatorCondition>::const_iterator& J,
                                        const COperatorCondition& condition) {
     m_conditions.insert(m_conditions.begin() + (J - m_conditions.begin()), condition);
     m_hash ^= condition.hash_value();
@@ -70,10 +70,10 @@ IC void CConditionStateAbstract::clear() {
 TEMPLATE_SPECIALIZATION
 IC u8 CConditionStateAbstract::weight(const CConditionState& condition) const {
     u8 result = 0;
-    xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-    xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+    std::vector<COperatorCondition>::const_iterator I = conditions().begin();
+    std::vector<COperatorCondition>::const_iterator E = conditions().end();
+    std::vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
+    std::vector<COperatorCondition>::const_iterator e = condition.conditions().end();
     for (; (I != E) && (i != e);)
         if ((*I).condition() < (*i).condition())
             ++I;
@@ -90,10 +90,10 @@ IC u8 CConditionStateAbstract::weight(const CConditionState& condition) const {
 
 TEMPLATE_SPECIALIZATION
 IC bool CConditionStateAbstract::operator<(const CConditionState& condition) const {
-    xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-    xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+    std::vector<COperatorCondition>::const_iterator I = conditions().begin();
+    std::vector<COperatorCondition>::const_iterator E = conditions().end();
+    std::vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
+    std::vector<COperatorCondition>::const_iterator e = condition.conditions().end();
     for (; (I != E) && (i != e); ++I, ++i)
         if (*I < *i)
             return (true);
@@ -112,10 +112,10 @@ TEMPLATE_SPECIALIZATION
 IC bool CConditionStateAbstract::operator==(const CConditionState& condition) const {
     if (hash_value() != condition.hash_value())
         return (false);
-    xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-    xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+    std::vector<COperatorCondition>::const_iterator I = conditions().begin();
+    std::vector<COperatorCondition>::const_iterator E = conditions().end();
+    std::vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
+    std::vector<COperatorCondition>::const_iterator e = condition.conditions().end();
     for (; (I != E) && (i != e); ++I, ++i)
         if (!(*I == *i))
             return (false);
@@ -128,11 +128,11 @@ TEMPLATE_SPECIALIZATION
 IC CConditionState<_world_property>& CConditionStateAbstract::
 operator-=(const CConditionState& condition) {
     m_hash = 0;
-    xr_vector<COperatorCondition> temp;
-    xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-    xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+    std::vector<COperatorCondition> temp;
+    std::vector<COperatorCondition>::const_iterator I = conditions().begin();
+    std::vector<COperatorCondition>::const_iterator E = conditions().end();
+    std::vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
+    std::vector<COperatorCondition>::const_iterator e = condition.conditions().end();
     for (; (I != E) && (i != e);)
         if ((*I).condition() < (*i).condition())
             ++I;
@@ -152,10 +152,10 @@ operator-=(const CConditionState& condition) {
 
 TEMPLATE_SPECIALIZATION
 IC bool CConditionStateAbstract::includes(const CConditionState& condition) const {
-    xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-    xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+    std::vector<COperatorCondition>::const_iterator I = conditions().begin();
+    std::vector<COperatorCondition>::const_iterator E = conditions().end();
+    std::vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
+    std::vector<COperatorCondition>::const_iterator e = condition.conditions().end();
     for (; (I != E) && (i != e);)
         if ((*I).condition() < (*i).condition())
             ++I;
@@ -176,7 +176,7 @@ IC u32 CConditionStateAbstract::hash_value() const { return (m_hash); }
 TEMPLATE_SPECIALIZATION
 IC const typename CConditionStateAbstract::COperatorCondition* CConditionStateAbstract::property(
     const typename CConditionStateAbstract::COperatorCondition::_condition_type& condition) const {
-    xr_vector<COperatorCondition>::const_iterator I =
+    std::vector<COperatorCondition>::const_iterator I =
         std::lower_bound(conditions().begin(), conditions().end(),
                          COperatorCondition(condition, COperatorCondition::_value_type(0)));
     if (I == m_conditions.end())

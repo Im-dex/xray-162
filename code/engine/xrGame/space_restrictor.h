@@ -30,8 +30,8 @@ private:
     };
 
 private:
-    typedef xr_vector<Fsphere> SPHERES;
-    typedef xr_vector<CPlanes> BOXES;
+    typedef std::vector<Fsphere> SPHERES;
+    typedef std::vector<CPlanes> BOXES;
 
 private:
     mutable SPHERES m_spheres;

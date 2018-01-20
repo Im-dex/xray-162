@@ -13,7 +13,7 @@ struct _counter {
 void CBuild::xrPhase_ResolveMaterials() {
     // Count number of materials
     Status("Calculating materials/subdivs...");
-    xr_vector<_counter> counts;
+    std::vector<_counter> counts;
     {
         counts.reserve(256);
         for (vecFaceIt F_it = lc_global_data()->g_faces().begin();

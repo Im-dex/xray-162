@@ -94,8 +94,8 @@ protected:
 
     PlayersMonitor net_players;
     // xrCriticalSection		csPlayers;
-    // xr_vector<IClient*>	net_Players;
-    // xr_vector<IClient*>	net_Players_disconnected;
+    // std::vector<IClient*>	net_Players;
+    // std::vector<IClient*>	net_Players_disconnected;
     IClient* SV_Client;
 
     int psNET_Port;

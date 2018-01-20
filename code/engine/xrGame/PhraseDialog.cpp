@@ -98,7 +98,7 @@ bool CPhraseDialog::SayPhrase(DIALOG_SHARED_PTR& phrase_dialog, const shared_str
         phrase_dialog->m_bFinished = true;
     } else {
         //обновить список фраз, которые сейчас сможет говорить собеседник
-        for (xr_vector<CPhraseGraph::CEdge>::const_iterator it = phrase_vertex->edges().begin();
+        for (std::vector<CPhraseGraph::CEdge>::const_iterator it = phrase_vertex->edges().begin();
              it != phrase_vertex->edges().end(); it++) {
             const CPhraseGraph::CEdge& edge = *it;
             CPhraseGraph::CVertex* next_phrase_vertex =

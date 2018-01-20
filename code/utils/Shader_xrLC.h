@@ -46,7 +46,7 @@ public:
     }
 };
 
-using Shader_xrLCVec = xr_vector<Shader_xrLC>;
+using Shader_xrLCVec = std::vector<Shader_xrLC>;
 class Shader_xrLC_LIB {
     Shader_xrLCVec library;
 
@@ -112,8 +112,8 @@ public:
 };
 
 IC void post_process_materials(const Shader_xrLC_LIB& shaders,
-                               const xr_vector<b_shader>& shader_compile,
-                               xr_vector<b_material>& materials) {
+                               const std::vector<b_shader>& shader_compile,
+                               std::vector<b_material>& materials) {
     for (u32 m = 0; m < materials.size(); m++) {
         b_material& M = materials[m];
 
@@ -135,7 +135,7 @@ IC void post_process_materials(const Shader_xrLC_LIB& shaders,
 }
 
 IC const Shader_xrLC& shader(u16 dwMaterial, const Shader_xrLC_LIB& shaders,
-                             const xr_vector<b_material>& materials) {
+                             const std::vector<b_material>& materials) {
     u32 shader_id = materials[dwMaterial].reserved;
     return *(shaders.Get(shader_id));
 }

@@ -101,8 +101,8 @@ private:
     collide::rq_results m_rq_results;
 
 private:
-    using SoundVec = xr_vector<ref_sound>;
-    using BulletVec = xr_vector<SBullet>;
+    using SoundVec = std::vector<ref_sound>;
+    using BulletVec = std::vector<SBullet>;
     friend CLevel;
 
     enum EventType {
@@ -127,19 +127,19 @@ private:
 
 protected:
     SoundVec m_WhineSounds;
-    RStringVec m_ExplodeParticles;
+    SStringVec m_ExplodeParticles;
 
     //список пуль наход€щихс€ в данный момент на уровне
     //.	xrCriticalSection		m_Lock				;
 
     BulletVec m_Bullets;         // working set, locked
     BulletVec m_BulletsRendered; // copy for rendering
-    xr_vector<_event> m_Events;
+    std::vector<_event> m_Events;
 
 #ifdef DEBUG
     u32 m_thread_id;
 
-    typedef xr_vector<Fvector> BulletPoints;
+    typedef std::vector<Fvector> BulletPoints;
     BulletPoints m_bullet_points;
 #endif // #ifdef DEBUG
 

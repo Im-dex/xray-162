@@ -20,7 +20,7 @@ public:
     //персонаж может инициировать в данный момент
     virtual void UpdateAvailableDialogs(CPhraseDialogManager* partner);
 
-    using DIALOG_VECTOR = xr_vector<DIALOG_SHARED_PTR>;
+    using DIALOG_VECTOR = std::vector<DIALOG_SHARED_PTR>;
     const DIALOG_VECTOR& AvailableDialogs() { return m_AvailableDialogs; }
     const DIALOG_SHARED_PTR& GetDialogByID(const shared_str& dialog_id) const;
     bool HaveAvailableDialog(const shared_str& dialog_id) const;

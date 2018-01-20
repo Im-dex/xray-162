@@ -49,9 +49,9 @@ class manager;
 
 class manager : public ::CEnvironment {
 public:
-    typedef xr_vector<LPCSTR> shader_ids_type;
-    typedef xr_vector<LPCSTR> particle_ids_type;
-    typedef xr_vector<LPCSTR> light_animator_ids_type;
+    typedef std::vector<LPCSTR> shader_ids_type;
+    typedef std::vector<LPCSTR> particle_ids_type;
+    typedef std::vector<LPCSTR> light_animator_ids_type;
 
 public:
     manager();
@@ -65,8 +65,8 @@ public:
     virtual SThunderboltCollection* thunderbolt_collection(CInifile* pIni, CInifile* thunderbolts,
                                                            LPCSTR section);
     virtual SThunderboltCollection*
-    thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection, shared_str const& id);
-    virtual CLensFlareDescriptor* add_flare(xr_vector<CLensFlareDescriptor*>& collection,
+    thunderbolt_collection(std::vector<SThunderboltCollection*>& collection, shared_str const& id);
+    virtual CLensFlareDescriptor* add_flare(std::vector<CLensFlareDescriptor*>& collection,
                                             const std::string& id);
     void save();
     shader_ids_type const& shader_ids() const;

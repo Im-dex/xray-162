@@ -5,7 +5,7 @@ class CBlockAllocator {
     u32 block_count;
     u32 block_position;
     T* current_block;
-    xr_vector<T*> blocks;
+    std::vector<T*> blocks;
 
 public:
     IC T* add() {

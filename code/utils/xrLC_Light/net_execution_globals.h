@@ -25,12 +25,12 @@ public:
 template <typename e>
 class enum_table;
 template <typename e>
-static xr_vector<xr_vector<e_net_globals>*>& inter_get_table(enum_table<e>& table);
+static std::vector<std::vector<e_net_globals>*>& inter_get_table(enum_table<e>& table);
 
 template <typename e>
 class enum_table {
 public:
-    typedef xr_vector<xr_vector<e_net_globals>*> type_table;
+    typedef std::vector<std::vector<e_net_globals>*> type_table;
 
 private:
     friend type_table& inter_get_table<e>(enum_table& table);
@@ -38,7 +38,7 @@ private:
 
 public:
     enum_table();
-    const xr_vector<e_net_globals>& get_globals(e et) const { return *gl_table[et]; }
+    const std::vector<e_net_globals>& get_globals(e et) const { return *gl_table[et]; }
 
 private:
 };

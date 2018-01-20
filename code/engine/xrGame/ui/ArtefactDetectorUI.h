@@ -57,14 +57,14 @@ class CUIArtefactDetectorElite : public CUIArtefactDetectorBase, public CUIWindo
 
     CUIWindow* m_wrk_area;
 
-    xr_map<shared_str, CUIStatic*> m_palette;
+    std::map<shared_str, CUIStatic*> m_palette;
 
     struct SDrawOneItem {
         SDrawOneItem(CUIStatic* s, const Fvector& p) : pStatic(s), pos(p) {}
         CUIStatic* pStatic;
         Fvector pos;
     };
-    xr_vector<SDrawOneItem> m_items_to_draw;
+    std::vector<SDrawOneItem> m_items_to_draw;
     CEliteDetector* m_parent;
     Fmatrix m_map_attach_offset;
 

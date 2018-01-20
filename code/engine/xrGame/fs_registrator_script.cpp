@@ -16,10 +16,10 @@ LPCSTR update_path_script(CLocatorAPI* fs, LPCSTR initial, LPCSTR src) {
 }
 
 class FS_file_list {
-    xr_vector<LPSTR>* m_p;
+    std::vector<LPSTR>* m_p;
 
 public:
-    FS_file_list(xr_vector<LPSTR>* p) : m_p(p) {}
+    FS_file_list(std::vector<LPSTR>* p) : m_p(p) {}
     u32 Size() { return m_p->size(); }
     LPCSTR GetAt(u32 idx) { return m_p->at(idx); }
     void Free() { FS.file_list_close(m_p); };
@@ -72,7 +72,7 @@ bool nameSorter(const FS_item& itm1, const FS_item& itm2) {
 }
 
 class FS_file_list_ex {
-    xr_vector<FS_item> m_file_items;
+    std::vector<FS_item> m_file_items;
 
 public:
     enum {

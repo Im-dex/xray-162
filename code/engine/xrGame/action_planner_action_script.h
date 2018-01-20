@@ -21,8 +21,8 @@ public:
     _object_type* m_object;
 
 public:
-    IC CActionPlannerActionScript(const xr_vector<COperatorCondition>& conditions,
-                                  const xr_vector<COperatorCondition>& effects,
+    IC CActionPlannerActionScript(const std::vector<COperatorCondition>& conditions,
+                                  const std::vector<COperatorCondition>& effects,
                                   _object_type* object = 0, LPCSTR action_name = "");
     IC CActionPlannerActionScript(_object_type* object = 0, LPCSTR action_name = "");
     virtual ~CActionPlannerActionScript();

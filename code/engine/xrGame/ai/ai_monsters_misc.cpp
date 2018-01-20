@@ -27,11 +27,11 @@
 #include "stalker/ai_stalker.h"
 
 bool bfGetActionSuccessProbability(GroupHierarchyHolder::MEMBER_REGISTRY& Members,
-                                   const xr_vector<const CEntityAlive*>& VisibleEnemies,
+                                   const std::vector<const CEntityAlive*>& VisibleEnemies,
                                    float fMinProbability,
                                    CBaseFunction& fSuccessProbabilityFunction) {
     int i = 0, j = 0, I = (int)Members.size(), J = (int)VisibleEnemies.size();
-    xr_vector<const CEntityAlive*>::const_iterator II = VisibleEnemies.begin();
+    std::vector<const CEntityAlive*>::const_iterator II = VisibleEnemies.begin();
     for (; (i < I) && (j < J);) {
         ai().ef_storage().non_alife().member() = smart_cast<CEntityAlive*>(Members[i]);
         if (!(ai().ef_storage().non_alife().member()) ||
@@ -116,7 +116,7 @@ u32 dwfChooseAction(u32 dwActionRefreshRate, float fMinProbability0, float fMinP
     const CCustomMonster* monster = smart_cast<const CCustomMonster*>(tpEntity);
     VERIFY(monster);
     const CAI_Stalker* stalker = smart_cast<const CAI_Stalker*>(monster);
-    const xr_vector<const CEntityAlive*>& VisibleEnemies = monster->memory().enemy().objects();
+    const std::vector<const CEntityAlive*>& VisibleEnemies = monster->memory().enemy().objects();
 
     GroupHierarchyHolder::MEMBER_REGISTRY Members;
     if (!tpEntity)

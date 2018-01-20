@@ -185,7 +185,7 @@ enum EMonsterState {
 #define is_state(state, type) (((state & type) == type) && (state != eStateUnknown))
 
 // Lain: added
-inline xr_string make_xrstr(EMonsterState state) {
+inline std::string make_xrstr(EMonsterState state) {
     switch (state) {
     case eGlobalState:
         return "eGlobalState";

@@ -36,7 +36,7 @@ protected:
     float fXStep;
     float fYStep;
     float fTCHeight;
-    xr_vector<String> strings;
+    std::vector<String> strings;
 
     IFontRender* pFontRender;
 

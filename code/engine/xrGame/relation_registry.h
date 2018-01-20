@@ -112,7 +112,7 @@ public:
     static void UpdateFightRegister();
 
 private:
-    using FIGHT_VECTOR = xr_vector<FIGHT_DATA>;
+    using FIGHT_VECTOR = std::vector<FIGHT_DATA>;
     static FIGHT_VECTOR* m_fight_registry;
     static FIGHT_VECTOR& fight_registry();
 

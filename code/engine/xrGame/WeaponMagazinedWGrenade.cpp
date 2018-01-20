@@ -84,7 +84,7 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC) {
             CRocketLauncher::SpawnRocket(*fake_grenade_name, this);
         }
     } else {
-        xr_vector<CCartridge>* pM = NULL;
+        std::vector<CCartridge>* pM = NULL;
         bool b_if_grenade_mode = (m_bGrenadeMode && iAmmoElapsed && !getRocketCount());
         if (b_if_grenade_mode)
             pM = &m_magazine;
@@ -160,7 +160,7 @@ void CWeaponMagazinedWGrenade::PerformSwitchGL() {
     swap(m_ammoType, m_ammoType2);
     swap(m_DefaultCartridge, m_DefaultCartridge2);
 
-    xr_vector<CCartridge> l_magazine;
+    std::vector<CCartridge> l_magazine;
     while (m_magazine.size()) {
         l_magazine.push_back(m_magazine.back());
         m_magazine.pop_back();
@@ -689,7 +689,7 @@ bool CWeaponMagazinedWGrenade::install_upgrade_ammo_class(LPCSTR section, bool t
     //	ammo_class = ammo_5.45x39_fmj, ammo_5.45x39_ap  // name of the ltx-section of used ammo
     bool result2 = process_if_exists_set(section, "ammo_class", &CInifile::r_string, str, test);
     if (result2 && !test) {
-        xr_vector<shared_str>& ammo_types = m_bGrenadeMode ? m_ammoTypes2 : m_ammoTypes;
+        std::vector<shared_str>& ammo_types = m_bGrenadeMode ? m_ammoTypes2 : m_ammoTypes;
         ammo_types.clear();
         for (int i = 0, count = _GetItemCount(str); i < count; ++i) {
             string128 ammo_item;
@@ -713,7 +713,7 @@ bool CWeaponMagazinedWGrenade::install_upgrade_impl(LPCSTR section, bool test) {
     //grenades
     bool result2 = process_if_exists_set(section, "grenade_class", &CInifile::r_string, str, test);
     if (result2 && !test) {
-        xr_vector<shared_str>& ammo_types = !m_bGrenadeMode ? m_ammoTypes2 : m_ammoTypes;
+        std::vector<shared_str>& ammo_types = !m_bGrenadeMode ? m_ammoTypes2 : m_ammoTypes;
         ammo_types.clear();
         for (int i = 0, count = _GetItemCount(str); i < count; ++i) {
             string128 ammo_item;

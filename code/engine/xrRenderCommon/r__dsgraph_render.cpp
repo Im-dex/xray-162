@@ -189,8 +189,8 @@ IC bool cmp_textures_ssa_mat(mapMatrixTextures::TNode* N1, mapMatrixTextures::TN
 }
 
 void sort_tlist_nrm(
-    xr_vector<mapNormalTextures::TNode*, render_alloc<mapNormalTextures::TNode*>>& lst,
-    xr_vector<mapNormalTextures::TNode*, render_alloc<mapNormalTextures::TNode*>>& temp,
+    std::vector<mapNormalTextures::TNode*, render_alloc<mapNormalTextures::TNode*>>& lst,
+    std::vector<mapNormalTextures::TNode*, render_alloc<mapNormalTextures::TNode*>>& temp,
     mapNormalTextures& textures, BOOL bSSA) {
     int amount = textures.begin()->key->size();
     if (bSSA) {
@@ -233,8 +233,8 @@ void sort_tlist_nrm(
 }
 
 void sort_tlist_mat(
-    xr_vector<mapMatrixTextures::TNode*, render_alloc<mapMatrixTextures::TNode*>>& lst,
-    xr_vector<mapMatrixTextures::TNode*, render_alloc<mapMatrixTextures::TNode*>>& temp,
+    std::vector<mapMatrixTextures::TNode*, render_alloc<mapMatrixTextures::TNode*>>& lst,
+    std::vector<mapMatrixTextures::TNode*, render_alloc<mapMatrixTextures::TNode*>>& temp,
     mapMatrixTextures& textures, BOOL bSSA) {
     int amount = textures.begin()->key->size();
     if (bSSA) {
@@ -776,7 +776,7 @@ void R_dsgraph_structure::r_dsgraph_render_R1_box(IRender_Sector* _S, Fbox& BB, 
         dxRender_Visual* V = lstVisuals[test];
 
         // Visual is 100% visible - simply add it
-        xr_vector<dxRender_Visual*>::iterator I, E; // it may be usefull for 'hierrarhy' visuals
+        std::vector<dxRender_Visual*>::iterator I, E; // it may be usefull for 'hierrarhy' visuals
 
         switch (V->Type) {
         case MT_HIERRARHY: {

@@ -185,7 +185,7 @@ public:
 
 protected:
     CCharacterInfo* m_pCharacterInfo;
-    xr_string m_game_name;
+    std::string m_game_name;
 
 public:
     virtual void renderable_Render();

@@ -12,7 +12,7 @@ struct SGameMtlPair;
 // class	CPHAction;
 struct SPHNetState;
 class CPHSynchronize;
-typedef xr_vector<std::pair<CPHSynchronize*, SPHNetState>> V_PH_WORLD_STATE;
+typedef std::vector<std::pair<CPHSynchronize*, SPHNetState>> V_PH_WORLD_STATE;
 class CPHMesh {
     dGeomID Geom;
 
@@ -63,7 +63,7 @@ class CPHWorld : public pureFrame,
     ;
 
 public:
-    xr_vector<ISpatial*> r_spatial;
+    std::vector<ISpatial*> r_spatial;
 
 public:
     u64 m_steps_num;

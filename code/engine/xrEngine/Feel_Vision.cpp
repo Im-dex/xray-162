@@ -46,7 +46,7 @@ void Vision::o_new(CObject* O) {
     I.cp_LAST = O->get_last_local_point_on_mesh(I.cp_LP, I.bone_id);
 }
 void Vision::o_delete(CObject* O) {
-    xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(), TE = feel_visible.end();
+    std::vector<feel_visible_Item>::iterator I = feel_visible.begin(), TE = feel_visible.end();
     for (; I != TE; I++)
         if (I->O == O) {
             feel_visible.erase(I);
@@ -62,7 +62,7 @@ void Vision::feel_vision_clear() {
 }
 
 void Vision::feel_vision_relcase(CObject* object) {
-    xr_vector<CObject*>::iterator Io;
+    std::vector<CObject*>::iterator Io;
     Io = std::find(seen.begin(), seen.end(), object);
     if (Io != seen.end())
         seen.erase(Io);
@@ -72,7 +72,7 @@ void Vision::feel_vision_relcase(CObject* object) {
     Io = std::find(diff.begin(), diff.end(), object);
     if (Io != diff.end())
         diff.erase(Io);
-    xr_vector<feel_visible_Item>::iterator Ii = feel_visible.begin(), IiE = feel_visible.end();
+    std::vector<feel_visible_Item>::iterator Ii = feel_visible.begin(), IiE = feel_visible.end();
     for (; Ii != IiE; ++Ii)
         if (Ii->O == object) {
             feel_visible.erase(Ii);
@@ -107,12 +107,12 @@ void Vision::feel_vision_query(Fmatrix& mFull, Fvector& P) {
 void Vision::feel_vision_update(CObject* parent, Fvector& P, float dt, float vis_threshold) {
     // B-A = objects, that become visible
     if (!seen.empty()) {
-        xr_vector<CObject*>::iterator E = std::remove(seen.begin(), seen.end(), parent);
+        std::vector<CObject*>::iterator E = std::remove(seen.begin(), seen.end(), parent);
         seen.resize(E - seen.begin());
 
         {
             diff.resize(std::max(seen.size(), query.size()));
-            xr_vector<CObject*>::iterator E = std::set_difference(
+            std::vector<CObject*>::iterator E = std::set_difference(
                 seen.begin(), seen.end(), query.begin(), query.end(), diff.begin());
             diff.resize(E - diff.begin());
             for (u32 i = 0; i < diff.size(); i++)
@@ -123,7 +123,7 @@ void Vision::feel_vision_update(CObject* parent, Fvector& P, float dt, float vis
     // A-B = objects, that are invisible
     if (!query.empty()) {
         diff.resize(std::max(seen.size(), query.size()));
-        xr_vector<CObject*>::iterator E =
+        std::vector<CObject*>::iterator E =
             std::set_difference(query.begin(), query.end(), seen.begin(), seen.end(), diff.begin());
         diff.resize(E - diff.begin());
         for (u32 i = 0; i < diff.size(); i++)
@@ -136,7 +136,7 @@ void Vision::feel_vision_update(CObject* parent, Fvector& P, float dt, float vis
 }
 void Vision::o_trace(Fvector& P, float dt, float vis_threshold) {
     RQR.r_clear();
-    xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
+    std::vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
     for (; I != E; I++) {
         if (0 == I->O->CFORM()) {
             I->fuzzy = -1;
@@ -204,8 +204,8 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold) {
             RD.flags = CDB::OPT_ONLYFIRST;
 
             bool collision_found = false;
-            xr_vector<ISpatial*>::const_iterator i = r_spatial.begin();
-            xr_vector<ISpatial*>::const_iterator e = r_spatial.end();
+            std::vector<ISpatial*>::const_iterator i = r_spatial.begin();
+            std::vector<ISpatial*>::const_iterator e = r_spatial.end();
             for (; i != e; ++i) {
                 if (*i == m_owner)
                     continue;

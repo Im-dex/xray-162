@@ -23,8 +23,8 @@ class base_Vertex;
 class base_Face;
 
 struct compilers_global_data {
-    xr_vector<b_BuildTexture> _textures;
-    xr_vector<b_material> _materials;
+    std::vector<b_BuildTexture> _textures;
+    std::vector<b_material> _materials;
     Shader_xrLC_LIB _shaders;
     b_params _g_params;
     base_lighting _L_static;
@@ -38,9 +38,9 @@ class XRLC_LIGHT_API xrLC_GlobalData {
     CMemoryWriter _err_invalid;
     CMemoryWriter _err_multiedge;
     CMemoryWriter _err_tjunction;
-    xr_vector<CLightmap*> _g_lightmaps;
-    xr_vector<xrMU_Model*> _mu_models;
-    xr_vector<xrMU_Reference*> _mu_refs;
+    std::vector<CLightmap*> _g_lightmaps;
+    std::vector<xrMU_Model*> _mu_models;
+    std::vector<xrMU_Reference*> _mu_refs;
     vecVertex _g_vertices;
     vecFace _g_faces;
     vecDefl _g_deflectors;
@@ -55,9 +55,9 @@ public:
 public:
     xrLC_GlobalData(); //:_RCAST_Model (0), _b_nosun(false),_gl_linear(false){}
     ~xrLC_GlobalData();
-    IC xr_vector<b_BuildTexture>& textures() { return _cl_globs._textures; }
-    IC xr_vector<CLightmap*>& lightmaps() { return _g_lightmaps; }
-    IC xr_vector<b_material>& materials() { return _cl_globs._materials; }
+    IC std::vector<b_BuildTexture>& textures() { return _cl_globs._textures; }
+    IC std::vector<CLightmap*>& lightmaps() { return _g_lightmaps; }
+    IC std::vector<b_material>& materials() { return _cl_globs._materials; }
     IC Shader_xrLC_LIB& shaders() { return _cl_globs._shaders; }
     IC CMemoryWriter& err_invalid() { return _err_invalid; }
     IC CMemoryWriter& err_multiedge() { return _err_multiedge; };
@@ -81,8 +81,8 @@ public:
     //;
     base_lighting& L_static() { return _cl_globs._L_static; }
     CDB::MODEL* RCAST_Model() { return _cl_globs._RCAST_Model; }
-    xr_vector<xrMU_Model*>& mu_models() { return _mu_models; }
-    xr_vector<xrMU_Reference*>& mu_refs() { return _mu_refs; }
+    std::vector<xrMU_Model*>& mu_models() { return _mu_models; }
+    std::vector<xrMU_Reference*>& mu_refs() { return _mu_refs; }
 
     void read_mu_models(INetReader& r);
     void write_mu_models(IWriter& w) const;
@@ -102,7 +102,7 @@ public:
 
     void clear_build_textures_surface();
 
-    void clear_build_textures_surface(const xr_vector<u32>& exept);
+    void clear_build_textures_surface(const std::vector<u32>& exept);
 
     void set_faces_indexses();
     void set_vertices_indexses();

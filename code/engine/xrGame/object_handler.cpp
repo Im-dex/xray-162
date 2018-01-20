@@ -325,7 +325,7 @@ u32 CObjectHandler::aim_time(const CWeapon& weapon) const {
 
 bool CObjectHandler::is_weapon_going_to_be_strapped(CGameObject const* object) const {
     CObjectHandlerPlanner const& planner = this->planner();
-    typedef xr_vector<typename GraphEngineSpace::CWorldProperty> properties_type;
+    typedef std::vector<typename GraphEngineSpace::CWorldProperty> properties_type;
     CWorldProperty const strap_property(
         planner.uid(object->ID(), ObjectHandlerSpace::eWorldPropertyIdleStrap), true);
     properties_type const& properties = planner.target_state().conditions();

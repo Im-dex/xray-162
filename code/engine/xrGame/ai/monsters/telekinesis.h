@@ -6,10 +6,10 @@
 class CTelekinesis : public CPHUpdateObject {
 
 protected:
-    using TELE_OBJECTS = xr_vector<CTelekineticObject*>;
+    using TELE_OBJECTS = std::vector<CTelekineticObject*>;
     using TELE_OBJECTS_IT = TELE_OBJECTS::iterator;
     TELE_OBJECTS objects;
-    xr_vector<CObject*> m_nearest;
+    std::vector<CObject*> m_nearest;
     bool active;
 
 public:

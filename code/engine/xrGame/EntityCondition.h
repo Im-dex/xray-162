@@ -146,7 +146,7 @@ public:
 
     IC float GetBoostRadiationImmunity() const { return m_fBoostRadiationImmunity; };
 
-    typedef xr_map<EBoostParams, SBooster> BOOSTER_MAP;
+    typedef std::map<EBoostParams, SBooster> BOOSTER_MAP;
 
 protected:
     void UpdateHealth();
@@ -166,7 +166,7 @@ protected:
     //для подсчета состояния открытых ран,
     //запоминается кость куда был нанесен хит
     //и скорость потери крови из раны
-    using WOUND_VECTOR = xr_vector<CWound*>;
+    using WOUND_VECTOR = std::vector<CWound*>;
     WOUND_VECTOR m_WoundVector;
     //очистка массива ран
 

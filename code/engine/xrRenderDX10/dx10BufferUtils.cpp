@@ -124,8 +124,8 @@ LPCSTR ConvertSemantic(D3DDECLUSAGE Semantic) {
     return 0;
 }
 
-void ConvertVertexDeclaration(const xr_vector<D3DVERTEXELEMENT9>& declIn,
-                              xr_vector<D3D_INPUT_ELEMENT_DESC>& declOut) {
+void ConvertVertexDeclaration(const std::vector<D3DVERTEXELEMENT9>& declIn,
+                              std::vector<D3D_INPUT_ELEMENT_DESC>& declOut) {
     int iDeclSize = declIn.size() - 1;
     declOut.resize(iDeclSize + 1);
 

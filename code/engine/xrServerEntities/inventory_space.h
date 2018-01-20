@@ -27,7 +27,7 @@ class CInventoryItem;
 class CInventory;
 
 typedef CInventoryItem* PIItem;
-typedef xr_vector<PIItem> TIItemContainer;
+typedef std::vector<PIItem> TIItemContainer;
 
 enum eItemPlace { eItemPlaceUndefined = 0, eItemPlaceSlot, eItemPlaceBelt, eItemPlaceRuck };
 

@@ -118,7 +118,7 @@ class XRCDB_API COLLIDER {
     u32 frustum_mode;
 
     // Result management
-    xr_vector<RESULT> rd;
+    std::vector<RESULT> rd;
 
 public:
     COLLIDER();
@@ -145,8 +145,8 @@ public:
 
 //
 class XRCDB_API Collector {
-    xr_vector<Fvector> verts;
-    xr_vector<TRI> faces;
+    std::vector<Fvector> verts;
+    std::vector<TRI> faces;
 
     u32 VPack(const Fvector& V, float eps);
 
@@ -159,7 +159,7 @@ public:
     void add_face_packed_D(const Fvector& v0, const Fvector& v1, const Fvector& v2, u32 dummy,
                            float eps = EPS);
     void remove_duplicate_T();
-    void calc_adjacency(xr_vector<u32>& dest);
+    void calc_adjacency(std::vector<u32>& dest);
 
     Fvector* getV() { return &*verts.begin(); }
     size_t getVS() { return verts.size(); }
@@ -183,13 +183,13 @@ private:
 #pragma warning(disable : 4275)
 const u32 clpMX = 24, clpMY = 16, clpMZ = 24;
 class XRCDB_API CollectorPacked : public non_copyable {
-    typedef xr_vector<u32> DWORDList;
+    typedef std::vector<u32> DWORDList;
     typedef DWORDList::iterator DWORDIt;
 
 private:
-    xr_vector<Fvector> verts;
-    xr_vector<TRI> faces;
-    xr_vector<u32> flags;
+    std::vector<Fvector> verts;
+    std::vector<TRI> faces;
+    std::vector<u32> flags;
     Fvector VMmin, VMscale;
     DWORDList VM[clpMX + 1][clpMY + 1][clpMZ + 1];
     Fvector VMeps;
@@ -208,7 +208,7 @@ public:
                   u32 flags);
     void add_face_D(const Fvector& v0, const Fvector& v1, const Fvector& v2, u32 dummy, u32 flags);
 
-    xr_vector<Fvector>& getV_Vec() { return verts; }
+    std::vector<Fvector>& getV_Vec() { return verts; }
     Fvector* getV() { return &*verts.begin(); }
     size_t getVS() { return verts.size(); }
     TRI* getT() { return &*faces.begin(); }

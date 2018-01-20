@@ -5,7 +5,7 @@
 class INetReader;
 class XRLC_LIGHT_API net_task_manager {
     friend void Finalize(IGenericStream* outStream);
-    xr_vector<u32> pool;
+    std::vector<u32> pool;
     CTimer start_time;
     float thProgress;
     void send(IGridUser& user, u32 id);

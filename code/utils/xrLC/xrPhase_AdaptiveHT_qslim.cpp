@@ -271,7 +271,7 @@ void CBuild::u_Tesselate	(tesscb_estimator* cb_E, tesscb_face* cb_F, tesscb_vert
         FPU::m64r					();
         Status						("Tesselating...");
         g_bUnregister				= FALSE;
-        xr_vector<Face*> adjacent;	adjacent.reserve(6*2*3);
+        std::vector<Face*> adjacent;	adjacent.reserve(6*2*3);
         u32		counter_create		= 0;
         u32		cnt_verts			= g_vertices.size	();
         u32		cnt_faces			= g_faces.size		();
@@ -392,12 +392,12 @@ void CBuild::u_SmoothVertColors(int count)
         for (int iteration=0; iteration<count; iteration++)
         {
                 // Gather
-                xr_vector<base_color>	colors;
+                std::vector<base_color>	colors;
                 colors.resize			(g_vertices.size());
                 for (u32 it=0; it<g_vertices.size(); it++)
                 {
                         // Circle
-                        xr_vector<Vertex*>	circle;
+                        std::vector<Vertex*>	circle;
                         Vertex*		V		= g_vertices[it];
                         for (u32 fit=0; fit<V->adjacent.size(); fit++)	{
                                 Face*	F		= V->adjacent[fit];

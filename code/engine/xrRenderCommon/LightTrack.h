@@ -42,8 +42,8 @@ public:
     u32 dwFrameSmooth;
 
     //
-    xr_vector<Item> track;   // everything what touches
-    xr_vector<Light> lights; //
+    std::vector<Item> track;   // everything what touches
+    std::vector<Light> lights; //
 
     bool result[lt_hemisamples];
     collide::ray_cache cache[lt_hemisamples];

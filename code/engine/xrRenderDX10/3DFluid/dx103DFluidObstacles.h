@@ -47,9 +47,9 @@ private:
 
     //	Cache vectors to avoid memory reallocations
     //	TODO: DX10: Reserve memory on object creation
-    xr_vector<ISpatial*> m_lstRenderables;
-    xr_vector<const IPhysicsShell*> m_lstShells;
-    xr_vector<const IPhysicsElement*> m_lstElements;
+    std::vector<ISpatial*> m_lstRenderables;
+    std::vector<const IPhysicsShell*> m_lstShells;
+    std::vector<const IPhysicsElement*> m_lstElements;
 };
 
 #endif //	dx103DFluidObstacles_included

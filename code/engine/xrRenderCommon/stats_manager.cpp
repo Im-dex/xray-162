@@ -145,8 +145,8 @@ void stats_manager::decrement_stats(u32 size, enum_stats_buffer_type type, _D3DP
         return;
 
 #ifdef DEBUG
-    xr_vector<stats_item>::iterator it = m_buffers_list.begin();
-    xr_vector<stats_item>::const_iterator en = m_buffers_list.end();
+    std::vector<stats_item>::iterator it = m_buffers_list.begin();
+    std::vector<stats_item>::const_iterator en = m_buffers_list.end();
     bool find = false;
     for (; it != en; ++it) {
         if (it->buff_ptr == buff_ptr) {

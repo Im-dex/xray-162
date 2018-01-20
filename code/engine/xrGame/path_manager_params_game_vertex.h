@@ -17,7 +17,7 @@ struct SGameVertex : public SBaseParameters<_dist_type, _index_type, _iteration_
 
     const VERTEX_TYPES* m_vertex_types;
     _index_type m_vertex_id;
-    xr_vector<_index_type>* m_path;
+    std::vector<_index_type>* m_path;
 
     IC SGameVertex(const VERTEX_TYPES& vertex_types, _dist_type max_range = _dist_type(6000),
                    _iteration_type max_iteration_count = _iteration_type(-1),

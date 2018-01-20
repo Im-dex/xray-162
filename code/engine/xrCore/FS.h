@@ -22,7 +22,7 @@ extern void unregister_file_mapping(void* address, const u32& size);
 // Write
 //------------------------------------------------------------------------------------
 class XRCORE_API IWriter {
-    xr_stack<size_t> chunk_pos;
+    std::stack<size_t> chunk_pos;
 
 public:
     std::string fName;
@@ -56,11 +56,6 @@ public:
     void w_stringZ(const char* p) { w(p, xr_strlen(p) + 1); }
     void w_stringZ(const shared_str& p) {
         w(*p ? *p : "", p.size());
-        w_u8(0);
-    }
-
-    void w_stringZ(const xr_string& p) {
-        w(p.c_str(), p.size());
         w_u8(0);
     }
 
@@ -379,13 +374,12 @@ public:
     void r(void* p, const size_t cnt);
 
     void r_string(char* dest, const size_t tgt_sz);
-    void r_string(xr_string& dest);
+    void r_string(std::string& dest);
 
     void skip_stringZ();
 
     void r_stringZ(char* dest, const size_t tgt_sz);
     void r_stringZ(shared_str& dest);
-    void r_stringZ(xr_string& dest);
     void r_stringZ(std::string& dest);
 
     void close();

@@ -26,8 +26,8 @@ class CTextureDescrMngr {
         texture_desc() : m_assoc(NULL), m_spec(NULL) {}
     };
 
-    using map_TD = xr_map<shared_str, texture_desc>;
-    using map_CS = xr_map<shared_str, cl_dt_scaler*>;
+    using map_TD = std::map<shared_str, texture_desc>;
+    using map_CS = std::map<shared_str, cl_dt_scaler*>;
 
     map_TD m_texture_details;
     map_CS m_detail_scalers;

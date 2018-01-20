@@ -44,25 +44,25 @@ struct SGameTypeMaps {
             return map_name == other.map_name && map_ver == other.map_ver;
         }
     };
-    xr_vector<SMapItm> m_map_names;
+    std::vector<SMapItm> m_map_names;
 };
 
 struct SGameWeathers {
     shared_str m_weather_name;
     shared_str m_start_time;
 };
-typedef xr_vector<SGameWeathers> GAME_WEATHERS;
-typedef xr_vector<SGameWeathers>::iterator GAME_WEATHERS_IT;
-typedef xr_vector<SGameWeathers>::const_iterator GAME_WEATHERS_CIT;
+typedef std::vector<SGameWeathers> GAME_WEATHERS;
+typedef std::vector<SGameWeathers>::iterator GAME_WEATHERS_IT;
+typedef std::vector<SGameWeathers>::const_iterator GAME_WEATHERS_CIT;
 
 class CMapListHelper {
-    typedef xr_vector<SGameTypeMaps> TSTORAGE;
+    typedef std::vector<SGameTypeMaps> TSTORAGE;
     typedef TSTORAGE::iterator TSTORAGE_IT;
     typedef TSTORAGE::iterator TSTORAGE_CIT;
     TSTORAGE m_storage;
     GAME_WEATHERS m_weathers;
     void Load();
-    void LoadMapInfo(LPCSTR file_name, const xr_string& map_name, LPCSTR map_ver = "1.0");
+    void LoadMapInfo(LPCSTR file_name, const std::string& map_name, LPCSTR map_ver = "1.0");
     SGameTypeMaps* GetMapListInt(const shared_str& game_type);
 
 public:
@@ -77,7 +77,7 @@ class CUIGameCustom : public DLL_Pure, public CDialogHolder {
 protected:
     CUIWindow* m_window;
     CUIXml* m_msgs_xml;
-    typedef xr_vector<SDrawStaticStruct*> st_vec;
+    typedef std::vector<SDrawStaticStruct*> st_vec;
     typedef st_vec::iterator st_vec_it;
     st_vec m_custom_statics;
 

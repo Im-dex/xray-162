@@ -94,21 +94,21 @@ poolFaces &xrLC_GlobalData	::FacePool			()
 void xrLC_GlobalData ::destroy_rcmodel() { xr_delete(_cl_globs._RCAST_Model); }
 void xrLC_GlobalData::clear_build_textures_surface() {
     clLog("mem usage before clear build textures surface: %u", Memory.mem_usage());
-    // xr_vector<b_BuildTexture>		_textures;
-    xr_vector<b_BuildTexture>::iterator i = textures().begin();
-    xr_vector<b_BuildTexture>::const_iterator e = textures().end();
+    // std::vector<b_BuildTexture>		_textures;
+    std::vector<b_BuildTexture>::iterator i = textures().begin();
+    std::vector<b_BuildTexture>::const_iterator e = textures().end();
     for (; i != e; ++i)
         ::clear((*i));
     Memory.mem_compact();
     clLog("mem usage after clear build textures surface: %u", Memory.mem_usage());
 }
-void xrLC_GlobalData::clear_build_textures_surface(const xr_vector<u32>& exept) {
+void xrLC_GlobalData::clear_build_textures_surface(const std::vector<u32>& exept) {
     clLog("mem usage before clear build textures surface: %u", Memory.mem_usage());
-    xr_vector<b_BuildTexture>::iterator i = textures().begin();
-    xr_vector<b_BuildTexture>::const_iterator e = textures().end();
-    xr_vector<b_BuildTexture>::const_iterator b = textures().begin();
+    std::vector<b_BuildTexture>::iterator i = textures().begin();
+    std::vector<b_BuildTexture>::const_iterator e = textures().end();
+    std::vector<b_BuildTexture>::const_iterator b = textures().begin();
     for (; i != e; ++i) {
-        xr_vector<u32>::const_iterator ff = std::find(exept.begin(), exept.end(), u32(i - b));
+        std::vector<u32>::const_iterator ff = std::find(exept.begin(), exept.end(), u32(i - b));
         if (ff == exept.end())
             ::clear((*i));
     }
@@ -128,8 +128,8 @@ void xrLC_GlobalData ::initialize() {
 }
 
 /*
-                xr_vector<b_BuildTexture>		_textures;
-                xr_vector<b_material>			_materials;
+                std::vector<b_BuildTexture>		_textures;
+                std::vector<b_material>			_materials;
                 Shader_xrLC_LIB					_shaders;
                 CMemoryWriter					_err_invalid;
                 b_params						_g_params;
@@ -183,8 +183,8 @@ void read(INetReader& r, CDB::TRI& tri, xrLC_GlobalData& lc_global_data) {
     tri.dummy = convert_nax(F);
 }
 
-static xr_vector<Fvector> verts;
-static xr_vector<CDB::TRI> tris;
+static std::vector<Fvector> verts;
+static std::vector<CDB::TRI> tris;
 
 void read(INetReader& r, CDB::MODEL*& m, xrLC_GlobalData& lc_global_data) {
 
@@ -360,12 +360,12 @@ void xrLC_GlobalData ::write_mu_models(IWriter& w) const {
 }
 
 void xrLC_GlobalData ::read_modes_color(INetReader& r) {
-    xr_vector<xrMU_Model*>::iterator i = _mu_models.begin(), e = _mu_models.end();
+    std::vector<xrMU_Model*>::iterator i = _mu_models.begin(), e = _mu_models.end();
     for (; e != i; ++i)
         (*i)->read_color(r);
 }
 void xrLC_GlobalData ::write_modes_color(IWriter& w) const {
-    xr_vector<xrMU_Model*>::const_iterator i = _mu_models.begin(), e = _mu_models.end();
+    std::vector<xrMU_Model*>::const_iterator i = _mu_models.begin(), e = _mu_models.end();
     for (; e != i; ++i)
         (*i)->write_color(w);
 }
@@ -398,18 +398,18 @@ bool xrLC_GlobalData ::b_r_vertices() { return !!::read_vertices; }
 //}
 
 void xrLC_GlobalData ::close_models_read() {
-    xr_vector<xrMU_Model*>::iterator i = _mu_models.begin(), e = _mu_models.end();
+    std::vector<xrMU_Model*>::iterator i = _mu_models.begin(), e = _mu_models.end();
     for (; e != i; ++i)
         (*i)->reading_close();
 }
 void xrLC_GlobalData ::close_models_write() const {
-    xr_vector<xrMU_Model*>::const_iterator i = _mu_models.begin(), e = _mu_models.end();
+    std::vector<xrMU_Model*>::const_iterator i = _mu_models.begin(), e = _mu_models.end();
     for (; e != i; ++i)
         (*i)->writting_close();
 }
 
 template <typename T>
-std::pair<u32, u32> get_id(const xr_vector<xrMU_Model*>& mu_models, const T* v) {
+std::pair<u32, u32> get_id(const std::vector<xrMU_Model*>& mu_models, const T* v) {
 
     u32 face_id = u32(-1);
     struct find {
@@ -504,16 +504,16 @@ xrLC_GlobalData::~xrLC_GlobalData() {
 }
 
 template <typename T>
-void vec_clear(xr_vector<T*>& v) {
-    typename xr_vector<T*>::iterator i = v.begin(), e = v.end();
+void vec_clear(std::vector<T*>& v) {
+    typename std::vector<T*>::iterator i = v.begin(), e = v.end();
     for (; i != e; ++i)
         xr_delete(*i);
     v.clear();
 }
 
 template <typename T>
-void vec_spetial_clear(xr_vector<T>& v) {
-    typename xr_vector<T>::iterator i = v.begin(), e = v.end();
+void vec_spetial_clear(std::vector<T>& v) {
+    typename std::vector<T>::iterator i = v.begin(), e = v.end();
     for (; i != e; ++i)
         clear(*i);
     v.clear();

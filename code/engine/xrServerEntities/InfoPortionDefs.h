@@ -1,7 +1,7 @@
 #pragma once
 
 typedef shared_str INFO_DATA;
-using KNOWN_INFO_VECTOR = xr_vector<INFO_DATA>;
+using KNOWN_INFO_VECTOR = std::vector<INFO_DATA>;
 
 class CFindByIDPred {
 public:

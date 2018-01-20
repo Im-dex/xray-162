@@ -26,7 +26,7 @@ static void AddImpImplicitNetTask(u32 from, u32 to) {
     el->implementation().construct(exec);
     get_task_manager().add_task(el);
 }
-void RunImplicitnet(ImplicitDeflector& defl, const xr_vector<u32>& exept) {
+void RunImplicitnet(ImplicitDeflector& defl, const std::vector<u32>& exept) {
 
     globals().get<gl_implicit_cl_data>().init();
 

@@ -84,7 +84,7 @@ public:
     static void ApplyAlign(float& x, float& y, u32 align);
 
     // Initialize and store predefined colors
-    using ColorDefs = xr_map<shared_str, u32>;
+    using ColorDefs = std::map<shared_str, u32>;
 
     static const ColorDefs* GetColorDefs() {
         R_ASSERT(m_pColorDefs);

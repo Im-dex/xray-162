@@ -46,7 +46,7 @@ private:
     typedef loophole_action_base inherited;
 
 public:
-    typedef xr_vector<shared_str> Animations;
+    typedef std::vector<shared_str> Animations;
 
 protected:
     shared_str m_action_id;

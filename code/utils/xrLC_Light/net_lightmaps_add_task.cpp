@@ -20,7 +20,8 @@ void net_lightmaps_add_task(u32 from, u32 to) {
                 //
 
                 u32	stride			= u32(-1);
-                
+                
+
                 u32 threads			= u32(-1);
                 u32 rest			= u32(-1);
 
@@ -73,7 +74,7 @@ void net_lightmaps_add_all_tasks() {
 
     //
     u32 total_weight = 0;
-    xr_vector<CDeflector*>::const_iterator i = inlc_global_data()->g_deflectors().begin(),
+    std::vector<CDeflector*>::const_iterator i = inlc_global_data()->g_deflectors().begin(),
                                            e = inlc_global_data()->g_deflectors().end();
     for (; i != e; ++i)
         total_weight += (*i)->weight();

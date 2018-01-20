@@ -28,7 +28,7 @@ template <e_net_globals gl_type>
 class tnet_global_data_base : public net_global_data, public net_global_data_impl<gl_type> {};
 
 class net_globals {
-    xr_vector<net_global_data*> data;
+    std::vector<net_global_data*> data;
 
 public:
     net_globals();

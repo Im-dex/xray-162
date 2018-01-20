@@ -10,7 +10,7 @@ struct var {
     float fval;
 };
 
-typedef xr_map<xr_string, var> debug_vars_t;
+typedef std::map<std::string, var> debug_vars_t;
 static debug_vars_t s_debug_vars;
 
 void set_var(const char* name, float value) {
@@ -18,16 +18,16 @@ void set_var(const char* name, float value) {
     new_var.fval = value;
     new_var.type = var::real;
 
-    debug_vars_t::iterator it = s_debug_vars.find(xr_string(name));
+    debug_vars_t::iterator it = s_debug_vars.find(std::string(name));
     if (it != s_debug_vars.end()) {
         s_debug_vars.erase(it);
     }
 
-    s_debug_vars.insert(make_pair(xr_string(name), new_var));
+    s_debug_vars.insert(make_pair(std::string(name), new_var));
 }
 
 bool get_var(const char* name, float& value) {
-    debug_vars_t::iterator it = s_debug_vars.find(xr_string(name));
+    debug_vars_t::iterator it = s_debug_vars.find(std::string(name));
     if (it == s_debug_vars.end()) {
         return false;
     }
@@ -60,7 +60,7 @@ bool get_var(const char* name, bool& value) {
 }
 
 void show_var(const char* name) {
-    debug_vars_t::iterator it = s_debug_vars.find(xr_string(name));
+    debug_vars_t::iterator it = s_debug_vars.find(std::string(name));
     if (it == s_debug_vars.end()) {
         return;
     }

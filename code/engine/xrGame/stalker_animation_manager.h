@@ -23,7 +23,7 @@ class CStalkerAnimationData;
 
 class CStalkerAnimationManager {
 public:
-    typedef xr_deque<CStalkerAnimationScript> SCRIPT_ANIMATIONS;
+    typedef std::deque<CStalkerAnimationScript> SCRIPT_ANIMATIONS;
     typedef MonsterSpace::EMovementDirection EMovementDirection;
     typedef MonsterSpace::EBodyState EBodyState;
     typedef GraphEngineSpace::_solver_value_type _value_type;
@@ -129,7 +129,7 @@ private:
     bool need_look_back() const;
 
 private:
-    MotionID aim_animation(const u32& slot, const xr_vector<CAniVector>& animation,
+    MotionID aim_animation(const u32& slot, const std::vector<CAniVector>& animation,
                            const u32& index) const;
     MotionID no_object_animation(const EBodyState& body_state) const;
     MotionID unknown_object_animation(u32 slot, const EBodyState& body_state) const;

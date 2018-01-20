@@ -94,7 +94,7 @@ public:
 #else
 private:
 #endif
-    typedef xr_vector<interval> STORAGE;
+    typedef std::vector<interval> STORAGE;
     typedef STORAGE::iterator ITERATOR;
     typedef STORAGE::const_iterator C_ITERATOR;
 
@@ -123,7 +123,7 @@ public:
     u16 accrue;  // quantized: 0..10
     u16 falloff; // quantized: 0..10
     u16 flags;
-    xr_vector<motion_marks> marks;
+    std::vector<motion_marks> marks;
 
     IC float Dequantize(u16 V) const { return float(V) / 655.35f; }
     IC u16 Quantize(float V) const {
@@ -146,18 +146,18 @@ struct accel_str_pred {
         return xr_strcmp(x, y) < 0;
     }
 };
-typedef xr_map<shared_str, u16, accel_str_pred> accel_map;
-using MotionDefVec = xr_vector<CMotionDef>;
+typedef std::map<shared_str, u16, accel_str_pred> accel_map;
+using MotionDefVec = std::vector<CMotionDef>;
 
-using MotionVec = xr_vector<CMotion>;
-using BoneMotionsVec = xr_vector<MotionVec*>;
-using BoneMotionMap = xr_map<std::string, MotionVec>;
+using MotionVec = std::vector<CMotion>;
+using BoneMotionsVec = std::vector<MotionVec*>;
+using BoneMotionMap = std::map<std::string, MotionVec>;
 
 // partition
 class ENGINE_API CPartDef {
 public:
     shared_str Name;
-    xr_vector<u32> bones;
+    std::vector<u32> bones;
     CPartDef() : Name(0){};
 
     u32 mem_usage() { return sizeof(*this) + bones.size() * sizeof(u32) + sizeof(Name); }
@@ -207,7 +207,7 @@ struct ENGINE_API motions_value {
 };
 
 class ENGINE_API motions_container {
-    using SharedMotionsMap = xr_map<shared_str, motions_value*>;
+    using SharedMotionsMap = std::map<shared_str, motions_value*>;
     SharedMotionsMap container;
 
 public:

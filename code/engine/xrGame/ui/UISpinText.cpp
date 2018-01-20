@@ -37,7 +37,7 @@ void CUISpinText::SetCurrentOptValue() {
         AddItem_(tok->name, tok->id);
         tok++;
     }
-    xr_string val = GetOptTokenValue();
+    std::string val = GetOptTokenValue();
 
     for (u32 i = 0; i < m_list.size(); i++)
         if (val == m_list[i]._orig.c_str()) {

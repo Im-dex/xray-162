@@ -25,8 +25,8 @@ public:
     CIni_Table();
     ~CIni_Table();
 
-    typedef xr_vector<T_ITEM> ITEM_VECTOR;
-    typedef xr_vector<ITEM_VECTOR> ITEM_TABLE;
+    typedef std::vector<T_ITEM> ITEM_VECTOR;
+    typedef std::vector<ITEM_VECTOR> ITEM_TABLE;
 
     ITEM_TABLE& table();
     void clear();

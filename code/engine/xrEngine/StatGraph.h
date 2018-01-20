@@ -28,14 +28,14 @@ protected:
             data = d;
         }
     };
-    using ElementsDeq = xr_deque<SElement>;
+    using ElementsDeq = std::deque<SElement>;
     struct SSubGraph {
         EStyle style;
         ElementsDeq elements;
         SSubGraph(EStyle s) { style = s; };
         void SetStyle(EStyle s) { style = s; };
     };
-    using SubGraphVec = xr_vector<SSubGraph>;
+    using SubGraphVec = std::vector<SSubGraph>;
     SubGraphVec subgraphs;
 
     float mn, mx;
@@ -57,7 +57,7 @@ protected:
         u32 m_dwColor;
     };
 
-    using MarkersDeq = xr_deque<SMarker>;
+    using MarkersDeq = std::deque<SMarker>;
     MarkersDeq m_Markers;
 
 protected:

@@ -148,7 +148,7 @@ MotionID animation_selector::select_animation(bool& animation_movement_controlle
     VERIFY(blend->motionID == result);
     CMotionDef* motion_def = m_skeleton_animated->LL_GetMotionDef(result);
 
-    typedef xr_vector<motion_marks> Marks;
+    typedef std::vector<motion_marks> Marks;
     Marks const& marks = motion_def->marks;
     if (marks.size() < 3) {
         current_operator()->on_no_mark();

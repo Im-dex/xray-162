@@ -11,7 +11,7 @@ struct CShapeData {
         u8 type;
         shape_data data;
     };
-    using ShapeVec = xr_vector<shape_def>;
+    using ShapeVec = std::vector<shape_def>;
     ShapeVec shapes;
 };
 

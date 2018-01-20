@@ -8,7 +8,7 @@
 #include "xrface.h"
 #include "xrLC_GlobalData.h"
 template <typename T, typename T2>
-T simple_optimize(xr_vector<T>& A, xr_vector<T>& B, T2& _scale, T2& _bias) {
+T simple_optimize(std::vector<T>& A, std::vector<T>& B, T2& _scale, T2& _bias) {
     T accum;
     u32 it;
 
@@ -73,7 +73,7 @@ T simple_optimize(xr_vector<T>& A, xr_vector<T>& B, T2& _scale, T2& _bias) {
 }
 
 void o_test(int iA, int iB, int count, base_color* A, base_color* B, float& C, float& D) {
-    xr_vector<double> _A, _B;
+    std::vector<double> _A, _B;
     _A.resize(count);
     _B.resize(count);
     for (int it = 0; it < count; it++) {
@@ -101,9 +101,9 @@ void xrMU_Reference::calc_lighting() {
     // build data
     {
         FPU::m64r();
-        xr_vector<double> A;
+        std::vector<double> A;
         A.resize(color.size());
-        xr_vector<double> B;
+        std::vector<double> B;
         B.resize(color.size());
         float* _s = (float*)&c_scale;
         float* _b = (float*)&c_bias;

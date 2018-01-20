@@ -123,7 +123,7 @@ void CActor::PickupModeUpdate() {
     CFrustum frustum;
     frustum.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);
 
-    for (xr_vector<CObject*>::iterator it = feel_touch.begin(); it != feel_touch.end(); it++) {
+    for (std::vector<CObject*>::iterator it = feel_touch.begin(); it != feel_touch.end(); it++) {
         if (CanPickItem(frustum, Device.vCameraPosition, *it))
             PickupInfoDraw(*it);
     }
@@ -231,7 +231,7 @@ void CActor::Check_for_AutoPickUp() {
     Fbox APU_Box;
     APU_Box.set(Fvector().sub(bc, m_AutoPickUp_AABB), Fvector().add(bc, m_AutoPickUp_AABB));
 
-    xr_vector<ISpatial*> ISpatialResult;
+    std::vector<ISpatial*> ISpatialResult;
     g_SpatialSpace->q_box(ISpatialResult, 0, STYPE_COLLIDEABLE, bc, m_AutoPickUp_AABB);
 
     // Determine visibility for dynamic part of scene
@@ -303,8 +303,8 @@ void CActor::Feel_Grenade_Update(float rad) {
     q_nearest.clear();
     g_pGameLevel->ObjectSpace.GetNearest(q_nearest, pos_actor, rad, NULL);
 
-    xr_vector<CObject*>::iterator it_b = q_nearest.begin();
-    xr_vector<CObject*>::iterator it_e = q_nearest.end();
+    std::vector<CObject*>::iterator it_b = q_nearest.begin();
+    std::vector<CObject*>::iterator it_e = q_nearest.end();
 
     // select only grenade
     for (; it_b != it_e; ++it_b) {

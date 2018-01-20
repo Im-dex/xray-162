@@ -35,7 +35,7 @@ public:
         u16 bone_id[3][2];
         float weight[3];
     };
-    using WMFacesVec = xr_vector<WMFace>;
+    using WMFacesVec = std::vector<WMFace>;
     WMFacesVec m_Faces; // 16
 public:
     Fsphere m_Bounds; // 16		world space
@@ -64,7 +64,7 @@ public:
     IC const Fvector3& ContactPoint() { return m_ContactPoint; }
     IC ref_shader Shader() { return m_Shader; }
 };
-using SkeletonWMVec = xr_vector<intrusive_ptr<CSkeletonWallmark>>;
+using SkeletonWMVec = std::vector<intrusive_ptr<CSkeletonWallmark>>;
 
 // sanity check
 #ifdef DEBUG
@@ -110,7 +110,7 @@ protected:
     SkeletonWMVec wallmarks;
     u32 wm_frame;
 
-    xr_vector<dxRender_Visual*> children_invisible;
+    std::vector<dxRender_Visual*> children_invisible;
 
     // Globals
     CInifile* pUserData;
@@ -219,8 +219,8 @@ public:
         return (*bones)[bone_id]->obb;
     }
     const Fbox& GetBox() const { return vis.box; }
-    void LL_GetBindTransform(xr_vector<Fmatrix>& matrices);
-    int LL_GetBoneGroups(xr_vector<xr_vector<u16>>& groups);
+    void LL_GetBindTransform(std::vector<Fmatrix>& matrices);
+    int LL_GetBoneGroups(std::vector<std::vector<u16>>& groups);
 
     u16 LL_GetBoneRoot() { return iRoot; }
     void LL_SetBoneRoot(u16 bone_id) {

@@ -71,8 +71,8 @@ void CALifeGraphRegistry::setup_current_level() {
         }
 
     {
-        xr_vector<CSE_ALifeDynamicObject*>::const_iterator I = m_temp.begin();
-        xr_vector<CSE_ALifeDynamicObject*>::const_iterator E = m_temp.end();
+        std::vector<CSE_ALifeDynamicObject*>::const_iterator I = m_temp.begin();
+        std::vector<CSE_ALifeDynamicObject*>::const_iterator E = m_temp.end();
         for (; I != E; ++I)
             level().add(*I);
 

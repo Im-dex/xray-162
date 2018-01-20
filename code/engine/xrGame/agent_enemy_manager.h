@@ -17,11 +17,11 @@ class CAI_Stalker;
 
 class CAgentEnemyManager {
 public:
-    typedef xr_vector<CMemberEnemy> ENEMIES;
+    typedef std::vector<CMemberEnemy> ENEMIES;
     typedef MemorySpace::squad_mask_type squad_mask_type;
     typedef std::pair<ALife::_OBJECT_ID, bool> WOUNDED;
     typedef std::pair<const CEntityAlive*, WOUNDED> WOUNDED_ENEMY;
-    typedef xr_vector<WOUNDED_ENEMY> WOUNDED_ENEMIES;
+    typedef std::vector<WOUNDED_ENEMY> WOUNDED_ENEMIES;
 
 private:
     CAgentManager* m_object;
@@ -32,7 +32,7 @@ private:
 
 protected:
     template <typename T>
-    IC void setup_mask(xr_vector<T>& objects, CMemberEnemy& enemy,
+    IC void setup_mask(std::vector<T>& objects, CMemberEnemy& enemy,
                        const squad_mask_type& non_combat_members);
     IC void setup_mask(CMemberEnemy& enemy, const squad_mask_type& non_combat_members);
     void fill_enemies();

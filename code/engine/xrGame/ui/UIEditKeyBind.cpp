@@ -174,12 +174,12 @@ void CUIEditKeyBind::UndoOptValue() {
 bool CUIEditKeyBind::IsChangedOptValue() const { return m_keyboard != m_opt_backup_value; }
 
 void CUIEditKeyBind::BindAction2Key() {
-    xr_string comm_unbind = (m_bPrimary) ? "unbind " : "unbind_sec ";
+    std::string comm_unbind = (m_bPrimary) ? "unbind " : "unbind_sec ";
     comm_unbind += m_action->action_name;
     Console->Execute(comm_unbind.c_str());
 
     if (m_keyboard) {
-        xr_string comm_bind = (m_bPrimary) ? "bind " : "bind_sec ";
+        std::string comm_bind = (m_bPrimary) ? "bind " : "bind_sec ";
         comm_bind += m_action->action_name;
         comm_bind += " ";
         comm_bind += m_keyboard->key_name;

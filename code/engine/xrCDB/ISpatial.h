@@ -118,7 +118,7 @@ class ISpatial_NODE {
 public:
     ISpatial_NODE* parent;      // parent node for "empty-members" optimization
     ISpatial_NODE* children[8]; // children nodes
-    xr_vector<ISpatial*> items; // own items
+    std::vector<ISpatial*> items; // own items
 public:
     void _init(ISpatial_NODE* _parent);
     void _remove(ISpatial* _S);
@@ -145,14 +145,14 @@ private:
 
     poolSS<ISpatial_NODE, 128> allocator;
 
-    xr_vector<ISpatial_NODE*> allocator_pool;
+    std::vector<ISpatial_NODE*> allocator_pool;
     ISpatial* rt_insert_object;
 
 public:
     ISpatial_NODE* m_root;
     Fvector m_center;
     float m_bounds;
-    xr_vector<ISpatial*>* q_result;
+    std::vector<ISpatial*>* q_result;
     u32 stat_nodes;
     u32 stat_objects;
     CStatTimer stat_insert;
@@ -198,13 +198,13 @@ public:
     };
 
     // query
-    void q_ray(xr_vector<ISpatial*>& R, u32 _o, u32 _mask_and, const Fvector& _start,
+    void q_ray(std::vector<ISpatial*>& R, u32 _o, u32 _mask_and, const Fvector& _start,
                const Fvector& _dir, float _range);
-    void q_box(xr_vector<ISpatial*>& R, u32 _o, u32 _mask_or, const Fvector& _center,
+    void q_box(std::vector<ISpatial*>& R, u32 _o, u32 _mask_or, const Fvector& _center,
                const Fvector& _size);
-    void q_sphere(xr_vector<ISpatial*>& R, u32 _o, u32 _mask_or, const Fvector& _center,
+    void q_sphere(std::vector<ISpatial*>& R, u32 _o, u32 _mask_or, const Fvector& _center,
                   const float _radius);
-    void q_frustum(xr_vector<ISpatial*>& R, u32 _o, u32 _mask_or, const CFrustum& _frustum);
+    void q_frustum(std::vector<ISpatial*>& R, u32 _o, u32 _mask_or, const CFrustum& _frustum);
 };
 
 XRCDB_API extern ISpatial_DB* g_SpatialSpace;

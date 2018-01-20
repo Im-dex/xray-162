@@ -184,7 +184,7 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags) {
 
 // Load bones
 #pragma todo("container is created in stack!")
-    xr_vector<std::string> L_parents;
+    std::vector<std::string> L_parents;
 
     R_ASSERT(data->find_chunk(OGF_S_BONE_NAMES));
 
@@ -301,7 +301,7 @@ IC void iBuildGroups(CBoneData* B, U16Vec& tgt, u16 id, u16& last_id) {
     if (B->IK_data.ik_flags.is(SJointIKData::flBreakable))
         id = ++last_id;
     tgt[B->GetSelfID()] = id;
-    for (xr_vector<CBoneData*>::iterator bone_it = B->children.begin();
+    for (std::vector<CBoneData*>::iterator bone_it = B->children.begin();
          bone_it != B->children.end(); bone_it++)
         iBuildGroups(*bone_it, tgt, id, last_id);
 }
@@ -321,17 +321,17 @@ void CKinematics::LL_Validate() {
         BOOL bValidBreakable = TRUE;
 
 #pragma todo("container is created in stack!")
-        xr_vector<xr_vector<u16>> groups;
+        std::vector<std::vector<u16>> groups;
         LL_GetBoneGroups(groups);
 
 #pragma todo("container is created in stack!")
-        xr_vector<u16> b_parts(LL_BoneCount(), BI_NONE);
+        std::vector<u16> b_parts(LL_BoneCount(), BI_NONE);
         CBoneData* root = &LL_GetData(LL_GetBoneRoot());
         u16 last_id = 0;
         iBuildGroups(root, b_parts, 0, last_id);
 
         for (u16 g = 0; g < (u16)groups.size(); ++g) {
-            xr_vector<u16>& group = groups[g];
+            std::vector<u16>& group = groups[g];
             u16 bp_id = b_parts[group[0]];
             for (u32 b = 1; b < groups[g].size(); b++)
                 if (bp_id != b_parts[groups[g][b]]) {
@@ -442,7 +442,7 @@ void CKinematics::LL_SetBoneVisible(u16 bone_id, BOOL val, BOOL bRecursive) {
     bone_instances[bone_id].mRenderTransform.mul_43(bone_instances[bone_id].mTransform,
                                                     (*bones)[bone_id]->m2b_transform);
     if (bRecursive) {
-        for (xr_vector<CBoneData*>::iterator C = (*bones)[bone_id]->children.begin();
+        for (std::vector<CBoneData*>::iterator C = (*bones)[bone_id]->children.begin();
              C != (*bones)[bone_id]->children.end(); C++)
             LL_SetBoneVisible((*C)->GetSelfID(), val, bRecursive);
     }
@@ -493,17 +493,17 @@ void CKinematics::Visibility_Update() {
     }
 }
 
-IC static void RecursiveBindTransform(CKinematics* K, xr_vector<Fmatrix>& matrices, u16 bone_id,
+IC static void RecursiveBindTransform(CKinematics* K, std::vector<Fmatrix>& matrices, u16 bone_id,
                                       const Fmatrix& parent) {
     CBoneData& BD = K->LL_GetData(bone_id);
     Fmatrix& BM = matrices[bone_id];
     // Build matrix
     BM.mul_43(parent, BD.bind_transform);
-    for (xr_vector<CBoneData*>::iterator C = BD.children.begin(); C != BD.children.end(); C++)
+    for (std::vector<CBoneData*>::iterator C = BD.children.begin(); C != BD.children.end(); C++)
         RecursiveBindTransform(K, matrices, (*C)->GetSelfID(), BM);
 }
 
-void CKinematics::LL_GetBindTransform(xr_vector<Fmatrix>& matrices) {
+void CKinematics::LL_GetBindTransform(std::vector<Fmatrix>& matrices) {
     matrices.resize(LL_BoneCount());
     RecursiveBindTransform(this, matrices, iRoot, Fidentity);
 }
@@ -528,7 +528,7 @@ void CKinematics::EnumBoneVertices(SEnumVerticesCallback& C, u16 bone_id) {
 }
 #include "cl_intersect.h"
 
-using OBBVec = xr_vector<Fobb>;
+using OBBVec = std::vector<Fobb>;
 
 bool CKinematics::PickBone(const Fmatrix& parent_xform, IKinematics::pick_result& r, float dist,
                            const Fvector& start, const Fvector& dir, u16 bone_id) {
@@ -561,7 +561,7 @@ void CKinematics::AddWallmark(const Fmatrix* parent_xform, const Fvector3& start
     float dist = flt_max;
     BOOL picked = FALSE;
 
-    using OBBVec = xr_vector<Fobb>;
+    using OBBVec = std::vector<Fobb>;
     OBBVec cache_obb;
     cache_obb.resize(LL_BoneCount());
     IKinematics::pick_result r;
@@ -716,7 +716,7 @@ void CKinematics::ClearWallmarks() {
     wallmarks.clear();
 }
 
-int CKinematics::LL_GetBoneGroups(xr_vector<xr_vector<u16>>& groups) {
+int CKinematics::LL_GetBoneGroups(std::vector<std::vector<u16>>& groups) {
     groups.resize(children.size());
     for (u16 bone_idx = 0; bone_idx < (u16)bones->size(); bone_idx++) {
         CBoneData* B = (*bones)[bone_idx];

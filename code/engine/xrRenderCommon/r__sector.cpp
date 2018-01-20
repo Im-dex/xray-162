@@ -30,7 +30,7 @@ void CPortal::OnRender() {
     if (psDeviceFlags.is(rsOcclusionDraw)) {
         VERIFY(poly.size());
         // draw rect
-        using LVec = xr_vector<FVF::L>;
+        using LVec = std::vector<FVF::L>;
         static LVec V;
         V.resize(poly.size() + 2);
         Fvector C = { 0, 0, 0 };

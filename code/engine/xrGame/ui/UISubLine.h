@@ -21,7 +21,7 @@ public:
     const CUISubLine* Cut2Pos(int i);
     void Draw(CGameFont* pFont, float x, float y) const;
 
-    xr_string m_text;
+    std::string m_text;
     u32 m_color;
     CUISubLine* m_pTempLine;
     bool m_last_in_line;

@@ -47,11 +47,11 @@ public:
 #define MAX_GlowsPerFrame 64
 
 class CGlowManager {
-    xr_vector<ref_glow> Glows;
-    xr_vector<ref_glow> Selected;
-    xr_vector<ref_glow> SelectedToTest_2; // 2-frames behind
-    xr_vector<ref_glow> SelectedToTest_1; // 1-frames behind
-    xr_vector<ref_glow> SelectedToTest_0; // 0-frames behind
+    std::vector<ref_glow> Glows;
+    std::vector<ref_glow> Selected;
+    std::vector<ref_glow> SelectedToTest_2; // 2-frames behind
+    std::vector<ref_glow> SelectedToTest_1; // 1-frames behind
+    std::vector<ref_glow> SelectedToTest_0; // 0-frames behind
     ref_geom hGeom;
 
     BOOL b_hardware;

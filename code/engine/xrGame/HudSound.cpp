@@ -56,7 +56,7 @@ void HUD_SOUND_ITEM::LoadSound(LPCSTR section, LPCSTR line, ref_sound& snd, int 
 }
 
 void HUD_SOUND_ITEM::DestroySound(HUD_SOUND_ITEM& hud_snd) {
-    xr_vector<SSnd>::iterator it = hud_snd.sounds.begin();
+    std::vector<SSnd>::iterator it = hud_snd.sounds.begin();
     for (; it != hud_snd.sounds.end(); ++it)
         (*it).snd.destroy();
     hud_snd.sounds.clear();
@@ -90,7 +90,7 @@ void HUD_SOUND_ITEM::PlaySound(HUD_SOUND_ITEM& hud_snd, const Fvector& position,
 }
 
 void HUD_SOUND_ITEM::StopSound(HUD_SOUND_ITEM& hud_snd) {
-    xr_vector<SSnd>::iterator it = hud_snd.sounds.begin();
+    std::vector<SSnd>::iterator it = hud_snd.sounds.begin();
     for (; it != hud_snd.sounds.end(); ++it)
         (*it).snd.stop();
     hud_snd.m_activeSnd = NULL;
@@ -98,8 +98,8 @@ void HUD_SOUND_ITEM::StopSound(HUD_SOUND_ITEM& hud_snd) {
 
 //----------------------------------------------------------
 HUD_SOUND_COLLECTION::~HUD_SOUND_COLLECTION() {
-    xr_vector<HUD_SOUND_ITEM>::iterator it = m_sound_items.begin();
-    xr_vector<HUD_SOUND_ITEM>::iterator it_e = m_sound_items.end();
+    std::vector<HUD_SOUND_ITEM>::iterator it = m_sound_items.begin();
+    std::vector<HUD_SOUND_ITEM>::iterator it_e = m_sound_items.end();
 
     for (; it != it_e; ++it) {
         HUD_SOUND_ITEM::StopSound(*it);
@@ -110,7 +110,7 @@ HUD_SOUND_COLLECTION::~HUD_SOUND_COLLECTION() {
 }
 
 HUD_SOUND_ITEM* HUD_SOUND_COLLECTION::FindSoundItem(LPCSTR alias, bool b_assert) {
-    xr_vector<HUD_SOUND_ITEM>::iterator it =
+    std::vector<HUD_SOUND_ITEM>::iterator it =
         std::find(m_sound_items.begin(), m_sound_items.end(), alias);
 
     if (it != m_sound_items.end())
@@ -123,8 +123,8 @@ HUD_SOUND_ITEM* HUD_SOUND_COLLECTION::FindSoundItem(LPCSTR alias, bool b_assert)
 
 void HUD_SOUND_COLLECTION::PlaySound(LPCSTR alias, const Fvector& position, const CObject* parent,
                                      bool hud_mode, bool looped, u8 index) {
-    xr_vector<HUD_SOUND_ITEM>::iterator it = m_sound_items.begin();
-    xr_vector<HUD_SOUND_ITEM>::iterator it_e = m_sound_items.end();
+    std::vector<HUD_SOUND_ITEM>::iterator it = m_sound_items.begin();
+    std::vector<HUD_SOUND_ITEM>::iterator it_e = m_sound_items.end();
     for (; it != it_e; ++it) {
         if (it->m_b_exclusive)
             HUD_SOUND_ITEM::StopSound(*it);
@@ -146,8 +146,8 @@ void HUD_SOUND_COLLECTION::SetPosition(LPCSTR alias, const Fvector& pos) {
 }
 
 void HUD_SOUND_COLLECTION::StopAllSounds() {
-    xr_vector<HUD_SOUND_ITEM>::iterator it = m_sound_items.begin();
-    xr_vector<HUD_SOUND_ITEM>::iterator it_e = m_sound_items.end();
+    std::vector<HUD_SOUND_ITEM>::iterator it = m_sound_items.begin();
+    std::vector<HUD_SOUND_ITEM>::iterator it_e = m_sound_items.end();
 
     for (; it != it_e; ++it) {
         HUD_SOUND_ITEM::StopSound(*it);

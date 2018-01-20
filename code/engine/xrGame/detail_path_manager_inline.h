@@ -31,11 +31,11 @@ IC bool CDetailPathManager::completed(const Fvector& position, bool bRealComplet
     return (completed(position, bRealCompleted, m_current_travel_point));
 }
 
-IC const xr_vector<DetailPathManager::STravelPathPoint>& CDetailPathManager::path() const {
+IC const std::vector<DetailPathManager::STravelPathPoint>& CDetailPathManager::path() const {
     return (m_path);
 }
 
-IC xr_vector<DetailPathManager::STravelPathPoint>& CDetailPathManager::path() { return (m_path); }
+IC std::vector<DetailPathManager::STravelPathPoint>& CDetailPathManager::path() { return (m_path); }
 
 IC const DetailPathManager::STravelPathPoint& CDetailPathManager::curr_travel_point() const {
     return (m_path[curr_travel_point_index()]);
@@ -213,7 +213,7 @@ IC void CDetailPathManager::last_patrol_point(const u32& last_patrol_point) {
 }
 
 #ifdef DEBUG
-IC xr_vector<CDetailPathManager::STravelPoint>& CDetailPathManager::key_points() {
+IC std::vector<CDetailPathManager::STravelPoint>& CDetailPathManager::key_points() {
     return (m_key_points);
 }
 #endif // DEBUG

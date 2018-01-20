@@ -29,10 +29,10 @@ class CGameGraphBuilder {
 private:
     typedef GameGraph::CVertex vertex_type;
     typedef CGraphAbstract<vertex_type, float, u32> graph_type;
-    typedef xr_vector<xr_vector<u32>> DISTANCES;
+    typedef std::vector<std::vector<u32>> DISTANCES;
     typedef std::pair<u32, u32> PAIR;
     typedef std::pair<float, PAIR> TRIPPLE;
-    typedef xr_vector<TRIPPLE> TRIPPLES;
+    typedef std::vector<TRIPPLE> TRIPPLES;
 
 private:
     LPCSTR m_graph_name;
@@ -46,16 +46,16 @@ private:
     graph_type* m_graph;
     xrGUID m_graph_guid;
     // cross table generation stuff
-    xr_vector<bool> m_marks;
-    xr_vector<u32> m_mark_stack;
+    std::vector<bool> m_marks;
+    std::vector<u32> m_mark_stack;
     DISTANCES m_distances;
-    xr_vector<u32> m_current_fringe;
-    xr_vector<u32> m_next_fringe;
-    xr_vector<u32> m_results;
+    std::vector<u32> m_current_fringe;
+    std::vector<u32> m_next_fringe;
+    std::vector<u32> m_results;
     // cross table itself
     CGameLevelCrossTable* m_cross_table;
     TRIPPLES m_tripples;
-    xr_vector<u32> m_path;
+    std::vector<u32> m_path;
     CGraphEngine* m_graph_engine;
 
 private:

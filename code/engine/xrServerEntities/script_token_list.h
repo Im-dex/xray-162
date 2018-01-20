@@ -12,7 +12,7 @@
 
 class CScriptTokenList {
 protected:
-    typedef xr_vector<xr_token> TOKEN_LIST;
+    typedef std::vector<xr_token> TOKEN_LIST;
     typedef TOKEN_LIST::iterator iterator;
     typedef TOKEN_LIST::const_iterator const_iterator;
 

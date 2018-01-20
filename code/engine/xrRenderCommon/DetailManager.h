@@ -16,9 +16,9 @@ const int dm_max_decompress = 14;
 class CCustomObject;
 typedef u32 ObjClassID;
 
-typedef xr_list<CCustomObject*> ObjectList;
+typedef std::list<CCustomObject*> ObjectList;
 typedef ObjectList::iterator ObjectIt;
-typedef xr_map<ObjClassID, ObjectList> ObjectMap;
+typedef std::map<ObjClassID, ObjectList> ObjectMap;
 typedef ObjectMap::iterator ObjectPairIt;
 
 #else
@@ -47,7 +47,7 @@ public:
         Fvector c_rgb;
 #endif
     };
-    using SlotItemVec = xr_vector<SlotItem*>;
+    using SlotItemVec = std::vector<SlotItem*>;
     struct SlotPart {           //
         u32 id;                 // ID модельки
         SlotItemVec items;      // список кустиков
@@ -87,7 +87,7 @@ public:
         }
     };
 
-    typedef xr_vector<xr_vector<SlotItemVec*>> vis_list;
+    typedef std::vector<std::vector<SlotItemVec*>> vis_list;
     typedef svector<CDetail*, dm_max_objects> DetailVec;
     typedef DetailVec::iterator DetailIt;
     typedef poolSS<SlotItem, 4096> PSS;

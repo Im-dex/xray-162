@@ -49,7 +49,7 @@ class CRegistrator // the registrator itself
     }
 
 public:
-    xr_vector<_REG_INFO> R;
+    std::vector<_REG_INFO> R;
     // constructor
     struct {
         u32 in_process : 1;

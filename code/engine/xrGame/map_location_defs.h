@@ -23,7 +23,7 @@ struct SLocationKey : public IPureSerializeObject<IReader, IWriter>, public IPur
     virtual void destroy();
 };
 
-using Locations = xr_vector<SLocationKey>;
+using Locations = std::vector<SLocationKey>;
 
 struct CMapLocationRegistry : public CALifeAbstractRegistry<u16, Locations> {
     virtual void save(IWriter& stream);

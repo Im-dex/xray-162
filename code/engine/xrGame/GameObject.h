@@ -265,7 +265,7 @@ public:
     typedef CScriptCallbackEx<void> CScriptCallbackExVoid;
 
 private:
-    using CALLBACK_MAP = xr_map<GameObject::ECallbackType, CScriptCallbackExVoid>;
+    using CALLBACK_MAP = std::map<GameObject::ECallbackType, CScriptCallbackExVoid>;
     CALLBACK_MAP* m_callbacks;
 
 public:

@@ -502,7 +502,7 @@ void CSpectator::GetSpectatorString(string1024& pStr) {
     if (GameID() == eGameIDSingle)
         return;
 
-    xr_string SpectatorMsg;
+    std::string SpectatorMsg;
     CStringTable st;
     switch (cam_active) {
     case eacFreeFly: {

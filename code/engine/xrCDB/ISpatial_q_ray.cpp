@@ -265,8 +265,8 @@ public:
         }
 
         // test items
-        xr_vector<ISpatial*>::iterator _it = N->items.begin();
-        xr_vector<ISpatial*>::iterator _end = N->items.end();
+        std::vector<ISpatial*>::iterator _it = N->items.begin();
+        std::vector<ISpatial*>::iterator _end = N->items.end();
         for (; _it != _end; _it++) {
             ISpatial* S = *_it;
             if (mask != (S->spatial.type & mask))
@@ -309,7 +309,7 @@ public:
     }
 };
 
-void ISpatial_DB::q_ray(xr_vector<ISpatial*>& R, u32 _o, u32 _mask_and, const Fvector& _start,
+void ISpatial_DB::q_ray(std::vector<ISpatial*>& R, u32 _o, u32 _mask_and, const Fvector& _start,
                         const Fvector& _dir, float _range) {
     std::lock_guard<decltype(cs)> lock(cs);
     q_result = &R;

@@ -19,7 +19,7 @@ public:
 
 class CScriptValueContainer {
 protected:
-    xr_vector<CScriptValue*> m_values;
+    std::vector<CScriptValue*> m_values;
 
 public:
     virtual ~CScriptValueContainer();

@@ -135,7 +135,7 @@ struct ECORE_API SJointIKData {
 
 // refs
 class CBone;
-using BoneVec = xr_vector<CBone*>;
+using BoneVec = std::vector<CBone*>;
 
 class ECORE_API CBone {
     shared_str name;

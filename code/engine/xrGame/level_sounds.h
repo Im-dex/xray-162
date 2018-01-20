@@ -39,9 +39,9 @@ public:
 };
 
 class CLevelSoundManager {
-    using StaticSoundsVec = xr_vector<SStaticSound>;
+    using StaticSoundsVec = std::vector<SStaticSound>;
     StaticSoundsVec m_StaticSounds;
-    using MusicTrackVec = xr_vector<SMusicTrack>;
+    using MusicTrackVec = std::vector<SMusicTrack>;
     MusicTrackVec m_MusicTracks;
     u32 m_NextTrackTime;
     int m_CurrentTrack;

@@ -20,7 +20,7 @@ void CSpaceRestrictionBridge::change_implementation(CSpaceRestrictionBase* objec
     m_object = object;
 }
 
-const xr_vector<u32>& CSpaceRestrictionBridge::border() const { return (object().border()); }
+const std::vector<u32>& CSpaceRestrictionBridge::border() const { return (object().border()); }
 
 bool CSpaceRestrictionBridge::initialized() const { return (object().initialized()); }
 
@@ -70,8 +70,8 @@ bool CSpaceRestrictionBridge::on_border(const Fvector& position) const {
 
     CLevelGraph::CPosition pos = ai().level_graph().vertex_position(position);
 
-    xr_vector<u32>::const_iterator E = object().border().end();
-    xr_vector<u32>::const_iterator I = std::lower_bound(
+    std::vector<u32>::const_iterator E = object().border().end();
+    std::vector<u32>::const_iterator I = std::lower_bound(
         object().border().begin(), object().border().end(), pos.xz(), CFindByXZ_predicate());
 
     if ((I == E) || (ai().level_graph().vertex(*I)->position().xz() != pos.xz()))

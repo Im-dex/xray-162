@@ -102,7 +102,7 @@ public:
     void OnDeviceDestroy(void);
 
 public:
-    xr_vector<shared_str> errors;
+    std::vector<shared_str> errors;
     CRegistrator<pureStats> seqStats;
 
 public:

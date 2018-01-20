@@ -509,7 +509,7 @@ void CStats::OnRender() {
                     DU->DrawSphere(Fidentity, item.params.position, item.params.max_distance,
                                    0x4000FF00, 0xFF008000, true, true);
 
-                xr_string out_txt = (out_txt.size() && g_stats_flags.is(st_sound_info_name))
+                std::string out_txt = (out_txt.size() && g_stats_flags.is(st_sound_info_name))
                                         ? item.name.c_str()
                                         : "";
 

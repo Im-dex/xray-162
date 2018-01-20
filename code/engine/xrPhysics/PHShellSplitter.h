@@ -9,7 +9,7 @@ class CPHShellSplitter;
 class CPHShell;
 class CODEGeom;
 typedef std::pair<u16, CODEGeom*> id_geom;
-using GEOM_MAP = xr_map<u16, CODEGeom*>;
+using GEOM_MAP = std::map<u16, CODEGeom*>;
 
 class CPHShellSplitter {
     friend class CPHShellSplitterHolder;
@@ -27,8 +27,8 @@ private:
     CPHShellSplitter();
 };
 
-using SPLITTER_STORAGE = xr_vector<CPHShellSplitter>;
-typedef xr_vector<CPHShellSplitter>::reverse_iterator SPLITTER_RI;
+using SPLITTER_STORAGE = std::vector<CPHShellSplitter>;
+typedef std::vector<CPHShellSplitter>::reverse_iterator SPLITTER_RI;
 
 class CPHShellSplitterHolder
     : public CPHUpdateObject // call all Fractures and Breakable Joints Updates

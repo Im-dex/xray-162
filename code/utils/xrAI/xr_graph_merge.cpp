@@ -58,8 +58,8 @@ u32 dwfGetIDByLevelName(CInifile* Ini, LPCSTR caLevelName) {
     return (u32(-1));
 }
 
-using GRAPH_P_MAP = xr_map<u32, ::CLevelGameGraph*>;
-using VERTEX_MAP = xr_map<LPSTR, SConnectionVertex, CCompareVertexPredicate>;
+using GRAPH_P_MAP = std::map<u32, ::CLevelGameGraph*>;
+using VERTEX_MAP = std::map<LPSTR, SConnectionVertex, CCompareVertexPredicate>;
 
 typedef struct tagSDynamicGraphVertex {
     Fvector tLocalPoint;
@@ -73,8 +73,8 @@ typedef struct tagSDynamicGraphVertex {
     CGameGraph::CEdge* tpaEdges;
 } SDynamicGraphVertex;
 
-using GRAPH_VERTEX_VECTOR = xr_vector<SDynamicGraphVertex>;
-using GRAPH_EDGE_VECTOR = xr_vector<CGameGraph::CEdge>;
+using GRAPH_VERTEX_VECTOR = std::vector<SDynamicGraphVertex>;
+using GRAPH_EDGE_VECTOR = std::vector<CGameGraph::CEdge>;
 
 class CLevelGameGraph {
 public:
@@ -167,7 +167,7 @@ public:
         {
             xr_strcpy(caFileName, raw_cross_table_file_name);
             CGameLevelCrossTable* tpCrossTable = new CGameLevelCrossTable(caFileName);
-            xr_vector<CGameLevelCrossTable::CCell> tCrossTableUpdate;
+            std::vector<CGameLevelCrossTable::CCell> tCrossTableUpdate;
             tCrossTableUpdate.resize(tpCrossTable->header().level_vertex_count());
             for (int i = 0; i < (int)tpCrossTable->header().level_vertex_count(); i++) {
                 tCrossTableUpdate[i] = tpCrossTable->vertex(i);
@@ -371,7 +371,7 @@ public:
     void vfGenerateDeathPoints(std::mt19937& rng, int iGraphIndex,
                                CGameLevelCrossTable* tpCrossTable, CLevelGraph* tpAI_Map,
                                u32& dwDeathPointCount) {
-        xr_vector<u32> l_dwaNodes;
+        std::vector<u32> l_dwaNodes;
         l_dwaNodes.clear();
         {
             for (u32 i = 0, n = tpCrossTable->m_tCrossTableHeader.dwNodeCount; i < n; i++)
@@ -390,7 +390,7 @@ public:
         m_tpLevelPoints.resize(l_dwStartIndex + m);
         LEVEL_POINT_STORAGE::iterator I = m_tpLevelPoints.begin() + l_dwStartIndex;
         LEVEL_POINT_STORAGE::iterator E = m_tpLevelPoints.end();
-        xr_vector<u32>::iterator i = l_dwaNodes.begin();
+        std::vector<u32>::iterator i = l_dwaNodes.begin();
 
         dwDeathPointCount = m;
 
@@ -407,8 +407,8 @@ public:
     CGraphMerger(LPCSTR game_graph_id, LPCSTR name, bool rebuild);
 };
 
-void read_levels(CInifile* Ini, xr_set<CLevelInfo>& levels, bool rebuild_graph,
-                 xr_vector<LPCSTR>* needed_levels) {
+void read_levels(CInifile* Ini, std::set<CLevelInfo>& levels, bool rebuild_graph,
+                 std::vector<LPCSTR>* needed_levels) {
     LPCSTR _N, V;
     string_path caFileName, file_name;
     for (u32 k = 0; Ini->r_line("levels", k, &_N, &V); k++) {
@@ -444,8 +444,8 @@ void read_levels(CInifile* Ini, xr_set<CLevelInfo>& levels, bool rebuild_graph,
 
         if (needed_levels) {
             bool found = false;
-            xr_vector<LPCSTR>::const_iterator I = needed_levels->begin();
-            xr_vector<LPCSTR>::const_iterator E = needed_levels->end();
+            std::vector<LPCSTR>::const_iterator I = needed_levels->begin();
+            std::vector<LPCSTR>::const_iterator E = needed_levels->end();
             for (; I != E; ++I)
                 if (!xr_strcmp(*I, S)) {
                     found = true;
@@ -519,7 +519,7 @@ LPCSTR generate_temp_file_name(LPCSTR header0, LPCSTR header1, string_path& buff
     return (buffer);
 }
 
-void fill_needed_levels(LPSTR levels, xr_vector<LPCSTR>& result) {
+void fill_needed_levels(LPSTR levels, std::vector<LPCSTR>& result) {
     LPSTR I = levels;
     for (LPSTR J = I;; ++I) {
         if (*I != ',') {
@@ -555,8 +555,8 @@ CGraphMerger::CGraphMerger(LPCSTR game_graph_id, LPCSTR name, bool rebuild) {
     LEVEL_POINT_STORAGE l_tpLevelPoints;
     l_tpLevelPoints.clear();
 
-    xr_set<CLevelInfo> levels;
-    xr_vector<LPCSTR> needed_levels;
+    std::set<CLevelInfo> levels;
+    std::vector<LPCSTR> needed_levels;
     string4096 levels_string;
     xr_strcpy(levels_string, name);
     strlwr(levels_string);

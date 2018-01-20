@@ -823,7 +823,7 @@ void CUIMainIngameWnd::DrawMainIndicatorsForInventory() {
     m_ui_hud_states->DrawZoneIndicators();
 }
 
-void CUIMainIngameWnd::UpdateBoosterIndicators(const xr_map<EBoostParams, SBooster> influences) {
+void CUIMainIngameWnd::UpdateBoosterIndicators(const std::map<EBoostParams, SBooster> influences) {
     m_ind_boost_psy->Show(false);
     m_ind_boost_radia->Show(false);
     m_ind_boost_chem->Show(false);
@@ -839,7 +839,7 @@ void CUIMainIngameWnd::UpdateBoosterIndicators(const xr_map<EBoostParams, SBoost
     flags |= LA_ONLYALPHA;
     flags |= LA_TEXTURECOLOR;
 
-    xr_map<EBoostParams, SBooster>::const_iterator b = influences.begin(), e = influences.end();
+    std::map<EBoostParams, SBooster>::const_iterator b = influences.begin(), e = influences.end();
     for (; b != e; b++) {
         switch (b->second.m_type) {
         case eBoostHpRestore: {

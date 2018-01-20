@@ -8,8 +8,8 @@ namespace PAPI {
 class CParticleManager : public IParticleManager {
     // These are static because all threads access the same effects.
     // All accesses to these should be locked.
-    using ParticleEffectVec = xr_vector<ParticleEffect*>;
-    using ParticleActionsVec = xr_vector<ParticleActions*>;
+    using ParticleEffectVec = std::vector<ParticleEffect*>;
+    using ParticleActionsVec = std::vector<ParticleActions*>;
     ParticleEffectVec effect_vec;
     ParticleActionsVec m_alist_vec;
 

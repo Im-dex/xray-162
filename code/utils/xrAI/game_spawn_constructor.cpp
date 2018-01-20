@@ -43,9 +43,9 @@ IC std::string CGameSpawnConstructor::actor_level_name() const {
     return writer.str();
 }
 
-extern void read_levels(CInifile* ini, xr_set<CLevelInfo>& m_levels, bool rebuild_graph,
-                        xr_vector<LPCSTR>*);
-void fill_needed_levels(LPSTR levels, xr_vector<LPCSTR>& result);
+extern void read_levels(CInifile* ini, std::set<CLevelInfo>& m_levels, bool rebuild_graph,
+                        std::vector<LPCSTR>*);
+void fill_needed_levels(LPSTR levels, std::vector<LPCSTR>& result);
 
 void CGameSpawnConstructor::load_spawns(LPCSTR name, bool no_separator_check) {
     m_spawn_id = 0;
@@ -59,7 +59,7 @@ void CGameSpawnConstructor::load_spawns(LPCSTR name, bool no_separator_check) {
 
     // init patrol path storage
     m_patrol_path_storage = new CPatrolPathStorage();
-    xr_vector<LPCSTR> needed_levels;
+    std::vector<LPCSTR> needed_levels;
     string4096 levels_string;
     xr_strcpy(levels_string, name);
     strlwr(levels_string);
@@ -111,7 +111,7 @@ void CGameSpawnConstructor::process_spawns() {
 }
 
 void CGameSpawnConstructor::verify_spawns(ALife::_SPAWN_ID spawn_id) {
-    xr_vector<ALife::_SPAWN_ID>::iterator J = std::find(m_temp0.begin(), m_temp0.end(), spawn_id);
+    std::vector<ALife::_SPAWN_ID>::iterator J = std::find(m_temp0.begin(), m_temp0.end(), spawn_id);
     R_ASSERT3(J == m_temp0.end(), "RECURSIVE Spawn group chain found in spawn",
               m_spawn_graph->vertex(spawn_id)->data()->object().name_replace());
     m_temp0.push_back(spawn_id);
@@ -293,7 +293,7 @@ void clear_temp_folder() {
     if (handle == intptr_t(-1))
         return;
 
-    typedef xr_vector<shared_str> FILES;
+    typedef std::vector<shared_str> FILES;
     FILES files;
     do {
         if (file.attrib & _A_SUBDIR)

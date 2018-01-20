@@ -39,7 +39,7 @@ void CAI_PhraseDialogManager::AnswerPhrase(DIALOG_SHARED_PTR& phrase_dialog) {
     if (!phrase_dialog->IsFinished()) {
         CHARACTER_GOODWILL attitude = RELATION_REGISTRY().GetAttitude(pOthersIO, pInvOwner);
 
-        xr_vector<int> phrases;
+        std::vector<int> phrases;
         CHARACTER_GOODWILL phrase_goodwill = NO_GOODWILL;
         //если не найдем более подходяещей выводим фразу
         //последнюю из списка (самую грубую)

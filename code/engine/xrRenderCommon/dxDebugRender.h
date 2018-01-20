@@ -38,8 +38,8 @@ private:
     enum { line_vertex_limit = 32767, line_index_limit = 32767 };
 
 private:
-    typedef xr_vector<u16> Indices;
-    typedef xr_vector<FVF::L> Vertices;
+    typedef std::vector<u16> Indices;
+    typedef std::vector<FVF::L> Vertices;
 
 protected:
     Vertices m_line_vertices;

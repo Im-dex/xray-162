@@ -80,7 +80,7 @@ void CHOM::Load() {
     }
 
     // Determine adjacency
-    xr_vector<u32> adjacency;
+    std::vector<u32> adjacency;
     CL.calc_adjacency(adjacency);
 
     // Create RASTER-triangles
@@ -370,7 +370,7 @@ void CHOM::OnRender() {
 
     if (psDeviceFlags.is(rsOcclusionDraw)) {
         if (m_pModel) {
-            using LVec = xr_vector<FVF::L>;
+            using LVec = std::vector<FVF::L>;
             static LVec poly;
             poly.resize(m_pModel->get_tris_count() * 3);
             static LVec line;

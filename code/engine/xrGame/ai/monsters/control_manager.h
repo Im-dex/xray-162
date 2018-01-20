@@ -18,18 +18,18 @@ class CControl_Com;
 
 class CControl_Manager {
     CBaseMonster* m_object;
-    xr_vector<CObject*> m_nearest;
+    std::vector<CObject*> m_nearest;
 
-    using CONTROLLERS_VECTOR = xr_vector<CControl_Com*>;
-    using LISTENERS_MAP = xr_map<ControlCom::EEventType, CONTROLLERS_VECTOR>;
+    using CONTROLLERS_VECTOR = std::vector<CControl_Com*>;
+    using LISTENERS_MAP = std::map<ControlCom::EEventType, CONTROLLERS_VECTOR>;
     LISTENERS_MAP m_listeners;
 
     // contains all available controllers
-    using CONTROLLERS_MAP = xr_map<ControlCom::EControlType, CControl_Com*>;
+    using CONTROLLERS_MAP = std::map<ControlCom::EControlType, CControl_Com*>;
     CONTROLLERS_MAP m_control_elems;
     CONTROLLERS_MAP m_base_elems;
 
-    using COM_VEC = xr_vector<CControl_Com*>;
+    using COM_VEC = std::vector<CControl_Com*>;
     COM_VEC m_active_elems;
 
     CControlAnimation* m_animation;

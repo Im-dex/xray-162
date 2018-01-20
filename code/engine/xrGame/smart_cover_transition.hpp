@@ -18,7 +18,7 @@ class animation_action;
 
 class action final {
 public:
-    typedef xr_vector<animation_action*> Animations;
+    typedef std::vector<animation_action*> Animations;
 
 private:
     shared_str m_precondition_functor;

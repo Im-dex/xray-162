@@ -32,7 +32,7 @@ protected:
     shared_str m_sStartDialog;
     shared_str m_sDefaultStartDialog;
 
-    using DIALOG_SHARED_VECTOR = xr_vector<DIALOG_SHARED_PTR>;
+    using DIALOG_SHARED_VECTOR = std::vector<DIALOG_SHARED_PTR>;
     //список диалогов, на которые нужно ответить
     DIALOG_SHARED_VECTOR m_PendingDialogs;
 };

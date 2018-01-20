@@ -551,12 +551,12 @@ bool CControlJump::jump_intersect_geometry(Fvector const& target, CObject* const
 
     Fvector collide_position;
     collide::rq_results temp_rq_results;
-    xr_vector<trajectory_pick>* pass_jump_picks = NULL;
-    xr_vector<Fvector>* pass_collide_tris = NULL;
+    std::vector<trajectory_pick>* pass_jump_picks = NULL;
+    std::vector<Fvector>* pass_collide_tris = NULL;
 #ifdef DEBUG
-    xr_vector<trajectory_pick> jump_picks;
+    std::vector<trajectory_pick> jump_picks;
     pass_jump_picks = &jump_picks;
-    xr_vector<Fvector> collide_tris;
+    std::vector<Fvector> collide_tris;
     pass_collide_tris = &collide_tris;
 #endif // #ifdef DEBUG
 

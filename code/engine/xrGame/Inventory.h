@@ -25,10 +25,10 @@ public:
     bool is_item_in_group(shared_str const& section_name) const;
 
 private:
-    xr_set<shared_str> m_sections;
+    std::set<shared_str> m_sections;
 }; // class priority_group
 
-typedef xr_vector<CInventorySlot> TISlotArr;
+typedef std::vector<CInventorySlot> TISlotArr;
 
 class CInventory {
 public:
@@ -183,7 +183,7 @@ private:
 
     priority_group m_groups[qs_priorities_count];
     priority_group m_null_priority;
-    typedef xr_set<PIItem> except_next_items_t;
+    typedef std::set<PIItem> except_next_items_t;
     except_next_items_t m_next_items_exceptions;
     u32 m_next_item_iteration_time;
 

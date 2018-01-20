@@ -511,7 +511,7 @@ void CInput::iRelease(IInputReceiver* p) {
         u32 cnt = cbStack.size();
         for (; cnt > 0; --cnt)
             if (cbStack[cnt - 1] == p) {
-                xr_vector<IInputReceiver*>::iterator it = cbStack.begin();
+                std::vector<IInputReceiver*>::iterator it = cbStack.begin();
                 std::advance(it, cnt - 1);
                 cbStack.erase(it);
                 break;

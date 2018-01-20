@@ -20,7 +20,7 @@ struct boxes;
 class moving_objects {
 private:
     typedef CQuadTree<moving_object> TREE;
-    typedef xr_vector<CObject*> NEAREST_STATIC;
+    typedef std::vector<CObject*> NEAREST_STATIC;
 
 public:
     enum possible_actions {
@@ -30,14 +30,14 @@ public:
     };
 
 public:
-    typedef xr_vector<moving_object*> NEAREST_MOVING;
+    typedef std::vector<moving_object*> NEAREST_MOVING;
     typedef std::pair<moving_object*, moving_object*> COLLISION;
     typedef std::pair<possible_actions, COLLISION> COLLISION_ACTION;
     typedef std::pair<float, COLLISION_ACTION> COLLISION_TIME;
-    typedef xr_vector<COLLISION_TIME> COLLISIONS;
+    typedef std::vector<COLLISION_TIME> COLLISIONS;
 
 private:
-    typedef xr_vector<ISpatial*> Spatials;
+    typedef std::vector<ISpatial*> Spatials;
 
 public:
     typedef obstacles_query query;
@@ -57,7 +57,7 @@ private:
 
 #ifdef DEBUG
 private:
-    typedef xr_set<moving_object*> OBJECTS;
+    typedef std::set<moving_object*> OBJECTS;
 
 private:
     OBJECTS m_objects;

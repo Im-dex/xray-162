@@ -40,4 +40,4 @@ struct TALK_CONTACT_DATA {
     u16 id;
 };
 
-using TALK_CONTACT_VECTOR = xr_vector<TALK_CONTACT_DATA>;
+using TALK_CONTACT_VECTOR = std::vector<TALK_CONTACT_DATA>;

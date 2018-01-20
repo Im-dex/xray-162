@@ -9,7 +9,8 @@
   Surface simplification using quadric error metrics
 
   Copyright (C) 1998 Michael Garland.  See "COPYING.txt" for details.
-  
+  
+
   $Id: MxQSlim.h,v 1.29 1999/02/18 15:26:07 garland Exp $
 
  ************************************************************************/
@@ -53,7 +54,7 @@ private:
 
     //
     // Temporary variables used by methods
-    using EdgeVec = xr_vector<MxQSlimEdge*>;
+    using EdgeVec = std::vector<MxQSlimEdge*>;
     EdgeVec edges;
     MxVertexList star, star2;
     MxPairContraction conx_tmp;

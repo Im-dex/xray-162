@@ -18,7 +18,7 @@ class CALifeSmartTerrainTask;
 class CALifeMonsterDetailPathManager {
 public:
     typedef CMovementManagerHolder object_type;
-    typedef xr_vector<u32> PATH;
+    typedef std::vector<u32> PATH;
 
 private:
     struct parameters {

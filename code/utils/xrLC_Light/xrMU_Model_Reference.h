@@ -17,7 +17,7 @@ public:
     Flags32 flags;
     u16 sector;
 
-    xr_vector<base_color> color;
+    std::vector<base_color> color;
 
     base_color_c c_scale;
     base_color_c c_bias;
@@ -25,7 +25,7 @@ public:
 public:
     xrMU_Reference() : model(0), sector(u16(-1)), flags(Flags32().assign(0)), xform(Fidentity) {}
 
-    void Load(IReader& fs, xr_vector<xrMU_Model*>& mu_models);
+    void Load(IReader& fs, std::vector<xrMU_Model*>& mu_models);
     void calc_lighting();
 
     void export_cform_game(CDB::CollectorPacked& CL);

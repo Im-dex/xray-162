@@ -26,8 +26,8 @@ using namespace ALife;
 CALifeSurgeManager::~CALifeSurgeManager() {}
 
 void CALifeSurgeManager::spawn_new_spawns() {
-    xr_vector<ALife::_SPAWN_ID>::const_iterator I = m_temp_spawns.begin();
-    xr_vector<ALife::_SPAWN_ID>::const_iterator E = m_temp_spawns.end();
+    std::vector<ALife::_SPAWN_ID>::const_iterator I = m_temp_spawns.begin();
+    std::vector<ALife::_SPAWN_ID>::const_iterator E = m_temp_spawns.end();
     for (; I != E; ++I) {
         CSE_ALifeDynamicObject *object, *spawn = smart_cast<CSE_ALifeDynamicObject*>(
                                             &spawns().spawns().vertex(*I)->data()->object());

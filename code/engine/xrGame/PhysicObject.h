@@ -22,7 +22,7 @@ struct net_update_PItem {
 };
 
 struct net_updatePhData {
-    xr_deque<net_update_PItem> NET_IItem;
+    std::deque<net_update_PItem> NET_IItem;
     /// spline coeff /////////////////////
     // float			SCoeff[3][4];
     /*Fvector			IStartPos;

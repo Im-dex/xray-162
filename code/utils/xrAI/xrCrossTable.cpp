@@ -12,17 +12,17 @@
 
 LPCSTR GAME_LEVEL_GRAPH = "level.graph";
 
-using FLOAT_VECTOR = xr_vector<u32>;
-using FLOAT_VECTOR_VECTOR = xr_vector<FLOAT_VECTOR>;
+using FLOAT_VECTOR = std::vector<u32>;
+using FLOAT_VECTOR_VECTOR = std::vector<FLOAT_VECTOR>;
 
 FLOAT_VECTOR* g_tDistances;
 CLevelGraph* g_tMap;
-xr_vector<bool>* g_tMarks;
+std::vector<bool>* g_tMarks;
 
 u32 absolute(u32 a, u32 b) { return ((a >= b) ? (a - b) : (b - a)); }
 
 void vfRecurseUpdate(u32 dwStartNodeID, u32 percent, u32 iVertexCount) {
-    xr_vector<u32> curr_fringe, next_fringe;
+    std::vector<u32> curr_fringe, next_fringe;
     curr_fringe.reserve(g_tDistances->size());
     next_fringe.reserve(g_tDistances->size());
     g_tDistances->assign(g_tDistances->size(), u32(-1));
@@ -30,8 +30,8 @@ void vfRecurseUpdate(u32 dwStartNodeID, u32 percent, u32 iVertexCount) {
     u32 curr_dist = 0, total_count = 0;
     Progress(float(percent) / float(iVertexCount));
     for (; !curr_fringe.empty();) {
-        xr_vector<u32>::iterator I = curr_fringe.begin();
-        xr_vector<u32>::iterator E = curr_fringe.end();
+        std::vector<u32>::iterator I = curr_fringe.begin();
+        std::vector<u32>::iterator E = curr_fringe.end();
         for (; I != E; ++I) {
             (*g_tDistances)[*I] = curr_dist;
             CLevelGraph::const_iterator i, e;
@@ -62,9 +62,9 @@ void vfRecurseUpdate(u32 dwStartNodeID, u32 percent, u32 iVertexCount) {
     }
 }
 
-void vfRecurseMark(const CLevelGraph& tMap, xr_vector<bool>& tMarks, u32 dwStartNodeID) {
+void vfRecurseMark(const CLevelGraph& tMap, std::vector<bool>& tMarks, u32 dwStartNodeID) {
     CLevelGraph::const_iterator I, E;
-    xr_vector<u32> l_stack;
+    std::vector<u32> l_stack;
     l_stack.reserve(8192);
     l_stack.push_back(dwStartNodeID);
 
@@ -102,7 +102,7 @@ CCrossTableBuilder::CCrossTableBuilder(LPCSTR caProjectName) {
     int iVertexCount = tGraph.header().vertex_count();
     R_ASSERT2(iVertexCount > 0, "There are no graph points in the graph!");
     int iNodeCount = tMap.header().vertex_count();
-    xr_vector<bool> tMarks;
+    std::vector<bool> tMarks;
     tMarks.assign(tMap.header().vertex_count(), false);
     {
         for (int i = 0; i < iVertexCount; i++)

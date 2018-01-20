@@ -102,7 +102,7 @@ struct CCloner {
     }
 
     template <typename T1, typename T2>
-    IC static void clone(const xr_stack<T1, T2>& _1, xr_stack<T1, T2>& _2) {
+    IC static void clone(const std::stack<T1, T2>& _1, std::stack<T1, T2>& _2) {
         return (clone(_1, _2, true));
     }
 

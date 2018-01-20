@@ -6,7 +6,7 @@ class CInventoryItem;
 class CEntity;
 
 class CTrade {
-    xr_vector<CObject*> m_nearest;
+    std::vector<CObject*> m_nearest;
 
     bool TradeState; // режим торговли. true - включен
     u32 m_dwLastTradeTime;

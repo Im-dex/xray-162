@@ -88,15 +88,8 @@ xalloc<Tp2> __stl_alloc_create(xalloc<Tp1>&, const Tp2*) {
 
 } // namespace std
 
-// string(char)
-using xr_string = std::basic_string<char, std::char_traits<char>, xalloc<char>>;
-
-// vector
-template <typename T, typename allocator = xalloc<T>>
-using xr_vector = std::vector<T, allocator>;
-
 template <typename T, typename Alloc>
-void clearAndReserve(xr_vector<T, Alloc>& vec) {
+void clearAndReserve(std::vector<T, Alloc>& vec) {
     if (vec.capacity() <= (vec.size() / 2))
         vec.clear();
     else {
@@ -104,33 +97,6 @@ void clearAndReserve(xr_vector<T, Alloc>& vec) {
         vec.clear();
     }
 }
-
-// deque
-template <typename T, typename allocator = xalloc<T>>
-using xr_deque = std::deque<T, allocator>;
-
-// stack
-template <typename T, class C = xr_deque<T>>
-using xr_stack = std::stack<T, C>;
-
-template <typename T, typename allocator = xalloc<T>>
-using xr_list = std::list<T, allocator>;
-
-template <typename K, class P = std::less<K>, typename allocator = xalloc<K>>
-using xr_set = std::set<K, P, allocator>;
-
-template <typename K, class P = std::less<K>, typename allocator = xalloc<K>>
-using xr_multiset = std::multiset<K, P, allocator>;
-
-template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<const K, V>>>
-using xr_map = std::map<K, V, P, allocator>;
-
-template <typename K, class V, class P = std::less<K>, typename allocator = xalloc<std::pair<const K, V>>>
-using xr_multimap = std::multimap<K, V, P, allocator>;
-
-template <typename K, class V, class Traits = std::equal_to<K>,
-          typename allocator = xalloc<std::pair<const K, V>>>
-using xr_hash_map = std::unordered_map<K, V, std::hash<K>, Traits, allocator>;
 
 struct pred_str {
     bool operator()(const char* x, const char* y) const { return std::strcmp(x, y) < 0; }
@@ -143,10 +109,10 @@ struct pred_stri {
 #include "buffer_vector.h"
 
 // auxilary definition
-using FvectorVec = xr_vector<Fvector>;
-using LPSTRVec = xr_vector<LPSTR>;
-using SStringVec = xr_vector<xr_string>;
-using U16Vec = xr_vector<u16>;
-using U32Vec = xr_vector<u32>;
-using FloatVec = xr_vector<float>;
-using IntVec = xr_vector<int>;
+using FvectorVec = std::vector<Fvector>;
+using LPSTRVec = std::vector<LPSTR>;
+using SStringVec = std::vector<std::string>;
+using U16Vec = std::vector<u16>;
+using U32Vec = std::vector<u32>;
+using FloatVec = std::vector<float>;
+using IntVec = std::vector<int>;

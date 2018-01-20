@@ -318,7 +318,7 @@ void CBurer::UpdateGraviObject() {
 
             // check for visibility
             bool b_enemy_visible = false;
-            xr_vector<CObject*> visible_objects;
+            std::vector<CObject*> visible_objects;
             feel_vision_get(visible_objects);
 
             // find object
@@ -364,7 +364,7 @@ void CBurer::UpdateGraviObject() {
     // hit objects
     m_nearest.clear();
     Level().ObjectSpace.GetNearest(m_nearest, m_gravi_object.cur_pos, m_gravi.radius, NULL);
-    // xr_vector<CObject*> &m_nearest = Level().ObjectSpace.q_nearest;
+    // std::vector<CObject*> &m_nearest = Level().ObjectSpace.q_nearest;
 
     for (u32 i = 0; i < m_nearest.size(); i++) {
         CPhysicsShellHolder* obj = smart_cast<CPhysicsShellHolder*>(m_nearest[i]);

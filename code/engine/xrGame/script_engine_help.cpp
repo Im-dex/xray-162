@@ -10,7 +10,7 @@
 
 #ifdef DEBUG
 
-xr_string to_string(luabind::object const& o) {
+std::string to_string(luabind::object const& o) {
     using namespace luabind;
     if (o.type() == LUA_TSTRING)
         return object_cast<luabind::internal_string>(o).c_str();
@@ -23,17 +23,17 @@ xr_string to_string(luabind::object const& o) {
         return buffer;
     }
 
-    return xr_string("<") + lua_typename(L, o.type()) + ">";
+    return std::string("<") + lua_typename(L, o.type()) + ">";
 }
 
-void strreplaceall(xr_string& str, LPCSTR S, LPCSTR N) {
+void strreplaceall(std::string& str, LPCSTR S, LPCSTR N) {
     LPCSTR A;
     int S_len = xr_strlen(S);
     while ((A = strstr(str.c_str(), S)) != 0)
         str.replace(A - str.c_str(), S_len, N);
 }
 
-xr_string& process_signature(xr_string& str) {
+std::string& process_signature(std::string& str) {
     strreplaceall(str, "custom [", "");
     strreplaceall(str, "]", "");
     strreplaceall(str, "float", "number");
@@ -42,7 +42,7 @@ xr_string& process_signature(xr_string& str) {
     return (str);
 }
 
-xr_string member_to_string(luabind::object const& e, LPCSTR function_signature) {
+std::string member_to_string(luabind::object const& e, LPCSTR function_signature) {
 #if 1 || !defined(LUABIND_NO_ERROR_CHECKING)
     using namespace luabind;
     lua_State* L = e.lua_state();
@@ -60,7 +60,7 @@ xr_string member_to_string(luabind::object const& e, LPCSTR function_signature) 
                 return to_string(e);
         }
 
-        xr_string s = "";
+        std::string s = "";
 
         {
             lua_getupvalue(L, -1, 2);
@@ -79,7 +79,7 @@ xr_string member_to_string(luabind::object const& e, LPCSTR function_signature) 
                 if (i != m->overloads().begin())
                     s += "\n";
 
-                xr_string xr_str(str.c_str());
+                std::string xr_str(str.c_str());
                 s += function_signature + process_signature(xr_str) + ";";
             }
         }
@@ -96,7 +96,7 @@ xr_string member_to_string(luabind::object const& e, LPCSTR function_signature) 
 }
 
 void print_class(lua_State* L, luabind::detail::class_rep* crep) {
-    xr_string S;
+    std::string S;
     // print class and bases
     {
         S = (crep->get_class_type() != luabind::detail::class_rep::cpp_class) ? "LUA class "
@@ -159,7 +159,7 @@ void print_class(lua_State* L, luabind::detail::class_rep* crep) {
         for (; I != E; ++I) {
             luabind::internal_string luaS;
             (*I).get_signature(L, luaS);
-            xr_string S(luaS.c_str());
+            std::string S(luaS.c_str());
             strreplaceall(S, "custom [", "");
             strreplaceall(S, "]", "");
             strreplaceall(S, "float", "number");
@@ -177,7 +177,7 @@ void print_class(lua_State* L, luabind::detail::class_rep* crep) {
         table.set();
         for (luabind::object::iterator i = table.begin(); i != table.end(); ++i) {
             luabind::object object = *i;
-            xr_string S;
+            std::string S;
             S = "    function ";
             S.append(to_string(i.key()).c_str());
 
@@ -198,7 +198,7 @@ void print_class(lua_State* L, luabind::detail::class_rep* crep) {
 }
 
 void print_free_functions(lua_State* L, const luabind::object& object, LPCSTR header,
-                          const xr_string& indent) {
+                          const std::string& indent) {
     u32 count = 0;
     luabind::object::iterator I = object.begin();
     luabind::object::iterator E = object.end();
@@ -224,7 +224,7 @@ void print_free_functions(lua_State* L, const luabind::object& object, LPCSTR he
                         for (; i != e; ++i) {
                             luabind::internal_string luaS;
                             (*i).get_signature(L, luaS);
-                            xr_string S(luaS.c_str());
+                            std::string S(luaS.c_str());
                             Msg("    %sfunction %s%s;", indent.c_str(), rep->name(),
                                 process_signature(S).c_str());
                         }
@@ -237,7 +237,7 @@ void print_free_functions(lua_State* L, const luabind::object& object, LPCSTR he
         lua_pop(L, 1);
     }
     {
-        xr_string _indent = indent;
+        std::string _indent = indent;
         _indent.append("    ");
         object.pushvalue();
         lua_pushnil(L);

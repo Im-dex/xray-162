@@ -6,7 +6,7 @@
 
 #include "string_table_defs.h"
 
-using STRING_TABLE_MAP = xr_map<STRING_ID, STRING_VALUE>;
+using STRING_TABLE_MAP = std::map<STRING_ID, STRING_VALUE>;
 
 struct STRING_TABLE_DATA {
     shared_str m_sLanguage;

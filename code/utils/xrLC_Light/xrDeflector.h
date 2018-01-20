@@ -17,7 +17,7 @@ class XRLC_LIGHT_API CDeflector {
 
 public:
     net_task_callback* _net_session;
-    xr_vector<UVtri> UVpolys;
+    std::vector<UVtri> UVpolys;
     Fvector normal;
     lm_layer layer;
     Fsphere Sphere;
@@ -67,7 +67,7 @@ public:
             bounds.merge(B);
         }
     }
-    void RemapUV(xr_vector<UVtri>& dest, u32 base_u, u32 base_v, u32 size_u, u32 size_v, u32 lm_u,
+    void RemapUV(std::vector<UVtri>& dest, u32 base_u, u32 base_v, u32 size_u, u32 size_v, u32 lm_u,
                  u32 lm_v, BOOL bRotate);
     void RemapUV(u32 base_u, u32 base_v, u32 size_u, u32 size_v, u32 lm_u, u32 lm_v, BOOL bRotate);
     void read(INetReader& r);
@@ -86,7 +86,7 @@ public:
 #endif
 };
 
-typedef xr_vector<UVtri>::iterator UVIt;
+typedef std::vector<UVtri>::iterator UVIt;
 
 extern XRLC_LIGHT_API void Jitter_Select(Fvector2*& Jitter, u32& Jcount);
 extern void blit(u32* dest, u32 ds_x, u32 ds_y, u32* src, u32 ss_x, u32 ss_y, u32 px, u32 py,

@@ -21,7 +21,7 @@ void export_ogf(xrMU_Reference& mu_reference);
 
 using namespace std;
 struct OGF_Base;
-xr_vector<OGF_Base*> g_tree;
+std::vector<OGF_Base*> g_tree;
 
 // BOOL					b_noise		= FALSE;
 // BOOL					b_radiosity	= FALSE;
@@ -41,14 +41,14 @@ void CBuild::CheckBeforeSave(u32 stage) {
 void CBuild::TempSave(u32 stage) { CheckBeforeSave(stage); }
 
 // Fbox								scene_bb;
-// xr_vector<b_shader>				shader_render;
-// xr_vector<b_shader>				shader_compile;
-//   xr_vector<b_light_dynamic>		L_dynamic;
-// xr_vector<b_glow>					glows;
-// xr_vector<b_portal>				portals;
-// xr_vector<b_lod>					lods;
+// std::vector<b_shader>				shader_render;
+// std::vector<b_shader>				shader_compile;
+//   std::vector<b_light_dynamic>		L_dynamic;
+// std::vector<b_glow>					glows;
+// std::vector<b_portal>				portals;
+// std::vector<b_lod>					lods;
 // string_path						path;
-// xr_vector<LPCSTR>					g_Shaders;
+// std::vector<LPCSTR>					g_Shaders;
 void CBuild::read(INetReader& r) {
     r_pod(r, g_build_options);
 
@@ -94,11 +94,11 @@ CMemoryWriter& CBuild::err_tjunction() {
     VERIFY(lc_global_data());
     return lc_global_data()->err_tjunction();
 }
-xr_vector<b_material>& CBuild::materials() {
+std::vector<b_material>& CBuild::materials() {
     VERIFY(lc_global_data());
     return lc_global_data()->materials();
 }
-xr_vector<b_BuildTexture>& CBuild::textures() {
+std::vector<b_BuildTexture>& CBuild::textures() {
     VERIFY(lc_global_data());
     return lc_global_data()->textures();
 }
@@ -382,12 +382,12 @@ void CBuild::MU_ModelsCalculateNormals() {
         calc_normals(*mu_models()[m]);
 }
 
-xr_vector<xrMU_Model*>& CBuild::mu_models() {
+std::vector<xrMU_Model*>& CBuild::mu_models() {
     VERIFY(lc_global_data());
     return lc_global_data()->mu_models();
 }
 
-xr_vector<xrMU_Reference*>& CBuild::mu_refs() {
+std::vector<xrMU_Reference*>& CBuild::mu_refs() {
     VERIFY(lc_global_data());
     return lc_global_data()->mu_refs();
 }

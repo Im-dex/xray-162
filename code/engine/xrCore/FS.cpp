@@ -12,7 +12,7 @@
 #ifdef FS_DEBUG
 XRCORE_API u32 g_file_mapped_memory = 0;
 u32 g_file_mapped_count = 0;
-typedef xr_map<u32, std::pair<u32, shared_str>> FILE_MAPPINGS;
+typedef std::map<u32, std::pair<u32, shared_str>> FILE_MAPPINGS;
 FILE_MAPPINGS g_file_mappings;
 
 void register_file_mapping(void* address, const u32& size, LPCSTR file_name) {
@@ -326,7 +326,7 @@ void IReader::r_string(char* dest, const size_t tgt_sz) {
     dest[sz] = 0;
 }
 
-void IReader::r_string(xr_string& dest) {
+void IReader::r_string(std::string& dest) {
     const char* src = data + Pos;
     const auto sz = advance_term_string();
     dest.assign(src, sz);
@@ -344,11 +344,6 @@ void IReader::r_stringZ(char* dest, const size_t tgt_sz) {
 void IReader::r_stringZ(shared_str& dest) {
     dest = data + Pos;
     Pos += dest.size() + 1;
-}
-
-void IReader::r_stringZ(xr_string& dest) {
-    dest = data + Pos;
-    Pos += int(dest.size() + 1);
 }
 
 void IReader::r_stringZ(std::string& dest) {

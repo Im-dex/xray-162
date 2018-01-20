@@ -13,7 +13,7 @@ class exec_pool {
     u32 tasks_completed;
     std::recursive_mutex send_receive_lock;
     std::recursive_mutex run_lock;
-    xr_vector<net_execution*> pool;
+    std::vector<net_execution*> pool;
     CTimer start_time;
     task_manager& _task_manager;
     // IGridUser					*_user;

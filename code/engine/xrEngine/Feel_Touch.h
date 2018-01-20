@@ -12,11 +12,11 @@ public:
     };
 
 protected:
-    xr_vector<DenyTouch> feel_touch_disable;
+    std::vector<DenyTouch> feel_touch_disable;
 
 public:
-    xr_vector<CObject*> feel_touch;
-    xr_vector<CObject*> q_nearest;
+    std::vector<CObject*> feel_touch;
+    std::vector<CObject*> q_nearest;
 
 public:
     void __stdcall feel_touch_relcase(CObject* O);

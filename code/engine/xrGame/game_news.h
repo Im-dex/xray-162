@@ -24,4 +24,4 @@ struct GAME_NEWS_DATA : public IPureSerializeObject<IReader, IWriter> {
 private:
 };
 
-using GAME_NEWS_VECTOR = xr_vector<GAME_NEWS_DATA>;
+using GAME_NEWS_VECTOR = std::vector<GAME_NEWS_DATA>;

@@ -21,10 +21,10 @@ private:
     };
 
 private:
-    xr_vector<Item> ItemsRT;
-    xr_vector<Item> Items;
-    xr_vector<Item> ItemsProcessed;
-    xr_vector<ItemReg> Registration;
+    std::vector<Item> ItemsRT;
+    std::vector<Item> Items;
+    std::vector<Item> ItemsProcessed;
+    std::vector<ItemReg> Registration;
     ISheduled* m_current_step_obj;
     bool m_processing_now;
 

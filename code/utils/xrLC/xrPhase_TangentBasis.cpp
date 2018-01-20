@@ -4,8 +4,8 @@
 #include "MeshMenderLayerOrdinaryStatic.h"
 #include "../xrLC_Light/xrLC_GlobalData.h"
 
-static u32 find_same_vertex(const xr_vector<u32>& m, const Fvector2& Ftc,
-                            const xr_vector<MeshMender::Vertex>& theVerts) {
+static u32 find_same_vertex(const std::vector<u32>& m, const Fvector2& Ftc,
+                            const std::vector<MeshMender::Vertex>& theVerts) {
     // Search
     for (u32 it = 0; it < m.size(); it++) {
         u32 m_id = m[it];
@@ -20,21 +20,21 @@ static u32 find_same_vertex(const xr_vector<u32>& m, const Fvector2& Ftc,
 }
 
 static u32 add_vertex(const Vertex& V, const Fvector2& Ftc,
-                      xr_vector<MeshMender::Vertex>& theVerts) {
+                      std::vector<MeshMender::Vertex>& theVerts) {
     MeshMender::Vertex new_vertex;
     set_vertex(new_vertex, V, Ftc);
     theVerts.push_back(new_vertex);
     return theVerts.size() - 1;
 }
 
-static void add_face(const Face& F, xr_vector<MeshMender::Vertex>& theVerts,
-                     xr_vector<unsigned int>& theIndices, xr_vector<xr_vector<u32>>& remap) {
+static void add_face(const Face& F, std::vector<MeshMender::Vertex>& theVerts,
+                     std::vector<unsigned int>& theIndices, std::vector<std::vector<u32>>& remap) {
     for (u32 v = 0; v < 3; v++) {
         const Vertex* V = F.v[v];
         u32 ID = u32(std::lower_bound(lc_global_data()->g_vertices().begin(),
                                       lc_global_data()->g_vertices().end(), V) -
                      lc_global_data()->g_vertices().begin());
-        xr_vector<u32>& m = remap[ID];
+        std::vector<u32>& m = remap[ID];
         Fvector2 Ftc = F.tc.front().uv[v];
 
         u32 vertex_index = find_same_vertex(m, Ftc, theVerts);
@@ -49,12 +49,12 @@ static void add_face(const Face& F, xr_vector<MeshMender::Vertex>& theVerts,
     }
 }
 
-static void fill_mender_input(xr_vector<MeshMender::Vertex>& theVerts,
-                              xr_vector<unsigned int>& theIndices) {
+static void fill_mender_input(std::vector<MeshMender::Vertex>& theVerts,
+                              std::vector<unsigned int>& theIndices) {
     // ************************************* Build vectors + expand TC if nessesary
     Status("Building inputs...");
     std::sort(lc_global_data()->g_vertices().begin(), lc_global_data()->g_vertices().end());
-    xr_vector<xr_vector<u32>> remap;
+    std::vector<std::vector<u32>> remap;
     remap.resize(lc_global_data()->g_vertices().size());
     for (u32 f = 0; f < lc_global_data()->g_faces().size(); f++) {
         Progress(float(f) / float(lc_global_data()->g_faces().size()));
@@ -64,8 +64,8 @@ static void fill_mender_input(xr_vector<MeshMender::Vertex>& theVerts,
     remap.clear();
 }
 
-static void retrive_data_from_mender_otput(const xr_vector<MeshMender::Vertex>& theVerts,
-                                           const xr_vector<unsigned int>& theIndices)
+static void retrive_data_from_mender_otput(const std::vector<MeshMender::Vertex>& theVerts,
+                                           const std::vector<unsigned int>& theIndices)
 
 {
     // ************************************* Retreive data
@@ -82,9 +82,9 @@ static void retrive_data_from_mender_otput(const xr_vector<MeshMender::Vertex>& 
         set_face(*F, verts);
     }
 }
-static xr_vector<MeshMender::Vertex> mender_in_out_verts;
-static xr_vector<unsigned int> mender_in_out_indices;
-static xr_vector<unsigned int> mender_mapping_out_to_in_vert;
+static std::vector<MeshMender::Vertex> mender_in_out_verts;
+static std::vector<unsigned int> mender_in_out_indices;
+static std::vector<unsigned int> mender_mapping_out_to_in_vert;
 
 void CBuild::xrPhase_TangentBasis() {
     // ************************************* Declare inputs

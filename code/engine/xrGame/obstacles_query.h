@@ -16,7 +16,7 @@ class CGameObject;
 
 class obstacles_query {
 public:
-    typedef xr_vector<u32> AREA;
+    typedef std::vector<u32> AREA;
     typedef associative_vector<const CGameObject*, u32> OBSTACLES;
 
 private:

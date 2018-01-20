@@ -227,7 +227,7 @@ public:
             u32 _rendered : 1;
         };
     };
-    using item_vec = xr_vector<SItem>;
+    using item_vec = std::vector<SItem>;
     item_vec items;
 
 public:

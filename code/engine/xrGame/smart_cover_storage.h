@@ -13,7 +13,7 @@ namespace smart_cover {
 
 class storage final {
 public:
-    typedef xr_vector<smart_cover::description*> Descriptions;
+    typedef std::vector<smart_cover::description*> Descriptions;
     typedef cover::DescriptionPtr DescriptionPtr;
 
 private:

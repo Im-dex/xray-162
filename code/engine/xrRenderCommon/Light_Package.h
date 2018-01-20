@@ -4,9 +4,9 @@
 
 class light_Package {
 public:
-    xr_vector<light*> v_point;
-    xr_vector<light*> v_spot;
-    xr_vector<light*> v_shadowed;
+    std::vector<light*> v_point;
+    std::vector<light*> v_spot;
+    std::vector<light*> v_shadowed;
 
 public:
     void clear();

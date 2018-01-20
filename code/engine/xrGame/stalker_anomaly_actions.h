@@ -16,8 +16,8 @@
 
 class CStalkerActionGetOutOfAnomaly : public CStalkerActionBase {
 private:
-    xr_vector<ALife::_OBJECT_ID> m_temp0;
-    xr_vector<ALife::_OBJECT_ID> m_temp1;
+    std::vector<ALife::_OBJECT_ID> m_temp0;
+    std::vector<ALife::_OBJECT_ID> m_temp1;
 
 protected:
     typedef CStalkerActionBase inherited;

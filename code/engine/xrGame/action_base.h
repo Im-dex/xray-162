@@ -87,8 +87,8 @@ public:
 #endif
 
 public:
-    CActionBase(const xr_vector<COperatorCondition>& conditions,
-                const xr_vector<COperatorCondition>& effects, _object_type* object = nullptr,
+    CActionBase(const std::vector<COperatorCondition>& conditions,
+                const std::vector<COperatorCondition>& effects, _object_type* object = nullptr,
                 LPCSTR action_name = "")
         : inherited(conditions, effects) {
         init(object, action_name);

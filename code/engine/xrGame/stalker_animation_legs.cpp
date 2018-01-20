@@ -214,7 +214,7 @@ MotionID CStalkerAnimationManager::legs_no_move_animation() {
     m_change_direction_time = Device.dwTimeGlobal;
 
     EBodyState body_state = this->body_state();
-    const xr_vector<MotionID>& animation =
+    const std::vector<MotionID>& animation =
         m_data_storage->m_part_animations.A[body_state].m_in_place->A;
 
     stalker_movement_manager_smart_cover& movement = object().movement();

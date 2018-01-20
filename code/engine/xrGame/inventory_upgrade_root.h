@@ -17,7 +17,7 @@ namespace upgrade {
 class Root : public UpgradeBase {
 private:
     typedef UpgradeBase inherited;
-    typedef xr_vector<Upgrade*> Upgrades_vec;
+    typedef std::vector<Upgrade*> Upgrades_vec;
 
 public:
     Root();

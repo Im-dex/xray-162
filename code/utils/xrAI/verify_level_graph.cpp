@@ -14,7 +14,7 @@ CLevelGraph::CVertex** stack_storage;
 #define PUSH(a) *stack_iterator++ = (a)
 #define POP() vertex = *--stack_iterator
 
-void floodfill(const CLevelGraph& level_graph, xr_vector<bool>& marks, u32 start_vertex_id) {
+void floodfill(const CLevelGraph& level_graph, std::vector<bool>& marks, u32 start_vertex_id) {
     CLevelGraph::CVertex** stack_iterator = stack_storage;
     CLevelGraph::CVertex* vertex = 0;
     CLevelGraph::const_iterator I, E;
@@ -85,9 +85,9 @@ void verify_level_graph(LPCSTR name, bool verbose) {
     stack_storage = (CLevelGraph::CVertex**)xr_malloc(level_graph->header().vertex_count() *
                                                       sizeof(CLevelGraph::CVertex*));
 
-    xr_vector<bool> marks;
+    std::vector<bool> marks;
 
-    xr_vector<u32> single_links;
+    std::vector<u32> single_links;
     single_links.reserve(level_graph->header().vertex_count());
     Progress(0.05f);
 
@@ -112,14 +112,14 @@ void verify_level_graph(LPCSTR name, bool verbose) {
 
     {
         std::sort(single_links.begin(), single_links.end());
-        xr_vector<u32>::iterator I = std::unique(single_links.begin(), single_links.end());
+        std::vector<u32>::iterator I = std::unique(single_links.begin(), single_links.end());
         single_links.erase(I, single_links.end());
     }
 
     if (!no_single_links) {
         if (verbose) {
-            xr_vector<u32>::const_iterator I = single_links.begin();
-            xr_vector<u32>::const_iterator E = single_links.end();
+            std::vector<u32>::const_iterator I = single_links.begin();
+            std::vector<u32>::const_iterator E = single_links.end();
             for (; I != E; ++I)
                 Msg("Vertex %d[%f][%f][%f] is single linked!", *I,
                     VPUSH(level_graph->vertex_position(*I)));
@@ -129,13 +129,13 @@ void verify_level_graph(LPCSTR name, bool verbose) {
 
     Progress(0.15f);
     bool valid = true;
-    xr_vector<u32>::const_iterator I = single_links.begin();
-    xr_vector<u32>::const_iterator E = single_links.end();
+    std::vector<u32>::const_iterator I = single_links.begin();
+    std::vector<u32>::const_iterator E = single_links.end();
     for (u32 i = 0, n = single_links.size(); I != E; ++I, ++i) {
         marks.assign(level_graph->header().vertex_count(), false);
         floodfill(*level_graph, marks, *I);
-        xr_vector<bool>::const_iterator II = marks.begin(), BB = II;
-        xr_vector<bool>::const_iterator EE = marks.end();
+        std::vector<bool>::const_iterator II = marks.begin(), BB = II;
+        std::vector<bool>::const_iterator EE = marks.end();
         for (; II != EE; ++II)
             if (!*II) {
                 valid = false;

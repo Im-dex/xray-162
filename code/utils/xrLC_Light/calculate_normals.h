@@ -11,9 +11,9 @@ class calculate_normals {
     typedef calculate_normals<typeVertex> type_self;
     typedef typename typeVertex::type_face type_face;
     // these typedefs to hide global typedefs!!!
-    typedef xr_vector<type_vertex*> vecVertex;
+    typedef std::vector<type_vertex*> vecVertex;
     typedef typename vecVertex::iterator vecVertexIt;
-    typedef xr_vector<type_face*> vecFace;
+    typedef std::vector<type_face*> vecFace;
     typedef typename vecFace::iterator vecFaceIt;
 
     typedef vecFace vecAdj;

@@ -44,7 +44,7 @@ struct dbg_matrix {
 struct SCalculateData;
 struct dbg_matrises {
     dbg_matrix dbg_m;
-    xr_vector<dbg_matrix> old_dbg_m;
+    std::vector<dbg_matrix> old_dbg_m;
     void next_state(SCalculateData& cd);
     void next_goal(const SCalculateData& cd);
 };

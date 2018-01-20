@@ -43,7 +43,7 @@ class CHM_Static {
     Slot* data[dhm_matrix][dhm_matrix]; // database
     int c_x, c_z;                       // center of heighmap
     svector<Slot*, dhm_total> task;
-    xr_vector<Poly> polys;
+    std::vector<Poly> polys;
 
 public:
     void Update();

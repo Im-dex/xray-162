@@ -8,9 +8,9 @@
 #include "ComputeShader.h"
 
 void ComputeShader::Construct(ID3D11ComputeShader* cs, ref_ctable ctable,
-                              xr_vector<ID3D11SamplerState*>& Samplers,
-                              xr_vector<ID3D11ShaderResourceView*>& Textures,
-                              xr_vector<ID3D11UnorderedAccessView*>& Outputs) {
+                              std::vector<ID3D11SamplerState*>& Samplers,
+                              std::vector<ID3D11ShaderResourceView*>& Textures,
+                              std::vector<ID3D11UnorderedAccessView*>& Outputs) {
     m_cs = cs;
     m_ctable = ctable;
     m_Textures.swap(Textures);

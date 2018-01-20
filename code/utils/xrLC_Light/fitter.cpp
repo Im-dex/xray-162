@@ -12,8 +12,8 @@
 
 IC REAL dfEvaluation(REAL& A, REAL& C, REAL& D) { return (A * C + D); }
 
-REAL dfComputeEvalResults(xr_vector<xr_vector<REAL>>& daEvalResults, xr_vector<xr_vector<REAL>>& A,
-                          xr_vector<xr_vector<REAL>>& B, xr_vector<REAL>& C, xr_vector<REAL>& D) {
+REAL dfComputeEvalResults(std::vector<std::vector<REAL>>& daEvalResults, std::vector<std::vector<REAL>>& A,
+                          std::vector<std::vector<REAL>>& B, std::vector<REAL>& C, std::vector<REAL>& D) {
     REAL dResult = 0.0;
     u32 dwTestCount = (u32)B.size();
     u32 dwParameterCount = (u32)B[0].size();
@@ -29,8 +29,8 @@ REAL dfComputeEvalResults(xr_vector<xr_vector<REAL>>& daEvalResults, xr_vector<x
     return (dResult);
 }
 
-xr_vector<REAL>& dafGradient(xr_vector<xr_vector<REAL>>& daEvalResults, xr_vector<REAL>& daResult,
-                             xr_vector<xr_vector<REAL>>& B, REAL dNormaFactor) {
+std::vector<REAL>& dafGradient(std::vector<std::vector<REAL>>& daEvalResults, std::vector<REAL>& daResult,
+                             std::vector<std::vector<REAL>>& B, REAL dNormaFactor) {
     REAL dNorma = 0.0;
     u32 dwTestCount = (u32)B.size();
     u32 dwParameterCount = (u32)B[0].size();
@@ -49,13 +49,13 @@ xr_vector<REAL>& dafGradient(xr_vector<xr_vector<REAL>>& daEvalResults, xr_vecto
     return (daResult);
 }
 
-void vfOptimizeParameters(xr_vector<xr_vector<REAL>>& A, xr_vector<xr_vector<REAL>>& B,
-                          xr_vector<REAL>& C, xr_vector<REAL>& D, REAL dEpsilon, REAL dAlpha,
+void vfOptimizeParameters(std::vector<std::vector<REAL>>& A, std::vector<std::vector<REAL>>& B,
+                          std::vector<REAL>& C, std::vector<REAL>& D, REAL dEpsilon, REAL dAlpha,
                           REAL dBeta, REAL dNormaFactor, u32 dwMaxIterationCount) {
     u32 dwTestCount = (u32)B.size();
-    xr_vector<REAL> daGradient;
-    xr_vector<REAL> daDelta;
-    xr_vector<xr_vector<REAL>> daEvalResults;
+    std::vector<REAL> daGradient;
+    std::vector<REAL> daDelta;
+    std::vector<std::vector<REAL>> daEvalResults;
     daEvalResults.resize(dwTestCount);
 
     if (!B.size()) {

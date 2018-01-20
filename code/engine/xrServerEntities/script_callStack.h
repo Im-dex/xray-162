@@ -19,7 +19,7 @@ public:
 
 protected:
     int m_nCurrentLevel;
-    xr_vector<u32> m_levels;
-    xr_vector<u32> m_lines;
-    xr_vector<SPath> m_files;
+    std::vector<u32> m_levels;
+    std::vector<u32> m_lines;
+    std::vector<SPath> m_files;
 };

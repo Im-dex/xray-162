@@ -176,7 +176,7 @@ bool CPolterTele::trace_object(CObject* obj, const Fvector& target) {
     return false;
 }
 
-void CPolterTele::tele_find_objects(xr_vector<CObject*>& objects, const Fvector& pos) {
+void CPolterTele::tele_find_objects(std::vector<CObject*>& objects, const Fvector& pos) {
     m_nearest.clear();
     Level().ObjectSpace.GetNearest(m_nearest, pos, m_pmt_radius, NULL);
 
@@ -201,7 +201,7 @@ void CPolterTele::tele_find_objects(xr_vector<CObject*>& objects, const Fvector&
 
 bool CPolterTele::tele_raise_objects() {
     // find objects near actor
-    xr_vector<CObject*> tele_objects;
+    std::vector<CObject*> tele_objects;
     tele_objects.reserve(20);
 
     // получить список объектов вокруг врага

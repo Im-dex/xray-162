@@ -26,26 +26,26 @@ private:
     };
 
 public:
-    using map_Blender = xr_map<const char*, IBlender*, str_pred>;
-    using map_Texture = xr_map<const char*, CTexture*, str_pred>;
-    using map_Matrix = xr_map<const char*, CMatrix*, str_pred>;
-    using map_Constant = xr_map<const char*, CConstant*, str_pred>;
-    using map_RT = xr_map<const char*, CRT*, str_pred>;
+    using map_Blender = std::map<const char*, IBlender*, str_pred>;
+    using map_Texture = std::map<const char*, CTexture*, str_pred>;
+    using map_Matrix = std::map<const char*, CMatrix*, str_pred>;
+    using map_Constant = std::map<const char*, CConstant*, str_pred>;
+    using map_RT = std::map<const char*, CRT*, str_pred>;
     //	DX10 cut DEFINE_MAP_PRED(const char*,CRTC*,			map_RTC,		map_RTCIt,
     //str_pred);
-    using map_VS = xr_map<const char*, SVS*, str_pred>;
+    using map_VS = std::map<const char*, SVS*, str_pred>;
 
 #if defined(USE_DX10) || defined(USE_DX11)
-    using map_GS = xr_map<const char*, SGS*, str_pred>;
+    using map_GS = std::map<const char*, SGS*, str_pred>;
 #endif //	USE_DX10
 #ifdef USE_DX11
-    using map_HS = xr_map<const char*, SHS*, str_pred>;
-    using map_DS = xr_map<const char*, SDS*, str_pred>;
-    using map_CS = xr_map<const char*, SCS*, str_pred>;
+    using map_HS = std::map<const char*, SHS*, str_pred>;
+    using map_DS = std::map<const char*, SDS*, str_pred>;
+    using map_CS = std::map<const char*, SCS*, str_pred>;
 #endif
 
-    using map_PS = xr_map<const char*, SPS*, str_pred>;
-    using map_TD = xr_map<const char*, texture_detail, str_pred>;
+    using map_PS = std::map<const char*, SPS*, str_pred>;
+    using map_TD = std::map<const char*, texture_detail, str_pred>;
 
 private:
     // data
@@ -63,33 +63,33 @@ private:
 #endif //	USE_DX10
     map_TD m_td;
 
-    xr_vector<SState*> v_states;
-    xr_vector<SDeclaration*> v_declarations;
-    xr_vector<SGeometry*> v_geoms;
-    xr_vector<R_constant_table*> v_constant_tables;
+    std::vector<SState*> v_states;
+    std::vector<SDeclaration*> v_declarations;
+    std::vector<SGeometry*> v_geoms;
+    std::vector<R_constant_table*> v_constant_tables;
 
 #if defined(USE_DX10) || defined(USE_DX11)
-    xr_vector<dx10ConstantBuffer*> v_constant_buffer;
-    xr_vector<SInputSignature*> v_input_signature;
+    std::vector<dx10ConstantBuffer*> v_constant_buffer;
+    std::vector<SInputSignature*> v_input_signature;
 #endif //	USE_DX10
 
     // lists
-    xr_vector<STextureList*> lst_textures;
-    xr_vector<SMatrixList*> lst_matrices;
-    xr_vector<SConstantList*> lst_constants;
+    std::vector<STextureList*> lst_textures;
+    std::vector<SMatrixList*> lst_matrices;
+    std::vector<SConstantList*> lst_constants;
 
     // main shader-array
-    xr_vector<SPass*> v_passes;
-    xr_vector<ShaderElement*> v_elements;
-    xr_vector<Shader*> v_shaders;
+    std::vector<SPass*> v_passes;
+    std::vector<ShaderElement*> v_elements;
+    std::vector<Shader*> v_shaders;
 
-    xr_vector<ref_texture> m_necessary;
+    std::vector<ref_texture> m_necessary;
     // misc
 public:
     CTextureDescrMngr m_textures_description;
     //.	CInifile*
     //m_textures_description;
-    xr_vector<std::pair<shared_str, R_constant_setup*>> v_constant_setup;
+    std::vector<std::pair<shared_str, R_constant_setup*>> v_constant_setup;
     lua_State* LSVM;
     BOOL bDeferredLoad;
 

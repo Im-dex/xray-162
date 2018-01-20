@@ -9,7 +9,7 @@ class CTracer {
 
 protected:
     ui_shader sh_Tracer;
-    xr_vector<u32> m_aColors;
+    std::vector<u32> m_aColors;
     float m_circle_size_k;
 
 public:

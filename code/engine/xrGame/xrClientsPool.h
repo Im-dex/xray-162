@@ -32,7 +32,7 @@ private:
         bool const operator()(dclient const& right) const;
     }; // struct pooled_client_finder
 
-    typedef xr_vector<dclient> dclients_t;
+    typedef std::vector<dclient> dclients_t;
     dclients_t m_dclients;
 }; // class xrClientsPool
 

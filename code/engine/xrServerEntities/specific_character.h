@@ -27,27 +27,27 @@ struct SSpecificCharacterData : CSharedResource {
     virtual ~SSpecificCharacterData();
 
     //игровое имя персонажа
-    xr_string m_sGameName;
+    std::string m_sGameName;
     //текст с биографией персонажа (линк на string table)
     shared_str m_sBioText;
     //строка содержащая предметы, которые нужно проспавнить
-    xr_string m_sSupplySpawn;
+    std::string m_sSupplySpawn;
     //имя секции конфигурации настроек NPC для персонажа
-    xr_string m_sNpcConfigSect;
+    std::string m_sNpcConfigSect;
     //имя секции конфигурации звука для NPC персонажа
-    xr_string m_sound_voice_prefix;
+    std::string m_sound_voice_prefix;
 
     float m_fPanic_threshold;
     float m_fHitProbabilityFactor;
     int m_crouch_type;
     bool m_upgrade_mechanic;
 
-    xr_string m_critical_wound_weights;
+    std::string m_critical_wound_weights;
 #endif
     shared_str m_terrain_sect;
 
     //имя модели
-    xr_string m_sVisual;
+    std::string m_sVisual;
 
 #ifdef XRGAME_EXPORTS
 
@@ -69,7 +69,7 @@ struct SSpecificCharacterData : CSharedResource {
 
     //классы персонажа (военные-ветераны, ученые и т.д.)
     //к которым он принадлежит
-    xr_vector<CHARACTER_CLASS> m_Classes;
+    std::vector<CHARACTER_CLASS> m_Classes;
 
     //указание на то что персонаж не предназначен для случайного выбора
     //и задается только через явное указание ID

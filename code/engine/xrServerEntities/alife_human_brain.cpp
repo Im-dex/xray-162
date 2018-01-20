@@ -86,7 +86,7 @@ void CALifeHumanBrain::on_state_read(NET_Packet& packet) {
             load_data(temp, packet);
         }
         {
-            xr_vector<bool> temp;
+            std::vector<bool> temp;
             load_data(temp, packet);
         }
     }

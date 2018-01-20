@@ -24,7 +24,7 @@ public:
     typedef CGraphAbstractSerialize<CServerEntityWrapper*, float, ALife::_SPAWN_ID> SPAWN_GRAPH;
 
 public:
-    typedef xr_vector<ALife::_SPAWN_ID> SPAWN_IDS;
+    typedef std::vector<ALife::_SPAWN_ID> SPAWN_IDS;
     typedef associative_vector<ALife::_SPAWN_STORY_ID, ALife::_OBJECT_ID> SPAWN_STORY_IDS;
 
 private:
@@ -47,22 +47,22 @@ protected:
     void load_updates(IReader& stream);
     void build_story_spawns();
     void build_root_spawns();
-    void fill_new_spawns_single(SPAWN_GRAPH::CVertex* vertex, xr_vector<ALife::_SPAWN_ID>& spawns,
-                                ALife::_TIME_ID game_time, xr_vector<ALife::_SPAWN_ID>& objects);
-    void fill_new_spawns(SPAWN_GRAPH::CVertex* vertex, xr_vector<ALife::_SPAWN_ID>& spawns,
-                         ALife::_TIME_ID game_time, xr_vector<ALife::_SPAWN_ID>& objects);
-    IC void process_spawns(xr_vector<ALife::_SPAWN_ID>& spawns);
+    void fill_new_spawns_single(SPAWN_GRAPH::CVertex* vertex, std::vector<ALife::_SPAWN_ID>& spawns,
+                                ALife::_TIME_ID game_time, std::vector<ALife::_SPAWN_ID>& objects);
+    void fill_new_spawns(SPAWN_GRAPH::CVertex* vertex, std::vector<ALife::_SPAWN_ID>& spawns,
+                         ALife::_TIME_ID game_time, std::vector<ALife::_SPAWN_ID>& objects);
+    IC void process_spawns(std::vector<ALife::_SPAWN_ID>& spawns);
     IC bool redundant(CSE_Abstract& abstract);
     IC bool new_spawn(CSE_Abstract& abstract);
     IC bool enabled_spawn(CSE_Abstract& abstract) const;
     IC bool count_limit(CSE_Abstract& abstract) const;
     IC bool time_limit(CSE_Abstract& abstract, ALife::_TIME_ID game_time) const;
-    IC bool spawned_item(CSE_Abstract& abstract, xr_vector<ALife::_SPAWN_ID>& objects) const;
-    IC bool spawned_item(SPAWN_GRAPH::CVertex* vertex, xr_vector<ALife::_SPAWN_ID>& objects);
+    IC bool spawned_item(CSE_Abstract& abstract, std::vector<ALife::_SPAWN_ID>& objects) const;
+    IC bool spawned_item(SPAWN_GRAPH::CVertex* vertex, std::vector<ALife::_SPAWN_ID>& objects);
     IC bool object_existance_limit(CSE_Abstract& abstract,
-                                   xr_vector<ALife::_SPAWN_ID>& objects) const;
+                                   std::vector<ALife::_SPAWN_ID>& objects) const;
     IC bool can_spawn(CSE_Abstract& abstract, ALife::_TIME_ID game_time,
-                      xr_vector<ALife::_SPAWN_ID>& objects) const;
+                      std::vector<ALife::_SPAWN_ID>& objects) const;
 
 public:
     CALifeSpawnRegistry(LPCSTR section);
@@ -71,8 +71,8 @@ public:
     virtual void save(IWriter& memory_stream);
     void load(IReader& file_stream, LPCSTR game_name);
     void load(LPCSTR spawn_name);
-    void fill_new_spawns(xr_vector<ALife::_SPAWN_ID>& spawns, ALife::_TIME_ID game_time,
-                         xr_vector<ALife::_SPAWN_ID>& objects);
+    void fill_new_spawns(std::vector<ALife::_SPAWN_ID>& spawns, ALife::_TIME_ID game_time,
+                         std::vector<ALife::_SPAWN_ID>& objects);
     IC const CALifeSpawnHeader& header() const;
     IC const SPAWN_GRAPH& spawns() const;
     IC void assign_artefact_position(CSE_ALifeAnomalousZone* anomaly,

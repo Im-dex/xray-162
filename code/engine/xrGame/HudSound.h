@@ -40,13 +40,13 @@ struct HUD_SOUND_ITEM {
     shared_str m_alias;
     SSnd* m_activeSnd;
     bool m_b_exclusive;
-    xr_vector<SSnd> sounds;
+    std::vector<SSnd> sounds;
 
     bool operator==(LPCSTR alias) const { return 0 == stricmp(m_alias.c_str(), alias); }
 };
 
 class HUD_SOUND_COLLECTION {
-    xr_vector<HUD_SOUND_ITEM> m_sound_items;
+    std::vector<HUD_SOUND_ITEM> m_sound_items;
     HUD_SOUND_ITEM* FindSoundItem(LPCSTR alias, bool b_assert);
 
 public:

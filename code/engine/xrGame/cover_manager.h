@@ -30,14 +30,14 @@ class object;
 class CCoverManager {
 public:
     typedef CQuadTree<CCoverPoint> CPointQuadTree;
-    typedef xr_vector<CCoverPoint*> PointVector;
+    typedef std::vector<CCoverPoint*> PointVector;
     typedef smart_cover::storage Storage;
     typedef smart_cover::cover Cover;
-    typedef xr_vector<Cover*> SmartCovers;
+    typedef std::vector<Cover*> SmartCovers;
 
 protected:
     CPointQuadTree* m_covers;
-    xr_vector<bool> m_temp;
+    std::vector<bool> m_temp;
     mutable PointVector m_nearest;
 
 private:

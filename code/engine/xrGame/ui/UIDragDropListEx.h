@@ -29,7 +29,7 @@ struct CUICell {
     bool operator==(const CUICell& C) const { return (m_item == C.m_item); }
 };
 
-typedef xr_vector<CUICell> UI_CELLS_VEC;
+typedef std::vector<CUICell> UI_CELLS_VEC;
 typedef UI_CELLS_VEC::iterator UI_CELLS_VEC_IT;
 
 class CUIDragDropListEx : public CUIWindow, public CUIWndCallback {
@@ -101,8 +101,8 @@ public:
     void SetCellSize(const Ivector2 new_sz);
     const Ivector2& CellsSpacing();
     void SetCellsSpacing(const Ivector2& new_sz);
-    void SetCellsVertAlignment(xr_string alignment);
-    void SetCellsHorizAlignment(xr_string alignment);
+    void SetCellsVertAlignment(std::string alignment);
+    void SetCellsHorizAlignment(std::string alignment);
 
     const Ivector2 GetVirtualCellsAlignment() { return m_virtual_cells_alignment; };
 

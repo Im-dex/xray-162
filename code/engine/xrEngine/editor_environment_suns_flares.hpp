@@ -36,7 +36,7 @@ public:
               editor::property_holder_collection* collection);
 
 private:
-    typedef xr_vector<flare*> flares_type;
+    typedef std::vector<flare*> flares_type;
     typedef editor::property_holder_collection property_holder_collection;
 
 public:

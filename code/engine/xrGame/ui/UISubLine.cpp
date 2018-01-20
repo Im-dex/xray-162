@@ -18,10 +18,10 @@ struct DBGList {
     CUISubLine* wnd;
     int num;
 };
-xr_vector<DBGList> dbg_list_sublines;
+std::vector<DBGList> dbg_list_sublines;
 void dump_list_sublines() {
     Msg("------Total  SubLines %d", dbg_list_sublines.size());
-    xr_vector<DBGList>::iterator _it = dbg_list_sublines.begin();
+    std::vector<DBGList>::iterator _it = dbg_list_sublines.begin();
     for (; _it != dbg_list_sublines.end(); ++_it)
         Msg("--leak detected ---- SubLine = %d", (*_it).num);
 }
@@ -62,7 +62,7 @@ CUISubLine::CUISubLine() : m_color(0), m_pTempLine(NULL), m_last_in_line(false) 
 CUISubLine::~CUISubLine() {
     xr_delete(m_pTempLine);
 #ifdef LOG_ALL_LINES
-    xr_vector<DBGList>::iterator _it = dbg_list_sublines.begin();
+    std::vector<DBGList>::iterator _it = dbg_list_sublines.begin();
     bool bOK = false;
     for (; _it != dbg_list_sublines.end(); ++_it) {
         if ((*_it).wnd == this) {

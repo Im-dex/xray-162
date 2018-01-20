@@ -38,7 +38,7 @@ private:
                                 IGenericStream* inStream);
     virtual bool run_task(IAgent* agent, DWORD sessionId, IGenericStream* inStream,
                           IGenericStream* outStream);
-    xr_vector<net_execution*>::iterator find(u32 id);
+    std::vector<net_execution*>::iterator find(u32 id);
 
 public:
     task_manager();

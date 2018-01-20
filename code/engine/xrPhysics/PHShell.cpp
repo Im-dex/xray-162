@@ -45,12 +45,12 @@ CPHShell::~CPHShell() {
     m_pKinematics = 0;
     VERIFY(!isActive());
 
-    xr_vector<CPHElement*>::iterator i;
+    std::vector<CPHElement*>::iterator i;
     for (i = elements.begin(); elements.end() != i; ++i)
         xr_delete(*i);
     elements.clear();
 
-    xr_vector<CPHJoint*>::iterator j;
+    std::vector<CPHJoint*>::iterator j;
     for (j = joints.begin(); joints.end() != j; ++j)
         xr_delete(*j);
     joints.clear();

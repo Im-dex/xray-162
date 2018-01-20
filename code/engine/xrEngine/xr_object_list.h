@@ -8,11 +8,11 @@ class NET_Packet;
 class ENGINE_API CObjectList {
 private:
     // data
-    //.	xr_map<u32,CObject*>		map_NETID;
+    //.	std::map<u32,CObject*>		map_NETID;
     CObject* map_NETID[0xffff];
 
 private:
-    typedef xr_vector<CObject*> Objects;
+    typedef std::vector<CObject*> Objects;
 
 private:
     Objects destroy_queue;
@@ -29,7 +29,7 @@ public:
         SRelcasePair(int* id, RELCASE_CALLBACK cb) : m_ID(id), m_Callback(cb) {}
         bool operator==(RELCASE_CALLBACK cb) { return m_Callback == cb; }
     };
-    typedef xr_vector<SRelcasePair> RELCASE_CALLBACK_VEC;
+    typedef std::vector<SRelcasePair> RELCASE_CALLBACK_VEC;
     RELCASE_CALLBACK_VEC m_relcase_callbacks;
 
     void relcase_register(RELCASE_CALLBACK, int*);

@@ -53,13 +53,13 @@ protected:
     CObject* pCurrentViewEntity;
 
     // Static sounds
-    xr_vector<ref_sound> Sounds_Random;
+    std::vector<ref_sound> Sounds_Random;
     u32 Sounds_Random_dwNextTime;
     BOOL Sounds_Random_Enabled;
     CCameraManager* m_pCameras;
 
     // temporary
-    xr_vector<ISpatial*> snd_ER;
+    std::vector<ISpatial*> snd_ER;
 
 public:
     CObjectList Objects;
@@ -76,7 +76,7 @@ public: // deferred sound events
         ref_sound_data_ptr source;
         float power;
     };
-    xr_vector<_esound_delegate> snd_Events;
+    std::vector<_esound_delegate> snd_Events;
 
 public:
     // Main, global functions

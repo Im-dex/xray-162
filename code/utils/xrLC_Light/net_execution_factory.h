@@ -22,7 +22,7 @@ public:
     typedef base_execution_type_creator* type_reg;
 
 private:
-    xr_vector<type_reg> vec_types;
+    std::vector<type_reg> vec_types;
 
 private:
     net_execution* create_in_pool(u32 type_id);
@@ -50,7 +50,7 @@ public:
     void register_type(base_execution_type_creator* creator);
 
 private:
-    //	xr_vector< type_reg >::iterator find_type		( u32 id  );
+    //	std::vector< type_reg >::iterator find_type		( u32 id  );
     void register_all();
     void clear();
 };

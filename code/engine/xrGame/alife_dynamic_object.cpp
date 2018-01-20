@@ -64,7 +64,7 @@ void CSE_ALifeDynamicObject::add_online(const bool& update_registries) {
     alife().graph().remove(this, m_tGraphID, false);
 }
 
-void CSE_ALifeDynamicObject::add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
+void CSE_ALifeDynamicObject::add_offline(const std::vector<ALife::_OBJECT_ID>& saved_children,
                                          const bool& update_registries) {
     if (!update_registries)
         return;
@@ -193,7 +193,7 @@ void CSE_ALifeInventoryBox::add_online(const bool& update_registries) {
     CSE_ALifeDynamicObjectVisual::add_online(update_registries);
 }
 
-void CSE_ALifeInventoryBox::add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
+void CSE_ALifeInventoryBox::add_offline(const std::vector<ALife::_OBJECT_ID>& saved_children,
                                         const bool& update_registries) {
     CSE_ALifeDynamicObjectVisual* object = (this);
 

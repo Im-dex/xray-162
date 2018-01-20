@@ -157,7 +157,7 @@ struct translation_pair {
 };
 
 void CLevel::Load_GameSpecific_CFORM(CDB::TRI* tris, u32 count) {
-    typedef xr_vector<translation_pair> ID_INDEX_PAIRS;
+    typedef std::vector<translation_pair> ID_INDEX_PAIRS;
     ID_INDEX_PAIRS translator;
     translator.reserve(GMLib.CountMaterial());
     u16 default_id = (u16)GMLib.GetMaterialIdx("default");

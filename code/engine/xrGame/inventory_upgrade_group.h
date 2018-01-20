@@ -39,7 +39,7 @@ public:
     void highlight_down();
 
 private:
-    typedef xr_vector<UpgradeBase*> Upgrades_type;
+    typedef std::vector<UpgradeBase*> Upgrades_type;
 
 private:
     shared_str m_id;

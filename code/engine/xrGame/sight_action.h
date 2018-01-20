@@ -24,7 +24,7 @@ public:
     typedef MemorySpace::CMemoryInfo CMemoryInfo;
 
 protected:
-    xr_vector<CObject*> objects;
+    std::vector<CObject*> objects;
     ESightType m_sight_type;
     bool m_torso_look;
     bool m_path;

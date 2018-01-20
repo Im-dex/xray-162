@@ -54,7 +54,7 @@ class UIInvUpgPropertiesWnd : public CUIWindow {
 private:
     typedef CUIWindow inherited;
     typedef inventory::upgrade::Upgrade Upgrade_type;
-    typedef xr_vector<UIProperty*> Properties_type;
+    typedef std::vector<UIProperty*> Properties_type;
     typedef CInventoryItem::Upgrades_type ItemUpgrades_type;
 
 protected:

@@ -146,7 +146,7 @@ void NET_Packet::r_stringZ(char* S) {
     r(S, len + 1);
 }
 
-void NET_Packet::r_stringZ(xr_string& dest) {
+void NET_Packet::r_stringZ(std::string& dest) {
     dest = reinterpret_cast<const char*>(&B.data[r_pos]);
     r_advance(u32(dest.size() + 1));
 }

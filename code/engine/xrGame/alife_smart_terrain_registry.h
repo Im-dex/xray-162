@@ -15,7 +15,7 @@ class CSE_ALifeSmartZone;
 
 class CALifeSmartTerrainRegistry {
 public:
-    typedef xr_map<ALife::_OBJECT_ID, CSE_ALifeSmartZone*> OBJECTS;
+    typedef std::map<ALife::_OBJECT_ID, CSE_ALifeSmartZone*> OBJECTS;
 
 protected:
     OBJECTS m_objects;

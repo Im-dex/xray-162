@@ -26,12 +26,12 @@ protected:
     typedef typename _Graph::_edge_type _edge_type;
 
 protected:
-    xr_vector<_edge_type>* m_edge_path;
+    std::vector<_edge_type>* m_edge_path;
     const_iterator m_iterator;
 
 public:
     virtual ~CPathManager();
-    IC void setup(const _Graph* graph, _DataStorage* _data_storage, xr_vector<_edge_type>* _path,
+    IC void setup(const _Graph* graph, _DataStorage* _data_storage, std::vector<_edge_type>* _path,
                   const _index_type& _start_node_index, const _index_type& _goal_node_index,
                   const _Parameters& params);
     IC bool is_goal_reached(const _index_type& vertex_id) const;

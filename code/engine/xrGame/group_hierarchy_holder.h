@@ -21,10 +21,10 @@ struct CHitObject;
 } // namespace MemorySpace
 
 namespace GroupHierarchyHolder {
-typedef xr_vector<MemorySpace::CVisibleObject> VISIBLE_OBJECTS;
-typedef xr_vector<MemorySpace::CSoundObject> SOUND_OBJECTS;
-typedef xr_vector<MemorySpace::CHitObject> HIT_OBJECTS;
-typedef xr_vector<CEntity*> MEMBER_REGISTRY;
+typedef std::vector<MemorySpace::CVisibleObject> VISIBLE_OBJECTS;
+typedef std::vector<MemorySpace::CSoundObject> SOUND_OBJECTS;
+typedef std::vector<MemorySpace::CHitObject> HIT_OBJECTS;
+typedef std::vector<CEntity*> MEMBER_REGISTRY;
 } // namespace GroupHierarchyHolder
 
 class CGroupHierarchyHolder {

@@ -122,7 +122,7 @@ private:
     u32 m_dwNumSteps;
     bool m_bIn_CrPr;
 
-    using OBJECTS_LIST = xr_vector<CGameObject*>;
+    using OBJECTS_LIST = std::vector<CGameObject*>;
 
     OBJECTS_LIST pObjects4CrPr;
     OBJECTS_LIST pActors4CrPr;
@@ -155,7 +155,7 @@ public:
 private:
     bool m_bConnectResultReceived;
     bool m_bConnectResult;
-    xr_string m_sConnectResult;
+    std::string m_sConnectResult;
 
 public:
     void OnConnectResult(NET_Packet* P);
@@ -163,14 +163,14 @@ public:
 public:
     //////////////////////////////////////////////
     // static particles
-    using POVec = xr_vector<CParticlesObject*>;
+    using POVec = std::vector<CParticlesObject*>;
     POVec m_StaticParticles;
 
     game_cl_GameState* game;
     BOOL m_bGameConfigStarted;
     BOOL game_configured;
     NET_Queue_Event* game_events;
-    xr_deque<CSE_Abstract*> game_spawn_queue;
+    std::deque<CSE_Abstract*> game_spawn_queue;
     xrServer* Server;
     GlobalFeelTouch m_feel_deny;
 
@@ -179,7 +179,7 @@ public:
 
 private:
     // preload sounds registry
-    using SoundRegistryMap = xr_map<shared_str, ref_sound>;
+    using SoundRegistryMap = std::map<shared_str, ref_sound>;
     SoundRegistryMap sound_registry;
 
 public:
@@ -221,7 +221,7 @@ public:
     bool IsChecksumsEqual(u32 check_sum) const;
 
     // sounds
-    xr_vector<ref_sound*> static_Sounds;
+    std::vector<ref_sound*> static_Sounds;
 
     // startup options
     shared_str m_caServerOptions;

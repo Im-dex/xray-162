@@ -13,7 +13,7 @@ IC bool p_sort(IBlender* A, IBlender* B) { return stricmp(A->getComment(), B->ge
 #define TYPES_EQUAL(A, B) (typeid(A).raw_name() == typeid(B).raw_name())
 #endif
 
-void IBlender::CreatePalette(xr_vector<IBlender*>& palette) {
+void IBlender::CreatePalette(std::vector<IBlender*>& palette) {
     // Create palette itself
     R_ASSERT(palette.empty());
     palette.push_back(Create(B_DEFAULT));

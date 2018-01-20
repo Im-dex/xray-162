@@ -23,7 +23,7 @@ protected:
 
 public:
     typedef std::pair<ref_sound_data_ptr, float> event;
-    xr_vector<event> s_events;
+    std::vector<event> s_events;
 
 public:
     BOOL bPresent;
@@ -47,11 +47,11 @@ protected:
     CDB::MODEL* geom_ENV;
 
     // Containers
-    xr_vector<CSoundRender_Source*> s_sources;
-    xr_vector<CSoundRender_Emitter*> s_emitters;
+    std::vector<CSoundRender_Source*> s_sources;
+    std::vector<CSoundRender_Emitter*> s_emitters;
     u32 s_emitters_u; // emitter update marker
-    xr_vector<CSoundRender_Target*> s_targets;
-    xr_vector<CSoundRender_Target*> s_targets_defer;
+    std::vector<CSoundRender_Target*> s_targets;
+    std::vector<CSoundRender_Target*> s_targets_defer;
     u32 s_targets_pu; // parameters update
     SoundEnvironment_LIB* s_environment;
     CSoundRender_Environment s_user_environment;

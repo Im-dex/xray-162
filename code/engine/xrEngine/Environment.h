@@ -62,13 +62,13 @@ public:
 
         INGAME_EDITOR_VIRTUAL ~SEffect() {}
     };
-    using EffectVec = xr_vector<SEffect*>;
+    using EffectVec = std::vector<SEffect*>;
     struct SSndChannel {
         std::string m_load_section;
         Fvector2 m_sound_dist;
         Ivector4 m_sound_period;
 
-        typedef xr_vector<ref_sound> sounds_type;
+        typedef std::vector<ref_sound> sounds_type;
 
         void load(CInifile& config, LPCSTR sect);
         ref_sound& get_rnd_sound() { return sounds()[Random.randI(sounds().size())]; }
@@ -90,9 +90,9 @@ public:
         INGAME_EDITOR_VIRTUAL sounds_type& sounds() { return m_sounds; }
 
     protected:
-        xr_vector<ref_sound> m_sounds;
+        std::vector<ref_sound> m_sounds;
     };
-    using SSndChannelVec = xr_vector<SSndChannel*>;
+    using SSndChannelVec = std::vector<SSndChannel*>;
 
 protected:
     std::string m_load_section;
@@ -214,9 +214,9 @@ public:
 class ENGINE_API CEnvironment {
     friend class dxEnvironmentRender;
 public:
-    using EnvAmbVec = xr_vector<CEnvAmbient*>;
-    using EnvVec = xr_vector<CEnvDescriptor*>;
-    using EnvsMap = xr_map<std::string, EnvVec>;
+    using EnvAmbVec = std::vector<CEnvAmbient*>;
+    using EnvVec = std::vector<CEnvDescriptor*>;
+    using EnvsMap = std::map<std::string, EnvVec>;
 
 private:
     // clouds
@@ -275,7 +275,7 @@ public:
 
     EnvsMap WeatherCycles;
     EnvsMap WeatherFXs;
-    xr_vector<CEnvModifier> Modifiers;
+    std::vector<CEnvModifier> Modifiers;
     EnvAmbVec Ambients;
 
     CEffect_Rain* eff_Rain;
@@ -363,9 +363,9 @@ public:
     INGAME_EDITOR_VIRTUAL SThunderboltCollection*
     thunderbolt_collection(CInifile* pIni, CInifile* thunderbolts, LPCSTR section);
     INGAME_EDITOR_VIRTUAL SThunderboltCollection*
-    thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection, const std::string& id);
+    thunderbolt_collection(std::vector<SThunderboltCollection*>& collection, const std::string& id);
     INGAME_EDITOR_VIRTUAL CLensFlareDescriptor*
-    add_flare(xr_vector<CLensFlareDescriptor*>& collection, const std::string& id);
+    add_flare(std::vector<CLensFlareDescriptor*>& collection, const std::string& id);
 
 public:
     float p_var_alt;

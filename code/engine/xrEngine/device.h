@@ -166,7 +166,7 @@ public:
     // CRegistrator	<pureFrame			>			seqFrame;
     CRegistrator<pureFrame> seqFrameMT;
     CRegistrator<pureDeviceReset> seqDeviceReset;
-    xr_vector<fastdelegate::FastDelegate0<>> seqParallel;
+    std::vector<fastdelegate::FastDelegate0<>> seqParallel;
 
     // Dependent classes
     // CResourceManager*						Resources;
@@ -255,7 +255,7 @@ public:
     volatile bool mt_bMustExit;
 
     ICF void remove_from_seq_parallel(const fastdelegate::FastDelegate0<>& delegate) {
-        xr_vector<fastdelegate::FastDelegate0<>>::iterator I =
+        std::vector<fastdelegate::FastDelegate0<>>::iterator I =
             std::find(seqParallel.begin(), seqParallel.end(), delegate);
         if (I != seqParallel.end())
             seqParallel.erase(I);
@@ -302,7 +302,7 @@ extern ENGINE_API CRenderDevice Device;
 extern ENGINE_API bool g_bBenchmark;
 
 typedef fastdelegate::FastDelegate0<bool> LOADING_EVENT;
-extern ENGINE_API xr_list<LOADING_EVENT> g_loading_events;
+extern ENGINE_API std::list<LOADING_EVENT> g_loading_events;
 
 class ENGINE_API CLoadScreenRenderer : public pureRender {
 public:

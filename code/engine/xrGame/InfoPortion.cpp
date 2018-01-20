@@ -75,7 +75,8 @@ item_data->pos_in_file); THROW3					(pNode, "info_portion id=",
                 info_data()->m_DialogNames.push_back(dialog_name);
         }
 
-        
+        
+
         //список названий порций информации, которые деактивируются,
         //после получения этой порции
         int disable_num = pXML->GetNodesNum(pNode, "disable");
@@ -122,9 +123,9 @@ void _destroy_item_data_vector_cont(T_VECTOR* vec) {
     T_VECTOR::iterator it = vec->begin();
     T_VECTOR::iterator it_e = vec->end();
 
-    xr_vector<CUIXml*> _tmp;
+    std::vector<CUIXml*> _tmp;
     for (; it != it_e; ++it) {
-        xr_vector<CUIXml*>::iterator it_f = std::find(_tmp.begin(), _tmp.end(), (*it)._xml);
+        std::vector<CUIXml*>::iterator it_f = std::find(_tmp.begin(), _tmp.end(), (*it)._xml);
         if (it_f == _tmp.end())
             _tmp.push_back((*it)._xml);
     }

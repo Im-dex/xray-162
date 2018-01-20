@@ -82,7 +82,7 @@ void CBuild::BuildCForm() {
     vecFace* cfFaces = new vecFace();
     vecVertex* cfVertices = new vecVertex();
     {
-        xr_vector<bool> cfVertexMarks;
+        std::vector<bool> cfVertexMarks;
         cfVertexMarks.assign(lc_global_data()->g_vertices().size(), false);
 
         Status("Sorting...");

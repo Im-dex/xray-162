@@ -7,7 +7,7 @@ public:
         state_working = 1,
         state_usingTC = 3,
     } state;
-    xr_vector<dxRender_Visual*> invisible;
+    std::vector<dxRender_Visual*> invisible;
 
     u32 frame_sleep;
     u32 test_count;

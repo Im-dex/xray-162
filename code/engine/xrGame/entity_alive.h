@@ -3,7 +3,7 @@
 #include "entity.h"
 
 // Igor DEFINE_VECTOR(ref_shader, SHADER_VECTOR, SHADER_VECTOR_IT);
-using STR_VECTOR = xr_vector<shared_str>;
+using STR_VECTOR = std::vector<shared_str>;
 
 class MONSTER_COMMUNITY;
 class CEntityCondition;
@@ -94,7 +94,7 @@ public:
     virtual void set_collision_hit_callback(ICollisionHitCallback* cc);
 
 protected:
-    using WOUND_VECTOR = xr_vector<CWound*>;
+    using WOUND_VECTOR = std::vector<CWound*>;
     WOUND_VECTOR m_ParticleWounds;
 
     virtual void StartFireParticles(CWound* pWound);
@@ -134,7 +134,7 @@ protected:
     static FactoryPtr<IWallMarkArray>* m_pBloodDropsVector;
     //список ран с которых капает кровь
 
-    using WOUND_VECTOR = xr_vector<CWound*>;
+    using WOUND_VECTOR = std::vector<CWound*>;
     WOUND_VECTOR m_BloodWounds;
     //размер раны, чтоб начала капать кровь
     static float m_fStartBloodWoundSize;
@@ -205,7 +205,7 @@ private:
     void fill_hit_bone_surface_areas() const;
 
 private:
-    typedef xr_vector<std::pair<u16, float>> hit_bone_surface_areas_type;
+    typedef std::vector<std::pair<u16, float>> hit_bone_surface_areas_type;
 
 private:
     mutable hit_bone_surface_areas_type m_hit_bone_surface_areas;

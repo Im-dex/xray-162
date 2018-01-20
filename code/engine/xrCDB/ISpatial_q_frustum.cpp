@@ -25,8 +25,8 @@ public:
             return;
 
         // test items
-        xr_vector<ISpatial*>::iterator _it = N->items.begin();
-        xr_vector<ISpatial*>::iterator _end = N->items.end();
+        std::vector<ISpatial*>::iterator _it = N->items.begin();
+        std::vector<ISpatial*>::iterator _end = N->items.end();
         for (; _it != _end; _it++) {
             ISpatial* S = *_it;
             if (0 == (S->spatial.type & mask))
@@ -53,7 +53,7 @@ public:
     }
 };
 
-void ISpatial_DB::q_frustum(xr_vector<ISpatial*>& R, u32 _o, u32 _mask, const CFrustum& _frustum) {
+void ISpatial_DB::q_frustum(std::vector<ISpatial*>& R, u32 _o, u32 _mask, const CFrustum& _frustum) {
     std::lock_guard<decltype(cs)> lock(cs);
     q_result = &R;
     q_result->clear();

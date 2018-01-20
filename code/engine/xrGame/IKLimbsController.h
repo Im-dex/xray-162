@@ -39,7 +39,7 @@ private:
 private:
     CBlend* m_legs_blend;
     CGameObject* m_object;
-    xr_vector<CIKLimb> _bone_chains;
+    std::vector<CIKLimb> _bone_chains;
     object_shift _object_shift;
     extrapolation::points _pose_extrapolation;
 

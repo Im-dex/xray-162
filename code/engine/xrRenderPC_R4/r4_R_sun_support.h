@@ -13,7 +13,7 @@ public:
         Fplane plane;
     };
 
-    xr_vector<sun::ray> view_frustum_rays;
+    std::vector<sun::ray> view_frustum_rays;
     sun::ray view_ray;
     sun::ray light_ray;
     Fvector3 light_cuboid_points[LIGHT_CUBOIDVERTICES_COUNT];
@@ -46,7 +46,7 @@ public:
         }
     }
 
-    void compute_caster_model_fixed(xr_vector<Fplane>& dest, Fvector3& translation, float map_size,
+    void compute_caster_model_fixed(std::vector<Fplane>& dest, Fvector3& translation, float map_size,
                                     bool clip_by_view_near) {
         translation.set(0.f, 0.f, 0.f);
 
@@ -263,7 +263,7 @@ template <bool _debug>
 class DumbConvexVolume {
 public:
     struct _poly {
-        xr_vector<int> points;
+        std::vector<int> points;
         Fvector3 planeN;
         float planeD;
         float classify(Fvector3& p) { return planeN.dotproduct(p) + planeD; }
@@ -279,9 +279,9 @@ public:
     };
 
 public:
-    xr_vector<Fvector3> points;
-    xr_vector<_poly> polys;
-    xr_vector<_edge> edges;
+    std::vector<Fvector3> points;
+    std::vector<_poly> polys;
+    std::vector<_edge> edges;
 
 public:
     void compute_planes() {
@@ -361,7 +361,7 @@ public:
             */
         }
     }
-    void compute_caster_model(xr_vector<Fplane>& dest, Fvector3 direction) {
+    void compute_caster_model(std::vector<Fplane>& dest, Fvector3 direction) {
         CRenderTarget& T = *RImplementation.Target;
 
         // COG
@@ -387,7 +387,7 @@ public:
             int marker = (base.planeN.dotproduct(direction) <= 0) ? -1 : 1;
 
             // register edges
-            xr_vector<int>& plist = polys[it].points;
+            std::vector<int>& plist = polys[it].points;
             for (int p = 0; p < int(plist.size()); p++) {
                 _edge E(plist[p], plist[(p + 1) % plist.size()], marker);
                 bool found = false;

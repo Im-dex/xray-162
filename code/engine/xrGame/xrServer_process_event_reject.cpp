@@ -39,8 +39,8 @@ bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const 
         id_entity, e_entity->name());
 #endif // MP_LOGGING
 
-    xr_vector<u16>& C = e_parent->children;
-    xr_vector<u16>::iterator c = std::find(C.begin(), C.end(), id_entity);
+    std::vector<u16>& C = e_parent->children;
+    std::vector<u16>::iterator c = std::find(C.begin(), C.end(), id_entity);
     if (c == C.end()) {
         Msg("! ERROR: SV: can't find children [%d] of parent [%d]", id_entity, e_parent);
         return false;

@@ -46,7 +46,7 @@ public:
     }
 };
 
-using Shader_xrLCVec = xr_vector<Shader_xrLC>;
+using Shader_xrLCVec = std::vector<Shader_xrLC>;
 class Shader_xrLC_LIB {
     Shader_xrLCVec library;
 

@@ -50,7 +50,7 @@
         throw * shared_str(std::string(__FILE__LINE__)           \
                                .append(" \"")                  \
                                .append(#xpr)                   \
-                               .append(std::string(msg0).c_str()) \
+                               .append(std::string(msg0)) \
                                .c_str());                      \
     }
 #define THROW3(xpr, msg0, msg1)                                \
@@ -58,7 +58,7 @@
         throw * shared_str(std::string(__FILE__LINE__)           \
                                .append(" \"")                  \
                                .append(#xpr)                   \
-                               .append(std::string(msg0).c_str()) \
+                               .append(std::string(msg0)) \
                                .append(", ")                   \
                                .append(std::string(msg1)) \
                                .c_str());                      \

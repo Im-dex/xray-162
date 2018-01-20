@@ -6,7 +6,7 @@
 
 namespace CDB {
 u32 Collector::VPack(const Fvector& V, float eps) {
-    xr_vector<Fvector>::iterator I, E;
+    std::vector<Fvector>::iterator I, E;
     I = verts.begin();
     E = verts.end();
     for (; I != E; I++)
@@ -101,19 +101,19 @@ struct sort_predicate {
     }
 };
 
-void Collector::calc_adjacency(xr_vector<u32>& dest) {
+void Collector::calc_adjacency(std::vector<u32>& dest) {
 #if 1
     VERIFY(faces.size() < 65536);
     const u32 edge_count = faces.size() * 3;
 #ifdef _EDITOR
-    xr_vector<edge> _edges(edge_count);
+    std::vector<edge> _edges(edge_count);
     edge* edges = &*_edges.begin();
 #else
     edge* edges = (edge*)_alloca(edge_count * sizeof(edge));
 #endif
     edge* i = edges;
-    xr_vector<TRI>::const_iterator B = faces.begin(), I = B;
-    xr_vector<TRI>::const_iterator E = faces.end();
+    std::vector<TRI>::const_iterator B = faces.begin(), I = B;
+    std::vector<TRI>::const_iterator E = faces.end();
     for (; I != E; ++I) {
         u32 face_id = u32(I - B);
 
@@ -166,7 +166,7 @@ void Collector::calc_adjacency(xr_vector<u32>& dest) {
         }
     }
 #if 0
-		xr_vector<u32>	test = dest;
+		std::vector<u32>	test = dest;
 
 		dest.assign		(faces.size()*3,0xffffffff);
 		// Dumb algorithm O(N^2) :)
@@ -200,9 +200,9 @@ void Collector::calc_adjacency(xr_vector<u32>& dest) {
 		}
 
 		{
-			xr_vector<u32>::const_iterator	I = test.begin();
-			xr_vector<u32>::const_iterator	E = test.end();
-			xr_vector<u32>::const_iterator	J = dest.begin();
+			std::vector<u32>::const_iterator	I = test.begin();
+			std::vector<u32>::const_iterator	E = test.end();
+			std::vector<u32>::const_iterator	J = dest.begin();
 			for ( ; I != E; ++I, ++J) {
 				VERIFY	(*I == *J);
 			}

@@ -243,7 +243,7 @@ public:
     };
 
 private:
-    using FLAME_ELEMS_VEC = xr_vector<SFlameElement*>;
+    using FLAME_ELEMS_VEC = std::vector<SFlameElement*>;
     FLAME_ELEMS_VEC m_flames;
 
 public:
@@ -267,7 +267,7 @@ private:
 class CPolterTele : public CPolterSpecialAbility {
     typedef CPolterSpecialAbility inherited;
 
-    xr_vector<CObject*> m_nearest;
+    std::vector<CObject*> m_nearest;
 
     // external params
     float m_pmt_radius;
@@ -303,7 +303,7 @@ public:
     virtual void update_frame();
 
 private:
-    void tele_find_objects(xr_vector<CObject*>& objects, const Fvector& pos);
+    void tele_find_objects(std::vector<CObject*>& objects, const Fvector& pos);
     bool tele_raise_objects();
     void tele_fire_objects();
 

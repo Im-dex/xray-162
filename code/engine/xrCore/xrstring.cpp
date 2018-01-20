@@ -209,7 +209,7 @@ str_container::~str_container() {
 #else
 
 struct str_container_impl {
-    typedef xr_multiset<str_value*, str_value_cmp> cdb;
+    typedef std::multiset<str_value*, str_value_cmp> cdb;
     int num_docs;
     str_container_impl() { num_docs = 0; }
 

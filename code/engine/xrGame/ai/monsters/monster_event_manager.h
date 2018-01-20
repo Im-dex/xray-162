@@ -17,8 +17,8 @@ class CMonsterEventManager {
         bool operator()(const event_struc& param) { return param.need_remove; }
     };
 
-    using EVENT_VECTOR = xr_vector<event_struc>;
-    using EVENT_MAP = xr_map<EEventType, EVENT_VECTOR>;
+    using EVENT_VECTOR = std::vector<event_struc>;
+    using EVENT_MAP = std::map<EEventType, EVENT_VECTOR>;
 
     EVENT_MAP m_event_storage;
 

@@ -62,7 +62,7 @@ public:
     virtual void EnableObject(CPHObject* obj);
     virtual void DisableObject();
     virtual void SetAirResistance(dReal linear = default_k_l, dReal angular = default_k_w) {
-        xr_vector<CPHElement*>::iterator i;
+        std::vector<CPHElement*>::iterator i;
         for (i = elements.begin(); elements.end() != i; ++i)
             (*i)->SetAirResistance(linear, angular);
     }

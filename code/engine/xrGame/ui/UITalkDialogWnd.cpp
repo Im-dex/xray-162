@@ -178,7 +178,7 @@ void CUITalkDialogWnd::AddAnswer(LPCSTR SpeakerName, LPCSTR str, bool bActor) {
     GAME_NEWS_DATA news_data;
     news_data.news_caption = SpeakerName;
 
-    xr_string res;
+    std::string res;
     res = "%c[250,255,232,208]";
     res += str;
     news_data.news_text = res.c_str();
@@ -321,7 +321,7 @@ CUIAnswerItemIconed::CUIAnswerItemIconed(CUIXml* xml_doc, LPCSTR path)
 }
 
 void CUIAnswerItemIconed::Init(LPCSTR text, LPCSTR name, LPCSTR texture_name) {
-    xr_string res;
+    std::string res;
     res += name;
     res += "\\n %c[250,255,232,208]";
     res += text;

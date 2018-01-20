@@ -75,7 +75,7 @@ struct CSaver {
         stream.w_stringZ(data);
     }
 
-    IC static void save_data(const xr_string& data, M& stream, const P& p) {
+    IC static void save_data(const std::string& data, M& stream, const P& p) {
         stream.w_stringZ(data.c_str());
     }
 
@@ -87,10 +87,10 @@ struct CSaver {
             CSaver<M, P>::save_data(data.second, stream, p);
     }
 
-    IC static void save_data(const xr_vector<bool>& data, M& stream, const P& p) {
+    IC static void save_data(const std::vector<bool>& data, M& stream, const P& p) {
         stream.w_u32((u32)data.size());
-        xr_vector<bool>::const_iterator I = data.begin();
-        xr_vector<bool>::const_iterator E = data.end();
+        std::vector<bool>::const_iterator I = data.begin();
+        std::vector<bool>::const_iterator E = data.end();
         u32 mask = 0;
         if (I != E) {
             for (int j = 0; I != E; ++I, ++j) {
@@ -145,7 +145,7 @@ struct CSaver {
     }
 
     template <typename T1, typename T2>
-    IC static void save_data(const xr_stack<T1, T2>& data, M& stream, const P& p) {
+    IC static void save_data(const std::stack<T1, T2>& data, M& stream, const P& p) {
         save_data(data, stream, p, true);
     }
 

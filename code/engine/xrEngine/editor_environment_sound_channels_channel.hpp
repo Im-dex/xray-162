@@ -45,7 +45,7 @@ private:
     void xr_stdcall id_setter(LPCSTR value);
 
 public:
-    typedef xr_vector<source*> sound_container_type;
+    typedef std::vector<source*> sound_container_type;
 
 private:
     typedef editor::property_holder property_holder_type;

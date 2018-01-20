@@ -141,15 +141,15 @@ void CHudItem::UpdateHudAdditonal(Fmatrix& hud_trans) {}
 void CHudItem::UpdateCL() {
     if (m_current_motion_def) {
         if (m_bStopAtEndAnimIsRunning) {
-            const xr_vector<motion_marks>& marks = m_current_motion_def->marks;
+            const std::vector<motion_marks>& marks = m_current_motion_def->marks;
             if (!marks.empty()) {
                 float motion_prev_time =
                     ((float)m_dwMotionCurrTm - (float)m_dwMotionStartTm) / 1000.0f;
                 float motion_curr_time =
                     ((float)Device.dwTimeGlobal - (float)m_dwMotionStartTm) / 1000.0f;
 
-                xr_vector<motion_marks>::const_iterator it = marks.begin();
-                xr_vector<motion_marks>::const_iterator it_e = marks.end();
+                std::vector<motion_marks>::const_iterator it = marks.begin();
+                std::vector<motion_marks>::const_iterator it_e = marks.end();
                 for (; it != it_e; ++it) {
                     const motion_marks& M = (*it);
                     if (M.is_empty())
@@ -192,7 +192,8 @@ void CHudItem::OnH_B_Independent(bool just_before_destroy) {
     {
             object().XFORM().set( HudItemData()->m_item_transform );
     }
-    
+    
+
     if (HudItemData())
     {
             g_player_hud->detach_item(this);

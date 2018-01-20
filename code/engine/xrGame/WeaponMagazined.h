@@ -126,7 +126,7 @@ protected:
     bool m_bFireSingleShot;
     //режимы стрельбы
     bool m_bHasDifferentFireModes;
-    xr_vector<s8> m_aFireModes;
+    std::vector<s8> m_aFireModes;
     int m_iCurFireMode;
     int m_iPrefferedFireMode;
 

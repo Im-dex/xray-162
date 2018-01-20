@@ -26,7 +26,7 @@ IC const CHitMemoryManager::HITS& CHitMemoryManager::objects() const {
 IC const CHitMemoryManager::CHitObject* CHitMemoryManager::hit() const { return (m_selected_hit); }
 #endif
 
-IC void CHitMemoryManager::set_squad_objects(xr_vector<CHitObject>* squad_objects) {
+IC void CHitMemoryManager::set_squad_objects(std::vector<CHitObject>* squad_objects) {
     m_hits = squad_objects;
 }
 

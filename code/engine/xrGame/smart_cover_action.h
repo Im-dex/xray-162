@@ -24,7 +24,7 @@ class action final {
     };
 
 public:
-    typedef xr_vector<shared_str> Animations;
+    typedef std::vector<shared_str> Animations;
     typedef associative_vector<shared_str, Animations*, animation_predicate> AnimationList;
 
 private:

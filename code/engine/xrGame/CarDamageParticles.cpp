@@ -12,7 +12,7 @@
 #include "../xrphysics/IPHWorld.h"
 //#include "PHWorld.h"
 // extern CPHWorld*	ph_world;
-void read_bones(IKinematics* K, LPCSTR S, xr_vector<u16>& bones) {
+void read_bones(IKinematics* K, LPCSTR S, std::vector<u16>& bones) {
     string64 S1;
     int count = _GetItemCount(S);
     for (int i = 0; i < count; ++i) {
@@ -20,7 +20,7 @@ void read_bones(IKinematics* K, LPCSTR S, xr_vector<u16>& bones) {
 
         u16 bone_id = K->LL_BoneID(S1);
         R_ASSERT3(bone_id != BI_NONE, "wrong bone", S1);
-        xr_vector<u16>::iterator iter = std::find(bones.begin(), bones.end(), bone_id);
+        std::vector<u16>::iterator iter = std::find(bones.begin(), bones.end(), bone_id);
         R_ASSERT3(iter == bones.end(), "double bone", S1);
         bones.push_back(bone_id);
     }

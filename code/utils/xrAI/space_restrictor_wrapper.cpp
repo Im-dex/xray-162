@@ -260,7 +260,7 @@ void CSpaceRestrictorWrapper::verify_connectivity() {
 
     level_graph().set_mask(m_border);
 
-    xr_vector<u32> nodes;
+    std::vector<u32> nodes;
 
     graph_engine().search(level_graph(), start_vertex_id, start_vertex_id, &nodes,
                           GraphEngineSpace::CFlooder(GraphEngineSpace::_dist_type(6000),

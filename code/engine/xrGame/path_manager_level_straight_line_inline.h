@@ -23,7 +23,7 @@ CLevelStraightLinePathManager::~CPathManager() {}
 
 TEMPLATE_SPECIALIZATION
 IC void CLevelStraightLinePathManager::setup(const _Graph* _graph, _DataStorage* _data_storage,
-                                             xr_vector<_index_type>* _path,
+                                             std::vector<_index_type>* _path,
                                              const _index_type& _start_node_index,
                                              const _index_type& _goal_node_index,
                                              _Parameters& parameters) {
@@ -41,8 +41,8 @@ IC void CLevelStraightLinePathManager::create_path(T& vertex) {
 
     Fvector tPosition = m_parameters->m_start_point;
 
-    xr_vector<_index_type>::iterator I = path->begin();
-    xr_vector<_index_type>::iterator E = path->end();
+    std::vector<_index_type>::iterator I = path->begin();
+    std::vector<_index_type>::iterator E = path->end();
     _index_type& dwNode = *I;
     for (++I; I != E; ++I) {
         u32 vertex_id =

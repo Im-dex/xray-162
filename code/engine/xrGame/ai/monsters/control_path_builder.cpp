@@ -273,7 +273,7 @@ bool CControlPathBuilder::can_use_distributed_computations(u32 option) const {
 
 u32 CControlPathBuilder::find_nearest_vertex(const u32& level_vertex_id,
                                              const Fvector& target_position, const float& range) {
-    xr_vector<u32> temp;
+    std::vector<u32> temp;
 
     ai().graph_engine().search(ai().level_graph(), level_vertex_id, level_vertex_id, &temp,
                                GraphEngineSpace::CNearestVertexParameters(target_position, range));

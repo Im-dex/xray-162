@@ -183,7 +183,7 @@ void _initialize_cpu() {
     GetSystemInfo(&sysInfo);
     const size_t cpusCount = sysInfo.dwNumberOfProcessors;
 
-    xr_vector<PROCESSOR_POWER_INFORMATION> cpusInfo(cpusCount);
+    std::vector<PROCESSOR_POWER_INFORMATION> cpusInfo(cpusCount);
     CallNtPowerInformation(ProcessorInformation, nullptr, 0, cpusInfo.data(),
                            sizeof(PROCESSOR_POWER_INFORMATION) * cpusCount);
 

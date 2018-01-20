@@ -25,7 +25,7 @@ private:
     typedef CUIStatic inherited;
 
 protected:
-    xr_vector<CUICellItem*> m_childs;
+    std::vector<CUICellItem*> m_childs;
 
     CUIDragDropListEx* m_pParentList;
     CUIProgressBar* m_pConditionState;

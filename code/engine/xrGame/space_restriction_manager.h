@@ -28,8 +28,8 @@ class CSpaceRestrictionManager : public CSpaceRestrictionHolder {
 
 protected:
     typedef intrusive_ptr<CSpaceRestriction, RestrictionSpace::CTimeIntrusiveBase> CRestrictionPtr;
-    typedef xr_map<shared_str, CSpaceRestriction*> SPACE_RESTRICTIONS;
-    typedef xr_map<ALife::_OBJECT_ID, CClientRestriction> CLIENT_RESTRICTIONS;
+    typedef std::map<shared_str, CSpaceRestriction*> SPACE_RESTRICTIONS;
+    typedef std::map<ALife::_OBJECT_ID, CClientRestriction> CLIENT_RESTRICTIONS;
 
 private:
 protected:

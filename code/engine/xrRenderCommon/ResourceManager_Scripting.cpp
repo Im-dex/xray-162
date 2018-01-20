@@ -277,7 +277,7 @@ void CResourceManager::LS_Load() {
                               value("srcalphasat", int(D3DBLEND_SRCALPHASAT))]];
 
     // load shaders
-    xr_vector<char*>* folder =
+    std::vector<char*>* folder =
         FS.file_list_open("$game_shaders$", ::Render->getShaderPath(), FS_ListFiles | FS_RootOnly);
     VERIFY(folder);
     for (u32 it = 0; it < folder->size(); it++) {

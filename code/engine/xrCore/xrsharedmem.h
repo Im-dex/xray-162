@@ -47,7 +47,7 @@ IC bool smem_equal(const smem_value* A, u32 dwCRC, u32 dwLength, u8* ptr) {
 //////////////////////////////////////////////////////////////////////////
 class XRCORE_API smem_container {
 private:
-    typedef xr_vector<smem_value*> cdb;
+    typedef std::vector<smem_value*> cdb;
     std::recursive_mutex cs;
     cdb container;
 

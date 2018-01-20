@@ -879,7 +879,7 @@ void CLevel::PhisStepsCallback(u32 Time0, u32 Time1) {
     //#pragma todo("Oles to all: highly inefficient and slow!!!")
     // fixed (Andy)
     /*
-    for (xr_vector<CObject*>::iterator O=Level().Objects.objects.begin();
+    for (std::vector<CObject*>::iterator O=Level().Objects.objects.begin();
     O!=Level().Objects.objects.end(); ++O)
     {
             if( smart_cast<CActor*>((*O)){

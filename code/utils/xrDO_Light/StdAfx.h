@@ -47,16 +47,16 @@
     }
 #define THROW2(xpr, msg0)                                                                          \
     if (!(xpr)) {                                                                                  \
-        throw std::string(__FILE__LINE__).append(" \"").append(#xpr).append(std::string(msg0).c_str()); \
+        throw std::string(__FILE__LINE__).append(" \"").append(#xpr).append(std::string(msg0)); \
     }
 #define THROW3(xpr, msg0, msg1)              \
     if (!(xpr)) {                            \
         throw std::string(__FILE__LINE__)      \
             .append(" \"")                   \
             .append(#xpr)                    \
-            .append(std::string(msg0).c_str())  \
+            .append(std::string(msg0))  \
             .append(", ")                    \
-            .append(std::string(msg1).c_str()); \
+            .append(std::string(msg1)); \
     }
 #else
 #define THROW VERIFY

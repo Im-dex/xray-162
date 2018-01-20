@@ -21,8 +21,8 @@ float CalcMotionSpeed(const shared_str& anim_name) {
 }
 
 player_hud_motion* player_hud_motion_container::find_motion(const shared_str& name) {
-    xr_vector<player_hud_motion>::iterator it = m_anims.begin();
-    xr_vector<player_hud_motion>::iterator it_e = m_anims.end();
+    std::vector<player_hud_motion>::iterator it = m_anims.begin();
+    std::vector<player_hud_motion>::iterator it_e = m_anims.end();
     for (; it != it_e; ++it) {
         const shared_str& s = (true) ? (*it).m_alias_name : (*it).m_base_name;
         if (s == name)
@@ -382,8 +382,8 @@ player_hud::~player_hud() {
     ::Render->model_Delete(v);
     m_model = NULL;
 
-    xr_vector<attachable_hud_item*>::iterator it = m_pool.begin();
-    xr_vector<attachable_hud_item*>::iterator it_e = m_pool.end();
+    std::vector<attachable_hud_item*>::iterator it = m_pool.begin();
+    std::vector<attachable_hud_item*>::iterator it_e = m_pool.end();
     for (; it != it_e; ++it) {
         attachable_hud_item* a = *it;
         xr_delete(a);
@@ -605,8 +605,8 @@ void player_hud::update_inertion(Fmatrix& trans) {
 }
 
 attachable_hud_item* player_hud::create_hud_item(const shared_str& sect) {
-    xr_vector<attachable_hud_item*>::iterator it = m_pool.begin();
-    xr_vector<attachable_hud_item*>::iterator it_e = m_pool.end();
+    std::vector<attachable_hud_item*>::iterator it = m_pool.begin();
+    std::vector<attachable_hud_item*>::iterator it_e = m_pool.end();
     for (; it != it_e; ++it) {
         attachable_hud_item* itm = *it;
         if (itm->m_sect_name == sect)

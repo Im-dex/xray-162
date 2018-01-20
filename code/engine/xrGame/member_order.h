@@ -55,7 +55,7 @@ protected:
     mutable const CCoverPoint* m_cover;
     bool m_initialized;
     float m_probability;
-    xr_vector<u32> m_enemies;
+    std::vector<u32> m_enemies;
     bool m_processed;
     u32 m_selected_enemy;
     CMemberDeathReaction m_member_death_reaction;
@@ -72,7 +72,7 @@ public:
     IC const CCoverPoint* cover() const;
     IC CMemberDeathReaction& member_death_reaction();
     IC CGrenadeReaction& grenade_reaction();
-    IC xr_vector<u32>& enemies();
+    IC std::vector<u32>& enemies();
     IC void cover(const CCoverPoint* object_cover) const;
     IC void probability(float probability);
     IC void processed(bool processed);

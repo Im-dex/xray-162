@@ -43,13 +43,13 @@ public:
     struct str_pred {
         IC bool operator()(const char* x, const char* y) const { return (xr_strcmp(x, y) < 0); }
     };
-    typedef xr_map<LPCSTR, IConsole_Command*, str_pred> vecCMD;
+    typedef std::map<LPCSTR, IConsole_Command*, str_pred> vecCMD;
     typedef vecCMD::iterator vecCMD_IT;
     typedef vecCMD::const_iterator vecCMD_CIT;
     typedef fastdelegate::FastDelegate0<void> Callback;
-    typedef xr_vector<std::string> vecHistory;
-    typedef xr_vector<std::string> vecTips;
-    typedef xr_vector<TipString> vecTipsEx;
+    typedef std::vector<std::string> vecHistory;
+    typedef std::vector<std::string> vecTips;
+    typedef std::vector<TipString> vecTipsEx;
 
     enum { CONSOLE_BUF_SIZE = 1024 };
     enum { VIEW_TIPS_COUNT = 14, MAX_TIPS_COUNT = 220 };

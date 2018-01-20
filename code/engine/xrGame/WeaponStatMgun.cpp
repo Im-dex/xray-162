@@ -99,7 +99,7 @@ BOOL CWeaponStatMgun::net_Spawn(CSE_Abstract* DC) {
     VERIFY(bdY.IK_data.type == jtJoint);
     m_lim_y_rot.set(bdY.IK_data.limits[1].limit.x, bdY.IK_data.limits[1].limit.y);
 
-    xr_vector<Fmatrix> matrices;
+    std::vector<Fmatrix> matrices;
     K->LL_GetBindTransform(matrices);
     m_i_bind_x_xform.invert(matrices[m_rotate_x_bone]);
     m_i_bind_y_xform.invert(matrices[m_rotate_y_bone]);

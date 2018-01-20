@@ -127,7 +127,7 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
     // Iterate
     for (u32 O = 0; O < objects.size(); O++) {
         CDetail& Object = *objects[O];
-        xr_vector<SlotItemVec*>& vis = list[O];
+        std::vector<SlotItemVec*>& vis = list[O];
         if (!vis.empty()) {
             for (u32 iPass = 0; iPass < Object.shader->E[lod_id]->passes.size(); ++iPass) {
                 // Setup matrices + colors (and flush it as necessary)
@@ -160,8 +160,8 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 
                 u32 dwBatch = 0;
 
-                xr_vector<SlotItemVec*>::iterator _vI = vis.begin();
-                xr_vector<SlotItemVec*>::iterator _vE = vis.end();
+                std::vector<SlotItemVec*>::iterator _vI = vis.begin();
+                std::vector<SlotItemVec*>::iterator _vE = vis.end();
                 for (; _vI != _vE; _vI++) {
                     SlotItemVec* items = *_vI;
                     auto _iI = items->begin();

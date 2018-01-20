@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------
 void SStaticSound::Load(IReader& F) {
     R_ASSERT(F.find_chunk(0));
-    xr_string wav_name;
+    std::string wav_name;
     F.r_stringZ(wav_name);
     m_Source.create(wav_name.c_str(), st_Effect, sg_SourceType);
     F.r_fvector3(m_Position);

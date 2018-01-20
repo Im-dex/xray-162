@@ -25,12 +25,12 @@ public:
 #endif // USE_HEAD_BONE_PART_FAKE
 
 public:
-    typedef xr_vector<float> ANIMATION_WEIGHTS;
+    typedef std::vector<float> ANIMATION_WEIGHTS;
     typedef std::pair<LPCSTR, LPCSTR> BLEND_ID;
 
 public:
     typedef fastdelegate::FastDelegate0<> CALLBACK_ID;
-    typedef xr_vector<CALLBACK_ID> CALLBACKS;
+    typedef std::vector<CALLBACK_ID> CALLBACKS;
 
 private:
     MotionID m_animation;

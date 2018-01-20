@@ -59,7 +59,7 @@ typedef ID3DPixelShader* ps_type;
 #endif
 
 // NORMAL
-typedef xr_vector<_NormalItem, render_allocator::helper<_NormalItem>::result> mapNormalDirect;
+typedef std::vector<_NormalItem, render_allocator::helper<_NormalItem>::result> mapNormalDirect;
 struct mapNormalItems : public mapNormalDirect {
     float ssa;
 };
@@ -98,7 +98,7 @@ typedef mapNormalVS mapNormal_T;
 typedef mapNormal_T mapNormalPasses_T[SHADER_PASSES_MAX];
 
 // MATRIX
-typedef xr_vector<_MatrixItem, render_allocator::helper<_MatrixItem>::result> mapMatrixDirect;
+typedef std::vector<_MatrixItem, render_allocator::helper<_MatrixItem>::result> mapMatrixDirect;
 struct mapMatrixItems : public mapMatrixDirect {
     float ssa;
 };

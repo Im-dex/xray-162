@@ -498,7 +498,7 @@ void CPHWorld::FrameStep(dReal step) {
 
 void CPHWorld::AddObject(CPHObject* object) {
     m_objects.push_back(object);
-    // xr_list <CPHObject*> ::iterator i= m_objects.end();
+    // std::list <CPHObject*> ::iterator i= m_objects.end();
     // return (--m_objects.end());
 };
 void CPHWorld::AddRecentlyDisabled(CPHObject* object) {

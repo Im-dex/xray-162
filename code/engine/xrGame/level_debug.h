@@ -16,8 +16,8 @@ public:
     template <typename T>
     class CItemBase {
 
-        xr_vector<T> m_data;
-        typedef typename xr_vector<T>::iterator ITEM_STORAGE_VEC_IT;
+        std::vector<T> m_data;
+        typedef typename std::vector<T>::iterator ITEM_STORAGE_VEC_IT;
 
         struct remove_text_pred {
             LPCSTR text;
@@ -227,10 +227,10 @@ private:
         bool operator<(const SKey& val) const { return (class_ptr < val.class_ptr); }
     };
 
-    using CLASS_INFO_MAP = xr_map<LPCSTR, CObjectInfo*>;
-    using OBJECT_INFO_MAP = xr_map<CObject*, CLASS_INFO_MAP>;
-    using TEXT_INFO_MAP = xr_map<SKey, CTextInfo*>;
-    using LEVEL_INFO_MAP = xr_map<SKey, CLevelInfo*>;
+    using CLASS_INFO_MAP = std::map<LPCSTR, CObjectInfo*>;
+    using OBJECT_INFO_MAP = std::map<CObject*, CLASS_INFO_MAP>;
+    using TEXT_INFO_MAP = std::map<SKey, CTextInfo*>;
+    using LEVEL_INFO_MAP = std::map<SKey, CLevelInfo*>;
 
     OBJECT_INFO_MAP m_objects_info;
     TEXT_INFO_MAP m_text_info;

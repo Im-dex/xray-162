@@ -9,7 +9,7 @@ class IClient;
 
 class PlayersMonitor {
 private:
-    typedef xr_vector<IClient*> players_collection_t;
+    typedef std::vector<IClient*> players_collection_t;
     std::recursive_mutex csPlayers;
     players_collection_t net_Players;
     players_collection_t net_Players_disconnected;

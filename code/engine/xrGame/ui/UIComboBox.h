@@ -11,7 +11,7 @@ class CUIComboBox : public CUIWindow, public CUIOptionsItem, public pureRender {
     friend class CUIXmlInit;
     typedef enum { LIST_EXPANDED, LIST_FONDED } E_COMBO_STATE;
 
-    xr_vector<int> m_disabled;
+    std::vector<int> m_disabled;
 
 public:
     CUIComboBox();

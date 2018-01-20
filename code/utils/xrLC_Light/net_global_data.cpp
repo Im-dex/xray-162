@@ -71,7 +71,7 @@ private:
     virtual void on_task_send(IGenericStream* outStream) const {
         R_ASSERT2(_id > 0, "data not ready call globaldata<type>::init()");
         //
-        const xr_vector<e_net_globals>& v = gl_gl_reg().get_globals(gl_type);
+        const std::vector<e_net_globals>& v = gl_gl_reg().get_globals(gl_type);
         u32 size = v.size();
         for (u32 i = 0; i < size; ++i)
             globals().get(v[i]).on_task_send(outStream);
@@ -80,7 +80,7 @@ private:
     }
     virtual bool on_task_receive(IAgent* agent, DWORD sessionId, IGenericStream* inStream) {
         //
-        const xr_vector<e_net_globals>& v = gl_gl_reg().get_globals(gl_type);
+        const std::vector<e_net_globals>& v = gl_gl_reg().get_globals(gl_type);
         u32 size = v.size();
         for (u32 i = 0; i < size; ++i)
             globals().get(v[i]).on_task_receive(agent, sessionId, inStream);
@@ -105,8 +105,8 @@ private:
     virtual LPCSTR files(string_path& buf) {
         //
 
-        const xr_vector<e_net_globals>& v = gl_gl_reg().get_globals(gl_type);
-        // xr_vector<e_net_globals>::const_iterator i = v.begin(), e = v.end();
+        const std::vector<e_net_globals>& v = gl_gl_reg().get_globals(gl_type);
+        // std::vector<e_net_globals>::const_iterator i = v.begin(), e = v.end();
         u32 size = v.size();
         buf[0] = 0;
         for (u32 i = 0; i < size; ++i) {
@@ -167,8 +167,8 @@ struct it {
     static const e_net_globals next_et = (e_net_globals)(i + 1);
     typedef it<next_et> next;
     next ni;
-    it(xr_vector<net_global_data*>& data) : ni(data) { data[et] = new tnet_global_data<et>(); }
-    static void cleanup(xr_vector<net_global_data*>& data) {
+    it(std::vector<net_global_data*>& data) : ni(data) { data[et] = new tnet_global_data<et>(); }
+    static void cleanup(std::vector<net_global_data*>& data) {
         tnet_global_data<et>* gd = static_cast<tnet_global_data<et>*>(data[et]);
         if (gd->id() > 0 && lc_net::cleanup().get_cleanup<et>() >= gd->id())
             gd->clear();
@@ -177,8 +177,8 @@ struct it {
 };
 template <>
 struct it<gl_last> {
-    it(xr_vector<net_global_data*>& data) {}
-    static void cleanup(xr_vector<net_global_data*>& data) {
+    it(std::vector<net_global_data*>& data) {}
+    static void cleanup(std::vector<net_global_data*>& data) {
 #ifdef CL_NET_LOG
         Msg("clean up end call");
 #endif

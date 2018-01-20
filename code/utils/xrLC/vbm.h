@@ -6,12 +6,12 @@
 static const u32 c_VB_maxSize = 4096 * 1024; // bytes
 // Vertex containers
 class VBContainer {
-    xr_vector<VDeclarator> vDcl;
-    xr_vector<xr_vector<BYTE>> vContainers;
+    std::vector<VDeclarator> vDcl;
+    std::vector<std::vector<BYTE>> vContainers;
 
     // Recording
     VDeclarator R_DCL;
-    xr_vector<BYTE> R_DATA;
+    std::vector<BYTE> R_DATA;
 
 public:
     // Constructor & destructor
@@ -96,7 +96,7 @@ public:
 };
 
 class IBContainer {
-    xr_vector<xr_vector<u16>> data;
+    std::vector<std::vector<u16>> data;
     enum { LIMIT = 1024ul * 1024ul };
 
 public:
@@ -117,7 +117,7 @@ public:
         // Can't find suitable container - register new
         *dwContainerID = (u32)data.size();
         *dwStart = 0;
-        data.push_back(xr_vector<u16>());
+        data.push_back(std::vector<u16>());
         data.back().assign(begin, end);
     }
     void Save(IWriter& fs) {
@@ -131,7 +131,7 @@ public:
 };
 
 class SWIContainer {
-    xr_vector<FSlideWindowItem*> data;
+    std::vector<FSlideWindowItem*> data;
 
 public:
     bool is_empty() const { return data.empty(); }

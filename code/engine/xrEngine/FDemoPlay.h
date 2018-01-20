@@ -15,7 +15,7 @@ class ENGINE_API CDemoPlay : public CEffectorCam {
     COMotion* m_pMotion;
     SAnimParams* m_MParam;
 
-    xr_vector<Fmatrix> seq;
+    std::vector<Fmatrix> seq;
     int m_count;
     float fStartTime;
     float fSpeed;
@@ -26,7 +26,7 @@ class ENGINE_API CDemoPlay : public CEffectorCam {
     CTimer stat_Timer_frame;
     CTimer stat_Timer_total;
     u32 stat_StartFrame;
-    xr_vector<float> stat_table;
+    std::vector<float> stat_table;
 
     void stat_Start();
     void stat_Stop();

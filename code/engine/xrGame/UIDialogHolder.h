@@ -22,9 +22,9 @@ public:
 
 class PROTECT_API CDialogHolder : public pureFrame {
     // dialogs
-    xr_vector<recvItem> m_input_receivers;
-    xr_vector<dlgItem> m_dialogsToRender;
-    xr_vector<dlgItem> m_dialogsToRender_new;
+    std::vector<recvItem> m_input_receivers;
+    std::vector<dlgItem> m_dialogsToRender;
+    std::vector<dlgItem> m_dialogsToRender_new;
     bool m_b_in_update;
 
     void StartMenu(CUIDialogWnd* pDialog, bool bDoHideIndicators);

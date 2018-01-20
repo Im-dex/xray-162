@@ -17,8 +17,8 @@ struct CLightR_Vertex {
 
 class CLightR_Manager {
     xrXRC xrc;
-    xr_vector<light*> selected_point;
-    xr_vector<light*> selected_spot;
+    std::vector<light*> selected_point;
+    std::vector<light*> selected_spot;
 
 public:
     CLightR_Manager();

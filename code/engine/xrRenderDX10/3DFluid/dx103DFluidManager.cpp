@@ -735,7 +735,7 @@ void dx103DFluidManager::UpdateObstacles(const dx103DFluidData& FluidData, float
 
 //	Allow real-time config reload
 #ifdef DEBUG
-void dx103DFluidManager::RegisterFluidData(dx103DFluidData* pData, const xr_string& SectionName) {
+void dx103DFluidManager::RegisterFluidData(dx103DFluidData* pData, const std::string& SectionName) {
     int iDataNum = m_lstFluidData.size();
 
     int i;
@@ -764,8 +764,8 @@ void dx103DFluidManager::DeregisterFluidData(dx103DFluidData* pData) {
     }
 
     if (i != iDataNum) {
-        xr_vector<xr_string>::iterator it1 = m_lstSectionNames.begin();
-        xr_vector<dx103DFluidData*>::iterator it2 = m_lstFluidData.begin();
+        std::vector<std::string>::iterator it1 = m_lstSectionNames.begin();
+        std::vector<dx103DFluidData*>::iterator it2 = m_lstFluidData.begin();
         // it1.advance(i);
         it1 += i;
         it2 += i;

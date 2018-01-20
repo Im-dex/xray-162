@@ -12,13 +12,13 @@
 
 template <typename _key_type, typename _data_type,
           typename _compare_predicate_type = std::less<_key_type>>
-class associative_vector : protected xr_vector<std::pair<_key_type, _data_type>>,
+class associative_vector : protected std::vector<std::pair<_key_type, _data_type>>,
                            protected associative_vector_compare_predicate<_key_type, _data_type,
                                                                           _compare_predicate_type> {
 private:
     typedef associative_vector<_key_type, _data_type, _compare_predicate_type> self_type;
 
-    typedef xr_vector<std::pair<_key_type, _data_type>> inherited;
+    typedef std::vector<std::pair<_key_type, _data_type>> inherited;
 
 public:
     typedef associative_vector_compare_predicate<_key_type, _data_type, _compare_predicate_type>

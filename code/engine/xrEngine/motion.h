@@ -41,7 +41,7 @@ struct st_BoneMotion {
     void SetName(LPCSTR nm) { name = nm; }
 };
 // vector по костям
-using BoneMotionVec = xr_vector<st_BoneMotion>;
+using BoneMotionVec = std::vector<st_BoneMotion>;
 
 //--------------------------------------------------------------------------
 class ENGINE_API CCustomMotion {
@@ -152,7 +152,7 @@ public:
     float fPower;
     Flags8 m_Flags;
 
-    xr_vector<motion_marks> marks;
+    std::vector<motion_marks> marks;
 
     void Clear();
 

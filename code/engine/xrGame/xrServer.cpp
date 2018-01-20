@@ -118,7 +118,7 @@ void xrServer::client_Destroy(IClient* C) {
 
         DelayedPacket pp;
         pp.SenderID = alife_client->ID;
-        xr_deque<DelayedPacket>::iterator it;
+        std::deque<DelayedPacket>::iterator it;
         do {
             it = std::find(m_aDelayedPackets.begin(), m_aDelayedPackets.end(), pp);
             if (it != m_aDelayedPackets.end()) {
@@ -304,7 +304,7 @@ void xrServer::SendUpdatesToAll() {
     }
 }
 
-xr_vector<shared_str> _tmp_log;
+std::vector<shared_str> _tmp_log;
 void console_log_cb(LPCSTR text) { _tmp_log.push_back(text); }
 
 u32 xrServer::OnDelayedMessage(
@@ -746,8 +746,8 @@ void xrServer::verify_entity(const CSE_Abstract* entity) const {
                 (*J).second->name_replace());
     }
 
-    xr_vector<u16>::const_iterator I = entity->children.begin();
-    xr_vector<u16>::const_iterator E = entity->children.end();
+    std::vector<u16>::const_iterator I = entity->children.begin();
+    std::vector<u16>::const_iterator E = entity->children.end();
     for (; I != E; ++I) {
         VERIFY3(*I != 0xffff, "SERVER : Invalid entity children id - 0xffff",
                 entity->name_replace());

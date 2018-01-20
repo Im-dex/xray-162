@@ -35,10 +35,10 @@ void CSE_ALifeMonsterBase::add_online(const bool& update_registries) {
 }
 
 extern void add_offline_impl(CSE_ALifeDynamicObject* object,
-                             const xr_vector<ALife::_OBJECT_ID>& saved_children,
+                             const std::vector<ALife::_OBJECT_ID>& saved_children,
                              const bool& update_registries);
 
-void CSE_ALifeMonsterBase::add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
+void CSE_ALifeMonsterBase::add_offline(const std::vector<ALife::_OBJECT_ID>& saved_children,
                                        const bool& update_registries) {
     add_offline_impl(this, saved_children, update_registries);
     brain().on_switch_offline();

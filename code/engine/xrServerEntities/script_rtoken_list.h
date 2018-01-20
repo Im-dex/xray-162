@@ -12,7 +12,7 @@
 
 class CScriptRTokenList {
 public:
-    typedef xr_vector<shared_str> RTOKEN_LIST;
+    typedef std::vector<shared_str> RTOKEN_LIST;
 
 protected:
     RTOKEN_LIST m_values;

@@ -16,7 +16,7 @@ const execution_globals_reg& exe_gl_reg() { return exe_reg; }
 const globals_globals_reg& gl_gl_reg() { return gl_reg; }
 
 template <typename e>
-static xr_vector<xr_vector<e_net_globals>*>& inter_get_table(enum_table<e>& table) {
+static std::vector<std::vector<e_net_globals>*>& inter_get_table(enum_table<e>& table) {
     return table.gl_table;
 }
 
@@ -24,7 +24,7 @@ template <execution_types ie, e_net_globals ig>
 struct add_global {
 
     add_global() {
-        xr_vector<e_net_globals>& v = *inter_get_table<execution_types>(exe_reg)[ie];
+        std::vector<e_net_globals>& v = *inter_get_table<execution_types>(exe_reg)[ie];
         v.erase(std::find(v.begin(), v.end(), ig));
     }
 };
@@ -33,7 +33,7 @@ template <e_net_globals ie, e_net_globals ig>
 struct global_add_global {
 
     global_add_global() {
-        xr_vector<e_net_globals>& v = *inter_get_table<e_net_globals>(gl_reg)[ie];
+        std::vector<e_net_globals>& v = *inter_get_table<e_net_globals>(gl_reg)[ie];
         v.erase(std::find(v.begin(), v.end(), ig));
     }
 };
@@ -127,7 +127,7 @@ enum_table<e>::enum_table() {
     gl_table.resize(v_type<e>::last, 0);
 
     for (u32 i = v_type<e>::first; v_type<e>::last != i; ++i) {
-        gl_table[i] = new xr_vector<e_net_globals>();
+        gl_table[i] = new std::vector<e_net_globals>();
         for (u32 j = gl_cl_data; gl_last != j; ++j)
             gl_table[i]->push_back(e_net_globals(j));
     }

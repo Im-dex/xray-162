@@ -6,7 +6,7 @@
 class CControlMovementBase : public CControl_ComBase {
     typedef CControl_ComBase inherited;
 
-    using VELOCITY_MAP = xr_map<u32, SVelocityParam>;
+    using VELOCITY_MAP = std::map<u32, SVelocityParam>;
     VELOCITY_MAP m_velocities;
 
     float m_velocity;

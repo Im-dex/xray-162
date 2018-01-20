@@ -209,7 +209,7 @@ static void dbg_draw_state_end(CPhysicsShell* shell) {
 }
 #endif
 
-static xr_vector<anim_bone_fix*> saved_fixes;
+static std::vector<anim_bone_fix*> saved_fixes;
 static void save_fixes(IKinematics* K) {
     VERIFY(K);
     saved_fixes.clear();

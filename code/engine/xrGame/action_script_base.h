@@ -20,8 +20,8 @@ protected:
 public:
     ObjectType* m_object;
 
-    CActionScriptBase(const xr_vector<COperatorCondition>& conditions,
-                      const xr_vector<COperatorCondition>& effects, ObjectType* object = nullptr,
+    CActionScriptBase(const std::vector<COperatorCondition>& conditions,
+                      const std::vector<COperatorCondition>& effects, ObjectType* object = nullptr,
                       LPCSTR action_name = "")
         : inherited(conditions, effects, object ? object->lua_game_object() : nullptr, action_name),
           m_object(object)

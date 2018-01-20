@@ -578,10 +578,10 @@ public:
     bool accessible_vertex_id(u32 level_vertex_id);
     u32 accessible_nearest(const Fvector& position, Fvector& result);
 
-    const xr_vector<MemorySpace::CVisibleObject>& memory_visible_objects() const;
-    const xr_vector<MemorySpace::CSoundObject>& memory_sound_objects() const;
-    const xr_vector<MemorySpace::CHitObject>& memory_hit_objects() const;
-    const xr_vector<MemorySpace::CNotYetVisibleObject>& not_yet_visible_objects() const;
+    const std::vector<MemorySpace::CVisibleObject>& memory_visible_objects() const;
+    const std::vector<MemorySpace::CSoundObject>& memory_sound_objects() const;
+    const std::vector<MemorySpace::CHitObject>& memory_hit_objects() const;
+    const std::vector<MemorySpace::CNotYetVisibleObject>& not_yet_visible_objects() const;
     float visibility_threshold() const;
     void enable_vision(bool value);
     bool vision_enabled() const;

@@ -8,7 +8,7 @@ CPortalTraverser PortalTraverser;
 CPortalTraverser::CPortalTraverser() { i_marker = 0xffffffff; }
 
 #ifdef DEBUG
-xr_vector<IRender_Sector*> dbg_sectors;
+std::vector<IRender_Sector*> dbg_sectors;
 #endif
 
 void CPortalTraverser::traverse(IRender_Sector* start, CFrustum& F, Fvector& vBase, Fmatrix& mXFORM,

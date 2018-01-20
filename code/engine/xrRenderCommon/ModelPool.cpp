@@ -85,7 +85,7 @@ dxRender_Visual* CModelPool::Instance_Duplicate(dxRender_Visual* V) {
     N->Copy(V);
     N->Spawn();
     // inc ref counter
-    for (xr_vector<ModelDef>::iterator I = Models.begin(); I != Models.end(); I++)
+    for (std::vector<ModelDef>::iterator I = Models.begin(); I != Models.end(); I++)
         if (I->model == V) {
             I->refs++;
             break;
@@ -177,8 +177,8 @@ void CModelPool::Destroy() {
     }
 
     // Base/Reference
-    xr_vector<ModelDef>::iterator I = Models.begin();
-    xr_vector<ModelDef>::iterator E = Models.end();
+    std::vector<ModelDef>::iterator I = Models.begin();
+    std::vector<ModelDef>::iterator E = Models.end();
     for (; I != E; I++) {
         I->model->Release();
         xr_delete(I->model);
@@ -204,7 +204,7 @@ CModelPool::~CModelPool() {
 
 dxRender_Visual* CModelPool::Instance_Find(LPCSTR N) {
     dxRender_Visual* Model = 0;
-    xr_vector<ModelDef>::iterator I;
+    std::vector<ModelDef>::iterator I;
     for (I = Models.begin(); I != Models.end(); I++) {
         if (I->name[0] && (0 == xr_strcmp(*I->name, N))) {
             Model = I->model;
@@ -329,8 +329,8 @@ void CModelPool::Discard(dxRender_Visual*& V, BOOL b_complete) {
 
         // Base
         const shared_str& name = it->second;
-        xr_vector<ModelDef>::iterator I = Models.begin();
-        xr_vector<ModelDef>::iterator I_e = Models.end();
+        std::vector<ModelDef>::iterator I = Models.begin();
+        std::vector<ModelDef>::iterator I_e = Models.end();
 
         for (; I != I_e; ++I) {
             if (I->name == name) {
@@ -403,7 +403,7 @@ void CModelPool::dump() {
     Log("--- model pool --- begin:");
     u32 sz = 0;
     u32 k = 0;
-    for (xr_vector<ModelDef>::iterator I = Models.begin(); I != Models.end(); I++) {
+    for (std::vector<ModelDef>::iterator I = Models.begin(); I != Models.end(); I++) {
         CKinematics* K = PCKinematics(I->model);
         if (K) {
             u32 cur = K->mem_usage(false);
@@ -439,8 +439,8 @@ void CModelPool::memory_stats(u32& vb_mem_video, u32& vb_mem_system, u32& ib_mem
     ib_mem_video = 0;
     ib_mem_system = 0;
 
-    xr_vector<ModelDef>::iterator it = Models.begin();
-    xr_vector<ModelDef>::const_iterator en = Models.end();
+    std::vector<ModelDef>::iterator it = Models.begin();
+    std::vector<ModelDef>::const_iterator en = Models.end();
 
     for (; it != en; ++it) {
         dxRender_Visual* ptr = it->model;
@@ -502,7 +502,7 @@ IC bool _IsValidShader(dxRender_Visual* visual, u32 priority, bool strictB2F) {
 void CModelPool::Render(dxRender_Visual* m_pVisual, const Fmatrix& mTransform, int priority,
                         bool strictB2F, float m_fLOD) {
     // render visual
-    xr_vector<dxRender_Visual*>::iterator I, E;
+    std::vector<dxRender_Visual*>::iterator I, E;
     switch (m_pVisual->Type) {
     case MT_SKELETON_ANIM:
     case MT_SKELETON_RIGID: {
@@ -551,9 +551,9 @@ void CModelPool::Render(dxRender_Visual* m_pVisual, const Fmatrix& mTransform, i
             RCache.set_xform_world(mTransform);
             for (PS::CParticleGroup::SItemVecIt i_it = pG->items.begin(); i_it != pG->items.end();
                  i_it++) {
-                xr_vector<dxRender_Visual*> visuals;
+                std::vector<dxRender_Visual*> visuals;
                 i_it->GetVisuals(visuals);
-                for (xr_vector<dxRender_Visual*>::iterator it = visuals.begin();
+                for (std::vector<dxRender_Visual*>::iterator it = visuals.begin();
                      it != visuals.end(); it++)
                     Render(*it, Fidentity, priority, strictB2F, m_fLOD);
             }

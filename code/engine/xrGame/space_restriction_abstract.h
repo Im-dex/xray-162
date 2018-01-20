@@ -10,9 +10,9 @@
 
 class CSpaceRestrictionAbstract {
 protected:
-    xr_vector<u32> m_border;
+    std::vector<u32> m_border;
     bool m_initialized;
-    xr_vector<u32> m_accessible_neighbour_border;
+    std::vector<u32> m_accessible_neighbour_border;
     bool m_accessible_neighbour_border_actual;
 
 private:
@@ -26,12 +26,12 @@ public:
     IC CSpaceRestrictionAbstract();
     virtual ~CSpaceRestrictionAbstract() {}
     virtual void initialize() = 0;
-    IC const xr_vector<u32>& border();
+    IC const std::vector<u32>& border();
     IC bool initialized() const;
 
 public:
     template <typename T>
-    IC const xr_vector<u32>& accessible_neighbour_border(T& restriction, bool out_restriction);
+    IC const std::vector<u32>& accessible_neighbour_border(T& restriction, bool out_restriction);
 
 public:
     virtual shared_str name() const = 0;

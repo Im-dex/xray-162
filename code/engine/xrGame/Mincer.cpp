@@ -74,7 +74,7 @@ void CMincer::AffectThrow(SZoneObjectInfo* O, CPhysicsShellHolder* GO, const Fve
 bool CMincer::BlowoutState() {
     bool ret = inherited::BlowoutState();
 
-    // xr_set<CObject*>::iterator it=m_inZone.begin(),e=m_inZone.end();
+    // std::set<CObject*>::iterator it=m_inZone.begin(),e=m_inZone.end();
     // for(;e!=it;++it)
     //{
     //	CEntityAlive * EA = smart_cast<CEntityAlive *>(*it);

@@ -207,16 +207,16 @@ SThunderboltCollection* manager::thunderbolt_collection(CInifile* pIni, CInifile
 }
 
 SThunderboltCollection*
-manager::thunderbolt_collection(xr_vector<SThunderboltCollection*>& collection,
+manager::thunderbolt_collection(std::vector<SThunderboltCollection*>& collection,
                                 shared_str const& id) {
     return (m_thunderbolts->get_collection(id));
 }
 
-CLensFlareDescriptor* manager::add_flare(xr_vector<CLensFlareDescriptor*>& collection,
+CLensFlareDescriptor* manager::add_flare(std::vector<CLensFlareDescriptor*>& collection,
                                          const std::string& id) {
 #if 0
 //	return						(m_suns->get_flare(id));
-	typedef xr_vector<CLensFlareDescriptor*>	container_type;
+	typedef std::vector<CLensFlareDescriptor*>	container_type;
 	container_type::iterator	i = collection.begin();
 	container_type::iterator	e = collection.end();
 	for ( ; i != e; ++i)

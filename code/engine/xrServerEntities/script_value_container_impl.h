@@ -18,8 +18,8 @@ IC CScriptValueContainer::~CScriptValueContainer() { clear(); }
 IC void CScriptValueContainer::add(CScriptValue* new_value) {
 #ifdef XRSE_FACTORY_EXPORTS
     CScriptValue* value = 0;
-    xr_vector<CScriptValue*>::const_iterator I = m_values.begin();
-    xr_vector<CScriptValue*>::const_iterator E = m_values.end();
+    std::vector<CScriptValue*>::const_iterator I = m_values.begin();
+    std::vector<CScriptValue*>::const_iterator E = m_values.end();
     for (; I != E; ++I)
         if (!xr_strcmp((*I)->name(), new_value->name())) {
             value = *I;
@@ -35,8 +35,8 @@ IC void CScriptValueContainer::add(CScriptValue* new_value) {
 
 IC void CScriptValueContainer::assign() {
 #ifdef XRSE_FACTORY_EXPORTS
-    xr_vector<CScriptValue*>::iterator I = m_values.begin();
-    xr_vector<CScriptValue*>::iterator E = m_values.end();
+    std::vector<CScriptValue*>::iterator I = m_values.begin();
+    std::vector<CScriptValue*>::iterator E = m_values.end();
     for (; I != E; ++I)
         (*I)->assign();
 #endif

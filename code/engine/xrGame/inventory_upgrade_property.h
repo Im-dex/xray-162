@@ -16,7 +16,7 @@ namespace upgrade {
 
 class Property {
 public:
-    typedef xr_vector<shared_str> FunctorParams_type;
+    typedef std::vector<shared_str> FunctorParams_type;
 
 private:
     typedef detail::functor2<LPCSTR> StrFunctor;

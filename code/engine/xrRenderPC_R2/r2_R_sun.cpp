@@ -201,7 +201,7 @@ public:
         Fplane plane;
     };
 
-    xr_vector<sun::ray> view_frustum_rays;
+    std::vector<sun::ray> view_frustum_rays;
     sun::ray view_ray;
     sun::ray light_ray;
     Fvector3 light_cuboid_points[LIGHT_CUBOIDVERTICES_COUNT];
@@ -234,7 +234,7 @@ public:
         }
     }
 
-    void compute_caster_model_fixed(xr_vector<Fplane>& dest, Fvector3& translation, float map_size,
+    void compute_caster_model_fixed(std::vector<Fplane>& dest, Fvector3& translation, float map_size,
                                     bool clip_by_view_near) {
         translation.set(0.f, 0.f, 0.f);
 
@@ -451,7 +451,7 @@ template <bool _debug>
 class DumbConvexVolume {
 public:
     struct _poly {
-        xr_vector<int> points;
+        std::vector<int> points;
         Fvector3 planeN;
         float planeD;
         float classify(Fvector3& p) { return planeN.dotproduct(p) + planeD; }
@@ -467,9 +467,9 @@ public:
     };
 
 public:
-    xr_vector<Fvector3> points;
-    xr_vector<_poly> polys;
-    xr_vector<_edge> edges;
+    std::vector<Fvector3> points;
+    std::vector<_poly> polys;
+    std::vector<_edge> edges;
 
 public:
     void compute_planes() {
@@ -500,7 +500,7 @@ public:
         }
     }
 
-    void compute_caster_model(xr_vector<Fplane>& dest, Fvector3 direction) {
+    void compute_caster_model(std::vector<Fplane>& dest, Fvector3 direction) {
         CRenderTarget& T = *RImplementation.Target;
 
         // COG
@@ -526,7 +526,7 @@ public:
             int marker = (base.planeN.dotproduct(direction) <= 0) ? -1 : 1;
 
             // register edges
-            xr_vector<int>& plist = polys[it].points;
+            std::vector<int>& plist = polys[it].points;
             for (int p = 0; p < int(plist.size()); p++) {
                 _edge E(plist[p], plist[(p + 1) % plist.size()], marker);
                 bool found = false;
@@ -613,7 +613,7 @@ Fvector3 wform(Fmatrix& m, Fvector3 const& v) {
 const float _eps = 0.000001f;
 struct DumbClipper {
     CFrustum frustum;
-    xr_vector<D3DXPLANE> planes;
+    std::vector<D3DXPLANE> planes;
     BOOL clip(D3DXVECTOR3& p0, D3DXVECTOR3& p1) // returns TRUE if result meaningfull
     {
         float denum;
@@ -646,7 +646,7 @@ struct DumbClipper {
         return D3DXVECTOR3((i & 1) ? bb.min.x : bb.max.x, (i & 2) ? bb.min.y : bb.max.y,
                            (i & 4) ? bb.min.z : bb.max.z);
     }
-    Fbox clipped_AABB(xr_vector<Fbox, render_alloc<Fbox3>>& src, Fmatrix& xf) {
+    Fbox clipped_AABB(std::vector<Fbox, render_alloc<Fbox3>>& src, Fmatrix& xf) {
         Fbox3 result;
         result.invalidate();
         for (int it = 0; it < int(src.size()); it++) {
@@ -694,7 +694,7 @@ inline const _Tp& max(const _Tp& __a, const _Tp& __b) {
     return __a < __b ? __b : __a;
 }
 
-xr_vector<Fbox, render_alloc<Fbox>> s_casters;
+std::vector<Fbox, render_alloc<Fbox>> s_casters;
 
 D3DXVECTOR2 BuildTSMProjectionMatrix_caster_depth_bounds(D3DXMATRIX& lightSpaceBasis) {
     float min_z = 1e32f, max_z = -1e32f;
@@ -733,7 +733,7 @@ void CRender::render_sun() {
     // Compute volume(s) - something like a frustum for infinite directional light
     // Also compute virtual light position and sector it is inside
     CFrustum cull_frustum;
-    xr_vector<Fplane> cull_planes;
+    std::vector<Fplane> cull_planes;
     Fvector3 cull_COP;
     CSector* cull_sector;
     Fmatrix cull_xform;
@@ -821,7 +821,7 @@ void CRender::render_sun() {
     }
 
     // Fill the database
-    xr_vector<Fbox3, render_alloc<Fbox3>>& s_receivers = main_coarse_structure;
+    std::vector<Fbox3, render_alloc<Fbox3>>& s_receivers = main_coarse_structure;
     s_casters.reserve(s_receivers.size());
     set_Recorder(&s_casters);
     r_dsgraph_render_subspace(cull_sector, &cull_frustum, cull_xform, cull_COP, TRUE);
@@ -1202,7 +1202,7 @@ void CRender::render_sun_near() {
     // Compute volume(s) - something like a frustum for infinite directional light
     // Also compute virtual light position and sector it is inside
     CFrustum cull_frustum;
-    xr_vector<Fplane> cull_planes;
+    std::vector<Fplane> cull_planes;
     Fvector3 cull_COP;
     CSector* cull_sector;
     Fmatrix cull_xform;
@@ -1474,7 +1474,7 @@ void CRender::render_sun_cascade(u32 cascade_ind) {
     // Compute volume(s) - something like a frustum for infinite directional light
     // Also compute virtual light position and sector it is inside
     CFrustum cull_frustum;
-    xr_vector<Fplane> cull_planes;
+    std::vector<Fplane> cull_planes;
     Fvector3 cull_COP;
     CSector* cull_sector;
     Fmatrix cull_xform;

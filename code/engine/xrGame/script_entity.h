@@ -36,7 +36,7 @@ public:
     };
 
 protected:
-    typedef xr_deque<CScriptEntityAction*> ACTIONS;
+    typedef std::deque<CScriptEntityAction*> ACTIONS;
 
 private:
     CGameObject* m_object;
@@ -58,7 +58,7 @@ public:
 
 protected:
     ref_sound* m_current_sound;
-    xr_vector<CSavedSound> m_saved_sounds;
+    std::vector<CSavedSound> m_saved_sounds;
 
 public:
     CScriptEntity();

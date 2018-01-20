@@ -287,7 +287,7 @@ void SDrawStaticStruct::Update() {
 CMapListHelper gMapListHelper;
 xr_token game_types[];
 
-void CMapListHelper::LoadMapInfo(LPCSTR map_cfg_fn, const xr_string& map_name, LPCSTR map_ver) {
+void CMapListHelper::LoadMapInfo(LPCSTR map_cfg_fn, const std::string& map_name, LPCSTR map_ver) {
     CInifile ini(map_cfg_fn);
 
     shared_str _map_name = map_name.substr(0, map_name.find('\\')).c_str();
@@ -364,7 +364,7 @@ void CMapListHelper::Load() {
     // scan all not laoded archieves
     LPCSTR tmp_entrypoint = "temporary_gamedata\\";
     FS_Path* game_levels = FS.get_path("$game_levels$");
-    xr_string prev_root = game_levels->m_Root;
+    std::string prev_root = game_levels->m_Root;
     game_levels->_set_root(tmp_entrypoint);
 
     auto it = FS.m_archives.begin();

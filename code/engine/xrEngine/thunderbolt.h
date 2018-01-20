@@ -58,7 +58,7 @@ public:
 #undef INGAME_EDITOR_VIRTUAL
 
 struct SThunderboltCollection {
-    using DescVec = xr_vector<SThunderboltDesc*>;
+    using DescVec = std::vector<SThunderboltDesc*>;
     DescVec palette;
     std::string section;
 
@@ -78,7 +78,7 @@ class ENGINE_API CEffect_Thunderbolt {
     friend class dxThunderboltRender;
 
 protected:
-    using CollectionVec = xr_vector<SThunderboltCollection*>;
+    using CollectionVec = std::vector<SThunderboltCollection*>;
     CollectionVec collection;
     SThunderboltDesc* current;
 

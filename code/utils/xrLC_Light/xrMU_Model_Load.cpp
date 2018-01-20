@@ -10,13 +10,13 @@ void xrMU_Model::Load(IReader& F, u32 version) {
     F.r_stringZ(m_name);
 
     // READ: vertices
-    xr_vector<b_vertex> b_vertices;
+    std::vector<b_vertex> b_vertices;
     b_vertices.resize(F.r_u32());
     m_vertices.reserve(b_vertices.size());
     F.r(&*b_vertices.begin(), (u32)b_vertices.size() * sizeof(b_vertex));
 
     // READ: faces
-    xr_vector<b_face> b_faces;
+    std::vector<b_face> b_faces;
     b_faces.resize(F.r_u32());
     m_faces.reserve(b_faces.size());
     F.r(&*b_faces.begin(), (u32)b_faces.size() * sizeof(b_face));
@@ -24,7 +24,7 @@ void xrMU_Model::Load(IReader& F, u32 version) {
     // READ: lod-ID
     F.r(&m_lod_ID, 2);
 
-    xr_vector<u32> sm_groups;
+    std::vector<u32> sm_groups;
     sm_groups.resize(b_faces.size());
     R_ASSERT(version > 17);
     F.r(&*sm_groups.begin(), (u32)sm_groups.size() * sizeof(u32));

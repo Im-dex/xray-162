@@ -18,9 +18,9 @@ struct CHitObject;
 
 class CDangerManager {
 public:
-    typedef xr_vector<CDangerObject> OBJECTS;
+    typedef std::vector<CDangerObject> OBJECTS;
     typedef OBJECTS DANGERS;
-    typedef xr_vector<ALife::_OBJECT_ID> IGNORED;
+    typedef std::vector<ALife::_OBJECT_ID> IGNORED;
 
 public:
     typedef MemorySpace::CVisibleObject CVisibleObject;

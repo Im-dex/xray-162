@@ -99,7 +99,7 @@ public: //	Public class members (must be encapsulated furthur)
 private:
     ID3DBaseTexture* pSurface;
     // Sequence data
-    xr_vector<ID3DBaseTexture*> seqDATA;
+    std::vector<ID3DBaseTexture*> seqDATA;
 
     // Description
     ID3DBaseTexture* desc_cache;
@@ -108,7 +108,7 @@ private:
 #if defined(USE_DX10) || defined(USE_DX11)
     ID3DShaderResourceView* m_pSRView;
     // Sequence view data
-    xr_vector<ID3DShaderResourceView*> m_seqSRView;
+    std::vector<ID3DShaderResourceView*> m_seqSRView;
 #endif //	USE_DX10
 };
 struct resptrcode_texture : public resptr_base<CTexture> {

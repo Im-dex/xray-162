@@ -94,7 +94,7 @@ struct CComparer {
     }
 
     template <typename T1, typename T2>
-    IC static bool compare(const xr_stack<T1, T2>& _1, const xr_stack<T1, T2>& _2, const P& p) {
+    IC static bool compare(const std::stack<T1, T2>& _1, const std::stack<T1, T2>& _2, const P& p) {
         return (compare(_1, _2, p, true));
     }
 

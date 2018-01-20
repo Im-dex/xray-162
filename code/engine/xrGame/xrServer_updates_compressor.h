@@ -33,7 +33,7 @@ public:
     server_updates_compressor();
     ~server_updates_compressor();
 
-    typedef xr_vector<NET_Packet*> send_ready_updates_t;
+    typedef std::vector<NET_Packet*> send_ready_updates_t;
 
     void begin_updates();
     void write_update_for(u16 const enity, NET_Packet& update);

@@ -300,7 +300,7 @@ BOOL CSE_Abstract::Spawn_Read(NET_Packet& tNetPacket) {
 
         if (m_wVersion > 83) {
             tNetPacket.r_u32(); // m_spawn_flags.assign(tNetPacket.r_u32());
-            xr_string temp;
+            std::string temp;
             tNetPacket.r_stringZ(temp); // tNetPacket.r_stringZ(m_spawn_control);
             tNetPacket.r_u32();         // m_max_spawn_count);
             // this stuff we do not need even in case of uncomment

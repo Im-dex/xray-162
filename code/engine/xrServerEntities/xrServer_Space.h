@@ -65,11 +65,11 @@ struct SRotation {
 
 enum EPOType { epotBox, epotFixedChain, epotFreeChain, epotSkeleton };
 
-using DWORD_VECTOR = xr_vector<u32>;
-using BOOL_VECTOR = xr_vector<bool>;
-using FLOAT_VECTOR = xr_vector<float>;
-using LPSTR_VECTOR = xr_vector<LPSTR>;
-using FVECTOR_VECTOR = xr_vector<Fvector>;
+using DWORD_VECTOR = std::vector<u32>;
+using BOOL_VECTOR = std::vector<bool>;
+using FLOAT_VECTOR = std::vector<float>;
+using LPSTR_VECTOR = std::vector<LPSTR>;
+using FVECTOR_VECTOR = std::vector<Fvector>;
 
 #ifdef XRGAME_EXPORTS
 #define DECLARE_ENTITY_DESTROY

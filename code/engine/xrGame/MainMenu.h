@@ -51,7 +51,7 @@ class CMainMenu : public IMainMenu,
     u32 m_screenshotFrame;
     void ReadTextureInfo();
 
-    xr_vector<CUIWindow*> m_pp_draw_wnds;
+    std::vector<CUIWindow*> m_pp_draw_wnds;
 
     demo_info_loader* m_demo_info_loader;
 
@@ -88,7 +88,7 @@ protected:
     shared_str m_player_name;
     shared_str m_cdkey;
 
-    xr_vector<CUIMessageBoxEx*> m_pMB_ErrDlgs;
+    std::vector<CUIMessageBoxEx*> m_pMB_ErrDlgs;
     bool ReloadUI();
 
 public:

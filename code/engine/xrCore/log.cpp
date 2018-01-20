@@ -12,7 +12,7 @@ static string_path log_file_name = "engine.log";
 static BOOL no_log = TRUE;
 static std::recursive_mutex logCS;
 
-xr_vector<std::string>* LogFile = nullptr;
+std::vector<std::string>* LogFile = nullptr;
 static LogCallback LogCB = nullptr;
 
 void FlushLog() {
@@ -153,7 +153,7 @@ LPCSTR log_name() { return (log_file_name); }
 
 void InitLog() {
     R_ASSERT(LogFile == NULL);
-    LogFile = new xr_vector<std::string>();
+    LogFile = new std::vector<std::string>();
     LogFile->reserve(1000);
 }
 

@@ -238,7 +238,7 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
     // Iterate
     for (u32 O = 0; O < objects.size(); O++) {
         CDetail& Object = *objects[O];
-        xr_vector<SlotItemVec*>& vis = list[O];
+        std::vector<SlotItemVec*>& vis = list[O];
         if (!vis.empty()) {
             // Setup matrices + colors (and flush it as nesessary)
             RCache.set_Element(Object.shader->E[lod_id]);
@@ -248,8 +248,8 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
 
             u32 dwBatch = 0;
 
-            xr_vector<SlotItemVec*>::iterator _vI = vis.begin();
-            xr_vector<SlotItemVec*>::iterator _vE = vis.end();
+            std::vector<SlotItemVec*>::iterator _vI = vis.begin();
+            std::vector<SlotItemVec*>::iterator _vE = vis.end();
             for (; _vI != _vE; _vI++) {
                 SlotItemVec* items = *_vI;
                 auto _iI = items->begin();

@@ -19,7 +19,7 @@ protected:
     const _Graph* m_graph;
     u32 m_last_query_time;
     u32 m_query_interval;
-    xr_vector<_vertex_id_type>* m_path;
+    std::vector<_vertex_id_type>* m_path;
     _vertex_id_type* dest_vertex_id;
     CRestrictedObject* m_restricted_object;
 
@@ -44,7 +44,7 @@ public:
     IC bool used() const;
     IC void select_location(const _vertex_id_type start_vertex_id, bool path_completed);
     // При поиске ноды сохранить найденный _кратчайший_ путь и найденную ноду
-    IC void set_dest_path(xr_vector<_vertex_id_type>& path);
+    IC void set_dest_path(std::vector<_vertex_id_type>& path);
     IC void set_dest_vertex(_vertex_id_type& vertex_id);
 };
 

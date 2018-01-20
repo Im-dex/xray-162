@@ -104,7 +104,7 @@ BOOL OGF::dbg_SphereContainsVertex(Fvector& c, float R) {
     return FALSE;
 }
 
-void OGF::adjacent_select(xr_vector<u32>& dest, xr_vector<bool>& vmark, xr_vector<bool>& fmark) {
+void OGF::adjacent_select(std::vector<u32>& dest, std::vector<bool>& vmark, std::vector<bool>& fmark) {
     // 0. Search for the group
     for (u32 fit = 0; fit < data.faces.size(); fit++) {
         OGF_Face& F = data.faces[fit];
@@ -214,8 +214,8 @@ void OGF::Optimize() {
 
     // Build p-rep
     /*
-    typedef xr_vector<u32>	flist	;
-    xr_vector<flist>		prep	;	prep.resize(vertices.size());
+    typedef std::vector<u32>	flist	;
+    std::vector<flist>		prep	;	prep.resize(vertices.size());
     for (u32 fit=0; fit<faces.size(); fit++)	{
             OGF_Face&	F		= faces	[fit];
             prep[F.v[0]].push_back		(fit);
@@ -225,14 +225,14 @@ void OGF::Optimize() {
     */
 
     // Optimize texture coordinates
-    xr_vector<bool> vmarker;
+    std::vector<bool> vmarker;
     vmarker.assign(data.vertices.size(), false);
-    xr_vector<bool> fmarker;
+    std::vector<bool> fmarker;
     fmarker.assign(data.faces.size(), false);
 
     for (;;) {
         // 0. Search for the group
-        xr_vector<u32> selection;
+        std::vector<u32> selection;
         for (;;) {
             u32 _old = selection.size();
             adjacent_select(selection, vmarker, fmarker);

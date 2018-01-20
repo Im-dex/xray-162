@@ -12,7 +12,7 @@ class CScriptThread;
 
 class CScriptProcess {
 public:
-    typedef xr_vector<CScriptThread*> SCRIPT_REGISTRY;
+    typedef std::vector<CScriptThread*> SCRIPT_REGISTRY;
 
 private:
     struct CScriptToRun {
@@ -36,7 +36,7 @@ private:
     };
 
 public:
-    typedef xr_vector<CScriptToRun> SCRIPTS_TO_RUN;
+    typedef std::vector<CScriptToRun> SCRIPTS_TO_RUN;
 
 protected:
     SCRIPT_REGISTRY m_scripts;

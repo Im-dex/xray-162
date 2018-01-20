@@ -117,7 +117,7 @@ void CDetail::Load(IReader* S) {
 #include "xrstripify.h"
 
 void CDetail::Optimize() {
-    xr_vector<u16> vec_indices, vec_permute;
+    std::vector<u16> vec_indices, vec_permute;
     const int cache = HW.Caps.geometry.dwVertexCache;
 
     // Stripify
@@ -134,7 +134,7 @@ void CDetail::Optimize() {
         std::memcpy(indices, &*vec_indices.begin(), vec_indices.size() * sizeof(u16));
 
         // Permute vertices
-        xr_vector<fvfVertexIn> verts;
+        std::vector<fvfVertexIn> verts;
         verts.assign(vertices, vertices + number_vertices);
         for (u32 i = 0; i < verts.size(); i++)
             vertices[i] = verts[vec_permute[i]];

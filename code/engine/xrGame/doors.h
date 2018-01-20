@@ -10,7 +10,7 @@
 namespace doors {
 
 class door;
-typedef xr_vector<door*> doors_type;
+typedef std::vector<door*> doors_type;
 
 enum door_state {
     door_state_open,

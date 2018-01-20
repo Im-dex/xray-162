@@ -177,7 +177,7 @@ protected:
     bool m_turning;
 
     // FSM
-    xr_stack<ERatStates> m_tStateStack;
+    std::stack<ERatStates> m_tStateStack;
     ERatStates m_eCurrentState;
     ERatStates m_ePreviousState;
     bool m_bStopThinking;

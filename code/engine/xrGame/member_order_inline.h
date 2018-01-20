@@ -28,7 +28,7 @@ IC float CMemberOrder::probability() const { return (m_probability); }
 
 IC void CMemberOrder::probability(float probability) { m_probability = probability; }
 
-IC xr_vector<u32>& CMemberOrder::enemies() { return (m_enemies); }
+IC std::vector<u32>& CMemberOrder::enemies() { return (m_enemies); }
 
 IC bool CMemberOrder::processed() const { return (m_processed); }
 

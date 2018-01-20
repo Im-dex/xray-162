@@ -30,8 +30,8 @@
 #include "UIMainIngameWnd.h"
 
 bool CUIActorMenu::AllowItemDrops(EDDListType from, EDDListType to) {
-    xr_vector<EDDListType>& v = m_allowed_drops[to];
-    xr_vector<EDDListType>::iterator it = std::find(v.begin(), v.end(), from);
+    std::vector<EDDListType>& v = m_allowed_drops[to];
+    std::vector<EDDListType>::iterator it = std::find(v.begin(), v.end(), from);
 
     return (it != v.end());
 }

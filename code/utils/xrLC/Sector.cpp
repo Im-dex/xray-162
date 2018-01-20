@@ -142,7 +142,7 @@ void CSector::Validate() {
 
 void CSector::Save(IWriter& fs) {
     // Root
-    xr_vector<OGF_Base*>::iterator F = std::find(g_tree.begin(), g_tree.end(), TreeRoot);
+    std::vector<OGF_Base*>::iterator F = std::find(g_tree.begin(), g_tree.end(), TreeRoot);
     R_ASSERT(F != g_tree.end());
     u32 ID = u32(F - g_tree.begin());
     fs.w_chunk(fsP_Root, &ID, sizeof(u32));

@@ -82,7 +82,7 @@ public:
 public:
     virtual bool can_kill() const;
     virtual CInventoryItem* can_kill(CInventory* inventory) const;
-    virtual const CInventoryItem* can_kill(const xr_vector<const CGameObject*>& items) const;
+    virtual const CInventoryItem* can_kill(const std::vector<const CGameObject*>& items) const;
     virtual bool ready_to_kill() const;
     virtual bool NeedToDestroyObject() const;
     virtual ALife::_TIME_ID TimePassedAfterIndependant() const;
@@ -440,7 +440,7 @@ protected:
     virtual bool IsNecessaryItem(const shared_str& item_sect);
 
 public:
-    xr_vector<shared_str> m_ammoTypes;
+    std::vector<shared_str> m_ammoTypes;
     /*
             struct SScopes
             {
@@ -454,7 +454,7 @@ public:
             u8						cur_scope;
     */
 
-    using SCOPES_VECTOR = xr_vector<shared_str>;
+    using SCOPES_VECTOR = std::vector<shared_str>;
     SCOPES_VECTOR m_scopes;
     u8 m_cur_scope;
 
@@ -465,7 +465,7 @@ public:
     u8 m_u8TracerColorID;
     u8 m_set_next_ammoType_on_reload;
     // Multitype ammo support
-    xr_vector<CCartridge> m_magazine;
+    std::vector<CCartridge> m_magazine;
     CCartridge m_DefaultCartridge;
     float m_fCurrentCartirdgeDisp;
 

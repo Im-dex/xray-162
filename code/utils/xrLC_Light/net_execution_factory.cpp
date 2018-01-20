@@ -19,7 +19,7 @@ factory::~factory() { clear(); }
 //	}
 //};
 
-// xr_vector< factory::type_reg >::iterator factory::find_type(  u32 id  )
+// std::vector< factory::type_reg >::iterator factory::find_type(  u32 id  )
 //{
 //	return  std::find_if( vec_types.begin(), vec_types.end(), sfind_type( id )  );
 //}
@@ -33,7 +33,7 @@ void lc_net::factory::register_type(base_execution_type_creator* creator) {
 }
 
 net_execution* factory::create(u32 type_id, u32 _net_id) {
-    // xr_vector< factory::type_reg >::iterator i= find_type(type_id);
+    // std::vector< factory::type_reg >::iterator i= find_type(type_id);
     // R_ASSERT2( vec_types.end() != i,"type has not regestred!" );
     // VERIFY((*i));
     R_ASSERT(type_id < et_last);
@@ -55,7 +55,7 @@ void factory::destroy_in_pool(net_execution*& e) {
 }
 
 void factory::clear() {
-    xr_vector<factory::type_reg>::iterator i = vec_types.begin(), e = vec_types.end();
+    std::vector<factory::type_reg>::iterator i = vec_types.begin(), e = vec_types.end();
     for (; e != i; ++i)
         xr_delete((*i));
     vec_types.clear();

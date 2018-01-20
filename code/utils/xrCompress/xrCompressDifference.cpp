@@ -99,11 +99,11 @@ int ProcessDifference() {
     CLocatorAPI* FS_new = NULL;
     CLocatorAPI* FS_old = NULL;
 
-    xr_vector<char*>* file_list_old = NULL;
-    xr_vector<char*>* folder_list_old = NULL;
+    std::vector<char*>* file_list_old = NULL;
+    std::vector<char*>* folder_list_old = NULL;
 
-    xr_vector<char*>* file_list_new = NULL;
-    xr_vector<char*>* folder_list_new = NULL;
+    std::vector<char*>* file_list_new = NULL;
+    std::vector<char*>* folder_list_new = NULL;
 
     sscanf(strstr(params, "-diff ") + 6, "%[^ ] ", new_folder);
     sscanf(strstr(params, "-diff ") + 6 + xr_strlen(new_folder) + 1, "%[^ ] ", old_folder);
@@ -132,12 +132,12 @@ int ProcessDifference() {
     file_list_old = FS_old->file_list_open("$target_folder$", FS_ListFiles);
     folder_list_old = FS_old->file_list_open("$target_folder$", FS_ListFolders);
 
-    xr_vector<LPCSTR> target_file_list;
+    std::vector<LPCSTR> target_file_list;
     target_file_list.reserve(file_list_new->size());
 
     for (u32 i = 0; i < file_list_new->size(); ++i) {
         file_comparer fc(file_list_new->at(i), FS_new, FS_old, _flags);
-        xr_vector<char*>::iterator it =
+        std::vector<char*>::iterator it =
             std::find_if(file_list_old->begin(), file_list_old->end(), fc);
         if (it != file_list_old->end()) {
             printf("skip file %s\n", file_list_new->at(i));

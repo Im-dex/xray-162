@@ -14,7 +14,7 @@ class CPathManagerGeneric {
 protected:
     const _Graph* graph;
     _DataStorage* data_storage;
-    xr_vector<_index_type>* path;
+    std::vector<_index_type>* path;
     _index_type start_node_index;
     _index_type goal_node_index;
     _dist_type max_range;
@@ -28,7 +28,7 @@ public:
     CPathManagerGeneric();
     virtual ~CPathManagerGeneric();
     IC void init();
-    IC void setup(const _Graph* graph, _DataStorage* _data_storage, xr_vector<_index_type>* _path,
+    IC void setup(const _Graph* graph, _DataStorage* _data_storage, std::vector<_index_type>* _path,
                   const _index_type& _start_node_index, const _index_type& _goal_node_index,
                   const _Parameters& params);
     IC _dist_type evaluate(const _index_type& node_index1, const _index_type& node_index2,

@@ -5,7 +5,7 @@
 #include "NV_Library\VertexCache.h"
 #include <d3dx9.h>
 
-int xrSimulate(xr_vector<u16>& indices, int iCacheSize) {
+int xrSimulate(std::vector<u16>& indices, int iCacheSize) {
     VertexCache C(iCacheSize);
 
     int count = 0;
@@ -19,14 +19,14 @@ int xrSimulate(xr_vector<u16>& indices, int iCacheSize) {
     return count;
 }
 
-void xrStripify(xr_vector<u16>& indices, xr_vector<u16>& perturb, int iCacheSize,
+void xrStripify(std::vector<u16>& indices, std::vector<u16>& perturb, int iCacheSize,
                 int iMinStripLength) {
     SetCacheSize(iCacheSize);
     SetMinStripSize(iMinStripLength);
     SetListsOnly(true);
 
     // Generate strips
-    xr_vector<PrimitiveGroup> PGROUP;
+    std::vector<PrimitiveGroup> PGROUP;
     GenerateStrips(&*indices.begin(), (u32)indices.size(), PGROUP);
     R_ASSERT(PGROUP.size() == 1);
     R_ASSERT(PGROUP[0].type == PT_LIST);
@@ -34,7 +34,7 @@ void xrStripify(xr_vector<u16>& indices, xr_vector<u16>& perturb, int iCacheSize
         throw "Stripify failed.";
 
     // Remap indices
-    xr_vector<PrimitiveGroup> xPGROUP;
+    std::vector<PrimitiveGroup> xPGROUP;
     RemapIndices(PGROUP, u16(perturb.size()), xPGROUP);
     R_ASSERT(xPGROUP.size() == 1);
     R_ASSERT(xPGROUP[0].type == PT_LIST);
@@ -64,7 +64,7 @@ void OGF::Stripify() {
     if (fast_path_data.vertices.size() && fast_path_data.faces.size())
     /*
 try {
-    xr_vector<u16>	indices,permute;
+    std::vector<u16>	indices,permute;
 
     // Stripify
     u16* F			= (u16*)&*x_faces.begin();
@@ -116,7 +116,7 @@ try {
 
     // normal verts
     try {
-        xr_vector<u16> indices, permute;
+        std::vector<u16> indices, permute;
 
         // Stripify
         u16* F = (u16*)&*data.faces.begin();

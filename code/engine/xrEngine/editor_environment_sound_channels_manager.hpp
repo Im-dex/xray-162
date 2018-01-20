@@ -34,8 +34,8 @@ public:
     shared_str unique_id(shared_str const& id) const;
 
 public:
-    typedef xr_vector<channel*> channel_container_type;
-    typedef xr_vector<LPSTR> channels_ids_type;
+    typedef std::vector<channel*> channel_container_type;
+    typedef std::vector<LPSTR> channels_ids_type;
 
 public:
     channels_ids_type const& channels_ids() const;

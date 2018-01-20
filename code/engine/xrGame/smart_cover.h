@@ -18,7 +18,7 @@ class storage;
 
 struct loophole_data {
     typedef std::pair<shared_str, u32> Action;
-    typedef xr_vector<Action> ActionVertices;
+    typedef std::vector<Action> ActionVertices;
 
     ActionVertices m_action_vertices;
     u32 m_level_vertex_id;
@@ -28,7 +28,7 @@ class cover final : public CCoverPoint {
 public:
     typedef intrusive_ptr<smart_cover::description, detail::intrusive_base_time> DescriptionPtr;
     typedef std::pair<loophole const*, loophole_data> Vertex;
-    typedef xr_vector<Vertex> Vertices;
+    typedef std::vector<Vertex> Vertices;
     typedef description::Loopholes Loopholes;
 
 private:

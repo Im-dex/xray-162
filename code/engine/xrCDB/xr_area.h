@@ -27,13 +27,13 @@ private:
     Fbox m_BoundingVolume;
     xrXRC xrc;                      // MT: dangerous
     collide::rq_results r_temp;     // MT: dangerous
-    xr_vector<ISpatial*> r_spatial; // MT: dangerous
+    std::vector<ISpatial*> r_spatial; // MT: dangerous
 public:
 #ifdef DEBUG
     FactoryPtr<IObjectSpaceRender>* m_pRender;
 // ref_shader							sh_debug;
 // clQueryCollision					q_debug;			// MT:
-// dangerous  xr_vector<std::pair<Fsphere,u32> >	dbg_S;				// MT: dangerous
+// dangerous  std::vector<std::pair<Fsphere,u32> >	dbg_S;				// MT: dangerous
 #endif
 
 private:
@@ -73,12 +73,12 @@ public:
     BOOL RayQuery(collide::rq_results& dest, ICollisionForm* target, const collide::ray_defs& rq);
 
     bool BoxQuery(Fvector const& box_center, Fvector const& box_z_axis, Fvector const& box_y_axis,
-                  Fvector const& box_sizes, xr_vector<Fvector>* out_tris);
+                  Fvector const& box_sizes, std::vector<Fvector>* out_tris);
 
-    int GetNearest(xr_vector<CObject*>& q_nearest, ICollisionForm* obj, float range);
-    int GetNearest(xr_vector<CObject*>& q_nearest, const Fvector& point, float range,
+    int GetNearest(std::vector<CObject*>& q_nearest, ICollisionForm* obj, float range);
+    int GetNearest(std::vector<CObject*>& q_nearest, const Fvector& point, float range,
                    CObject* ignore_object);
-    int GetNearest(xr_vector<ISpatial*>& q_spatial, xr_vector<CObject*>& q_nearest,
+    int GetNearest(std::vector<ISpatial*>& q_spatial, std::vector<CObject*>& q_nearest,
                    const Fvector& point, float range, CObject* ignore_object);
 
     CDB::TRI* GetStaticTris() { return Static.get_tris(); }

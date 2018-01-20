@@ -25,10 +25,10 @@
 CRestrictedObject::~CRestrictedObject() {}
 
 IC void construct_string(LPSTR result, u32 const result_size,
-                         const xr_vector<ALife::_OBJECT_ID>& restrictions) {
+                         const std::vector<ALife::_OBJECT_ID>& restrictions) {
     u32 count = xr_strlen(result) ? _GetItemCount(result) : 0;
-    xr_vector<ALife::_OBJECT_ID>::const_iterator I = restrictions.begin();
-    xr_vector<ALife::_OBJECT_ID>::const_iterator E = restrictions.end();
+    std::vector<ALife::_OBJECT_ID>::const_iterator I = restrictions.begin();
+    std::vector<ALife::_OBJECT_ID>::const_iterator E = restrictions.end();
     for (; I != E; ++I) {
         CSE_ALifeDynamicObject* object = ai().alife().objects().object(*I);
         if (ai().game_graph().vertex(object->m_tGraphID)->level_id() !=
@@ -43,13 +43,13 @@ IC void construct_string(LPSTR result, u32 const result_size,
 }
 
 #if 0
-IC	void construct_id_string					(LPSTR result, const xr_vector<ALife::_OBJECT_ID> &restrictions)
+IC	void construct_id_string					(LPSTR result, const std::vector<ALife::_OBJECT_ID> &restrictions)
 {
 	xr_strcpy			(result,"");
 	string16		temp;
 	u32				count = 0;
-	xr_vector<ALife::_OBJECT_ID>::const_iterator	I = restrictions.begin();
-	xr_vector<ALife::_OBJECT_ID>::const_iterator	E = restrictions.end();
+	std::vector<ALife::_OBJECT_ID>::const_iterator	I = restrictions.begin();
+	std::vector<ALife::_OBJECT_ID>::const_iterator	E = restrictions.end();
 	for ( ; I != E; ++I) {
 		if (count)
 			xr_strcat	(result,",");
@@ -246,11 +246,11 @@ IC void CRestrictedObject::remove_object_restriction(
 template <typename P, bool value>
 IC void CRestrictedObject::construct_restriction_string(
     LPSTR temp_restrictions, u32 const temp_restrictions_size,
-    const xr_vector<ALife::_OBJECT_ID>& restrictions, shared_str current_restrictions, const P& p) {
+    const std::vector<ALife::_OBJECT_ID>& restrictions, shared_str current_restrictions, const P& p) {
     u32 count = 0;
     *temp_restrictions = 0;
-    xr_vector<ALife::_OBJECT_ID>::const_iterator I = restrictions.begin();
-    xr_vector<ALife::_OBJECT_ID>::const_iterator E = restrictions.end();
+    std::vector<ALife::_OBJECT_ID>::const_iterator I = restrictions.begin();
+    std::vector<ALife::_OBJECT_ID>::const_iterator E = restrictions.end();
     for (; I != E; ++I) {
         CObject* object = Level().Objects.net_Find(*I);
         if (!object || !!strstr(*current_restrictions, *object->cName()) == value)
@@ -283,8 +283,8 @@ struct CRestrictionPredicate {
     }
 };
 
-void CRestrictedObject::add_restrictions(const xr_vector<ALife::_OBJECT_ID>& out_restrictions,
-                                         const xr_vector<ALife::_OBJECT_ID>& in_restrictions) {
+void CRestrictedObject::add_restrictions(const std::vector<ALife::_OBJECT_ID>& out_restrictions,
+                                         const std::vector<ALife::_OBJECT_ID>& in_restrictions) {
     if (out_restrictions.empty() && in_restrictions.empty())
         return;
 
@@ -309,8 +309,8 @@ void CRestrictedObject::add_restrictions(const xr_vector<ALife::_OBJECT_ID>& out
     STOP_PROFILE;
 }
 
-void CRestrictedObject::remove_restrictions(const xr_vector<ALife::_OBJECT_ID>& out_restrictions,
-                                            const xr_vector<ALife::_OBJECT_ID>& in_restrictions) {
+void CRestrictedObject::remove_restrictions(const std::vector<ALife::_OBJECT_ID>& out_restrictions,
+                                            const std::vector<ALife::_OBJECT_ID>& in_restrictions) {
     if (out_restrictions.empty() && in_restrictions.empty())
         return;
 

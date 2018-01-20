@@ -1413,7 +1413,7 @@ CInventoryItem* CWeapon::can_kill(CInventory* inventory) const {
         if (!inventory_item)
             continue;
 
-        xr_vector<shared_str>::const_iterator i =
+        std::vector<shared_str>::const_iterator i =
             std::find(m_ammoTypes.begin(), m_ammoTypes.end(), inventory_item->object().cNameSect());
         if (i != m_ammoTypes.end())
             return (inventory_item);
@@ -1422,18 +1422,18 @@ CInventoryItem* CWeapon::can_kill(CInventory* inventory) const {
     return (0);
 }
 
-const CInventoryItem* CWeapon::can_kill(const xr_vector<const CGameObject*>& items) const {
+const CInventoryItem* CWeapon::can_kill(const std::vector<const CGameObject*>& items) const {
     if (m_ammoTypes.empty())
         return (this);
 
-    xr_vector<const CGameObject*>::const_iterator I = items.begin();
-    xr_vector<const CGameObject*>::const_iterator E = items.end();
+    std::vector<const CGameObject*>::const_iterator I = items.begin();
+    std::vector<const CGameObject*>::const_iterator E = items.end();
     for (; I != E; ++I) {
         const CInventoryItem* inventory_item = smart_cast<const CInventoryItem*>(*I);
         if (!inventory_item)
             continue;
 
-        xr_vector<shared_str>::const_iterator i =
+        std::vector<shared_str>::const_iterator i =
             std::find(m_ammoTypes.begin(), m_ammoTypes.end(), inventory_item->object().cNameSect());
         if (i != m_ammoTypes.end())
             return (inventory_item);

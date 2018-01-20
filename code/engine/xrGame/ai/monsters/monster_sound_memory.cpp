@@ -56,7 +56,7 @@ void CMonsterSoundMemory::HearSound(const SoundElem& s) {
         return;
 
     // поиск в массиве звука
-    xr_vector<SoundElem>::iterator it;
+    std::vector<SoundElem>::iterator it;
 
     bool b_sound_replaced = false;
     for (it = Sounds.begin(); Sounds.end() != it; ++it) {
@@ -106,7 +106,7 @@ void CMonsterSoundMemory::GetSound(SoundElem& s, bool& bDangerous) {
 SoundElem& CMonsterSoundMemory::GetSound() {
     VERIFY(!Sounds.empty());
 
-    xr_vector<SoundElem>::iterator it = std::max_element(Sounds.begin(), Sounds.end());
+    std::vector<SoundElem>::iterator it = std::max_element(Sounds.begin(), Sounds.end());
     return (*it);
 }
 
@@ -143,7 +143,7 @@ void CMonsterSoundMemory::UpdateHearing() {
                  Sounds.end());
 
     // пересчитать value
-    for (xr_vector<SoundElem>::iterator I = Sounds.begin(); I != Sounds.end(); ++I)
+    for (std::vector<SoundElem>::iterator I = Sounds.begin(); I != Sounds.end(); ++I)
         I->CalcValue(Device.dwTimeGlobal, monster->Position());
 
     // update help sound

@@ -8,11 +8,11 @@
 
 namespace PS {
 class CPEDef;
-using PEDVec = xr_vector<CPEDef*>;
+using PEDVec = std::vector<CPEDef*>;
 using PEDIt = PEDVec::iterator;
 
 class CPGDef;
-using PGDVec = xr_vector<CPGDef*>;
+using PGDVec = std::vector<CPGDef*>;
 using PGDIt = PGDVec::iterator;
 } // namespace PS
 

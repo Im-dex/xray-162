@@ -74,7 +74,7 @@ typedef struct tagSoundElement {
 
 class CMonsterSoundMemory {
     TTime time_memory; // время хранения звуков
-    xr_vector<SoundElem> Sounds;
+    std::vector<SoundElem> Sounds;
 
     CBaseMonster* monster;
 

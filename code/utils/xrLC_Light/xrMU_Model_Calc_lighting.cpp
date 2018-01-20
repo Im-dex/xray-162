@@ -55,10 +55,10 @@ var _x	= var(x);
 */
 
 //-----------------------------------------------------------------------
-void xrMU_Model::calc_lighting(xr_vector<base_color>& dest, const Fmatrix& xform, CDB::MODEL* MDL,
+void xrMU_Model::calc_lighting(std::vector<base_color>& dest, const Fmatrix& xform, CDB::MODEL* MDL,
                                base_lighting& lights, u32 flags) {
     // trans-map
-    typedef xr_multimap<float, v_vertices> mapVert;
+    typedef std::multimap<float, v_vertices> mapVert;
     typedef mapVert::iterator mapVertIt;
     mapVert g_trans;
     u32 I;

@@ -51,8 +51,8 @@ private:
     HRESULT CreateInputDevice(LPDIRECTINPUTDEVICE8* device, GUID guidDevice,
                               const DIDATAFORMAT* pdidDataFormat, u32 dwFlags, u32 buf_size);
 
-    //	xr_stack<IInputReceiver*>	cbStack;
-    xr_vector<IInputReceiver*> cbStack;
+    //	std::stack<IInputReceiver*>	cbStack;
+    std::vector<IInputReceiver*> cbStack;
 
     void MouseUpdate();
     void KeyUpdate();

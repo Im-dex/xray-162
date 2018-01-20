@@ -66,9 +66,9 @@ protected:
 private:
     void free_mem();
 
-    typedef xr_map<u32, CSState*> SubStates;
+    typedef std::map<u32, CSState*> SubStates;
     SubStates substates;
-    typedef typename xr_map<u32, CSState*>::iterator STATE_MAP_IT;
+    typedef typename std::map<u32, CSState*>::iterator STATE_MAP_IT;
 };
 
 template <typename _Object>

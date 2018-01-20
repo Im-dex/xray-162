@@ -58,7 +58,7 @@ private:
     void xr_stdcall id_setter(LPCSTR value);
 
 public:
-    typedef xr_vector<time*> container_type;
+    typedef std::vector<time*> container_type;
 
 public:
     container_type const& times() const { return m_times; }

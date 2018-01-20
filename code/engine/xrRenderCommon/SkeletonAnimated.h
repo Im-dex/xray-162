@@ -78,7 +78,7 @@ private:
         shared_motions motions;
         BoneMotionsVec bone_motions;
     };
-    using MotionsSlotVec = xr_vector<SMotionsSlot>;
+    using MotionsSlotVec = std::vector<SMotionsSlot>;
     MotionsSlotVec m_Motions;
 
     CPartition* m_Partition;

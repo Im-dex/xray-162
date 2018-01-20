@@ -11,7 +11,7 @@
 #include "xrrender/KinematicsAnimated.h"
 #include "../ai_debug.h"
 
-using ANIM_VECTOR = xr_vector<MotionID>;
+using ANIM_VECTOR = std::vector<MotionID>;
 
 class CAniVector {
 public:
@@ -46,7 +46,7 @@ public:
 template <class TYPE_NAME, LPCSTR caBaseNames[]>
 class CAniCollection {
 public:
-    xr_vector<TYPE_NAME> A;
+    std::vector<TYPE_NAME> A;
 
     IC void Load(IKinematicsAnimated* tpKinematics, LPCSTR caBaseName) {
         A.clear();

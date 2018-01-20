@@ -93,15 +93,15 @@ public:
     bool m_toV1;
 };
 
-typedef xr_vector<NvFaceInfo*> NvFaceInfoVec;
-typedef xr_list<NvFaceInfo*> NvFaceInfoList;
-typedef xr_list<NvFaceInfoVec*> NvStripList;
-typedef xr_vector<NvEdgeInfo*> NvEdgeInfoVec;
+typedef std::vector<NvFaceInfo*> NvFaceInfoVec;
+typedef std::list<NvFaceInfo*> NvFaceInfoList;
+typedef std::list<NvFaceInfoVec*> NvStripList;
+typedef std::vector<NvEdgeInfo*> NvEdgeInfoVec;
 
-typedef xr_vector<u16> WordVec;
-typedef xr_vector<int> IntVec;
-typedef xr_vector<MyVertex> MyVertexVec;
-typedef xr_vector<MyFace> MyFaceVec;
+typedef std::vector<u16> WordVec;
+typedef std::vector<int> IntVec;
+typedef std::vector<MyVertex> MyVertexVec;
+typedef std::vector<MyFace> MyFaceVec;
 
 template <class T>
 inline void SWAP(T& first, T& second) {
@@ -156,7 +156,7 @@ public:
     bool visited;
 };
 
-typedef xr_vector<NvStripInfo*> NvStripInfoVec;
+typedef std::vector<NvStripInfo*> NvStripInfoVec;
 
 // The actual stripifier
 class NvStripifier {
@@ -204,8 +204,8 @@ protected:
 
     bool FindTraversal(NvFaceInfoVec& faceInfos, NvEdgeInfoVec& edgeInfos, NvStripInfo* strip,
                        NvStripStartInfo& startInfo);
-    int CountRemainingTris(xr_list<NvStripInfo*>::iterator iter,
-                           xr_list<NvStripInfo*>::iterator end);
+    int CountRemainingTris(std::list<NvStripInfo*>::iterator iter,
+                           std::list<NvStripInfo*>::iterator end);
 
     void CommitStrips(NvStripInfoVec& allStrips, const NvStripInfoVec& strips);
 

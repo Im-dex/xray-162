@@ -13,7 +13,7 @@
 #include "wallmark_manager.h"
 #include "ParticlesObject.h"
 class IRender_Light;
-using BLASTED_OBJECTS_V = xr_vector<CPhysicsShellHolder*>;
+using BLASTED_OBJECTS_V = std::vector<CPhysicsShellHolder*>;
 class CExplosive : public IDamageSource {
 private:
     collide::rq_results rq_storage;

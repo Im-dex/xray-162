@@ -15,7 +15,7 @@ struct CVertexAllocatorFixed {
     public:
         typedef _vertex CGraphVertex;
         typedef typename CGraphVertex::_index_type _index_type;
-        typedef xr_vector<CGraphVertex> VERTICES;
+        typedef std::vector<CGraphVertex> VERTICES;
 
     protected:
         u32 m_vertex_count;

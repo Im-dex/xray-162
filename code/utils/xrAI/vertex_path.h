@@ -32,7 +32,7 @@ struct CVertexPath {
         template <typename T>
         IC void assign_parent(CGraphVertex& neighbour, CGraphVertex* parent, const T&);
         IC void update_successors(CGraphVertex& neighbour);
-        IC void get_node_path(xr_vector<_index_type>& path, CGraphVertex* best);
+        IC void get_node_path(std::vector<_index_type>& path, CGraphVertex* best);
     };
 };
 

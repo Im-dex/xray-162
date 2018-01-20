@@ -20,7 +20,7 @@ class CGameTask;
 class CUIXml;
 class UIHint;
 
-using GameMaps = xr_map<std::string, CUICustomMap*>;
+using GameMaps = std::map<std::string, CUICustomMap*>;
 
 class CUIMapWnd : public CUIWindow, public CUIWndCallback {
     typedef CUIWindow inherited;

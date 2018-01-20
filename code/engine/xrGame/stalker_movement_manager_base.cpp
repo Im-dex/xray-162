@@ -664,9 +664,9 @@ void stalker_movement_manager_base::update_object_on_the_way(const CGameObject* 
 
     Fvector position = object->Position();
     float current_distance = 0.f;
-    xr_vector<STravelPathPoint>::const_iterator I =
+    std::vector<STravelPathPoint>::const_iterator I =
         detail().path().begin() + detail().curr_travel_point_index() + 1;
-    xr_vector<STravelPathPoint>::const_iterator E = detail().path().end();
+    std::vector<STravelPathPoint>::const_iterator E = detail().path().end();
     for (; I != E; ++I) {
         if (distance_to_line((*(I - 1)).position, (*I).position, position) < 1.f) {
             m_last_query_result = true;
@@ -693,7 +693,7 @@ void stalker_movement_manager_base::check_for_bad_path(stalker_movement_params& 
     if (detail().completed(object().Position(), !detail().state_patrol_path()))
         return;
 
-    typedef xr_vector<STravelPathPoint> PATH;
+    typedef std::vector<STravelPathPoint> PATH;
     const PATH& path = detail().path();
 
     u32 point_count = path.size();

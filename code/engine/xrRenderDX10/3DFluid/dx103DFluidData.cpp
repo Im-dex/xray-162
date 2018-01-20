@@ -82,7 +82,7 @@ void dx103DFluidData::DestroyRTTextureAndViews(int rtIndex) {
 void dx103DFluidData::Load(IReader* data) {
     //	Version 3
 
-    xr_string Profile;
+    std::string Profile;
     data->r_string(Profile);
 
     //	Prepare transform
@@ -100,7 +100,7 @@ void dx103DFluidData::Load(IReader* data) {
     ParseProfile(Profile);
 }
 
-void dx103DFluidData::ParseProfile(const xr_string& Profile) {
+void dx103DFluidData::ParseProfile(const std::string& Profile) {
     string_path fn;
     FS.update_path(fn, "$game_config$", Profile.c_str());
 
@@ -208,7 +208,7 @@ void dx103DFluidData::ParseProfile(const xr_string& Profile) {
 
 //	Allow real-time config reload
 #ifdef DEBUG
-void dx103DFluidData::ReparseProfile(const xr_string& Profile) {
+void dx103DFluidData::ReparseProfile(const std::string& Profile) {
     m_Emitters.clear();
     ParseProfile(Profile);
 }

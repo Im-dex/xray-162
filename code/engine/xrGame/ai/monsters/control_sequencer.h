@@ -4,7 +4,7 @@
 #include "xrRender/KinematicsAnimated.h"
 
 struct SAnimationSequencerData : public ControlCom::IComData {
-    xr_vector<MotionID> motions;
+    std::vector<MotionID> motions;
 };
 
 class CAnimationSequencer : public CControl_ComCustom<SAnimationSequencerData> {

@@ -59,7 +59,7 @@ private:
     bool m_need_reload;
     WINDOW_LIST m_items_cache;
     WINDOW_LIST m_items_ready;
-    xr_vector<u32> m_news_in_queue;
+    std::vector<u32> m_news_in_queue;
 
     CUIWindow* CreateItem();
     CUIWindow* ItemFromCache();

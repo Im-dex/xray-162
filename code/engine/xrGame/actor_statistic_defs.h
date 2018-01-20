@@ -13,7 +13,7 @@ struct SStatDetailBData : public IPureSerializeObject<IReader, IWriter> {
     virtual void load(IReader& stream);
 };
 
-typedef xr_vector<SStatDetailBData> vStatDetailData;
+typedef std::vector<SStatDetailBData> vStatDetailData;
 
 struct SStatSectionData : public IPureSerializeObject<IReader, IWriter> {
     shared_str key;
@@ -25,5 +25,5 @@ struct SStatSectionData : public IPureSerializeObject<IReader, IWriter> {
     virtual void load(IReader& stream);
 };
 
-typedef xr_vector<SStatSectionData> vStatSectionData;
+typedef std::vector<SStatSectionData> vStatSectionData;
 typedef CALifeAbstractRegistry<u16, vStatSectionData> CActorStatisticRegistry;

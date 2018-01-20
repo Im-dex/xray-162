@@ -18,8 +18,8 @@ protected:
     typedef CALifeSimulatorBase inherited;
 
 protected:
-    xr_vector<ALife::_SPAWN_ID> m_temp_spawns;
-    xr_vector<ALife::_SPAWN_ID> m_temp_spawned_objects;
+    std::vector<ALife::_SPAWN_ID> m_temp_spawns;
+    std::vector<ALife::_SPAWN_ID> m_temp_spawned_objects;
 
 private:
     void fill_spawned_objects();

@@ -64,7 +64,7 @@ void CPHCollisionDamageReceiver::CollisionHit(u16 source_id, u16 bone_id, float 
 
 void CPHCollisionDamageReceiver::Clear() {
     // IPhysicsShellHolder *sh	=PPhysicsShellHolder	();
-    // xr_map<u16,float>::iterator i=m_controled_bones.begin(),e=m_controled_bones.end();
+    // std::map<u16,float>::iterator i=m_controled_bones.begin(),e=m_controled_bones.end();
     // for(;e!=i;++i)
     //{
     //	CODEGeom* og= sh->PPhysicsShell()->get_GeomByID(i->first);

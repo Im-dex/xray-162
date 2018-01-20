@@ -208,8 +208,8 @@ void CLevelGraph::draw_restrictions() {
         u8 g = u8(R.randI(255));
         u8 r = u8(R.randI(255));
 
-        xr_vector<u32>::const_iterator i = (*I).second->border().begin();
-        xr_vector<u32>::const_iterator e = (*I).second->border().end();
+        std::vector<u32>::const_iterator i = (*I).second->border().begin();
+        std::vector<u32>::const_iterator e = (*I).second->border().end();
         for (; i != e; ++i) {
             Fvector temp = ai().level_graph().vertex_position(*i);
             temp.y += .1f;
@@ -222,8 +222,8 @@ void CLevelGraph::draw_restrictions() {
         CSpaceRestriction::FREE_IN_RESTRICTIONS::const_iterator EE =
             (*I).second->m_free_in_restrictions.end();
         for (; II != EE; ++II) {
-            xr_vector<u32>::const_iterator i = (*II).m_restriction->border().begin();
-            xr_vector<u32>::const_iterator e = (*II).m_restriction->border().end();
+            std::vector<u32>::const_iterator i = (*II).m_restriction->border().begin();
+            std::vector<u32>::const_iterator e = (*II).m_restriction->border().end();
             for (; i != e; ++i) {
                 Fvector temp = ai().level_graph().vertex_position(*i);
                 temp.y += .1f;
@@ -231,8 +231,8 @@ void CLevelGraph::draw_restrictions() {
                                                    D3DCOLOR_XRGB(255, 0, 0));
             }
             {
-                xr_vector<u32>::const_iterator i = (*II).m_restriction->border().begin();
-                xr_vector<u32>::const_iterator e = (*II).m_restriction->border().end();
+                std::vector<u32>::const_iterator i = (*II).m_restriction->border().begin();
+                std::vector<u32>::const_iterator e = (*II).m_restriction->border().end();
                 for (; i != e; ++i) {
                     Fvector temp = ai().level_graph().vertex_position(*i);
                     temp.y += .1f;
@@ -247,11 +247,11 @@ void CLevelGraph::draw_restrictions() {
 
 void CLevelGraph::draw_covers() {
     float half_size = ai().level_graph().header().cell_size() * .5f;
-    xr_vector<CCoverPoint*> nearest;
+    std::vector<CCoverPoint*> nearest;
     nearest.reserve(1000);
     ai().cover_manager().covers().nearest(Device.vCameraPosition, 5.f, nearest);
-    xr_vector<CCoverPoint*>::const_iterator I = nearest.begin();
-    xr_vector<CCoverPoint*>::const_iterator E = nearest.end();
+    std::vector<CCoverPoint*>::const_iterator I = nearest.begin();
+    std::vector<CCoverPoint*>::const_iterator E = nearest.end();
     for (; I != E; ++I) {
         Fvector position = (*I)->position();
         position.y += 1.5f;

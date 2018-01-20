@@ -8,7 +8,7 @@
 #include "ai_space.h"
 #include "alife_object_registry.h"
 
-xr_string xrServer::ent_name_safe(u16 eid) {
+std::string xrServer::ent_name_safe(u16 eid) {
     string1024 buff;
     CSE_Abstract* e_dest = game->get_entity_from_eid(eid);
     if (e_dest)

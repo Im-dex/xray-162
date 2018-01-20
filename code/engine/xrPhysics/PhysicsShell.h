@@ -43,7 +43,7 @@ struct physicsBone {
     }
 };
 
-using BONE_P_MAP = xr_map<u16, physicsBone>;
+using BONE_P_MAP = std::map<u16, physicsBone>;
 typedef const BONE_P_MAP ::iterator BONE_P_PAIR_CIT;
 // ABSTRACT:
 class CPhysicsBase;

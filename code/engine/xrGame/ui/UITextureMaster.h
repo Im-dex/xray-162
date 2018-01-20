@@ -49,7 +49,7 @@ public:
 protected:
     IC static bool IsSh(const shared_str& texture_name);
 
-    static xr_map<shared_str, TEX_INFO> m_textures;
+    static std::map<shared_str, TEX_INFO> m_textures;
 
-    static xr_map<sh_pair, ui_shader> m_shaders;
+    static std::map<sh_pair, ui_shader> m_shaders;
 };

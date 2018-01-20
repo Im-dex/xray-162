@@ -40,8 +40,8 @@ public:
     CSector* pLastSector;
     Fvector vLastCameraPos;
     u32 uLastLTRACK;
-    xr_vector<IRender_Portal*> Portals;
-    xr_vector<IRender_Sector*> Sectors;
+    std::vector<IRender_Portal*> Portals;
+    std::vector<IRender_Sector*> Sectors;
     xrXRC Sectors_xrc;
     CDB::MODEL* rmPortals;
     CHOM HOM;
@@ -49,13 +49,13 @@ public:
     //HWOCC;
 
     // Global containers
-    xr_vector<FSlideWindowItem> SWIs;
-    xr_vector<ref_shader> Shaders;
+    std::vector<FSlideWindowItem> SWIs;
+    std::vector<ref_shader> Shaders;
     typedef svector<D3DVERTEXELEMENT9, MAXD3DDECLLENGTH + 1> VertexDeclarator;
-    xr_vector<VertexDeclarator> DCL;
-    xr_vector<IDirect3DVertexBuffer9*> VB;
-    xr_vector<IDirect3DIndexBuffer9*> IB;
-    xr_vector<dxRender_Visual*> Visuals;
+    std::vector<VertexDeclarator> DCL;
+    std::vector<IDirect3DVertexBuffer9*> VB;
+    std::vector<IDirect3DIndexBuffer9*> IB;
+    std::vector<dxRender_Visual*> Visuals;
     CPSLibrary PSLibrary;
 
     CLight_DB* L_DB;

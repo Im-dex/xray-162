@@ -212,8 +212,8 @@ public:
     // If you have polygons that map to a large area in texture space
     //							this option could mess up the texture
     // coordinates
-    bool Mend(xr_vector<Vertex>& theVerts, xr_vector<unsigned int>& theIndices,
-              xr_vector<unsigned int>& mappingNewToOldVert,
+    bool Mend(std::vector<Vertex>& theVerts, std::vector<unsigned int>& theIndices,
+              std::vector<unsigned int>& mappingNewToOldVert,
               const float minNormalsCreaseCosAngle = 0.0f,
               const float minTangentsCreaseCosAngle = 0.0f,
               const float minBinormalsCreaseCosAngle = 0.0f, const float weightNormalsByArea = 1.0f,
@@ -239,13 +239,13 @@ protected:
     friend class CanSmoothBinormalsChecker;
 
     // sets up any internal data structures needed
-    void SetUpData(xr_vector<Vertex>& theVerts, const xr_vector<unsigned int>& theIndices,
-                   xr_vector<unsigned int>& mappingNewToOldVert,
+    void SetUpData(std::vector<Vertex>& theVerts, const std::vector<unsigned int>& theIndices,
+                   std::vector<unsigned int>& mappingNewToOldVert,
                    const NormalCalcOption computeNormals);
 
     typedef size_t NeighborhoodID;
     typedef size_t TriID;
-    typedef xr_vector<TriID> TriangleList;
+    typedef std::vector<TriID> TriangleList;
 
     struct Triangle {
         size_t indices[3];
@@ -263,23 +263,23 @@ protected:
         TriID myID; // a global id used to keep track of tris'
     };
 
-    xr_vector<Triangle> m_Triangles;
+    std::vector<Triangle> m_Triangles;
 
     // each vertex has a set of triangles that contain it.
     // those triangles are considered to be that vertex's children
-    typedef xr_map<D3DXVECTOR3, TriangleList> VertexChildrenMap;
+    typedef std::map<D3DXVECTOR3, TriangleList> VertexChildrenMap;
     VertexChildrenMap m_VertexChildrenMap;
 
     // a neighbor group is defined to be the list of traingles
     // that all fall arround a single vertex, and can smooth with
     // eachother
-    typedef xr_vector<TriangleList> NeighborGroupList;
+    typedef std::vector<TriangleList> NeighborGroupList;
 
     size_t m_originalNumVerts;
 
     // sets up the normal, binormal, and tangent for a triangle
     // assumes the triangle indices are set to match whats in the verts
-    void SetUpFaceVectors(Triangle& t, const xr_vector<Vertex>& verts,
+    void SetUpFaceVectors(Triangle& t, const std::vector<Vertex>& verts,
                           const NormalCalcOption computeNormals);
 
     // function responsible for growing the neighbor hood groups
@@ -287,29 +287,29 @@ protected:
     void BuildGroups(Triangle* tri,                     // the tri of interest
                      TriangleList& possibleNeighbors,   // all tris arround a vertex
                      NeighborGroupList& neighborGroups, // the neighbor groups to be updated
-                     xr_vector<Vertex>& theVerts, CanSmoothChecker* smoothChecker,
+                     std::vector<Vertex>& theVerts, CanSmoothChecker* smoothChecker,
                      const float& minCreaseAngle);
 
     // given 2 triangles, fill the two neighbor pointers with either
     // null or valid Triangle pointers.
     void FindNeighbors(Triangle* tri, TriangleList& possibleNeighbors, Triangle** neighbor1,
-                       Triangle** neighbor2, xr_vector<Vertex>& theVerts);
+                       Triangle** neighbor2, std::vector<Vertex>& theVerts);
 
-    bool SharesEdge(Triangle* triA, Triangle* triB, xr_vector<Vertex>& theVerts);
+    bool SharesEdge(Triangle* triA, Triangle* triB, std::vector<Vertex>& theVerts);
 
-    bool SharesEdgeRespectSplits(Triangle* triA, Triangle* triB, xr_vector<Vertex>& theVerts);
+    bool SharesEdgeRespectSplits(Triangle* triA, Triangle* triB, std::vector<Vertex>& theVerts);
 
     // calculates the tangent and binormal per face
     void GetGradients(const MeshMender::Vertex& v0, const MeshMender::Vertex& v1,
                       const MeshMender::Vertex& v2, D3DXVECTOR3& tangent,
                       D3DXVECTOR3& binormal) const;
 
-    void OrthogonalizeTangentsAndBinormals(xr_vector<Vertex>& theVerts);
+    void OrthogonalizeTangentsAndBinormals(std::vector<Vertex>& theVerts);
 
-    void UpdateTheIndicesWithFinalIndices(xr_vector<unsigned int>& theIndices);
+    void UpdateTheIndicesWithFinalIndices(std::vector<unsigned int>& theIndices);
 
-    void FixCylindricalWrapping(xr_vector<Vertex>& theVerts, xr_vector<unsigned int>& theIndices,
-                                xr_vector<unsigned int>& mappingNewToOldVert);
+    void FixCylindricalWrapping(std::vector<Vertex>& theVerts, std::vector<unsigned int>& theIndices,
+                                std::vector<unsigned int>& mappingNewToOldVert);
 
     bool TriHasEdge(const D3DXVECTOR3& p0, const D3DXVECTOR3& p1, const D3DXVECTOR3& triA,
                     const D3DXVECTOR3& triB, const D3DXVECTOR3& triC);
@@ -317,14 +317,14 @@ protected:
     bool TriHasEdge(const size_t& p0, const size_t& p1, const size_t& triA, const size_t& triB,
                     const size_t& triC);
 
-    void ProcessNormals(TriangleList& possibleNeighbors, xr_vector<Vertex>& theVerts,
-                        xr_vector<unsigned int>& mappingNewToOldVert, D3DXVECTOR3 workingPosition);
+    void ProcessNormals(TriangleList& possibleNeighbors, std::vector<Vertex>& theVerts,
+                        std::vector<unsigned int>& mappingNewToOldVert, D3DXVECTOR3 workingPosition);
 
-    void ProcessTangents(TriangleList& possibleNeighbors, xr_vector<Vertex>& theVerts,
-                         xr_vector<unsigned int>& mappingNewToOldVert, D3DXVECTOR3 workingPosition);
+    void ProcessTangents(TriangleList& possibleNeighbors, std::vector<Vertex>& theVerts,
+                         std::vector<unsigned int>& mappingNewToOldVert, D3DXVECTOR3 workingPosition);
 
-    void ProcessBinormals(TriangleList& possibleNeighbors, xr_vector<Vertex>& theVerts,
-                          xr_vector<unsigned int>& mappingNewToOldVert,
+    void ProcessBinormals(TriangleList& possibleNeighbors, std::vector<Vertex>& theVerts,
+                          std::vector<unsigned int>& mappingNewToOldVert,
                           D3DXVECTOR3 workingPosition);
 
     // make any triangle that used the oldIndex use the newIndex instead
@@ -334,7 +334,7 @@ protected:
     // takes into account that we may be mapping a new vertex to another new vertex,
     // and uses the original old vertex index....is that confusing?
     void AppendToMapping(const size_t oldIndex, const size_t originalNumVerts,
-                         xr_vector<unsigned int>& mappingNewToOldVert);
+                         std::vector<unsigned int>& mappingNewToOldVert);
 };
 
 #endif

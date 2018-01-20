@@ -67,8 +67,8 @@ static bool trajectory_check_collision(float low, float high, Fvector const& pos
                                        CObject* const self_object, CObject* const ignored_object,
                                        Fvector& collide_position,
                                        collide::rq_results& temp_rq_results, Fvector box_size,
-                                       xr_vector<trajectory_pick>* const out_trajectory_picks,
-                                       xr_vector<Fvector>* const out_collide_tris) {
+                                       std::vector<trajectory_pick>* const out_trajectory_picks,
+                                       std::vector<Fvector>* const out_collide_tris) {
     Fvector start;
     trajectory_get_position(start, position, velocity, gravity, low);
 
@@ -155,8 +155,8 @@ bool trajectory_intersects_geometry(float trajectory_time, Fvector const& trajec
                                     Fvector const& trajectory_velocity, Fvector& collide_position,
                                     CObject* const self_object, CObject* const ignored_object,
                                     collide::rq_results& temp_rq_results,
-                                    xr_vector<trajectory_pick>* const out_trajectory_picks,
-                                    xr_vector<Fvector>* const out_collide_tris,
+                                    std::vector<trajectory_pick>* const out_trajectory_picks,
+                                    std::vector<Fvector>* const out_collide_tris,
                                     Fvector const& box_size) {
     out_trajectory_picks;
     out_collide_tris;

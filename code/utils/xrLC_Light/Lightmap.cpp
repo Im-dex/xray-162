@@ -32,7 +32,7 @@ void CLightmap::Capture(CDeflector* D, int b_u, int b_v, int s_u, int s_v, BOOL 
         lm.create(c_LMAP_size, c_LMAP_size);
 
     // Addressing
-    xr_vector<UVtri> tris;
+    std::vector<UVtri> tris;
     D->RemapUV(tris, b_u + BORDER, b_v + BORDER, s_u - 2 * BORDER, s_v - 2 * BORDER, c_LMAP_size,
                c_LMAP_size, bRotated);
 
@@ -138,9 +138,9 @@ void CLightmap::Save(LPCSTR path) {
     }
     Progress(1.f);
 
-    xr_vector<u32> lm_packed;
+    std::vector<u32> lm_packed;
     lm.Pack(lm_packed);
-    xr_vector<u32> hemi_packed;
+    std::vector<u32> hemi_packed;
     lm.Pack_hemi(hemi_packed);
 
     lm_texture.bHasAlpha = TRUE;

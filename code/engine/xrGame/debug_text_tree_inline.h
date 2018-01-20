@@ -15,7 +15,7 @@ void text_tree::output(OutFunc func, int indent) {
 
 template <class OutFunc>
 void text_tree::output(int current_indent, int indent, Columns& columns, OutFunc func) {
-    xr_string buffer;
+    std::string buffer;
     buffer.reserve(1024);
     buffer = "";
 

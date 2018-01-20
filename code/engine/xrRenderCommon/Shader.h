@@ -15,7 +15,7 @@
 #include "sh_constant.h"
 #include "sh_rt.h"
 
-typedef xr_vector<shared_str> sh_list;
+typedef std::vector<shared_str> sh_list;
 class CBlender_Compile;
 class IBlender;
 #define SHADER_PASSES_MAX 2
@@ -24,8 +24,8 @@ class IBlender;
 
 //////////////////////////////////////////////////////////////////////////
 struct ECORE_API STextureList : public xr_resource_flagged,
-                                public xr_vector<std::pair<u32, ref_texture>> {
-    typedef xr_vector<std::pair<u32, ref_texture>> inherited_vec;
+                                public std::vector<std::pair<u32, ref_texture>> {
+    typedef std::vector<std::pair<u32, ref_texture>> inherited_vec;
     ~STextureList();
 
     IC BOOL equal(const STextureList& base) const {

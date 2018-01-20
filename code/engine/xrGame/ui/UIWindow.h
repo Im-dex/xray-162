@@ -73,7 +73,7 @@ inline bool operator!=(const uialloc<_Ty>&, const uialloc<_Other>&) {
 //. class	ui_list 		: public std::list<T,uialloc<T> >{ public: u32 size() const
 //{return (u32)__super::size(); } };
 
-#define ui_list xr_vector
+#define ui_list std::vector
 
 #define DEF_UILIST(N, T)  \
     typedef ui_list<T> N; \

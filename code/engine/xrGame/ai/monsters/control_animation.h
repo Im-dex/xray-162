@@ -55,8 +55,8 @@ class CControlAnimation : public CControl_ComPure<SControlAnimationData> {
         bool handled;
     };
 
-    using ANIMATION_EVENT_VEC = xr_vector<SAnimationEvent>;
-    using ANIMATION_EVENT_MAP = xr_map<MotionID, ANIMATION_EVENT_VEC>;
+    using ANIMATION_EVENT_VEC = std::vector<SAnimationEvent>;
+    using ANIMATION_EVENT_MAP = std::map<MotionID, ANIMATION_EVENT_VEC>;
     ANIMATION_EVENT_MAP m_anim_events;
 
     bool m_freeze;

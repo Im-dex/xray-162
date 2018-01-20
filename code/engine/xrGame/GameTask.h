@@ -9,15 +9,15 @@ class CGameTaskManager;
 class CMapLocation;
 class CGameTask;
 
-typedef xr_vector<luabind::functor<bool>> task_state_functors;
+typedef std::vector<luabind::functor<bool>> task_state_functors;
 
 class SScriptTaskHelper : public IPureSerializeObject<IReader, IWriter> {
 public:
-    xr_vector<shared_str> m_s_complete_lua_functions;
-    xr_vector<shared_str> m_s_fail_lua_functions;
+    std::vector<shared_str> m_s_complete_lua_functions;
+    std::vector<shared_str> m_s_fail_lua_functions;
 
-    xr_vector<shared_str> m_s_lua_functions_on_complete;
-    xr_vector<shared_str> m_s_lua_functions_on_fail;
+    std::vector<shared_str> m_s_lua_functions_on_complete;
+    std::vector<shared_str> m_s_lua_functions_on_fail;
 
 public:
     bool not_empty() {
@@ -28,7 +28,7 @@ public:
     virtual void save(IWriter& stream);
     virtual void load(IReader& stream);
 
-    void init_functors(xr_vector<shared_str>& v_src, task_state_functors& v_dest);
+    void init_functors(std::vector<shared_str>& v_src, task_state_functors& v_dest);
 };
 
 class CGameTask {
@@ -46,10 +46,10 @@ public:
 
 private:
     // infos
-    xr_vector<shared_str> m_completeInfos;
-    xr_vector<shared_str> m_failInfos;
-    xr_vector<shared_str> m_infos_on_complete;
-    xr_vector<shared_str> m_infos_on_fail;
+    std::vector<shared_str> m_completeInfos;
+    std::vector<shared_str> m_failInfos;
+    std::vector<shared_str> m_infos_on_complete;
+    std::vector<shared_str> m_infos_on_fail;
 
     // functions
     task_state_functors m_fail_lua_functions;
@@ -60,8 +60,8 @@ private:
 
     CMapLocation* m_linked_map_location;
 
-    void SendInfo(const xr_vector<shared_str>&);
-    bool CheckInfo(const xr_vector<shared_str>&) const;
+    void SendInfo(const std::vector<shared_str>&);
+    bool CheckInfo(const std::vector<shared_str>&) const;
     void CallAllFuncs(const task_state_functors& v);
     bool CheckFunctions(const task_state_functors& v) const;
 

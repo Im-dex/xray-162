@@ -166,7 +166,7 @@
 // 122 - CSE_ALifeItemWeapon			appended with count of grenades to spawn in grenade
 // launcher (if it attached)
 // 123 - CSE_ALifeInventoryItem			added functions has_upgrade & add_upgrade,
-// xr_vector<shared_str> m_upgrades 124 - CSE_ALifeInventoryBox			added property
+// std::vector<shared_str> m_upgrades 124 - CSE_ALifeInventoryBox			added property
 // m_can_take, m_closed
 //       CSE_ALifeTraderAbstract		added property m_deadbody_can_take,
 //       m_deadbody_closed

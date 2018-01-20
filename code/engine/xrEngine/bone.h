@@ -290,7 +290,7 @@ public:
 // static const Fobb	dummy ;//= Fobb().identity();
 // refs
 class CBone;
-using BoneVec = xr_vector<CBone*>;
+using BoneVec = std::vector<CBone*>;
 
 class ECORE_API CBone : public CBoneInstance, public IBoneData {
     std::string name;
@@ -447,7 +447,7 @@ private:
 //*** Shared Bone Data ****************************************************************************
 class CBoneData;
 // t-defs
-typedef xr_vector<CBoneData*> vecBones;
+typedef std::vector<CBoneData*> vecBones;
 typedef vecBones::iterator vecBonesIt;
 
 class ENGINE_API CBoneData : public IBoneData {
@@ -471,8 +471,8 @@ public:
 
     vecBones children; // bones which are slaves to this
 
-    using FacesVec = xr_vector<u16>;
-    using ChildFacesVec = xr_vector<FacesVec>;
+    using FacesVec = std::vector<u16>;
+    using ChildFacesVec = std::vector<FacesVec>;
     ChildFacesVec child_faces; // shared
 public:
     CBoneData(u16 ID) : SelfID(ID) { VERIFY(SelfID != BI_NONE); }

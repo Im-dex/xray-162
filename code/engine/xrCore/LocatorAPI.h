@@ -35,7 +35,7 @@ public:
         void open();
         void close();
     };
-    using archives_vec = xr_vector<archive>;
+    using archives_vec = std::vector<archive>;
     archives_vec m_archives;
     void LoadArchive(archive& A, LPCSTR entrypoint = NULL);
 
@@ -45,13 +45,13 @@ private:
             return xr_strcmp(x.name, y.name) < 0;
         }
     };
-    using PathMap = xr_map<const char*, FS_Path*, pred_str>;
+    using PathMap = std::map<const char*, FS_Path*, pred_str>;
     PathMap pathes;
 
-    using files_set = xr_set<file, file_pred>;
+    using files_set = std::set<file, file_pred>;
     using files_it = files_set::iterator;
 
-    using FFVec = xr_vector<_finddata64i32_t>;
+    using FFVec = std::vector<_finddata64i32_t>;
     FFVec rec_files;
 
     int m_iLockRescan;
@@ -154,9 +154,9 @@ public:
     u32 get_file_age(LPCSTR nm);
     void set_file_age(LPCSTR nm, u32 age);
 
-    xr_vector<LPSTR>* file_list_open(LPCSTR initial, LPCSTR folder, u32 flags = FS_ListFiles);
-    xr_vector<LPSTR>* file_list_open(LPCSTR path, u32 flags = FS_ListFiles);
-    void file_list_close(xr_vector<LPSTR>*& lst);
+    std::vector<LPSTR>* file_list_open(LPCSTR initial, LPCSTR folder, u32 flags = FS_ListFiles);
+    std::vector<LPSTR>* file_list_open(LPCSTR path, u32 flags = FS_ListFiles);
+    void file_list_close(std::vector<LPSTR>*& lst);
 
     bool path_exist(LPCSTR path);
     FS_Path* get_path(LPCSTR path);

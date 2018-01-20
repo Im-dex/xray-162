@@ -21,4 +21,4 @@ typedef char FILE_NAME[_MAX_PATH];
 extern LPCSTR GAME_LEVEL_GRAPH;
 
 extern void xrBuildCrossTable(LPCSTR caProjectName);
-extern void vfRecurseMark(const CLevelGraph& tMap, xr_vector<bool>& tMarks, u32 dwStartNodeID);
+extern void vfRecurseMark(const CLevelGraph& tMap, std::vector<bool>& tMarks, u32 dwStartNodeID);

@@ -6,7 +6,7 @@ class CInventoryBox : public CGameObject {
     typedef CGameObject inherited;
 
 public:
-    xr_vector<u16> m_items;
+    std::vector<u16> m_items;
 
 protected:
     bool m_in_use;

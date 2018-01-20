@@ -7,7 +7,7 @@ CDB::MODEL Level;
 CDB::COLLIDER XRC;
 
 Nodes g_nodes;
-xr_vector<SCover> g_covers_palette;
+std::vector<SCover> g_covers_palette;
 
 Lights g_lights;
 SAIParams g_params;

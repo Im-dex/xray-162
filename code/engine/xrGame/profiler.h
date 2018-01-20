@@ -51,8 +51,8 @@ private:
     };
 
 protected:
-    typedef xr_vector<CProfileResultPortion> PORTIONS;
-    typedef xr_map<shared_str, CProfileStats, pred_rstr> TIMERS;
+    typedef std::vector<CProfileResultPortion> PORTIONS;
+    typedef std::map<shared_str, CProfileStats, pred_rstr> TIMERS;
 
 protected:
     PORTIONS m_portions;

@@ -6,7 +6,7 @@ template <typename typeVertex>
 struct itterate_adjacents_params_static {
     typedef typeVertex type_vertex;
     typedef typename typeVertex::type_face type_face;
-    typedef xr_vector<type_face*> vecFace;
+    typedef std::vector<type_face*> vecFace;
 
 private:
     const type_vertex* pTestVertex;

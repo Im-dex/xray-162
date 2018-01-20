@@ -64,7 +64,7 @@ bool do_constrain(u32 base_edge_idx, u32 test_edg_idx, face_props& base_fprops,
                                                  base_edge_idx, test_edg_idx);
 }
 
-using FPVec = xr_vector<face_props>;
+using FPVec = std::vector<face_props>;
 
 void SimplifyCFORM(CDB::CollectorPacked& CL) {
     FPVec FPs;

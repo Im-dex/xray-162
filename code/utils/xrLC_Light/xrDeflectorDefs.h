@@ -2,7 +2,7 @@
 
 #include "hash2D.h"
 class CDeflector;
-typedef xr_vector<CDeflector*> vecDefl;
+typedef std::vector<CDeflector*> vecDefl;
 // extern vecDefl							g_deflectors	;
 typedef vecDefl::iterator vecDeflIt;
 struct UVtri;

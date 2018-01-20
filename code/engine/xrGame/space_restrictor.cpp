@@ -115,7 +115,7 @@ void CSpaceRestrictor::prepare() const {
 
     const CCF_Shape* shape = (const CCF_Shape*)collidable.model;
 
-    typedef xr_vector<CCF_Shape::shape_def> SHAPES;
+    typedef std::vector<CCF_Shape::shape_def> SHAPES;
 
     SHAPES::const_iterator I = shape->shapes.begin();
     SHAPES::const_iterator E = shape->shapes.end();
@@ -216,8 +216,8 @@ void CSpaceRestrictor::OnRender() {
     Fvector l_half;
     l_half.set(.5f, .5f, .5f);
     Fmatrix l_ball, l_box;
-    xr_vector<CCF_Shape::shape_def>& l_shapes = ((CCF_Shape*)CFORM())->Shapes();
-    xr_vector<CCF_Shape::shape_def>::iterator l_pShape;
+    std::vector<CCF_Shape::shape_def>& l_shapes = ((CCF_Shape*)CFORM())->Shapes();
+    std::vector<CCF_Shape::shape_def>::iterator l_pShape;
 
     u32 Color = 0;
     CCustomZone* custom_zone = smart_cast<CCustomZone*>(this);

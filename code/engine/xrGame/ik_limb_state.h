@@ -12,7 +12,7 @@ class ik_limb_state {
     calculate_state state;
     const CIKLimb* limb;
 #ifdef IK_DBG_STATE_SEQUENCE
-    xr_vector<calculate_state> sv_state;
+    std::vector<calculate_state> sv_state;
 #endif
 
 public:

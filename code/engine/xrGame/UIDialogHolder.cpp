@@ -111,7 +111,7 @@ void CDialogHolder::AddDialogToRender(CUIWindow* pDialog) {
 void CDialogHolder::RemoveDialogToRender(CUIWindow* pDialog) {
     dlgItem itm(pDialog);
     itm.enabled = true;
-    xr_vector<dlgItem>::iterator it =
+    std::vector<dlgItem>::iterator it =
         std::find(m_dialogsToRender.begin(), m_dialogsToRender.end(), itm);
 
     if (it != m_dialogsToRender.end()) {
@@ -122,7 +122,7 @@ void CDialogHolder::RemoveDialogToRender(CUIWindow* pDialog) {
 }
 
 void CDialogHolder::DoRenderDialogs() {
-    xr_vector<dlgItem>::iterator it = m_dialogsToRender.begin();
+    std::vector<dlgItem>::iterator it = m_dialogsToRender.begin();
     for (; it != m_dialogsToRender.end(); ++it) {
         if ((*it).enabled && (*it).wnd->IsShown())
             (*it).wnd->Draw();
@@ -130,8 +130,8 @@ void CDialogHolder::DoRenderDialogs() {
 }
 
 void CDialogHolder::OnExternalHideIndicators() {
-    xr_vector<recvItem>::iterator it = m_input_receivers.begin();
-    xr_vector<recvItem>::iterator it_e = m_input_receivers.end();
+    std::vector<recvItem>::iterator it = m_input_receivers.begin();
+    std::vector<recvItem>::iterator it_e = m_input_receivers.end();
     for (; it != it_e; ++it) {
         (*it).m_flags.set(recvItem::eIndicators, FALSE);
         (*it).m_flags.set(recvItem::eCrosshair, FALSE);
@@ -166,7 +166,7 @@ void CDialogHolder::SetMainInputReceiver(CUIDialogWnd* ir, bool _find_remove) {
                     m_input_receivers[cnt].m_flags.set(
                         recvItem::eIndicators,
                         m_input_receivers[cnt - 1].m_flags.test(recvItem::eIndicators));
-                    xr_vector<recvItem>::iterator it = m_input_receivers.begin();
+                    std::vector<recvItem>::iterator it = m_input_receivers.begin();
                     std::advance(it, cnt - 1);
                     m_input_receivers.erase(it);
                     break;
@@ -195,7 +195,7 @@ void CDialogHolder::OnFrame() {
     }
     // else
     {
-        xr_vector<dlgItem>::iterator it = m_dialogsToRender.begin();
+        std::vector<dlgItem>::iterator it = m_dialogsToRender.begin();
         for (; it != m_dialogsToRender.end(); ++it)
             if ((*it).enabled && (*it).wnd->IsEnabled())
                 (*it).wnd->Update();

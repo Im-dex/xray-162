@@ -107,7 +107,7 @@ struct st_Key {
 };
 #pragma pack(pop)
 
-using KeyVec = xr_vector<st_Key*>;
+using KeyVec = std::vector<st_Key*>;
 using KeyIt = KeyVec::iterator;
 
 // refs

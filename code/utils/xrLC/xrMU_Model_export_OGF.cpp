@@ -14,7 +14,7 @@
     }
 
 void export_ogf(xrMU_Reference& mu_reference) {
-    xr_vector<u32> generated_ids;
+    std::vector<u32> generated_ids;
     xrMU_Model* model = mu_reference.model;
     // Export nodes
     {

@@ -7,7 +7,7 @@
 // refs
 class ENGINE_API CObjectAnimator {
 private:
-    using MotionVec = xr_vector<COMotion*>;
+    using MotionVec = std::vector<COMotion*>;
 
 protected:
     bool bLoop;

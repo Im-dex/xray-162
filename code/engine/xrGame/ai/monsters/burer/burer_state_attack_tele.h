@@ -6,9 +6,9 @@ template <typename Object>
 class CStateBurerAttackTele : public CState<Object> {
     typedef CState<Object> inherited;
 
-    xr_vector<CPhysicsShellHolder*> tele_objects;
+    std::vector<CPhysicsShellHolder*> tele_objects;
     CPhysicsShellHolder* selected_object;
-    xr_vector<CObject*> m_nearest;
+    std::vector<CObject*> m_nearest;
 
     u32 time_started;
 
@@ -51,7 +51,7 @@ private:
     void SelectObjects();
 
     // internal for FindObjects
-    void FindFreeObjects(xr_vector<CObject*>& tpObjects, const Fvector& pos);
+    void FindFreeObjects(std::vector<CObject*>& tpObjects, const Fvector& pos);
     void xr_stdcall OnGrenadeDestroyed(CGrenade* const grenade);
 
     void FireAllToEnemy();

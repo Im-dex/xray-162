@@ -15,7 +15,7 @@ const float gi_reflect = 0.9f;
 const float gi_clip = 0.05f;
 const u32 gi_maxlevel = 4;
 //////////////////////////////////////////////////////////////////////////
-static xr_vector<R_Light>* task;
+static std::vector<R_Light>* task;
 std::recursive_mutex task_cs;
 static u32 task_it;
 

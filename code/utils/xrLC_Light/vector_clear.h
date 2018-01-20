@@ -8,13 +8,13 @@
 #define VECTOR_CLEAR_H_INCLUDED
 
 template <typename T, typename TDestruct>
-void vec_value_destruct(xr_vector<T*>& v, TDestruct& destruct) {
-    typename xr_vector<T*>::iterator i = v.begin(), e = v.end();
+void vec_value_destruct(std::vector<T*>& v, TDestruct& destruct) {
+    typename std::vector<T*>::iterator i = v.begin(), e = v.end();
     for (; i != e; ++i)
         destruct.destruct(*i);
 }
 template <typename T, typename TDestruct>
-void vec_clear(xr_vector<T*>& v, TDestruct& destruct) {
+void vec_clear(std::vector<T*>& v, TDestruct& destruct) {
     vec_value_destruct(v, destruct);
     v.clear();
 }

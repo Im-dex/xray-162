@@ -14,7 +14,7 @@ template <typename _Graph, typename _VertexEvaluator, typename _vertex_id_type,
           typename _index_type>
 class CAbstractPathManager {
 public:
-    typedef xr_vector<_vertex_id_type> PATH;
+    typedef std::vector<_vertex_id_type> PATH;
 
 private:
     const _Graph* m_graph;

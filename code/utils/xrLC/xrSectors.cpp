@@ -2,7 +2,7 @@
 #include "build.h"
 #include "sector.h"
 #include "OGF_Face.h"
-xr_vector<CSector*> g_sectors;
+std::vector<CSector*> g_sectors;
 
 void CBuild::BuildSectors() {
     Status("Determining sectors...");

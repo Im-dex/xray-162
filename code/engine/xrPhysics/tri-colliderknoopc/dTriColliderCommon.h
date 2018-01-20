@@ -5,9 +5,9 @@
 #include "../ExtendedGeom.h"
 #include "dTriColliderMath.h"
 
-extern xr_vector<flags8> gl_cl_tries_state;
+extern std::vector<flags8> gl_cl_tries_state;
 
-// extern xr_vector<int>::iterator		I,E,B				;
+// extern std::vector<int>::iterator		I,E,B				;
 
 // NOTE: stride is sizeof(dContact) * N, where N is [0, ...)
 

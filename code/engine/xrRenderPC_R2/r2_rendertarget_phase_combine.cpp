@@ -368,7 +368,7 @@ void CRenderTarget::phase_combine() {
 
 #ifdef DEBUG
     RCache.set_CullMode(CULL_CCW);
-    static xr_vector<Fplane> saved_dbg_planes;
+    static std::vector<Fplane> saved_dbg_planes;
     if (bDebug)
         saved_dbg_planes = dbg_planes;
     else
@@ -399,7 +399,7 @@ void CRenderTarget::phase_combine() {
             RCache.dbg_DrawTRI(Fidentity, p2, p3, p0, 0xffffffff);
         }
 
-    static xr_vector<dbg_line_t> saved_dbg_lines;
+    static std::vector<dbg_line_t> saved_dbg_lines;
     if (bDebug)
         saved_dbg_lines = dbg_lines;
     else

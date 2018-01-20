@@ -5,8 +5,8 @@
 
 class XRNETSERVER_API INetQueue {
     std::recursive_mutex cs;
-    xr_deque<NET_Packet*> ready;
-    xr_vector<NET_Packet*> unused;
+    std::deque<NET_Packet*> ready;
+    std::vector<NET_Packet*> unused;
 
 public:
     INetQueue();
@@ -45,7 +45,7 @@ protected:
     IDirectPlay8Address* net_Address_server;
 
     std::recursive_mutex net_csEnumeration;
-    xr_vector<HOST_NODE> net_Hosts;
+    std::vector<HOST_NODE> net_Hosts;
 
     ConnectionState net_Connected;
     BOOL net_Syncronised;

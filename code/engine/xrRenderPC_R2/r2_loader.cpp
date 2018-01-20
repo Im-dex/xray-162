@@ -200,9 +200,9 @@ void CRender::LoadBuffers(CStreamReader* base_fs, BOOL _alternative) {
     dxRenderDeviceRender::Instance().Resources->Evict();
     u32 dwUsage = D3DUSAGE_WRITEONLY;
 
-    xr_vector<VertexDeclarator>& _DC = _alternative ? xDC : nDC;
-    xr_vector<IDirect3DVertexBuffer9*>& _VB = _alternative ? xVB : nVB;
-    xr_vector<IDirect3DIndexBuffer9*>& _IB = _alternative ? xIB : nIB;
+    std::vector<VertexDeclarator>& _DC = _alternative ? xDC : nDC;
+    std::vector<IDirect3DVertexBuffer9*>& _VB = _alternative ? xVB : nVB;
+    std::vector<IDirect3DIndexBuffer9*>& _IB = _alternative ? xIB : nIB;
 
     // Vertex buffers
     {
@@ -364,8 +364,8 @@ void CRender::LoadSWIs(CStreamReader* base_fs) {
         CStreamReader* fs = base_fs->open_chunk(fsL_SWIS);
         u32 item_count = fs->r_u32();
 
-        xr_vector<FSlideWindowItem>::iterator it = SWIs.begin();
-        xr_vector<FSlideWindowItem>::iterator it_e = SWIs.end();
+        std::vector<FSlideWindowItem>::iterator it = SWIs.begin();
+        std::vector<FSlideWindowItem>::iterator it_e = SWIs.end();
 
         for (; it != it_e; ++it)
             delete[] (*it).sw;

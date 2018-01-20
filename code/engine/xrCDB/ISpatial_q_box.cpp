@@ -29,8 +29,8 @@ public:
             return;
 
         // test items
-        xr_vector<ISpatial*>::iterator _it = N->items.begin();
-        xr_vector<ISpatial*>::iterator _end = N->items.end();
+        std::vector<ISpatial*>::iterator _it = N->items.begin();
+        std::vector<ISpatial*>::iterator _end = N->items.end();
         for (; _it != _end; _it++) {
             ISpatial* S = *_it;
             if (0 == (S->spatial.type & mask))
@@ -62,7 +62,7 @@ public:
     }
 };
 
-void ISpatial_DB::q_box(xr_vector<ISpatial*>& R, u32 _o, u32 _mask, const Fvector& _center,
+void ISpatial_DB::q_box(std::vector<ISpatial*>& R, u32 _o, u32 _mask, const Fvector& _center,
                         const Fvector& _size) {
     std::lock_guard<decltype(cs)> lock(cs);
     q_result = &R;
@@ -76,7 +76,7 @@ void ISpatial_DB::q_box(xr_vector<ISpatial*>& R, u32 _o, u32 _mask, const Fvecto
     }
 }
 
-void ISpatial_DB::q_sphere(xr_vector<ISpatial*>& R, u32 _o, u32 _mask, const Fvector& _center,
+void ISpatial_DB::q_sphere(std::vector<ISpatial*>& R, u32 _o, u32 _mask, const Fvector& _center,
                            const float _radius) {
     Fvector _size = { _radius, _radius, _radius };
     q_box(R, _o, _mask, _center, _size);

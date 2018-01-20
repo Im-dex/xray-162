@@ -26,7 +26,7 @@ public:
 };
 
 class XRLC_LIGHT_API CThreadManager {
-    xr_vector<CThread*> threads;
+    std::vector<CThread*> threads;
 
 public:
     void start(CThread* T);

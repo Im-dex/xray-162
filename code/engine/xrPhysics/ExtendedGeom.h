@@ -107,7 +107,7 @@ struct dxGeomUserData {
     CObjectContactCallback* object_callbacks;
     u16 element_position;
     u16 bone_id;
-    xr_vector<int> cashed_tries;
+    std::vector<int> cashed_tries;
     Fvector last_aabb_size;
     Fvector last_aabb_pos;
 

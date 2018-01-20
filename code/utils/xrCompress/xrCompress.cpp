@@ -131,7 +131,7 @@ bool xrCompressor::testEqual(LPCSTR path, IReader* base) {
 }
 
 xrCompressor::ALIAS* xrCompressor::testALIAS(IReader* base, u32 crc, u32& a_tests) {
-    xr_multimap<u32, ALIAS>::iterator I = aliases.lower_bound(base->length());
+    std::multimap<u32, ALIAS>::iterator I = aliases.lower_bound(base->length());
 
     while (I != aliases.end() && (I->first == base->length())) {
         if (I->second.crc == crc) {
@@ -444,16 +444,16 @@ void xrCompressor::ProcessTargetFolder() {
 }
 
 void xrCompressor::GatherFiles(LPCSTR path) {
-    xr_vector<char*>* i_list =
+    std::vector<char*>* i_list =
         FS.file_list_open("$target_folder$", path, FS_ListFiles | FS_RootOnly);
     if (!i_list) {
         Msg("ERROR: Unable to open file list:%s", path);
         return;
     }
-    xr_vector<char*>::iterator it = i_list->begin();
-    xr_vector<char*>::iterator itE = i_list->end();
+    std::vector<char*>::iterator it = i_list->begin();
+    std::vector<char*>::iterator itE = i_list->end();
     for (; it != itE; ++it) {
-        xr_string tmp_path = xr_string(path) + xr_string(*it);
+        std::string tmp_path = std::string(path) + std::string(*it);
         if (!testSKIP(tmp_path.c_str())) {
             files_list->push_back(xr_strdup(tmp_path.c_str()));
         } else {
@@ -487,8 +487,8 @@ void xrCompressor::ProcessLTX(CInifile& ltx) {
     if (ltx.line_exist("options", "exclude_exts"))
         _SequenceToList(exclude_exts, ltx.r_string("options", "exclude_exts"));
 
-    files_list = new xr_vector<char*>();
-    folders_list = new xr_vector<char*>();
+    files_list = new std::vector<char*>();
+    folders_list = new std::vector<char*>();
 
     if (ltx.section_exist("include_folders")) {
         CInifile::Sect& if_sect = ltx.r_section("include_folders");
@@ -512,17 +512,17 @@ void xrCompressor::ProcessLTX(CInifile& ltx) {
                 if (val)
                     GatherFiles(path);
 
-                xr_vector<char*>* i_fl_list =
+                std::vector<char*>* i_fl_list =
                     FS.file_list_open("$target_folder$", path, folder_mask);
                 if (!i_fl_list) {
                     Msg("ERROR: Unable to open folder list:", path);
                     continue;
                 }
 
-                xr_vector<char*>::iterator it = i_fl_list->begin();
-                xr_vector<char*>::iterator itE = i_fl_list->end();
+                std::vector<char*>::iterator it = i_fl_list->begin();
+                std::vector<char*>::iterator itE = i_fl_list->end();
                 for (; it != itE; ++it) {
-                    xr_string tmp_path = xr_string(path) + xr_string(*it);
+                    std::string tmp_path = std::string(path) + std::string(*it);
                     bool val = IsFolderAccepted(ltx, tmp_path.c_str(), efRecurse);
                     if (val) {
                         folders_list->push_back(xr_strdup(tmp_path.c_str()));

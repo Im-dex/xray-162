@@ -11,7 +11,7 @@
 class CInventoryOwner;
 class CPda;
 
-using PDA_LIST = xr_vector<CPda*>;
+using PDA_LIST = std::vector<CPda*>;
 
 class CPda : public CInventoryItemObject, public Feel::Touch {
     typedef CInventoryItemObject inherited;
@@ -44,7 +44,7 @@ public:
     bool IsOn() { return !m_bTurnedOff; }
     bool IsOff() { return m_bTurnedOff; }
 
-    void ActivePDAContacts(xr_vector<CPda*>& res);
+    void ActivePDAContacts(std::vector<CPda*>& res);
     CPda* GetPdaFromOwner(CObject* owner);
     u32 ActiveContactsNum() { return m_active_contacts.size(); }
     void PlayScriptFunction();
@@ -63,12 +63,12 @@ public:
 protected:
     void UpdateActiveContacts();
 
-    xr_vector<CObject*> m_active_contacts;
+    std::vector<CObject*> m_active_contacts;
     float m_fRadius;
 
     u16 m_idOriginalOwner;
     shared_str m_SpecificChracterOwner;
-    xr_string m_sFullName;
+    std::string m_sFullName;
 
     bool m_bTurnedOff;
     shared_str m_functor_str;

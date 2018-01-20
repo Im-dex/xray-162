@@ -52,13 +52,13 @@ public:
         return m_pRenderTargetViews[id];
     }
     const Fmatrix& GetTransform() const { return m_Transform; }
-    const xr_vector<Fmatrix>& GetObstaclesList() const { return m_Obstacles; }
-    const xr_vector<dx103DFluidEmitters::CEmitter>& GetEmittersList() const { return m_Emitters; }
+    const std::vector<Fmatrix>& GetObstaclesList() const { return m_Obstacles; }
+    const std::vector<dx103DFluidEmitters::CEmitter>& GetEmittersList() const { return m_Emitters; }
     const Settings& GetSettings() const { return m_Settings; }
 
 //	Allow real-time config reload
 #ifdef DEBUG
-    void ReparseProfile(const xr_string& Profile);
+    void ReparseProfile(const std::string& Profile);
 #endif //	DEBUG
 
 private:
@@ -68,13 +68,13 @@ private:
     void CreateRTTextureAndViews(int rtIndex, D3D_TEXTURE3D_DESC TexDesc);
     void DestroyRTTextureAndViews(int rtIndex);
 
-    void ParseProfile(const xr_string& Profile);
+    void ParseProfile(const std::string& Profile);
 
 private:
     Fmatrix m_Transform;
 
-    xr_vector<Fmatrix> m_Obstacles;
-    xr_vector<CEmitter> m_Emitters;
+    std::vector<Fmatrix> m_Obstacles;
+    std::vector<CEmitter> m_Emitters;
 
     Settings m_Settings;
 

@@ -8,7 +8,7 @@ public:
 
     //	State handle
     typedef u32 SHandle;
-    typedef xr_vector<SHandle> HArray;
+    typedef std::vector<SHandle> HArray;
 
 public:
     dx10SamplerStateCache();
@@ -54,7 +54,7 @@ private:
     //	Private data
 private:
     //	This must be cleared on device destroy
-    xr_vector<StateRecord> m_StateArray;
+    std::vector<StateRecord> m_StateArray;
 
     SHandle m_aPSSamplers[D3D_COMMONSHADER_SAMPLER_SLOT_COUNT];
     SHandle m_aVSSamplers[D3D_COMMONSHADER_SAMPLER_SLOT_COUNT];

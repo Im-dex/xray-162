@@ -47,7 +47,7 @@ struct vertex // definition of "patch" or "node"
     void PointBL(Fvector& D);
 };
 
-using DWORDs = xr_vector<u32>;
+using DWORDs = std::vector<u32>;
 // struct NodeMerged
 //{
 //	DWORDs		neighbours;	// list of neighbours
@@ -85,14 +85,14 @@ struct SCover {
     u8 cover[4];
 };
 
-using Nodes = xr_vector<vertex>;
-using Vectors = xr_vector<Fvector>;
-using Marks = xr_vector<BYTE>;
-using Lights = xr_vector<R_Light>;
+using Nodes = std::vector<vertex>;
+using Vectors = std::vector<Fvector>;
+using Marks = std::vector<BYTE>;
+using Lights = std::vector<R_Light>;
 
 // data
 extern Nodes g_nodes;
-extern xr_vector<SCover> g_covers_palette;
+extern std::vector<SCover> g_covers_palette;
 extern Lights g_lights;
 extern SAIParams g_params;
 extern CDB::MODEL Level;
@@ -118,11 +118,11 @@ struct b_BuildTexture : public b_texture {
 };
 
 extern Shader_xrLC_LIB* g_shaders_xrlc;
-extern xr_vector<b_material> g_materials;
-extern xr_vector<b_shader> g_shader_render;
-extern xr_vector<b_shader> g_shader_compile;
-extern xr_vector<b_BuildTexture> g_textures;
-extern xr_vector<b_rc_face> g_rc_faces;
+extern std::vector<b_material> g_materials;
+extern std::vector<b_shader> g_shader_render;
+extern std::vector<b_shader> g_shader_compile;
+extern std::vector<b_BuildTexture> g_textures;
+extern std::vector<b_rc_face> g_rc_faces;
 
 // phases
 void xrLoad(LPCSTR name, bool draft_mode);

@@ -29,7 +29,7 @@ public:
     typedef T_ID id_type;
 
 protected:
-    typedef xr_vector<ITEM_DATA> T_VECTOR;
+    typedef std::vector<ITEM_DATA> T_VECTOR;
     static T_VECTOR* m_pItemDataVector;
 
     template <u32 NUM>

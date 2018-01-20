@@ -58,7 +58,7 @@ struct CSolverConditionValue {
     }
 };
 
-typedef xr_vector<CSolverConditionValue> CSolverConditionStorage;
+typedef std::vector<CSolverConditionValue> CSolverConditionStorage;
 
 typedef COperatorConditionAbstract<_solver_condition_type, _solver_value_type> CWorldProperty;
 

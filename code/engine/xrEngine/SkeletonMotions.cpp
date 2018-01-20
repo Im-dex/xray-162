@@ -89,7 +89,7 @@ BOOL motions_value::load(LPCSTR N, IReader* data, vecBones* bones) {
             PART.Name = _strlwr(buf);
             PART.bones.resize(MP->r_u16());
 
-            for (xr_vector<u32>::iterator b_it = PART.bones.begin(); b_it < PART.bones.end();
+            for (std::vector<u32>::iterator b_it = PART.bones.begin(); b_it < PART.bones.end();
                  b_it++) {
                 MP->r_stringZ(buf, sizeof(buf));
                 u16 m_idx = u16(MP->r_u32());
@@ -399,7 +399,7 @@ float motion_marks::time_to_next_mark(float time) const {
 }
 
 void ENGINE_API motion_marks::Load(IReader* R) {
-    xr_string tmp;
+    std::string tmp;
     R->r_string(tmp);
     name = tmp.c_str();
     u32 cnt = R->r_u32();

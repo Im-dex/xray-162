@@ -54,7 +54,7 @@ private:
     void delete_all_phantoms();
 
 private:
-    xr_vector<CPsyDogPhantom*> m_storage;
+    std::vector<CPsyDogPhantom*> m_storage;
 
     DECLARE_SCRIPT_REGISTER_FUNCTION
 };

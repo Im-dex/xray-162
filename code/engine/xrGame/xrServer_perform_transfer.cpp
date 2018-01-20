@@ -17,8 +17,8 @@ void xrServer::Perform_transfer(NET_Packet& PR, NET_Packet& PT, CSE_Abstract* wh
     // Log						("B");
 
     // 2. Detach "FROM"
-    xr_vector<u16>& C = from->children;
-    xr_vector<u16>::iterator c = std::find(C.begin(), C.end(), what->ID);
+    std::vector<u16>& C = from->children;
+    std::vector<u16>::iterator c = std::find(C.begin(), C.end(), what->ID);
     R_ASSERT(C.end() != c);
     C.erase(c);
     PR.w_begin(M_EVENT);

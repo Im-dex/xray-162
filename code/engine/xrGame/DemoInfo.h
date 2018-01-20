@@ -54,7 +54,7 @@ add_to_type_list(demo_player_info)
 
     class demo_info {
 private:
-    typedef xr_vector<demo_player_info*> players_coll_t;
+    typedef std::vector<demo_player_info*> players_coll_t;
     shared_str m_map_name;
     shared_str m_map_version;
     shared_str m_game_type;

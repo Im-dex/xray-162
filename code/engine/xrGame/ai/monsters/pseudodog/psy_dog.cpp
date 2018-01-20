@@ -59,7 +59,7 @@ void CPsyDog::reload(LPCSTR section) { inherited::reload(section); }
 void CPsyDog::register_phantom(CPsyDogPhantom* phantom) { m_storage.push_back(phantom); }
 
 void CPsyDog::unregister_phantom(CPsyDogPhantom* phantom) {
-    xr_vector<CPsyDogPhantom*>::iterator it =
+    std::vector<CPsyDogPhantom*>::iterator it =
         std::find(m_storage.begin(), m_storage.end(), phantom);
 
     for (int i = 0; i < m_max_phantoms_count; ++i) {
@@ -104,7 +104,7 @@ bool CPsyDog::spawn_phantom() {
 // Destroy all phantoms
 //////////////////////////////////////////////////////////////////////////
 void CPsyDog::delete_all_phantoms() {
-    for (xr_vector<CPsyDogPhantom*>::iterator it = m_storage.begin(); it != m_storage.end(); it++)
+    for (std::vector<CPsyDogPhantom*>::iterator it = m_storage.begin(); it != m_storage.end(); it++)
         (*it)->destroy_from_parent();
 
     m_storage.clear();

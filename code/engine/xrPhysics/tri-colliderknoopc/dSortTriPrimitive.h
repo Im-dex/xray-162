@@ -307,7 +307,7 @@ IC int dcTriListCollider::dSortTriPrimitiveCollide(T primitive, dxGeom* o1, dxGe
     }
 
     // if(intersect) ret=0;
-    xr_vector<Triangle>::iterator i;
+    std::vector<Triangle>::iterator i;
 
     if (intersect) {
 

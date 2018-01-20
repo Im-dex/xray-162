@@ -247,8 +247,8 @@ void IGame_Level::SoundEvent_Register(ref_sound_data_ptr S, float range) {
     g_SpatialSpace->q_box(snd_ER, 0, STYPE_REACTTOSOUND, snd_position, bb_size);
 
     // Iterate
-    xr_vector<ISpatial*>::iterator it = snd_ER.begin();
-    xr_vector<ISpatial*>::iterator end = snd_ER.end();
+    std::vector<ISpatial*>::iterator it = snd_ER.begin();
+    std::vector<ISpatial*>::iterator end = snd_ER.end();
     for (; it != end; it++) {
         Feel::Sound* L = (*it)->dcast_FeelSound();
         if (0 == L)

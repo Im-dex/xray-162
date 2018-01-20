@@ -25,7 +25,7 @@ void CUIOptionsItem::OnMessage(LPCSTR message) {
 LPCSTR CUIOptionsItem::GetOptStringValue() { return Console->GetString(m_entry.c_str()); }
 
 void CUIOptionsItem::SaveOptStringValue(LPCSTR val) {
-    xr_string command = m_entry.c_str();
+    std::string command = m_entry.c_str();
     command += " ";
     command += val;
     Console->Execute(command.c_str());

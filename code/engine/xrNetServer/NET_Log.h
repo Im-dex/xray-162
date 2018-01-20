@@ -16,7 +16,7 @@ private:
 
     std::recursive_mutex m_cs;
 
-    xr_vector<SLogPacket> m_aLogPackets;
+    std::vector<SLogPacket> m_aLogPackets;
 
     void FlushLog();
 

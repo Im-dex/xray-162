@@ -219,7 +219,7 @@ void CIKLimbsController::Calculate() {
 
     SCalculateData cd[max_size];
 
-    xr_vector<CIKLimb>::iterator i, b = _bone_chains.begin(), e = _bone_chains.end();
+    std::vector<CIKLimb>::iterator i, b = _bone_chains.begin(), e = _bone_chains.end();
     for (i = b; e != i; ++i) {
         cd[i - b] = SCalculateData(*i, obj);
         LimbCalculate(cd[i - b]);
@@ -277,7 +277,7 @@ void CIKLimbsController::Destroy(CGameObject* O) {
 #endif
 
     O->remove_visual_callback(IKVisualCallback);
-    xr_vector<CIKLimb>::iterator i = _bone_chains.begin(), e = _bone_chains.end();
+    std::vector<CIKLimb>::iterator i = _bone_chains.begin(), e = _bone_chains.end();
     for (; e != i; ++i)
         i->Destroy();
     _bone_chains.clear();
@@ -326,7 +326,7 @@ void CIKLimbsController::Update() {
     update_blend(m_legs_blend);
 
     _pose_extrapolation.update(m_object->XFORM());
-    xr_vector<CIKLimb>::iterator i = _bone_chains.begin(), e = _bone_chains.end();
+    std::vector<CIKLimb>::iterator i = _bone_chains.begin(), e = _bone_chains.end();
     for (; e != i; ++i)
         LimbUpdate(*i);
 

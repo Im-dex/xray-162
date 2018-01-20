@@ -48,9 +48,9 @@ public:
     params m_game_params;
 
 public:
-    xr_set<CPS_Instance*> ps_active;
-    xr_vector<CPS_Instance*> ps_destroy;
-    xr_vector<CPS_Instance*> ps_needtoplay;
+    std::set<CPS_Instance*> ps_active;
+    std::vector<CPS_Instance*> ps_destroy;
+    std::vector<CPS_Instance*> ps_needtoplay;
 
 public:
     void destroy_particles(const bool& all_particles);

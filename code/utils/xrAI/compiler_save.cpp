@@ -72,7 +72,7 @@ float CalculateHeight(Fbox& BB) {
     return BB.max.y - BB.min.y + EPS_L;
 }
 
-xr_vector<NodeCompressed> compressed_nodes;
+std::vector<NodeCompressed> compressed_nodes;
 
 class CNodeRenumberer {
     IC bool operator=(const CNodeRenumberer&) {}
@@ -88,13 +88,13 @@ class CNodeRenumberer {
         }
     };
 
-    xr_vector<NodeCompressed>& m_nodes;
-    xr_vector<u32>& m_sorted;
-    xr_vector<u32>& m_renumbering;
+    std::vector<NodeCompressed>& m_nodes;
+    std::vector<u32>& m_sorted;
+    std::vector<u32>& m_renumbering;
 
 public:
-    CNodeRenumberer(xr_vector<NodeCompressed>& nodes, xr_vector<u32>& sorted,
-                    xr_vector<u32>& renumbering)
+    CNodeRenumberer(std::vector<NodeCompressed>& nodes, std::vector<u32>& sorted,
+                    std::vector<u32>& renumbering)
         : m_nodes(nodes), m_sorted(sorted), m_renumbering(renumbering) {
         u32 N = (u32)m_nodes.size();
         m_sorted.resize(N);
@@ -155,8 +155,8 @@ void xrSaveNodes(LPCSTR N, LPCSTR out_name) {
         compressed_nodes.push_back(NC);
     }
 
-    xr_vector<u32> sorted;
-    xr_vector<u32> renumbering;
+    std::vector<u32> sorted;
+    std::vector<u32> renumbering;
     CNodeRenumberer A(compressed_nodes, sorted, renumbering);
 
     for (u32 i = 0; i < g_nodes.size(); ++i) {

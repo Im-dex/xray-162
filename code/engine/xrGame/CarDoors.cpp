@@ -13,11 +13,11 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool CCar::DoorHit(float P, s16 element, ALife::EHitType hit_type) {
     if (hit_type == ALife::eHitTypeStrike && P > 20.f) {
-        xr_map<u16, SDoor>::iterator i = m_doors.begin(), e = m_doors.end();
+        std::map<u16, SDoor>::iterator i = m_doors.begin(), e = m_doors.end();
         for (; e != i; ++i)
             i->second.Open();
     }
-    xr_map<u16, SDoor>::iterator i = m_doors.find(element);
+    std::map<u16, SDoor>::iterator i = m_doors.find(element);
     if (i != m_doors.end()) {
         i->second.Hit(P);
         return true;
@@ -376,7 +376,7 @@ float CCar::SDoor::GetAngle() {
     return joint->GetAxisAngle(0);
 }
 
-static xr_vector<Fmatrix> bones_bind_forms;
+static std::vector<Fmatrix> bones_bind_forms;
 bool CCar::SDoor::IsFront(const Fvector& pos, const Fvector& dir) {
     IKinematics* K = PKinematics(pcar->Visual());
     // CBoneInstance bi=K->LL_GetBoneInstance(bone_id);

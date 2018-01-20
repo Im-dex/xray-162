@@ -36,7 +36,7 @@ void simplify_texture(string_path& fn) {
 }
 
 template <class T>
-BOOL reclaim(xr_vector<T*>& vec, const T* ptr) {
+BOOL reclaim(std::vector<T*>& vec, const T* ptr) {
     auto it = vec.begin();
     auto end = vec.end();
     for (; it != end; it++)

@@ -126,7 +126,7 @@ void CBulletManager::Load() {
 
     LPCSTR whine_sounds = pSettings->r_string(bullet_manager_sect, "whine_sounds");
     int cnt = _GetItemCount(whine_sounds);
-    xr_string tmp;
+    std::string tmp;
     for (int k = 0; k < cnt; ++k) {
         m_WhineSounds.push_back(ref_sound());
         m_WhineSounds.back().create(_GetItem(whine_sounds, k, tmp), st_Effect, sg_SourceType);

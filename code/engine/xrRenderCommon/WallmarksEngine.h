@@ -17,11 +17,11 @@ public:
 public:
     struct static_wallmark {
         Fsphere bounds;
-        xr_vector<FVF::LIT> verts;
+        std::vector<FVF::LIT> verts;
         float ttl;
     };
-    using StaticWMVec = xr_vector<static_wallmark*>;
-    using WMSlotVec = xr_vector<wm_slot*>;
+    using StaticWMVec = std::vector<static_wallmark*>;
+    using WMSlotVec = std::vector<wm_slot*>;
 
 private:
     StaticWMVec static_pool;
@@ -35,7 +35,7 @@ private:
 
     xrXRC xrc;
     CDB::Collector sml_collector;
-    xr_vector<u32> sml_adjacency;
+    std::vector<u32> sml_adjacency;
 
     std::recursive_mutex lock;
 

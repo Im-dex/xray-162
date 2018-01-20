@@ -28,7 +28,7 @@ struct SSCDrawHelper {
     Fvector fov_direction;
     shared_str animation_id;
 };
-xr_vector<SSCDrawHelper> m_draw_data;
+std::vector<SSCDrawHelper> m_draw_data;
 shared_str m_description;
 float m_hold_position_time;
 float m_enter_min_enemy_distance;
@@ -42,7 +42,7 @@ luabind::object m_available_loopholes;
 
 #ifdef XRSE_FACTORY_EXPORTS
 private:
-typedef xr_vector<visual_data> visuals_collection;
+typedef std::vector<visual_data> visuals_collection;
 
 void __stdcall OnChangeDescription(PropValue* sender);
 void __stdcall OnChangeLoopholes(PropValue* sender);

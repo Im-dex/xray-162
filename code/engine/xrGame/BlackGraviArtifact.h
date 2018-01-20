@@ -8,7 +8,7 @@
 #include "GraviArtifact.h"
 #include "../xrEngine/feel_touch.h"
 #include "PhysicsShellHolder.h"
-using GAME_OBJECT_LIST = xr_vector<CPhysicsShellHolder*>;
+using GAME_OBJECT_LIST = std::vector<CPhysicsShellHolder*>;
 
 class CBlackGraviArtefact : public CGraviArtefact, public Feel::Touch {
 private:

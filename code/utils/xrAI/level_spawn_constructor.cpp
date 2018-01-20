@@ -159,7 +159,7 @@ void CLevelSpawnConstructor::add_free_object(CSE_Abstract* abstract) {
 //{
 //	SPAWN_GRPOUP_OBJECTS::iterator	I = m_spawn_objects.find(group_section);
 //	if (I == m_spawn_objects.end()) {
-//		xr_vector<CSE_Abstract*>	*temp = new GROUP_OBJECTS();
+//		std::vector<CSE_Abstract*>	*temp = new GROUP_OBJECTS();
 //		temp->clear					();
 //		temp->push_back				(abstract);
 //		m_spawn_objects.insert		(std::make_pair(group_section,temp));
@@ -450,7 +450,7 @@ void CLevelSpawnConstructor::generate_artefact_spawn_positions() {
     VERIFY(!m_graph_engine);
     m_graph_engine = new CGraphEngine(m_level_graph->header().vertex_count());
 
-    xr_vector<u32> l_tpaStack;
+    std::vector<u32> l_tpaStack;
     SPAWN_STORAGE zones;
     l_tpaStack.reserve(1024);
     SPAWN_STORAGE::iterator I = m_spawns.begin();
@@ -514,7 +514,7 @@ void CLevelSpawnConstructor::generate_artefact_spawn_positions() {
 
         LEVEL_POINT_STORAGE::iterator I = m_level_points.begin() + zone->m_artefact_position_offset;
         LEVEL_POINT_STORAGE::iterator E = m_level_points.end();
-        xr_vector<u32>::iterator i = l_tpaStack.begin();
+        std::vector<u32>::iterator i = l_tpaStack.begin();
         for (; I != E; ++I, ++i) {
             (*I).tNodeID = *i;
             (*I).tPoint = level_graph().vertex_position(*i);

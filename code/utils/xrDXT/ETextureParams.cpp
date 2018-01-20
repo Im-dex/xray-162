@@ -271,7 +271,7 @@ u32 STextureParams::MemoryUsage(LPCSTR base_name) {
     case STextureParams::tfRGBA:
         break;
     }
-    xr_string fn;
+    std::string fn;
     FS.update_path(fn, _game_textures_, EFS.ChangeFileExt(base_name, ".seq").c_str());
     if (FS.exist(fn.c_str())) {
         string128 buffer;

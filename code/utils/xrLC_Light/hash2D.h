@@ -2,7 +2,7 @@
 #include "serialize.h"
 template <class T, u32 s_X, u32 s_Y>
 class hash2D {
-    xr_vector<T> table[s_Y][s_X];
+    std::vector<T> table[s_Y][s_X];
     Fbox2 bounds;
     Fvector2 size;
 
@@ -13,7 +13,7 @@ public:
 
         // for (u32 y=0; y<s_Y; y++)
         //	for (u32 x=0; x<s_Y; x++)
-        //		table[y][x]	= new xr_vector<T > ();
+        //		table[y][x]	= new std::vector<T > ();
     }
     ~hash2D() {
         // for (u32 y=0; y<s_Y; y++)
@@ -48,7 +48,7 @@ public:
             for (int x = x1; x <= x2; x++)
                 table[y][x].push_back(value);
     };
-    xr_vector<T>& query(float x, float y) {
+    std::vector<T>& query(float x, float y) {
         int _x = iFloor(float(s_X) * (x - bounds.min.x) / size.x);
         clamp(_x, 0, int(s_X - 1));
         int _y = iFloor(float(s_Y) * (y - bounds.min.y) / size.y);

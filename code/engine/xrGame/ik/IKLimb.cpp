@@ -314,7 +314,7 @@ void CIKLimb::Create(u16 id, IKinematicsAnimated* K, bool collide_) {
     sv_state.set_limb(this);
     m_collide = collide_;
     //////////////////////////////////////////////////////////////////////
-    xr_vector<Fmatrix> binds;
+    std::vector<Fmatrix> binds;
     CK->LL_GetBindTransform(binds);
     Fmatrix XT, XS;
     XT.set(binds[m_bones[0]]);

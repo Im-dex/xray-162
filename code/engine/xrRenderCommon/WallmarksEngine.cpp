@@ -17,7 +17,7 @@ struct wm_slot {
     typedef CWallmarksEngine::StaticWMVec StaticWMVec;
     ref_shader shader;
     StaticWMVec static_items;
-    xr_vector<intrusive_ptr<CSkeletonWallmark>> skeleton_items;
+    std::vector<intrusive_ptr<CSkeletonWallmark>> skeleton_items;
     wm_slot(ref_shader sh) {
         shader = sh;
         static_items.reserve(256);
@@ -400,7 +400,7 @@ void CWallmarksEngine::Render() {
         BeginStream(hGeom, w_offset, w_verts, w_start);
 
         // dynamic wallmarks
-        for (xr_vector<intrusive_ptr<CSkeletonWallmark>>::iterator w_it =
+        for (std::vector<intrusive_ptr<CSkeletonWallmark>>::iterator w_it =
                  slot->skeleton_items.begin();
              w_it != slot->skeleton_items.end(); w_it++) {
             intrusive_ptr<CSkeletonWallmark> W = *w_it;

@@ -10,7 +10,7 @@ struct SBoneProtections {
     };
     float m_fHitFracNpc;
     float m_fHitFracActor;
-    typedef xr_map<s16, BoneProtection> storage_type;
+    typedef std::map<s16, BoneProtection> storage_type;
     typedef storage_type::iterator storage_it;
     SBoneProtections() {
         m_default.koeff = 1.0f;

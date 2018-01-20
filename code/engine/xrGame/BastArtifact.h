@@ -12,7 +12,7 @@
 struct SGameMtl;
 struct dContact;
 
-using ALIVE_LIST = xr_vector<CEntityAlive*>;
+using ALIVE_LIST = std::vector<CEntityAlive*>;
 
 class CBastArtefact : public CArtefact, public Feel::Touch {
 private:

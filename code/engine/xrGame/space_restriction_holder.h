@@ -26,7 +26,7 @@ typedef intrusive_ptr<CSpaceRestrictionBridge, RestrictionSpace::CTimeIntrusiveB
 
 class CSpaceRestrictionHolder {
 public:
-    typedef xr_map<shared_str, CSpaceRestrictionBridge*> RESTRICTIONS;
+    typedef std::map<shared_str, CSpaceRestrictionBridge*> RESTRICTIONS;
 
 private:
     enum {

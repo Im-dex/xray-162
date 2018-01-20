@@ -23,8 +23,8 @@ struct ARTICLE_DATA : public IPureSerializeObject<IReader, IWriter> {
     EArticleType article_type;
 };
 
-using ARTICLE_ID_VECTOR = xr_vector<shared_str>;
-using ARTICLE_VECTOR = xr_vector<ARTICLE_DATA>;
+using ARTICLE_ID_VECTOR = std::vector<shared_str>;
+using ARTICLE_VECTOR = std::vector<ARTICLE_DATA>;
 
 class FindArticleByIDPred {
 public:

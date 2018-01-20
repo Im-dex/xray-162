@@ -23,7 +23,7 @@ CPhysicsShellAnimator::CPhysicsShellAnimator(CPhysicsShell* _pPhysicsShell, CIni
     }
 
     if (all_bones)
-        for (xr_vector<CPHElement*>::iterator i = m_pPhysicsShell->Elements().begin();
+        for (std::vector<CPHElement*>::iterator i = m_pPhysicsShell->Elements().begin();
              i != m_pPhysicsShell->Elements().end(); i++)
             CreateJoint(*i);
 
@@ -37,7 +37,7 @@ CPhysicsShellAnimator::CPhysicsShellAnimator(CPhysicsShell* _pPhysicsShell, CIni
 }
 
 CPhysicsShellAnimator::~CPhysicsShellAnimator() {
-    for (xr_vector<CPhysicsShellAnimatorBoneData>::iterator i = m_bones_data.begin();
+    for (std::vector<CPhysicsShellAnimatorBoneData>::iterator i = m_bones_data.begin();
          i != m_bones_data.end(); i++) {
         ((CPHShell*)(m_pPhysicsShell))
             ->Island()
@@ -80,7 +80,7 @@ void CPhysicsShellAnimator::OnFrame() {
 
     m_pPhysicsShell->Enable();
 
-    for (xr_vector<CPhysicsShellAnimatorBoneData>::iterator i = m_bones_data.begin();
+    for (std::vector<CPhysicsShellAnimatorBoneData>::iterator i = m_bones_data.begin();
          i != m_bones_data.end(); i++) {
         Fmatrix target_obj_posFmatrixS;
         CBoneInstance& B =

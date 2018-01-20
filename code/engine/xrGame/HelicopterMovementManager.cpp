@@ -290,7 +290,7 @@ float SHeliMovementState::GetSafeAltitude() {
 }
 
 void SHeliMovementState::CreateRoundPoints(Fvector center, float radius, float start_h, float end_h,
-                                           xr_vector<STmpPt>& round_points) {
+                                           std::vector<STmpPt>& round_points) {
     float height = center.y;
 
     float round_len = 2 * PI * radius;
@@ -336,8 +336,8 @@ void SHeliMovementState::goByRoundPath(Fvector center_, float radius_, bool cloc
     float start_h = 0.0f;
     float end_h = PI_MUL_2 - EPS;
 
-    xr_vector<STmpPt> round_points;
-    xr_vector<STmpPt>::iterator it, it_e;
+    std::vector<STmpPt> round_points;
+    std::vector<STmpPt>::iterator it, it_e;
     CreateRoundPoints(center_, radius_, start_h, end_h, round_points);
     if (clockwise_)
         std::reverse(round_points.begin() + 1, round_points.end());
@@ -429,7 +429,7 @@ void CHelicopter::OnRender() {
             static float	dist		= 10.0f;//dist between points
             float	td			= 2*PI*dist/round_len;
             float	dir_h		= 0.0f;
-            xr_vector<Fvector>	round_points;
+            std::vector<Fvector>	round_points;
             
 
             while(dir_h+td<2*PI){
@@ -441,8 +441,8 @@ void CHelicopter::OnRender() {
                     dir_h	+= td;
             }
 
-            xr_vector<Fvector>::iterator it = round_points.begin();
-            xr_vector<Fvector>::iterator it_e = round_points.end();
+            std::vector<Fvector>::iterator it = round_points.begin();
+            std::vector<Fvector>::iterator it_e = round_points.end();
             for(;it!=it_e;++it){
                     Level().debug_renderer().draw_aabb
        ((*it),0.1f,0.1f,0.1f,D3DCOLOR_XRGB(0,255,0));

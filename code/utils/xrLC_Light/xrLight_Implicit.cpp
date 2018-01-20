@@ -19,7 +19,7 @@ extern "C" bool __declspec(dllimport) __stdcall DXTCompress(LPCSTR out_name, u8*
                                                             u8* normal_map, u32 w, u32 h, u32 pitch,
                                                             STextureParams* fmt, u32 depth);
 
-using Implicit = xr_map<u32, ImplicitDeflector>;
+using Implicit = std::map<u32, ImplicitDeflector>;
 
 void ImplicitExecute::read(INetReader& r) {
     y_start = r.r_u32();
@@ -91,7 +91,7 @@ void ImplicitExecute::Execute(net_task_callback* net_callback) {
                     Fvector2 P;
                     P.x = float(U) / dim.x + half.x + Jitter[J].x * JS.x;
                     P.y = float(V) / dim.y + half.y + Jitter[J].y * JS.y;
-                    xr_vector<Face*>& space = cl_globs.Hash().query(P.x, P.y);
+                    std::vector<Face*>& space = cl_globs.Hash().query(P.x, P.y);
 
                     // World space
                     Fvector wP, wN, B;
@@ -154,7 +154,7 @@ void ImplicitLightingTreadNetExec() {
     ImplicitLightingExec(TRUE);
 }
 
-static xr_vector<u32> not_clear;
+static std::vector<u32> not_clear;
 void ImplicitLightingExec(BOOL b_net) {
 
     Implicit calculator;
@@ -228,7 +228,7 @@ void ImplicitLightingExec(BOOL b_net) {
             }
         }
 
-        xr_vector<u32> packed;
+        std::vector<u32> packed;
         defl.lmap.Pack(packed);
         defl.Deallocate();
 
@@ -258,7 +258,7 @@ void ImplicitLightingExec(BOOL b_net) {
         // lmap
         Status("Saving lmap...");
         {
-            // xr_vector<u32>			packed;
+            // std::vector<u32>			packed;
             // defl.lmap.Pack			(packed);
 
             string_path name, out_name;

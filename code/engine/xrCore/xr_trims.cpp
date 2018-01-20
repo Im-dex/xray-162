@@ -165,10 +165,10 @@ LPSTR _ChangeSymbol(LPSTR name, char src, char dest) {
     return name;
 }
 
-xr_string& _ChangeSymbol(xr_string& name, char src, char dest) {
-    for (xr_string::iterator it = name.begin(); it != name.end(); it++)
+std::string& _ChangeSymbol(std::string& name, char src, char dest) {
+    for (std::string::iterator it = name.begin(); it != name.end(); it++)
         if (*it == src)
-            *it = xr_string::value_type(dest);
+            *it = std::string::value_type(dest);
     return name;
 }
 
@@ -183,22 +183,10 @@ void _SequenceToList(LPSTRVec& lst, LPCSTR in, char separator) {
     }
 }
 
-void _SequenceToList(xr_vector<std::string>& lst, LPCSTR in, char separator) {
-    lst.clear();
-    const int t_cnt = _GetItemCount(in, separator);
-    xr_string T;
-    for (int i = 0; i < t_cnt; i++) {
-        _GetItem(in, i, T, separator, nullptr);
-        _Trim(T);
-        if (T.size())
-            lst.push_back(T.c_str());
-    }
-}
-
 void _SequenceToList(SStringVec& lst, LPCSTR in, char separator) {
     lst.clear();
     int t_cnt = _GetItemCount(in, separator);
-    xr_string T;
+    std::string T;
     for (int i = 0; i < t_cnt; i++) {
         _GetItem(in, i, T, separator, 0);
         _Trim(T);
@@ -207,18 +195,7 @@ void _SequenceToList(SStringVec& lst, LPCSTR in, char separator) {
     }
 }
 
-xr_string _ListToSequence(const SStringVec& lst) {
-    static xr_string out;
-    out = "";
-    if (lst.size()) {
-        out = lst.front();
-        for (SStringVec::const_iterator s_it = lst.begin() + 1; s_it != lst.end(); s_it++)
-            out += xr_string(",") + (*s_it);
-    }
-    return out;
-}
-
-xr_string& _TrimLeft(xr_string& str) {
+std::string& _TrimLeft(std::string& str) {
     LPCSTR b = str.c_str();
     LPCSTR p = str.c_str();
     while (*p && (u8(*p) <= u8(' ')))
@@ -228,7 +205,7 @@ xr_string& _TrimLeft(xr_string& str) {
     return str;
 }
 
-xr_string& _TrimRight(xr_string& str) {
+std::string& _TrimRight(std::string& str) {
     LPCSTR b = str.c_str();
     size_t l = str.length();
     if (l) {
@@ -241,13 +218,13 @@ xr_string& _TrimRight(xr_string& str) {
     return str;
 }
 
-xr_string& _Trim(xr_string& str) {
+std::string& _Trim(std::string& str) {
     _TrimLeft(str);
     _TrimRight(str);
     return str;
 }
 
-LPCSTR _CopyVal(LPCSTR src, xr_string& dst, char separator) {
+LPCSTR _CopyVal(LPCSTR src, std::string& dst, char separator) {
     LPCSTR p;
     ptrdiff_t n;
     p = strchr(src, separator);
@@ -257,7 +234,7 @@ LPCSTR _CopyVal(LPCSTR src, xr_string& dst, char separator) {
     return dst.c_str();
 }
 
-LPCSTR _GetItem(LPCSTR src, int index, xr_string& dst, char separator, LPCSTR def, bool trim) {
+LPCSTR _GetItem(LPCSTR src, int index, std::string& dst, char separator, LPCSTR def, bool trim) {
     LPCSTR ptr;
     ptr = _SetPos(src, index, separator);
     if (ptr)
@@ -269,6 +246,6 @@ LPCSTR _GetItem(LPCSTR src, int index, xr_string& dst, char separator, LPCSTR de
     return dst.c_str();
 }
 
-std::string _ListToSequence(const RStringVec& lst) {
+std::string _ListToSequence(const SStringVec& lst) {
     return boost::algorithm::join(lst, ",");
 }

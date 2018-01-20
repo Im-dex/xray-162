@@ -91,7 +91,7 @@ void CStringTable::ReparseKeyBindings() {
 
 STRING_VALUE CStringTable::ParseLine(LPCSTR str, LPCSTR skey, bool bFirst) {
     //	LPCSTR str = "1 $$action_left$$ 2 $$action_right$$ 3 $$action_left$$ 4";
-    xr_string res;
+    std::string res;
     int k = 0;
     const char* b;
 #define ACTION_STR "$$ACTION_"

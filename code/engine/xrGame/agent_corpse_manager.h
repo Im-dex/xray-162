@@ -15,7 +15,7 @@ class CMemberOrder;
 
 class CAgentCorpseManager {
 public:
-    typedef xr_vector<CMemberCorpse> MEMBER_CORPSES;
+    typedef std::vector<CMemberCorpse> MEMBER_CORPSES;
 
 private:
     MEMBER_CORPSES m_corpses;

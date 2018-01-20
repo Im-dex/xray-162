@@ -55,7 +55,7 @@ public:
 
 //	Allow real-time config reload
 #ifdef DEBUG
-    void RegisterFluidData(dx103DFluidData* pData, const xr_string& SectionName);
+    void RegisterFluidData(dx103DFluidData* pData, const std::string& SectionName);
     void DeregisterFluidData(dx103DFluidData* pData);
     void UpdateProfiles();
 #endif //	DEBUG
@@ -138,8 +138,8 @@ private:
 
 //	Allow real-time config reload
 #ifdef DEBUG
-    xr_vector<xr_string> m_lstSectionNames;
-    xr_vector<dx103DFluidData*> m_lstFluidData;
+    std::vector<std::string> m_lstSectionNames;
+    std::vector<dx103DFluidData*> m_lstFluidData;
 #endif //	DEBUG
 
 //	Allow real-time config reload

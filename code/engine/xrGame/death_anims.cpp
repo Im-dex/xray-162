@@ -151,7 +151,7 @@ MotionID death_anims::motion(CEntityAlive& ea, const SHit& H, float& angle) cons
     }
 
     MotionID m;
-    xr_vector<type_motion*>::const_iterator i = anims.begin(), e = anims.end();
+    std::vector<type_motion*>::const_iterator i = anims.begin(), e = anims.end();
     for (; e != i; ++i)
         if ((*i)->predicate(ea, H, m, angle) && m.valid())
             return m;

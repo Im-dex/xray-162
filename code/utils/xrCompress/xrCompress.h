@@ -10,8 +10,8 @@ class xrCompressor {
     shared_str target_name;
     IReader* pPackHeader;
     CInifile* config_ltx;
-    xr_vector<char*>* files_list;
-    xr_vector<char*>* folders_list;
+    std::vector<char*>* files_list;
+    std::vector<char*>* folders_list;
 
     struct ALIAS {
         LPCSTR path;
@@ -20,9 +20,9 @@ class xrCompressor {
         u32 c_size_real;
         u32 c_size_compressed;
     };
-    xr_multimap<u32, ALIAS> aliases;
+    std::multimap<u32, ALIAS> aliases;
 
-    xr_vector<std::string> exclude_exts;
+    std::vector<std::string> exclude_exts;
     bool testSKIP(LPCSTR path);
     ALIAS* testALIAS(IReader* base, u32 crc, u32& a_tests);
     bool testEqual(LPCSTR path, IReader* base);

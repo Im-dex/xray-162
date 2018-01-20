@@ -29,8 +29,8 @@ public:
 public:
     typedef const CEdge* const_iterator;
     typedef const CLevelPoint* const_spawn_iterator;
-    typedef xr_vector<CLevelPoint> LEVEL_POINT_VECTOR;
-    typedef xr_vector<bool> ENABLED;
+    typedef std::vector<CLevelPoint> LEVEL_POINT_VECTOR;
+    typedef std::vector<bool> ENABLED;
 
 private:
     CHeader m_header;

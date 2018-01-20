@@ -31,7 +31,7 @@ struct SGameTaskKey : public IPureSerializeObject<IReader, IWriter>, public IPur
     virtual void destroy();
 };
 
-using vGameTasks = xr_vector<SGameTaskKey>;
+using vGameTasks = std::vector<SGameTaskKey>;
 
 struct CGameTaskRegistry : public CALifeAbstractRegistry<u16, vGameTasks> {
     virtual void save(IWriter& stream) {

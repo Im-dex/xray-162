@@ -7,11 +7,11 @@
 //#	define MESHSTRUCTURE_API
 //#endif
 
-// typedef	xr_vector<_vertex*>		v_vertices;
+// typedef	std::vector<_vertex*>		v_vertices;
 // typedef	v_vertices::iterator	v_vertices_it;
 
 // typedef v_faces::iterator		v_faces_it;
-// typedef xr_vector<_subdiv>		v_subdivs;
+// typedef std::vector<_subdiv>		v_subdivs;
 // typedef v_subdivs::iterator		v_subdivs_it;
 // extern	volatile	u32		dwInvalidFaces;
 class MESHSTRUCTURE_API vector_item {
@@ -231,11 +231,11 @@ struct MESHSTRUCTURE_API Tvertex : public DataVertexType, public vector_item {
     typedef Tface<DataVertexType> type_face;
     typedef Tvertex<DataVertexType> type_vertex;
 
-    typedef xr_vector<type_face*> v_faces;
+    typedef std::vector<type_face*> v_faces;
     typedef typename v_faces::iterator v_faces_it;
 
-    // typedef typename xr_vector<type_vertex>::iterator v_dummy;
-    typedef xr_vector<type_vertex*> v_vertices;
+    // typedef typename std::vector<type_vertex>::iterator v_dummy;
+    typedef std::vector<type_vertex*> v_vertices;
 
     typedef typename v_vertices::iterator v_vertices_it;
     //////////////////////////////////////////////////////////////
@@ -298,7 +298,7 @@ struct remove_pred {
 };
 
 template <typename typeVertex>
-IC void isolate_vertices(BOOL bProgress, xr_vector<typeVertex*>& vertices) {
+IC void isolate_vertices(BOOL bProgress, std::vector<typeVertex*>& vertices) {
     if (bProgress)
         Status("Isolating vertices...");
     // g_bUnregister		= false;
@@ -317,7 +317,7 @@ IC void isolate_vertices(BOOL bProgress, xr_vector<typeVertex*>& vertices) {
 
     /*
             remove_pred<typeVertex> rp;
-            xr_vector<typeVertex*>::iterator	_end	= std::remove_if
+            std::vector<typeVertex*>::iterator	_end	= std::remove_if
        (vertices.begin(),vertices.end(),rp);
             
 

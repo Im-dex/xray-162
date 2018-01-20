@@ -15,7 +15,7 @@ class CEntity;
 class CTeamHierarchyHolder;
 
 namespace SquadHierarchyHolder {
-typedef xr_vector<CGroupHierarchyHolder*> GROUP_REGISTRY;
+typedef std::vector<CGroupHierarchyHolder*> GROUP_REGISTRY;
 }
 
 class CSquadHierarchyHolder {

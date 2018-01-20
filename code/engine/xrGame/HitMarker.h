@@ -45,8 +45,8 @@ public:
     FactoryPtr<IUIShader> hShader2;
     FactoryPtr<IUIShader> hShader_Grenade;
 
-    typedef xr_deque<SHitMark*> HITMARKS;
-    typedef xr_deque<SGrenadeMark*> GRENADEMARKS;
+    typedef std::deque<SHitMark*> HITMARKS;
+    typedef std::deque<SGrenadeMark*> GRENADEMARKS;
 
     HITMARKS m_HitMarks;
     GRENADEMARKS m_GrenadeMarks;

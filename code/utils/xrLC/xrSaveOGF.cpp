@@ -83,7 +83,7 @@ void CBuild::SaveTREE(IWriter& fs) {
     CMemoryWriter MFS;
 
     Status("Geometry buffers...");
-    xr_vector<u32> remap;
+    std::vector<u32> remap;
     remap.reserve(g_tree.size());
     for (u32 rid = 0; rid < g_tree.size(); rid++) {
         OGF* o = dynamic_cast<OGF*>(g_tree[rid]);
@@ -100,7 +100,7 @@ void CBuild::SaveTREE(IWriter& fs) {
 
     Status("Visuals...");
     fs.open_chunk(fsL_VISUALS);
-    for (xr_vector<OGF_Base*>::iterator it = g_tree.begin(); it != g_tree.end(); it++) {
+    for (std::vector<OGF_Base*>::iterator it = g_tree.begin(); it != g_tree.end(); it++) {
         u32 idx = u32(it - g_tree.begin());
         MFS.open_chunk(idx);
         (*it)->Save(MFS);
@@ -124,7 +124,7 @@ void CBuild::SaveTREE(IWriter& fs) {
     Status("Shader table...");
     fs.open_chunk(fsL_SHADERS);
     fs.w_u32(g_Shaders.size());
-    for (xr_vector<LPCSTR>::iterator T = g_Shaders.begin(); T != g_Shaders.end(); T++)
+    for (std::vector<LPCSTR>::iterator T = g_Shaders.begin(); T != g_Shaders.end(); T++)
         fs.w_stringZ(*T);
     fs.close_chunk();
     // mem_Compact			();

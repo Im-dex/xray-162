@@ -160,7 +160,7 @@ bool CDetailPathManager::compute_tangent(const STrajectoryPoint& start,
 }
 
 bool CDetailPathManager::build_circle_trajectory(const STrajectoryPoint& position,
-                                                 xr_vector<STravelPathPoint>* path, u32* vertex_id,
+                                                 std::vector<STravelPathPoint>* path, u32* vertex_id,
                                                  const u32 velocity) {
     const float min_dist = .1f;
     STravelPathPoint t;
@@ -254,7 +254,7 @@ bool CDetailPathManager::build_circle_trajectory(const STrajectoryPoint& positio
 
 bool CDetailPathManager::build_line_trajectory(const STrajectoryPoint& start,
                                                const STrajectoryPoint& dest, u32 vertex_id,
-                                               xr_vector<STravelPathPoint>* path, u32 velocity) {
+                                               std::vector<STravelPathPoint>* path, u32 velocity) {
     VERIFY(ai().level_graph().valid_vertex_id(vertex_id));
     STravelPathPoint t;
     t.velocity = velocity;
@@ -278,7 +278,7 @@ bool CDetailPathManager::build_line_trajectory(const STrajectoryPoint& start,
 
 bool CDetailPathManager::build_trajectory(const STrajectoryPoint& start,
                                           const STrajectoryPoint& dest,
-                                          xr_vector<STravelPathPoint>* path, const u32 velocity1,
+                                          std::vector<STravelPathPoint>* path, const u32 velocity1,
                                           const u32 velocity2, const u32 velocity3) {
 
     u32 vertex_id;
@@ -297,7 +297,7 @@ bool CDetailPathManager::build_trajectory(const STrajectoryPoint& start,
 bool CDetailPathManager::build_trajectory(STrajectoryPoint& start, STrajectoryPoint& dest,
                                           const SCirclePoint tangents[4][2],
                                           const u32 tangent_count,
-                                          xr_vector<STravelPathPoint>* path, float& time,
+                                          std::vector<STravelPathPoint>* path, float& time,
                                           const u32 velocity1, const u32 velocity2,
                                           const u32 velocity3) {
     time = flt_max;
@@ -331,7 +331,7 @@ bool CDetailPathManager::build_trajectory(STrajectoryPoint& start, STrajectoryPo
 }
 
 bool CDetailPathManager::compute_trajectory(STrajectoryPoint& start, STrajectoryPoint& dest,
-                                            xr_vector<STravelPathPoint>* path, float& time,
+                                            std::vector<STravelPathPoint>* path, float& time,
                                             const u32 velocity1, const u32 velocity2,
                                             const u32 velocity3,
                                             const EDirectionType direction_type) {
@@ -364,9 +364,9 @@ bool CDetailPathManager::compute_trajectory(STrajectoryPoint& start, STrajectory
 }
 
 bool CDetailPathManager::compute_path(STrajectoryPoint& _start, STrajectoryPoint& _dest,
-                                      xr_vector<STravelPathPoint>* m_tpTravelLine,
-                                      const xr_vector<STravelParamsIndex>& start_params,
-                                      const xr_vector<STravelParamsIndex>& dest_params,
+                                      std::vector<STravelPathPoint>* m_tpTravelLine,
+                                      const std::vector<STravelParamsIndex>& start_params,
+                                      const std::vector<STravelParamsIndex>& dest_params,
                                       const u32 straight_line_index,
                                       const u32 straight_line_index_negative) {
     STrajectoryPoint start = _start;
@@ -374,8 +374,8 @@ bool CDetailPathManager::compute_path(STrajectoryPoint& _start, STrajectoryPoint
     float min_time = flt_max, time;
     u32 size = m_tpTravelLine ? m_tpTravelLine->size() : 0;
     u32 real_straight_line_index;
-    xr_vector<STravelParamsIndex>::const_iterator I = start_params.begin();
-    xr_vector<STravelParamsIndex>::const_iterator E = start_params.end();
+    std::vector<STravelParamsIndex>::const_iterator I = start_params.begin();
+    std::vector<STravelParamsIndex>::const_iterator E = start_params.end();
     for (; I != E; ++I) {
         EDirectionType direction_type = eDirectionTypePP;
         start = _start;
@@ -386,8 +386,8 @@ bool CDetailPathManager::compute_path(STrajectoryPoint& _start, STrajectoryPoint
             direction_type = EDirectionType(direction_type | eDirectionTypeFN);
             start.direction.mul(-1.f);
         }
-        xr_vector<STravelParamsIndex>::const_iterator i = dest_params.begin();
-        xr_vector<STravelParamsIndex>::const_iterator e = dest_params.end();
+        std::vector<STravelParamsIndex>::const_iterator i = dest_params.begin();
+        std::vector<STravelParamsIndex>::const_iterator e = dest_params.end();
         for (; i != e; ++i) {
             dest = _dest;
             (STravelParams&)dest = (*i);
@@ -442,7 +442,7 @@ void CDetailPathManager::validate_vertex_position(STrajectoryPoint& point) const
     VERIFY(ai().level_graph().inside(point.vertex_id, point.position));
 }
 
-bool CDetailPathManager::init_build(const xr_vector<u32>& level_path, u32 intermediate_index,
+bool CDetailPathManager::init_build(const std::vector<u32>& level_path, u32 intermediate_index,
                                     STrajectoryPoint& start, STrajectoryPoint& dest,
                                     u32& straight_line_index, u32& straight_line_index_negative) {
     VERIFY(!level_path.empty());
@@ -517,7 +517,7 @@ bool CDetailPathManager::init_build(const xr_vector<u32>& level_path, u32 interm
     return (true);
 }
 
-bool CDetailPathManager::fill_key_points(const xr_vector<u32>& level_path, u32 intermediate_index,
+bool CDetailPathManager::fill_key_points(const std::vector<u32>& level_path, u32 intermediate_index,
                                          STrajectoryPoint& start, STrajectoryPoint& dest) {
     STravelPoint start_point;
     start_point.vertex_id = start.vertex_id;
@@ -635,13 +635,13 @@ IC bool CDetailPathManager::better_key_point(const STravelPoint& point0, const S
 }
 
 void CDetailPathManager::build_path_via_key_points(STrajectoryPoint& start, STrajectoryPoint& dest,
-                                                   xr_vector<STravelParamsIndex>& finish_params,
+                                                   std::vector<STravelParamsIndex>& finish_params,
                                                    const u32 straight_line_index,
                                                    const u32 straight_line_index_negative) {
     STrajectoryPoint s, d, p;
     s = start;
-    xr_vector<STravelPoint>::const_iterator I = m_key_points.begin(), B = I;
-    xr_vector<STravelPoint>::const_iterator E = m_key_points.end();
+    std::vector<STravelPoint>::const_iterator I = m_key_points.begin(), B = I;
+    std::vector<STravelPoint>::const_iterator E = m_key_points.end();
     for (B != E ? ++I : I; I != E; ++I) {
         VERIFY(ai().level_graph().inside((*I).vertex_id, (*I).position));
 
@@ -701,10 +701,10 @@ void CDetailPathManager::build_path_via_key_points(STrajectoryPoint& start, STra
     m_failed = false;
 }
 
-void CDetailPathManager::postprocess_key_points(const xr_vector<u32>& level_path,
+void CDetailPathManager::postprocess_key_points(const std::vector<u32>& level_path,
                                                 u32 intermediate_index, STrajectoryPoint& start,
                                                 STrajectoryPoint& dest,
-                                                xr_vector<STravelParamsIndex>& finish_params,
+                                                std::vector<STravelParamsIndex>& finish_params,
                                                 u32 straight_line_index,
                                                 u32 straight_line_index_negative) {
     if (m_key_points.size() < 3)
@@ -776,7 +776,7 @@ void CDetailPathManager::add_patrol_point() {
     }
 }
 
-void CDetailPathManager::build_smooth_path(const xr_vector<u32>& level_path,
+void CDetailPathManager::build_smooth_path(const std::vector<u32>& level_path,
                                            u32 intermediate_index) {
     //	Msg									("[%6d][%s] started to build detail
     //path",Device.dwFrame,*m_restricted_object->object().cName());
@@ -817,7 +817,7 @@ void CDetailPathManager::build_smooth_path(const xr_vector<u32>& level_path,
         m_restricted_object->add_border(start.vertex_id, dest.vertex_id);
     }
 
-    xr_vector<STravelParamsIndex>& finish_params =
+    std::vector<STravelParamsIndex>& finish_params =
         m_use_dest_orientation ? m_start_params : m_dest_params;
 
     if (!fill_key_points(level_path, intermediate_index, start, dest)) {

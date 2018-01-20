@@ -59,12 +59,12 @@ struct SSquadCommand {
 // MonsterSquad Class
 class CMonsterSquad {
 public:
-    using MEMBER_COMMAND_MAP = xr_map<const CEntity*, SSquadCommand>;
+    using MEMBER_COMMAND_MAP = std::map<const CEntity*, SSquadCommand>;
     using MEMBER_COMMAND_MAP_IT = MEMBER_COMMAND_MAP::iterator;
 
 private:
     CEntity* leader;
-    using MEMBER_GOAL_MAP = xr_map<CEntity*, SMemberGoal>;
+    using MEMBER_GOAL_MAP = std::map<CEntity*, SMemberGoal>;
 
     // карта целей членов группы (обновляется со стороны объекта)
     MEMBER_GOAL_MAP m_goals;
@@ -72,10 +72,10 @@ private:
     // карта комманд членов группы (обновляется со стороны squad manager)
     MEMBER_COMMAND_MAP m_commands;
 
-    using NODES_VECTOR = xr_vector<u32>;
+    using NODES_VECTOR = std::vector<u32>;
     NODES_VECTOR m_locked_covers;
 
-    using CORPSES_VECTOR = xr_vector<const CEntityAlive*>;
+    using CORPSES_VECTOR = std::vector<const CEntityAlive*>;
     CORPSES_VECTOR m_locked_corpses;
 
 public:
@@ -122,14 +122,14 @@ public:
     //  Общие данные
     //////////////////////////////////////////////////////////////////////////////////////
 
-    using ENTITY_VEC = xr_vector<CEntity*>;
+    using ENTITY_VEC = std::vector<CEntity*>;
     ENTITY_VEC m_temp_entities;
 
     ///////////////////////////////////////////////////////////////////////////////////////
     //  Атака группой монстров
     //////////////////////////////////////////////////////////////////////////////////////
 
-    using ENEMY_MAP = xr_map<const CEntity*, ENTITY_VEC>;
+    using ENEMY_MAP = std::map<const CEntity*, ENTITY_VEC>;
 
     ENEMY_MAP m_enemy_map;
 
@@ -141,7 +141,7 @@ public:
         Fvector p_from;
         float yaw;
     };
-    xr_vector<_elem> lines;
+    std::vector<_elem> lines;
     // ------------
 
     void Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* enemy);

@@ -26,7 +26,7 @@ private:
     dGeomID geom;
     dGeomID transform;
     // PHDynamicData* Childs;
-    // xr_vector<PHDynamicData>  Childs;
+    // std::vector<PHDynamicData>  Childs;
     unsigned int numOfChilds;
     Fmatrix ZeroTransform;
 

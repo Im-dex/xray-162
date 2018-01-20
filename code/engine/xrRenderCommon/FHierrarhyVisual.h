@@ -11,7 +11,7 @@
 
 class FHierrarhyVisual : public dxRender_Visual {
 public:
-    xr_vector<dxRender_Visual*> children;
+    std::vector<dxRender_Visual*> children;
     BOOL bDontDelete;
 
 public:

@@ -34,9 +34,9 @@ protected:
     //уникальный индекс в списке фраз диалога
     shared_str m_ID;
     //текстовое представление фразы
-    xr_string m_text;
-    xr_string m_script_text_id;
-    xr_string m_script_text_val;
+    std::string m_text;
+    std::string m_script_text_id;
+    std::string m_script_text_val;
     //минимальный уровень благосклоггости, необходимый для того
     //чтоб фразу можно было сказать
     int m_iGoodwillLevel;

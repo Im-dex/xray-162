@@ -45,7 +45,7 @@ void exec_pool::receive_result(IGenericStream* inStream) {
     u32 id = u32(-1), type = u32(-1); // r.r_u32();
     read_task_caption(inStream, id, type);
 
-    // xr_vector<u32>::iterator it =std::find( pool.begin(), pool.end(), id );
+    // std::vector<u32>::iterator it =std::find( pool.begin(), pool.end(), id );
     const u32 size = pool.size();
 
     R_ASSERT(_start != u32(-1));
@@ -229,7 +229,7 @@ net_execution* exec_pool::receive_task(IAgent* agent, DWORD sessionId, IGenericS
 
 void exec_pool::remove_task(net_execution* e) {
     send_receive_lock.lock();
-    xr_vector<net_execution*>::iterator i = std::find(pool.begin(), pool.end(), e);
+    std::vector<net_execution*>::iterator i = std::find(pool.begin(), pool.end(), e);
     R_ASSERT(i != pool.end());
     net_execution* pe = *i;
     R_ASSERT(pe == e);

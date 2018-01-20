@@ -36,7 +36,7 @@ private:
     typedef inventory::upgrade::Manager Manager_type;
     typedef inventory::upgrade::Upgrade Upgrade_type;
     typedef inventory::upgrade::Property Property_type;
-    typedef xr_vector<UIUpgrade*> UI_Upgrades_type;
+    typedef std::vector<UIUpgrade*> UI_Upgrades_type;
 
 private: // sub-classes
     struct Scheme {
@@ -46,7 +46,7 @@ private: // sub-classes
         Scheme();
         virtual ~Scheme();
     };
-    typedef xr_vector<Scheme*> SCHEMES;
+    typedef std::vector<Scheme*> SCHEMES;
 
 public:
     CUIInventoryUpgradeWnd();

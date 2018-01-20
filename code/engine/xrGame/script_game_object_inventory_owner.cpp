@@ -250,8 +250,8 @@ void CScriptGameObject::IterateInventoryBox(luabind::functor<void> functor,
         return;
     }
 
-    xr_vector<u16>::const_iterator I = inventory_box->m_items.begin();
-    xr_vector<u16>::const_iterator E = inventory_box->m_items.end();
+    std::vector<u16>::const_iterator I = inventory_box->m_items.begin();
+    std::vector<u16>::const_iterator E = inventory_box->m_items.end();
     for (; I != E; ++I) {
         CGameObject* GO = smart_cast<CGameObject*>(Level().Objects.net_Find(*I));
         if (GO)
@@ -770,7 +770,7 @@ void CScriptGameObject::ActorLookAtPoint(Fvector point) {
 
 //////////////////////////////////////////////////////////////////////////
 
-void construct_restriction_vector(shared_str restrictions, xr_vector<ALife::_OBJECT_ID>& result) {
+void construct_restriction_vector(shared_str restrictions, std::vector<ALife::_OBJECT_ID>& result) {
     result.clear();
     string64 temp;
     u32 n = _GetItemCount(*restrictions);

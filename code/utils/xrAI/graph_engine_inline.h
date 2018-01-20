@@ -33,7 +33,7 @@ IC const CGraphEngine::CSolverAlgorithm& CGraphEngine::solver_algorithm() const 
 
 template <typename _Graph, typename _Parameters>
 IC bool CGraphEngine::search(const _Graph& graph, const _index_type& start_node,
-                             const _index_type& dest_node, xr_vector<_index_type>* node_path,
+                             const _index_type& dest_node, std::vector<_index_type>* node_path,
                              const _Parameters& parameters) {
 #ifndef AI_COMPILER
     Device.Statistic->AI_Path.Begin();
@@ -63,7 +63,7 @@ IC bool CGraphEngine::search(const _Graph& graph, const _index_type& start_node,
 
 template <typename _Graph, typename _Parameters>
 IC bool CGraphEngine::search(const _Graph& graph, const _index_type& start_node,
-                             const _index_type& dest_node, xr_vector<_index_type>* node_path,
+                             const _index_type& dest_node, std::vector<_index_type>* node_path,
                              _Parameters& parameters) {
 #ifndef AI_COMPILER
     Device.Statistic->AI_Path.Begin();
@@ -93,7 +93,7 @@ IC bool CGraphEngine::search(const _Graph& graph, const _index_type& start_node,
 
 template <typename _Graph, typename _Parameters, typename _PathManager>
 IC bool CGraphEngine::search(const _Graph& graph, const _index_type& start_node,
-                             const _index_type& dest_node, xr_vector<_index_type>* node_path,
+                             const _index_type& dest_node, std::vector<_index_type>* node_path,
                              const _Parameters& parameters, _PathManager& path_manager) {
 #ifndef AI_COMPILER
     Device.Statistic->AI_Path.Begin();
@@ -121,7 +121,7 @@ template <typename T1, typename T2, typename T3, typename T4, typename T5, bool 
 IC bool
 CGraphEngine::search(const CProblemSolver<T1, T2, T3, T4, T5, T6, T7, T8>& graph,
                      const _solver_index_type& start_node, const _solver_index_type& dest_node,
-                     xr_vector<_solver_edge_type>* node_path, const _Parameters& parameters) {
+                     std::vector<_solver_edge_type>* node_path, const _Parameters& parameters) {
 #ifndef AI_COMPILER
     Device.Statistic->AI_Path.Begin();
     START_PROFILE("graph_engine")

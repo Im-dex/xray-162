@@ -13,14 +13,14 @@ struct global_claculation_data {
     base_lighting g_lights;               /////////////////////lc
     Shader_xrLC_LIB* g_shaders_xrlc;      ////////////////lc
     b_params g_params;                    //////////////////////lc
-    xr_vector<b_material> g_materials;    ///////////////////lc
-    xr_vector<b_BuildTexture> g_textures; ////////////////////lc
+    std::vector<b_material> g_materials;    ///////////////////lc
+    std::vector<b_BuildTexture> g_textures; ////////////////////lc
     CDB::MODEL RCAST_Model;               ///////////////////lc
 
     Fbox LevelBB;                         //-----------============
     global_slots_data slots_data;         //-------=============
-    xr_vector<b_shader> g_shader_compile; //-----==========
-    xr_vector<b_rc_face> g_rc_faces;      //---------===============
+    std::vector<b_shader> g_shader_compile; //-----==========
+    std::vector<b_rc_face> g_rc_faces;      //---------===============
     ///////////////////////////////////////////////////////////////////////
     void read(INetReader& r);
     void write(IWriter& w) const;

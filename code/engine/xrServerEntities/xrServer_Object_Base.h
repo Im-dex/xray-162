@@ -80,7 +80,7 @@ shared_str s_name;
 GameTypeChooser m_gameType;
 u8 s_RP;
 Flags16 s_flags; // state flags
-xr_vector<u16> children;
+std::vector<u16> children;
 
 // update data
 Fvector o_Position;
@@ -99,7 +99,7 @@ ALife::_SPAWN_ID m_tSpawnID;
 Flags32 m_spawn_flags;
 
 // client object custom data serialization
-xr_vector<u8> client_data;
+std::vector<u8> client_data;
 virtual void load(NET_Packet& tNetPacket);
 
 //////////////////////////////////////////////////////////////////////////

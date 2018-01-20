@@ -57,7 +57,7 @@ protected:
     };
 
 private:
-    xr_vector<CLASS_ID> m_killer_clsids;
+    std::vector<CLASS_ID> m_killer_clsids;
 
 public:
     // Eyes
@@ -103,7 +103,7 @@ public:
         }
         void lerp(net_update& A, net_update& B, float f);
     };
-    xr_deque<net_update> NET;
+    std::deque<net_update> NET;
     net_update NET_Last;
     BOOL NET_WasInterpolating; // previous update was by interpolation or by extrapolation
     u32 NET_Time;              // server time of last update
@@ -331,8 +331,8 @@ public:
     virtual Fvector spatial_sector_point();
 
 #ifdef DEBUG
-    xr_vector<trajectory_pick> m_jump_picks;
-    xr_vector<Fvector> m_jump_collide_tris;
+    std::vector<trajectory_pick> m_jump_picks;
+    std::vector<Fvector> m_jump_collide_tris;
 #endif // #ifdef DEBUG
 };
 

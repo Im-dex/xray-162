@@ -33,7 +33,7 @@ private:
     //	Private data
 private:
     //	This must be cleared on device destroy
-    xr_vector<StateRecord> m_StateArray;
+    std::vector<StateRecord> m_StateArray;
 };
 
 extern dx10StateCache<ID3DRasterizerState, D3D_RASTERIZER_DESC> RSManager;

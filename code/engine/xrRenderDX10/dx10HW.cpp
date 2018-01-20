@@ -254,7 +254,8 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window) {
             }
             fDepth  = selectDepthStencil(fTarget);
     }
-    
+    
+
 
     if ((D3DFMT_UNKNOWN==fTarget) || (D3DFMT_UNKNOWN==fTarget))	{
             Msg					("Failed to initialize graphics hardware.\nPlease try to restart
@@ -624,7 +625,7 @@ DXGI_RATIONAL CHW::selectRefresh(u32 dwWidth, u32 dwHeight, DXGI_FORMAT fmt) {
     if (psDeviceFlags.is(rsRefresh60hz)) {
         return res;
     } else {
-        xr_vector<DXGI_MODE_DESC> modes;
+        std::vector<DXGI_MODE_DESC> modes;
 
         IDXGIOutput* pOutput;
         m_pAdapter->EnumOutputs(0, &pOutput);
@@ -774,7 +775,7 @@ _HW.DestroyD3D				();
 u16		ps_ver_major		= u16 ( u32(u32(caps.PixelShaderVersion)&u32(0xf <<
 8ul))>>8 );
 
-xr_vector<LPCSTR>			_tmp;
+std::vector<LPCSTR>			_tmp;
 u32 i						= 0;
 for(; i<5; ++i)
 {
@@ -835,8 +836,8 @@ void free_vid_mode_list() {
 void fill_vid_mode_list(CHW* _hw) {
     if (vid_mode_token != NULL)
         return;
-    xr_vector<LPCSTR> _tmp;
-    xr_vector<DXGI_MODE_DESC> modes;
+    std::vector<LPCSTR> _tmp;
+    std::vector<DXGI_MODE_DESC> modes;
 
     IDXGIOutput* pOutput;
     //_hw->m_pSwapChain->GetContainingOutput(&pOutput);
@@ -895,7 +896,7 @@ void fill_vid_mode_list(CHW* _hw) {
 
     /*	Old code
     if(vid_mode_token != NULL)		return;
-    xr_vector<LPCSTR>	_tmp;
+    std::vector<LPCSTR>	_tmp;
     u32 cnt = _hw->pD3D->GetAdapterModeCount	(_hw->DevAdapter, _hw->Caps.fTarget);
 
     u32 i;

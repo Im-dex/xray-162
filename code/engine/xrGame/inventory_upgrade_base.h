@@ -64,7 +64,7 @@ public:
     virtual void highlight_down(){};
 
 protected:
-    typedef xr_vector<Group*> Groups_type;
+    typedef std::vector<Group*> Groups_type;
 
 private:
     shared_str m_id;

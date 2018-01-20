@@ -148,7 +148,7 @@ bool CSheduler::internal_Unregister(ISheduled* O, BOOL RT, bool warn_on_not_foun
 #ifdef DEBUG
 bool CSheduler::Registered(ISheduled* object) const {
     u32 count = 0;
-    typedef xr_vector<Item> ITEMS;
+    typedef std::vector<Item> ITEMS;
 
     {
         ITEMS::const_iterator I = ItemsRT.begin();
@@ -187,7 +187,7 @@ bool CSheduler::Registered(ISheduled* object) const {
             }
     }
 
-    typedef xr_vector<ItemReg> ITEMS_REG;
+    typedef std::vector<ItemReg> ITEMS_REG;
     ITEMS_REG::const_iterator I = Registration.begin();
     ITEMS_REG::const_iterator E = Registration.end();
     for (; I != E; ++I) {

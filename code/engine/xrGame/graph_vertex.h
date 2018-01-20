@@ -16,8 +16,8 @@ public:
     typedef _vertex_id_type _vertex_id_type;
     typedef typename _graph_type::CEdge _edge_type;
     typedef typename _edge_type::_edge_weight_type _edge_weight_type;
-    typedef xr_vector<_edge_type> EDGES;
-    typedef xr_vector<CVertex*> VERTICES;
+    typedef std::vector<_edge_type> EDGES;
+    typedef std::vector<CVertex*> VERTICES;
 
 private:
     _vertex_id_type m_vertex_id;

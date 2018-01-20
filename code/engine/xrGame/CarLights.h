@@ -23,7 +23,7 @@ struct SCarLight {
     void ParseDefinitions(LPCSTR section);
 };
 
-using LIGHTS_STORAGE = xr_vector<SCarLight*>;
+using LIGHTS_STORAGE = std::vector<SCarLight*>;
 class CCarLights {
 public:
     void ParseDefinitions();

@@ -22,7 +22,7 @@
 
 using namespace luabind;
 
-typedef xr_vector<std::pair<shared_str, int>> STORY_PAIRS;
+typedef std::vector<std::pair<shared_str, int>> STORY_PAIRS;
 typedef STORY_PAIRS SPAWN_STORY_PAIRS;
 LPCSTR _INVALID_STORY_ID = "INVALID_STORY_ID";
 LPCSTR _INVALID_SPAWN_STORY_ID = "INVALID_SPAWN_STORY_ID";

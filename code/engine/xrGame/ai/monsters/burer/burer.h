@@ -13,7 +13,7 @@ class CBurer : public CBaseMonster, public CTelekinesis {
     typedef CBaseMonster inherited;
 
 private:
-    xr_vector<CObject*> m_nearest;
+    std::vector<CObject*> m_nearest;
 
 public:
     static bool can_scan;

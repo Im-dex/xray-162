@@ -18,7 +18,7 @@ struct DataVertex;
 typedef Tvertex<DataVertex> Vertex;
 
 typedef std::pair<Vertex*, Vertex*> PAIR_VV;
-typedef xr_map<Vertex*, Vertex*> map_v2v; // vertex to vertex translation
+typedef std::map<Vertex*, Vertex*> map_v2v; // vertex to vertex translation
 typedef map_v2v::iterator map_v2v_it;
 
 struct XRLC_LIGHT_API DataVertex : public base_Vertex {
@@ -69,7 +69,7 @@ class Edge;
 
 // Typedefs
 namespace detail {
-typedef xr_vector<Vertex>::iterator dummy_compiler_treatment;
+typedef std::vector<Vertex>::iterator dummy_compiler_treatment;
 } // namespace detail
 
 #include "xrUVpoint.h"

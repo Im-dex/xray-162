@@ -39,17 +39,17 @@ public:
         u32 sw_id;
     };
 
-    typedef xr_vector<_vertex>::iterator dummy_compiler_treatment;
+    typedef std::vector<_vertex>::iterator dummy_compiler_treatment;
 
     //**
-    typedef xr_vector<_vertex*> v_vertices;
+    typedef std::vector<_vertex*> v_vertices;
     typedef v_vertices::iterator v_vertices_it;
     typedef v_vertices::const_iterator v_vertices_cit;
 
-    typedef xr_vector<_face*> v_faces;
+    typedef std::vector<_face*> v_faces;
     typedef v_faces::iterator v_faces_it;
     typedef v_faces::const_iterator v_faces_cit;
-    typedef xr_vector<_subdiv> v_subdivs;
+    typedef std::vector<_subdiv> v_subdivs;
     typedef v_subdivs::iterator v_subdivs_it;
 
 public:
@@ -59,7 +59,7 @@ public:
     v_faces m_faces;
     v_subdivs m_subdivs;
 
-    xr_vector<base_color> color;
+    std::vector<base_color> color;
 
 private:
     _face* create_face(_vertex* v0, _vertex* v1, _vertex* v2, b_face& F);
@@ -75,7 +75,7 @@ public:
     //	void					calc_normals		();
     void calc_materials();
     void calc_faceopacity();
-    void calc_lighting(xr_vector<base_color>& dest, const Fmatrix& xform, CDB::MODEL* M,
+    void calc_lighting(std::vector<base_color>& dest, const Fmatrix& xform, CDB::MODEL* M,
                        base_lighting& lights, u32 flags);
     void calc_lighting();
     //	void					calc_ogf			();

@@ -53,8 +53,8 @@ IC bool CProblemSolverAbstract::actual() const {
     if (!m_actuality)
         return (false);
 
-    xr_vector<COperatorCondition>::const_iterator I = current_state().conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator E = current_state().conditions().end();
+    std::vector<COperatorCondition>::const_iterator I = current_state().conditions().begin();
+    std::vector<COperatorCondition>::const_iterator E = current_state().conditions().end();
     EVALUATORS::const_iterator i = evaluators().begin();
     EVALUATORS::const_iterator e = evaluators().end();
     for (; I != E; ++I) {
@@ -85,8 +85,8 @@ IC void CProblemSolverAbstract::add_operator(const _edge_type& operator_id,
 #ifdef DEBUG
 TEMPLATE_SPECIALIZATION
 IC void CProblemSolverAbstract::validate_properties(const CState& conditions) const {
-    xr_vector<COperatorCondition>::const_iterator I = conditions.conditions().begin();
-    xr_vector<COperatorCondition>::const_iterator E = conditions.conditions().end();
+    std::vector<COperatorCondition>::const_iterator I = conditions.conditions().begin();
+    std::vector<COperatorCondition>::const_iterator E = conditions.conditions().end();
     for (; I != E; ++I) {
         if (evaluators().find((*I).condition()) == evaluators().end()) {
             Msg("! cannot find corresponding evaluator to the property with id %d",
@@ -169,8 +169,8 @@ IC const typename CProblemSolverAbstract::EVALUATORS& CProblemSolverAbstract::ev
 
 TEMPLATE_SPECIALIZATION
 IC void CProblemSolverAbstract::evaluate_condition(
-    typename xr_vector<COperatorCondition>::const_iterator& I,
-    typename xr_vector<COperatorCondition>::const_iterator& E,
+    typename std::vector<COperatorCondition>::const_iterator& I,
+    typename std::vector<COperatorCondition>::const_iterator& E,
     const _condition_type& condition_id) const {
     size_t index = I - m_current_state.conditions().begin();
     m_current_state.add_condition(
@@ -307,7 +307,7 @@ IC bool CProblemSolverAbstract::is_goal_reached_impl(const _index_type& vertex_i
 }
 
 TEMPLATE_SPECIALIZATION
-IC const xr_vector<typename CProblemSolverAbstract::_edge_type>&
+IC const std::vector<typename CProblemSolverAbstract::_edge_type>&
 CProblemSolverAbstract::solution() const {
     return (m_solution);
 }

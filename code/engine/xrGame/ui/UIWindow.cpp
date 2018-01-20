@@ -15,10 +15,10 @@ struct DBGList {
     int num;
     bool closed;
 };
-xr_vector<DBGList> dbg_list_wnds;
+std::vector<DBGList> dbg_list_wnds;
 void dump_list_wnd() {
     Msg("------Total  wnds %d", dbg_list_wnds.size());
-    xr_vector<DBGList>::iterator _it = dbg_list_wnds.begin();
+    std::vector<DBGList>::iterator _it = dbg_list_wnds.begin();
     for (; _it != dbg_list_wnds.end(); ++_it)
         if (!(*_it).closed)
             Msg("--leak detected ---- wnd = %d", (*_it).num);
@@ -27,7 +27,7 @@ void dump_list_wnd() {
 void dump_list_wnd() {}
 #endif
 
-xr_vector<Frect> g_wnds_rects;
+std::vector<Frect> g_wnds_rects;
 BOOL g_show_wnd_rect2 = FALSE;
 
 void clean_wnd_rects() {
@@ -60,8 +60,8 @@ void draw_wnds_rects() {
     if (0 == g_wnds_rects.size())
         return;
 
-    xr_vector<Frect>::iterator it = g_wnds_rects.begin();
-    xr_vector<Frect>::iterator it_e = g_wnds_rects.end();
+    std::vector<Frect>::iterator it = g_wnds_rects.begin();
+    std::vector<Frect>::iterator it_e = g_wnds_rects.end();
 
     for (; it != it_e; ++it) {
         Frect& r = *it;
@@ -115,7 +115,7 @@ CUIWindow::~CUIWindow() {
         MainMenu()->UnregisterPPDraw(this);
 
 #ifdef LOG_ALL_WNDS
-    xr_vector<DBGList>::iterator _it = dbg_list_wnds.begin();
+    std::vector<DBGList>::iterator _it = dbg_list_wnds.begin();
     bool bOK = false;
     for (; _it != dbg_list_wnds.end(); ++_it) {
         if ((*_it).num == m_dbg_id && !(*_it).closed) {

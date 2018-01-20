@@ -9,18 +9,18 @@
 #include "object_broker.h"
 
 Shader_xrLC_LIB* g_shaders_xrlc;
-xr_vector<b_material> g_materials;
-xr_vector<b_shader> g_shader_render;
-xr_vector<b_shader> g_shader_compile;
-xr_vector<b_BuildTexture> g_textures;
-xr_vector<b_rc_face> g_rc_faces;
+std::vector<b_material> g_materials;
+std::vector<b_shader> g_shader_render;
+std::vector<b_shader> g_shader_compile;
+std::vector<b_BuildTexture> g_textures;
+std::vector<b_rc_face> g_rc_faces;
 
-typedef xr_vector<bool> COVER_NODES;
+typedef std::vector<bool> COVER_NODES;
 COVER_NODES g_cover_nodes;
 
 typedef CQuadTree<CCoverPoint> CPointQuadTree;
 static CPointQuadTree* g_covers = 0;
-typedef xr_vector<CCoverPoint*> COVERS;
+typedef std::vector<CCoverPoint*> COVERS;
 
 // -------------------------------- Ray pick
 typedef Fvector RayCache[3];
@@ -185,7 +185,7 @@ IC int calcSphereSector(Fvector& dir) {
 }
 
 // volumetric query
-using Nearest = xr_vector<u32>;
+using Nearest = std::vector<u32>;
 
 class Query {
 public:
@@ -241,7 +241,7 @@ struct RC {
 
 class CoverThread : public CThread {
     u32 Nstart, Nend;
-    xr_vector<RC> cache;
+    std::vector<RC> cache;
     CDB::COLLIDER DB;
     Query Q;
 
@@ -474,7 +474,7 @@ void compute_non_covers() {
     }
 
     typedef std::pair<float, CCoverPoint*> COVER_PAIR;
-    typedef xr_vector<COVER_PAIR> COVER_PAIRS;
+    typedef std::vector<COVER_PAIR> COVER_PAIRS;
     COVER_PAIRS cover_pairs;
 
     Nodes::iterator B = g_nodes.begin(), I = B;

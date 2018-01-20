@@ -228,7 +228,7 @@ void CEngineAPI::CreateRendererList() {
 
     hRender = 0;
 
-    xr_vector<LPCSTR> _tmp;
+    std::vector<LPCSTR> _tmp;
     u32 i = 0;
     bool bBreakLoop = false;
     for (; i < 6; ++i) {
@@ -309,7 +309,7 @@ void CEngineAPI::CreateRendererList() {
     u16		ps_ver_major		= u16 ( u32(u32(caps.PixelShaderVersion)&u32(0xf << 8ul))>>8
 );
 
-    xr_vector<LPCSTR>			_tmp;
+    std::vector<LPCSTR>			_tmp;
     u32 i						= 0;
     for(; i<5; ++i)
     {

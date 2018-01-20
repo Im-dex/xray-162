@@ -13,7 +13,7 @@ IC CSpaceRestrictionAbstract::CSpaceRestrictionAbstract() {
     m_accessible_neighbour_border_actual = false;
 }
 
-IC const xr_vector<u32>& CSpaceRestrictionAbstract::border() {
+IC const std::vector<u32>& CSpaceRestrictionAbstract::border() {
     if (!initialized())
         initialize();
 
@@ -25,7 +25,7 @@ IC const xr_vector<u32>& CSpaceRestrictionAbstract::border() {
 IC bool CSpaceRestrictionAbstract::initialized() const { return (m_initialized); }
 
 template <typename T>
-IC const xr_vector<u32>&
+IC const std::vector<u32>&
 CSpaceRestrictionAbstract::accessible_neighbour_border(T& restriction, bool out_restriction) {
     if (!m_accessible_neighbour_border_actual)
         prepare_accessible_neighbour_border(restriction, out_restriction);
@@ -63,8 +63,8 @@ IC void CSpaceRestrictionAbstract::prepare_accessible_neighbour_border(T& restri
     VERIFY(!border().empty());
     m_accessible_neighbour_border.reserve(border().size());
 
-    xr_vector<u32>::const_iterator I = border().begin();
-    xr_vector<u32>::const_iterator E = border().end();
+    std::vector<u32>::const_iterator I = border().begin();
+    std::vector<u32>::const_iterator E = border().end();
     for (; I != E; ++I)
         if (accessible_neighbours(restriction, *I, out_restriction))
             m_accessible_neighbour_border.push_back(*I);

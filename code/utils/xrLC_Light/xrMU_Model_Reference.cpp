@@ -12,7 +12,7 @@
 extern tread_models* read_models;
 extern twrite_models* write_models;
 
-void xrMU_Reference::Load(IReader& F, xr_vector<xrMU_Model*>& mu_models) {
+void xrMU_Reference::Load(IReader& F, std::vector<xrMU_Model*>& mu_models) {
     b_mu_reference R;
     F.r(&R, sizeof(R));
     model = mu_models[R.model_index];
@@ -33,7 +33,7 @@ void xrMU_Reference::export_cform_game(CDB::CollectorPacked& CL) {
     xrMU_Model::v_faces* cfFaces = new xrMU_Model::v_faces();
     xrMU_Model::v_vertices* cfVertices = new xrMU_Model::v_vertices();
     {
-        xr_vector<bool> cfVertexMarks;
+        std::vector<bool> cfVertexMarks;
         cfVertexMarks.assign(model->m_vertices.size(), false);
 
         std::sort(model->m_vertices.begin(), model->m_vertices.end());
@@ -89,7 +89,7 @@ void xrMU_Reference::export_cform_rcast(CDB::CollectorPacked& CL) {
 //   Flags32					flags;
 // u16						sector;
 
-// xr_vector<base_color>	color;
+// std::vector<base_color>	color;
 
 // base_color_c			c_scale;
 // base_color_c			c_bias;

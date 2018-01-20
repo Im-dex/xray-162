@@ -18,7 +18,7 @@ class rat_state_manager {
 private:
     typedef u32 state_id_type;
     typedef associative_vector<state_id_type, rat_state_base*> States;
-    typedef xr_stack<state_id_type> Stack;
+    typedef std::stack<state_id_type> Stack;
 
 private:
     CAI_Rat* m_object;

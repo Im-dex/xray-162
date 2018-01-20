@@ -320,7 +320,7 @@ IC Fvector2 CLevelGraph::v2d(const Fvector& vector3d) const {
 template <bool bAssignY, typename T>
 IC bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& start_point,
                                           const Fvector2& finish_point,
-                                          xr_vector<T>& tpaOutputPoints, const T& example,
+                                          std::vector<T>& tpaOutputPoints, const T& example,
                                           bool bAddFirstPoint, bool bClearPath) const {
     if (!valid_vertex_position(v3d(finish_point)))
         return (false);
@@ -472,14 +472,14 @@ IC bool CLevelGraph::create_straight_path(u32 start_vertex_id, const Fvector2& s
 }
 
 template <typename T>
-IC void CLevelGraph::assign_y_values(xr_vector<T>& path) {
+IC void CLevelGraph::assign_y_values(std::vector<T>& path) {
     Fvector DUP = { 0, 1, 0 }, normal, v1, P = { 0, 0, 0 };
     Fplane PL;
     const CVertex* _vertex;
     u32 prev_id = u32(-1);
 
-    xr_vector<T>::iterator I = path.begin();
-    xr_vector<T>::iterator E = path.end();
+    std::vector<T>::iterator I = path.begin();
+    std::vector<T>::iterator E = path.end();
     for (; I != E; ++I) {
         if (prev_id != (*I).get_vertex_id()) {
             _vertex = vertex((*I).get_vertex_id());
@@ -514,30 +514,30 @@ IC bool CLevelGraph::valid_vertex_position(const Fvector& position) const {
     return ((vertex_position(position).xz() < (1 << MAX_NODE_BIT_COUNT) - 1));
 }
 
-IC void CLevelGraph::set_mask(const xr_vector<u32>& mask) {
-    xr_vector<u32>::const_iterator I = mask.begin();
-    xr_vector<u32>::const_iterator E = mask.end();
+IC void CLevelGraph::set_mask(const std::vector<u32>& mask) {
+    std::vector<u32>::const_iterator I = mask.begin();
+    std::vector<u32>::const_iterator E = mask.end();
     for (; I != E; ++I)
         set_mask(*I);
 }
 
-IC void CLevelGraph::set_mask_no_check(const xr_vector<u32>& mask) {
-    xr_vector<u32>::const_iterator I = mask.begin();
-    xr_vector<u32>::const_iterator E = mask.end();
+IC void CLevelGraph::set_mask_no_check(const std::vector<u32>& mask) {
+    std::vector<u32>::const_iterator I = mask.begin();
+    std::vector<u32>::const_iterator E = mask.end();
     for (; I != E; ++I)
         set_mask_no_check(*I);
 }
 
-IC void CLevelGraph::clear_mask(const xr_vector<u32>& mask) {
-    xr_vector<u32>::const_iterator I = mask.begin();
-    xr_vector<u32>::const_iterator E = mask.end();
+IC void CLevelGraph::clear_mask(const std::vector<u32>& mask) {
+    std::vector<u32>::const_iterator I = mask.begin();
+    std::vector<u32>::const_iterator E = mask.end();
     for (; I != E; ++I)
         clear_mask(*I);
 }
 
-IC void CLevelGraph::clear_mask_no_check(const xr_vector<u32>& mask) {
-    xr_vector<u32>::const_iterator I = mask.begin();
-    xr_vector<u32>::const_iterator E = mask.end();
+IC void CLevelGraph::clear_mask_no_check(const std::vector<u32>& mask) {
+    std::vector<u32>::const_iterator I = mask.begin();
+    std::vector<u32>::const_iterator E = mask.end();
     for (; I != E; ++I)
         clear_mask_no_check(*I);
 }

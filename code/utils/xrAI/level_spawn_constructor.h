@@ -31,12 +31,12 @@ class CLevelSpawnConstructor : public CThread {
 public:
     typedef SpawnConstructorSpace::LEVEL_POINT_STORAGE LEVEL_POINT_STORAGE;
     typedef SpawnConstructorSpace::LEVEL_CHANGER_STORAGE LEVEL_CHANGER_STORAGE;
-    typedef xr_vector<CSE_ALifeObject*> SPAWN_STORAGE;
-    typedef xr_vector<CSE_ALifeGraphPoint*> GRAPH_POINT_STORAGE;
-    typedef xr_vector<CSpaceRestrictorWrapper*> SPACE_RESTRICTORS;
-    //	typedef xr_vector<CSE_Abstract*>
-    //GROUP_OBJECTS; 	typedef xr_map<shared_str,GROUP_OBJECTS*>
-    //SPAWN_GRPOUP_OBJECTS; 	typedef xr_map<shared_str,CSE_SpawnGroup*>
+    typedef std::vector<CSE_ALifeObject*> SPAWN_STORAGE;
+    typedef std::vector<CSE_ALifeGraphPoint*> GRAPH_POINT_STORAGE;
+    typedef std::vector<CSpaceRestrictorWrapper*> SPACE_RESTRICTORS;
+    //	typedef std::vector<CSE_Abstract*>
+    //GROUP_OBJECTS; 	typedef std::map<shared_str,GROUP_OBJECTS*>
+    //SPAWN_GRPOUP_OBJECTS; 	typedef std::map<shared_str,CSE_SpawnGroup*>
     //SPAWN_GROUPS;
 
 private:

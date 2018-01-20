@@ -21,7 +21,7 @@ public:
     typedef CEdge<_edge_weight_type, CVertex> CEdge;
 
 public:
-    typedef xr_map<_vertex_id_type, CVertex*> VERTICES;
+    typedef std::map<_vertex_id_type, CVertex*> VERTICES;
     typedef typename CVertex::EDGES EDGES;
 
 public:

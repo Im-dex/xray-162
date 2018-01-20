@@ -88,21 +88,21 @@ public:
     CSector* pLastSector;
     Fvector vLastCameraPos;
     u32 uLastLTRACK;
-    xr_vector<IRender_Portal*> Portals;
-    xr_vector<IRender_Sector*> Sectors;
+    std::vector<IRender_Portal*> Portals;
+    std::vector<IRender_Sector*> Sectors;
     xrXRC Sectors_xrc;
     CDB::MODEL* rmPortals;
     CHOM HOM;
     R_occlusion HWOCC;
 
     // Global vertex-buffer container
-    xr_vector<FSlideWindowItem> SWIs;
-    xr_vector<ref_shader> Shaders;
+    std::vector<FSlideWindowItem> SWIs;
+    std::vector<ref_shader> Shaders;
     typedef svector<D3DVERTEXELEMENT9, MAXD3DDECLLENGTH + 1> VertexDeclarator;
-    xr_vector<VertexDeclarator> nDC, xDC;
-    xr_vector<IDirect3DVertexBuffer9*> nVB, xVB;
-    xr_vector<IDirect3DIndexBuffer9*> nIB, xIB;
-    xr_vector<dxRender_Visual*> Visuals;
+    std::vector<VertexDeclarator> nDC, xDC;
+    std::vector<IDirect3DVertexBuffer9*> nVB, xVB;
+    std::vector<IDirect3DIndexBuffer9*> nIB, xIB;
+    std::vector<dxRender_Visual*> Visuals;
     CPSLibrary PSLibrary;
 
     CDetailManager* Details;
@@ -113,12 +113,12 @@ public:
 
     CLight_DB Lights;
     CLight_Compute_XFORM_and_VIS LR;
-    xr_vector<light*> Lights_LastFrame;
+    std::vector<light*> Lights_LastFrame;
     SMAP_Allocator LP_smap_pool;
     light_Package LP_normal;
     light_Package LP_pending;
 
-    xr_vector<Fbox3, render_alloc<Fbox3>> main_coarse_structure;
+    std::vector<Fbox3, render_alloc<Fbox3>> main_coarse_structure;
 
     shared_str c_sbase;
     shared_str c_lmaterial;
@@ -132,7 +132,7 @@ public:
     bool m_bFirstFrameAfterReset; // Determines weather the frame is the first after resetting
                                   // device.
 
-    xr_vector<sun::cascade> m_sun_cascades;
+    std::vector<sun::cascade> m_sun_cascades;
 
 private:
     // Loading / Unloading

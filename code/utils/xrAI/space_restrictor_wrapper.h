@@ -20,7 +20,7 @@ private:
 
 public:
     typedef CSE_ALifeSpaceRestrictor object_type;
-    typedef xr_vector<u32> BORDER;
+    typedef std::vector<u32> BORDER;
 
 private:
     object_type* m_object;

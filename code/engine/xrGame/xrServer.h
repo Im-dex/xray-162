@@ -23,7 +23,7 @@ class CSE_Abstract;
 const u32 NET_Latency = 50; // time in (ms)
 
 // t-defs
-typedef xr_hash_map<u16, CSE_Abstract*> xrS_entities;
+typedef std::unordered_map<u16, CSE_Abstract*> xrS_entities;
 
 class xrClientData : public IClient {
 public:
@@ -58,8 +58,8 @@ IC bool operator<(const svs_respawn& A, const svs_respawn& B) { return A.timesta
 
 class xrServer : public IPureServer {
     xrS_entities entities;
-    xr_multiset<svs_respawn> q_respawn;
-    xr_vector<u16> conn_spawned_ids;
+    std::multiset<svs_respawn> q_respawn;
+    std::vector<u16> conn_spawned_ids;
 
     typedef server_updates_compressor::send_ready_updates_t::const_iterator update_iterator_t;
     update_iterator_t m_update_begin;
@@ -85,7 +85,7 @@ class xrServer : public IPureServer {
     };
 
     std::recursive_mutex DelayedPackestCS;
-    xr_deque<DelayedPacket> m_aDelayedPackets;
+    std::deque<DelayedPacket> m_aDelayedPackets;
     void ProceedDelayedPackets();
     void AddDelayedPacket(NET_Packet& Packet, ClientID Sender);
     u32 OnDelayedMessage(NET_Packet& P,
@@ -223,7 +223,7 @@ public:
     virtual void GetServerInfo(CServerInfo* si);
 
 public:
-    xr_string ent_name_safe(u16 eid);
+    std::string ent_name_safe(u16 eid);
 #ifdef DEBUG
     bool verify_entities() const;
     void verify_entity(const CSE_Abstract* entity) const;

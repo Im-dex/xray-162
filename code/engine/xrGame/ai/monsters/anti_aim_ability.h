@@ -18,7 +18,7 @@ private:
 
     // settings
     float m_timeout;
-    xr_vector<shared_str> m_effectors;
+    std::vector<shared_str> m_effectors;
     float m_freeze_time;
     float m_max_angle;
     float m_detection_gain_speed;

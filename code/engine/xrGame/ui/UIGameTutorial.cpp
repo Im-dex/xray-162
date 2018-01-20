@@ -23,8 +23,8 @@ void CallFunction(shared_str const& func) {
         functor_to_call();
 }
 
-void CallFunctions(xr_vector<shared_str>& v) {
-    xr_vector<shared_str>::const_iterator it = v.begin();
+void CallFunctions(std::vector<shared_str>& v) {
+    std::vector<shared_str>::const_iterator it = v.begin();
     for (; it != v.end(); ++it)
         CallFunction(*it);
 }
@@ -57,7 +57,7 @@ void CUISequenceItem::Load(CUIXml* xml, int idx) {
 }
 
 bool CUISequenceItem::AllowKey(int dik) {
-    xr_vector<int>::iterator it =
+    std::vector<int>::iterator it =
         std::find(m_disabled_actions.begin(), m_disabled_actions.end(), get_binded_action(dik));
     if (it == m_disabled_actions.end())
         return true;

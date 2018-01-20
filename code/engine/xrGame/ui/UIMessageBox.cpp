@@ -339,10 +339,10 @@ LPCSTR CUIMessageBox::GetText() { return m_UIStaticText->GetText(); }
 LPCSTR CUIMessageBox::GetHost() {
     if (m_UIEditHost) {
         m_ret_val.clear();
-        xr_string tmp = m_UIEditHost->GetText();
-        xr_string::size_type pos = tmp.find(":");
+        std::string tmp = m_UIEditHost->GetText();
+        std::string::size_type pos = tmp.find(":");
 
-        if (xr_string::npos != pos) {
+        if (std::string::npos != pos) {
             m_ret_val.assign(tmp.begin(), tmp.begin() + pos);
             tmp.erase(tmp.begin(), tmp.begin() + pos + 1);
 

@@ -7,7 +7,7 @@
 static u32 const ammo_to_cost_map_koef = 3;
 class next_weapon_searcher {
 public:
-    typedef xr_set<PIItem> exception_items_t;
+    typedef std::set<PIItem> exception_items_t;
     next_weapon_searcher(priority_group& pg, PIItem& best_fit, exception_items_t& except_set,
                          bool ignore_ammo)
         : m_prior_group(pg), m_best_fit(best_fit), m_best_fit_cost(0), m_best_fit_ammo_elapsed(0),

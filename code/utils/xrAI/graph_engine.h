@@ -68,15 +68,15 @@ public:
 
     template <typename _Graph, typename _Parameters>
     IC bool search(const _Graph& graph, const _index_type& start_node, const _index_type& dest_node,
-                   xr_vector<_index_type>* node_path, const _Parameters& parameters);
+                   std::vector<_index_type>* node_path, const _Parameters& parameters);
 
     template <typename _Graph, typename _Parameters>
     IC bool search(const _Graph& graph, const _index_type& start_node, const _index_type& dest_node,
-                   xr_vector<_index_type>* node_path, _Parameters& parameters);
+                   std::vector<_index_type>* node_path, _Parameters& parameters);
 
     template <typename _Graph, typename _Parameters, typename _PathManager>
     IC bool search(const _Graph& graph, const _index_type& start_node, const _index_type& dest_node,
-                   xr_vector<_index_type>* node_path, const _Parameters& parameters,
+                   std::vector<_index_type>* node_path, const _Parameters& parameters,
                    _PathManager& path_manager);
 
 #ifndef AI_COMPILER
@@ -84,7 +84,7 @@ public:
               typename T8, typename _Parameters>
     IC bool search(const CProblemSolver<T1, T2, T3, T4, T5, T6, T7, T8>& graph,
                    const _solver_index_type& start_node, const _solver_index_type& dest_node,
-                   xr_vector<_solver_edge_type>* node_path, const _Parameters& parameters);
+                   std::vector<_solver_edge_type>* node_path, const _Parameters& parameters);
 #endif // AI_COMPILER
 };
 

@@ -25,7 +25,7 @@ class CAI_Stalker;
 class CHitMemoryManager {
 public:
     typedef MemorySpace::CHitObject CHitObject;
-    typedef xr_vector<CHitObject> HITS;
+    typedef std::vector<CHitObject> HITS;
 
 private:
     struct CDelayedHitObject {
@@ -34,7 +34,7 @@ private:
     };
 
 private:
-    typedef xr_vector<CDelayedHitObject> DELAYED_HIT_OBJECTS;
+    typedef std::vector<CDelayedHitObject> DELAYED_HIT_OBJECTS;
 
 private:
     CCustomMonster* m_object;

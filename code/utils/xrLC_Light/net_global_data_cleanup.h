@@ -7,7 +7,7 @@ namespace lc_net {
 class global_data_cleanup {
 
     u32 id_state;
-    xr_vector<u32> vec_cleanup;
+    std::vector<u32> vec_cleanup;
     std::recursive_mutex lock;
     friend void data_cleanup_callback(const char* dataDesc, IGenericStream** stream);
 

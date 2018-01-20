@@ -37,7 +37,7 @@ void CResourceManager::_DeleteCS(const SCS* CS) { DestroyShader(CS); }
 void fix_texture_name(LPSTR fn);
 
 template <class T>
-BOOL reclaim(xr_vector<T*>& vec, const T* ptr) {
+BOOL reclaim(std::vector<T*>& vec, const T* ptr) {
     auto it = vec.begin();
     auto end = vec.end();
     for (; it != end; it++)
@@ -211,9 +211,9 @@ void CResourceManager::_DeleteVS(const SVS* vs) {
     map_VS::iterator I = m_vs.find(N);
     if (I != m_vs.end()) {
         m_vs.erase(I);
-        xr_vector<SDeclaration*>::iterator iDecl;
+        std::vector<SDeclaration*>::iterator iDecl;
         for (iDecl = v_declarations.begin(); iDecl != v_declarations.end(); ++iDecl) {
-            xr_map<ID3DBlob*, ID3DInputLayout*>::iterator iLayout;
+            std::map<ID3DBlob*, ID3DInputLayout*>::iterator iLayout;
             iLayout = (*iDecl)->vs_to_layout.find(vs->signature->signature);
             if (iLayout != (*iDecl)->vs_to_layout.end()) {
                 //	Release vertex layout

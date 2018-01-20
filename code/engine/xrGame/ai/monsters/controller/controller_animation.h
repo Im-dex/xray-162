@@ -57,8 +57,8 @@ private:
     ELegsActionType m_current_legs_action;
     ETorsoActionType m_current_torso_action;
 
-    using LEGS_MOTION_MAP = xr_map<ELegsActionType, MotionID>;
-    using TORSO_MOTION_MAP = xr_map<ETorsoActionType, MotionID>;
+    using LEGS_MOTION_MAP = std::map<ELegsActionType, MotionID>;
+    using TORSO_MOTION_MAP = std::map<ETorsoActionType, MotionID>;
 
     LEGS_MOTION_MAP m_legs;
     TORSO_MOTION_MAP m_torso;
@@ -68,8 +68,8 @@ private:
         ELegsActionType legs_motion;
     };
 
-    using PATH_ROTATIONS_VEC = xr_vector<SPathRotations>;
-    using PATH_ROTATIONS_MAP = xr_map<ELegsActionType, PATH_ROTATIONS_VEC>;
+    using PATH_ROTATIONS_VEC = std::vector<SPathRotations>;
+    using PATH_ROTATIONS_MAP = std::map<ELegsActionType, PATH_ROTATIONS_VEC>;
     PATH_ROTATIONS_MAP m_path_rotations;
 
     bool m_wait_torso_anim_end;

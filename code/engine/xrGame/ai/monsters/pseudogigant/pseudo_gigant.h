@@ -9,7 +9,7 @@ class CPseudoGigant : public CBaseMonster, public CControlledEntity<CPseudoGigan
     typedef CControlledEntity<CPseudoGigant> CControlled;
 
 private:
-    xr_vector<CObject*> m_nearest;
+    std::vector<CObject*> m_nearest;
 
     // step_effector
     struct {

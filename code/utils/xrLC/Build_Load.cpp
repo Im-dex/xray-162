@@ -11,7 +11,7 @@
 
 extern u32 version;
 template <class T>
-void transfer(const char* name, xr_vector<T>& dest, IReader& F, u32 chunk) {
+void transfer(const char* name, std::vector<T>& dest, IReader& F, u32 chunk) {
     IReader* O = F.open_chunk(chunk);
     u32 count = O ? (O->length() / sizeof(T)) : 0;
     clMsg("* %16s: %d", name, count);
@@ -28,11 +28,11 @@ extern void Surface_Init();
 
 struct R_Control {
     string64 name;
-    xr_vector<u32> data;
+    std::vector<u32> data;
 };
 struct R_Layer {
     R_Control control;
-    xr_vector<R_Light> lights;
+    std::vector<R_Light> lights;
 };
 
 void CBuild::Load(const b_params& Params, const IReader& _in_FS) {
@@ -166,8 +166,8 @@ void CBuild::Load(const b_params& Params, const IReader& _in_FS) {
     // Load lights
     Status("Loading lights...");
     {
-        xr_vector<R_Layer> L_layers;
-        xr_vector<BYTE> L_control_data;
+        std::vector<R_Layer> L_layers;
+        std::vector<BYTE> L_control_data;
 
         // Controlles/Layers
         {

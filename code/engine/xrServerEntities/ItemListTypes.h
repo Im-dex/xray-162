@@ -52,6 +52,6 @@ public:
     IC void SetIcon(int index) { icon_index = index; }
 };
 
-using ListItemsVec = xr_vector<ListItem*>;
+using ListItemsVec = std::vector<ListItem*>;
 //---------------------------------------------------------------------------
 #endif

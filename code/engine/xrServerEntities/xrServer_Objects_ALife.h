@@ -34,12 +34,12 @@ class CALifeMonsterAbstract;
 
 struct SFillPropData {
     RTokenVec locations[4];
-    RStringVec level_ids;
+    SStringVec level_ids;
     RTokenVec story_names;
     RTokenVec spawn_story_names;
-    RStringVec character_profiles;
-    RStringVec smart_covers;
-    xr_map<shared_str, u32> location_colors;
+    SStringVec character_profiles;
+    SStringVec smart_covers;
+    std::map<shared_str, u32> location_colors;
     u32 counter;
     SFillPropData();
     ~SFillPropData();
@@ -276,7 +276,7 @@ virtual void try_switch_offline();
 virtual void switch_online();
 virtual void switch_offline();
 virtual void add_online(const bool& update_registries);
-virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
+virtual void add_offline(const std::vector<ALife::_OBJECT_ID>& saved_children,
                          const bool& update_registries);
 virtual bool redundant() const;
 void attach(CSE_ALifeInventoryItem* tpALifeInventoryItem, bool bALifeRequest,
@@ -510,8 +510,8 @@ struct SWheelState {
     void write(NET_Packet& P);
     float health;
 };
-xr_vector<SDoorState> door_states;
-xr_vector<SWheelState> wheel_states;
+std::vector<SDoorState> door_states;
+std::vector<SWheelState> wheel_states;
 float health;
 CSE_ALifeCar(LPCSTR caSection);
 virtual ~CSE_ALifeCar();
@@ -589,7 +589,7 @@ shared_str m_tip_text;
 CSE_ALifeInventoryBox(LPCSTR caSection);
 virtual ~CSE_ALifeInventoryBox();
 #ifdef XRGAME_EXPORTS
-virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
+virtual void add_offline(const std::vector<ALife::_OBJECT_ID>& saved_children,
                          const bool& update_registries);
 virtual void add_online(const bool& update_registries);
 #endif

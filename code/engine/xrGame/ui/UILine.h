@@ -44,7 +44,7 @@ public:
     ~CUILine();
     CUILine(const CUILine& other);
     CUILine& operator=(const CUILine& other);
-    void AddSubLine(const xr_string& str, u32 color);
+    void AddSubLine(const std::string& str, u32 color);
     void AddSubLine(const char* str, u32 color);
     void AddSubLine(const CUISubLine* subLine);
     void Clear();
@@ -58,7 +58,7 @@ protected:
     const CUILine* Cut2Pos(Position& pos, bool to_first = true);
     const CUILine* GetEmptyLine();
 
-    xr_vector<CUISubLine> m_subLines;
+    std::vector<CUISubLine> m_subLines;
 
     CUILine* m_tmpLine;
 };

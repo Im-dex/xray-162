@@ -97,7 +97,7 @@ void CUIMMShniaga::OnDeviceReset() {}
 
 extern CActor* g_actor;
 
-void CUIMMShniaga::CreateList(xr_vector<CUITextWnd*>& lst, CUIXml& xml_doc, LPCSTR path) {
+void CUIMMShniaga::CreateList(std::vector<CUITextWnd*>& lst, CUIXml& xml_doc, LPCSTR path) {
     CGameFont* pF;
     u32 color;
     float button_height = xml_doc.ReadAttribFlt("button", 0, "h");
@@ -139,7 +139,7 @@ void CUIMMShniaga::CreateList(xr_vector<CUITextWnd*>& lst, CUIXml& xml_doc, LPCS
 
 void CUIMMShniaga::SetPage(enum_page_id page_id, LPCSTR xml_file, LPCSTR xml_path) {
     VERIFY(m_page != page_id);
-    xr_vector<CUITextWnd*>* lst = NULL;
+    std::vector<CUITextWnd*>* lst = NULL;
     switch (page_id) {
     case epi_main: {
         lst = &m_buttons;

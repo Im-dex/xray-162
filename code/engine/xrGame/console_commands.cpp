@@ -429,7 +429,7 @@ bool valid_saved_game_name(LPCSTR file_name) {
     return (true);
 }
 
-void get_files_list(xr_vector<std::string>& files, LPCSTR dir, LPCSTR file_ext) {
+void get_files_list(std::vector<std::string>& files, LPCSTR dir, LPCSTR file_ext) {
     VERIFY(dir && file_ext);
     files.clear();
 

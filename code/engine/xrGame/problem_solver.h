@@ -52,14 +52,14 @@ public:
 
         _operator_ptr get_operator() const { return (m_operator); }
     };
-    typedef xr_vector<SOperator> OPERATOR_VECTOR;
+    typedef std::vector<SOperator> OPERATOR_VECTOR;
     typedef typename OPERATOR_VECTOR::const_iterator const_iterator;
     typedef associative_vector<_condition_type, _condition_evaluator_ptr> EVALUATORS;
 
 protected:
     OPERATOR_VECTOR m_operators;
     EVALUATORS m_evaluators;
-    xr_vector<_edge_type> m_solution;
+    std::vector<_edge_type> m_solution;
     CState m_target_state;
     mutable CState m_current_state;
     mutable CState m_temp;
@@ -142,13 +142,13 @@ public:
     IC virtual void remove_evaluator(const _condition_type& condition_id);
     IC _condition_evaluator_ptr evaluator(const _condition_type& condition_id) const;
     IC const EVALUATORS& evaluators() const;
-    IC void evaluate_condition(typename xr_vector<COperatorCondition>::const_iterator& I,
-                               typename xr_vector<COperatorCondition>::const_iterator& E,
+    IC void evaluate_condition(typename std::vector<COperatorCondition>::const_iterator& I,
+                               typename std::vector<COperatorCondition>::const_iterator& E,
                                const _condition_type& condition_id) const;
 
     // solver interface
     IC void solve();
-    IC const xr_vector<_edge_type>& solution() const;
+    IC const std::vector<_edge_type>& solution() const;
     virtual void clear();
 };
 

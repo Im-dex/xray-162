@@ -12,7 +12,7 @@
 #include "../xrLC_Light/mu_model_light.h"
 std::recursive_mutex task_CS;
 
-xr_vector<int> task_pool;
+std::vector<int> task_pool;
 
 class CLMThread : public CThread {
 private:

@@ -68,7 +68,7 @@ void CPsyDogAura::update_schedule() {
     }
 
     // check memory and enemy manager of phantoms whether they see actor
-    xr_vector<CPsyDogPhantom*>::iterator it = m_object->m_storage.begin();
+    std::vector<CPsyDogPhantom*>::iterator it = m_object->m_storage.begin();
     for (; it != m_object->m_storage.end(); ++it) {
         if ((*it)->EnemyMan.get_enemy() == m_actor)
             m_time_phantom_saw_actor = time();

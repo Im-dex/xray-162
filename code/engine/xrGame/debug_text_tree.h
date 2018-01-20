@@ -19,9 +19,9 @@ public: // START INTERFACE
     void toggle_show(int group_id);
 
     // finds node by first string
-    text_tree* find_node(const xr_string& s1);
+    text_tree* find_node(const std::string& s1);
     // adds if cant find
-    text_tree& find_or_add(const xr_string& s1);
+    text_tree& find_or_add(const std::string& s1);
 
     // add_text appends text to this node
     // add_line makes child nodes
@@ -56,9 +56,9 @@ public: // START INTERFACE
     virtual ~text_tree() { clear(); }
 
 private: // END INTERFACE
-    typedef xr_list<text_tree*> Children;
-    typedef xr_vector<int> Columns;
-    typedef xr_vector<xr_string> Strings;
+    typedef std::list<text_tree*> Children;
+    typedef std::vector<int> Columns;
+    typedef std::vector<std::string> Strings;
 
     template <class OutFunc>
     void output(int current_indent, int indent, Columns& columns, OutFunc func);
@@ -90,19 +90,19 @@ void log_text_tree(text_tree& tree);
 } // namespace debug
 
 template <typename... Args>
-xr_string make_xrstr(const char* format, const Args&... args) {
+std::string make_xrstr(const char* format, const Args&... args) {
     char temp[4096];
     std::snprintf(temp, 4096, format, args...);
-    return xr_string(temp);
+    return std::string(temp);
 }
 
-inline xr_string make_xrstr(bool b) { return b ? "+" : "-"; }
-inline xr_string make_xrstr(float f) { return make_xrstr("%f", f); }
-inline xr_string make_xrstr(s32 d) { return make_xrstr("%i", d); }
-inline xr_string make_xrstr(u32 d) { return make_xrstr("%u", d); }
-inline xr_string make_xrstr(s64 d) { return make_xrstr("%" PRIi64, d); }
-inline xr_string make_xrstr(u64 d) { return make_xrstr("%" PRIu64, d); }
-inline xr_string make_xrstr(Fvector3 v) { return make_xrstr("[%f][%f][%f]", v.x, v.y, v.z); }
-inline xr_string make_xrstr(const xr_string& s) { return s; }
+inline std::string make_xrstr(bool b) { return b ? "+" : "-"; }
+inline std::string make_xrstr(float f) { return make_xrstr("%f", f); }
+inline std::string make_xrstr(s32 d) { return make_xrstr("%i", d); }
+inline std::string make_xrstr(u32 d) { return make_xrstr("%u", d); }
+inline std::string make_xrstr(s64 d) { return make_xrstr("%" PRIi64, d); }
+inline std::string make_xrstr(u64 d) { return make_xrstr("%" PRIu64, d); }
+inline std::string make_xrstr(Fvector3 v) { return make_xrstr("[%f][%f][%f]", v.x, v.y, v.z); }
+inline std::string make_xrstr(const std::string& s) { return s; }
 
 #endif // defined(AI_DEBUG_TEXT_TREE_H_INCLUDED)

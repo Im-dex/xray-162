@@ -46,7 +46,7 @@ s32 m_iFoodValue;
 float m_fDeteriorationValue;
 CSE_ALifeObject* m_self;
 u32 m_last_update_time;
-xr_vector<shared_str> m_upgrades;
+std::vector<shared_str> m_upgrades;
 
 public:
 CSE_ALifeInventoryItem(LPCSTR caSection);
@@ -214,7 +214,7 @@ add_to_type_list(CSE_ALifeItemWeaponMagazinedWGL)
 #define script_type_list save_type_list(CSE_ALifeItemWeaponMagazinedWGL)
 
     SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeaponShotGun,
-                                CSE_ALifeItemWeaponMagazined) xr_vector<u8> m_AmmoIDs;
+                                CSE_ALifeItemWeaponMagazined) std::vector<u8> m_AmmoIDs;
 CSE_ALifeItemWeaponShotGun(LPCSTR caSection);
 virtual ~CSE_ALifeItemWeaponShotGun();
 

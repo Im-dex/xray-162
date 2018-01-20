@@ -44,16 +44,16 @@ protected:
     string_path m_strPathName;
     string_path m_strRelPathName;
     //	CMap<int, int, BOOL, BOOL> m_breakPoints;
-    xr_map<int, BOOL> m_breakPoints;
+    std::map<int, BOOL> m_breakPoints;
     int m_nMinBreakPoint;
     int m_nMaxBreakPoint;
     //	CMap<int, int, BOOL, BOOL> m_debugLines;
-    xr_map<int, BOOL> m_debugLines;
+    std::map<int, BOOL> m_debugLines;
     int m_nMinDebugLine;
     int m_nMaxDebugLine;
     //	SYSTEMTIME	m_timeCompiled;
 
-    typedef xr_map<int, BOOL>::iterator uniIt;
+    typedef std::map<int, BOOL>::iterator uniIt;
 };
 
 #endif

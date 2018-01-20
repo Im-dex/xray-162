@@ -34,12 +34,12 @@ struct ITEM_INFO {
 template <typename K>
 class CDetectList : public Feel::Touch {
 protected:
-    typedef xr_map<shared_str, ITEM_TYPE> TypesMap;
+    typedef std::map<shared_str, ITEM_TYPE> TypesMap;
     typedef typename TypesMap::iterator TypesMapIt;
     TypesMap m_TypesMap;
 
 public:
-    typedef xr_map<K*, ITEM_INFO> ItemsMap;
+    typedef std::map<K*, ITEM_INFO> ItemsMap;
     typedef typename ItemsMap::iterator ItemsMapIt;
     ItemsMap m_ItemInfos;
 

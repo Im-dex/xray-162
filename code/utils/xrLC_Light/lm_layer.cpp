@@ -3,11 +3,11 @@
 #include "lm_layer.h"
 #include "serialize.h"
 
-void lm_layer::Pack(xr_vector<u32>& dest) const {
+void lm_layer::Pack(std::vector<u32>& dest) const {
     dest.resize(width * height);
-    xr_vector<base_color>::const_iterator I = surface.begin();
-    xr_vector<base_color>::const_iterator E = surface.end();
-    xr_vector<u32>::iterator W = dest.begin();
+    std::vector<base_color>::const_iterator I = surface.begin();
+    std::vector<base_color>::const_iterator E = surface.end();
+    std::vector<u32>::iterator W = dest.begin();
     for (; I != E; I++) {
         base_color_c C;
         I->_get(C);
@@ -18,12 +18,12 @@ void lm_layer::Pack(xr_vector<u32>& dest) const {
         *W++ = color_rgba(_r, _g, _b, _d);
     }
 }
-void lm_layer::Pack_hemi(xr_vector<u32>& dest) const //.
+void lm_layer::Pack_hemi(std::vector<u32>& dest) const //.
 {
     dest.resize(width * height);
-    xr_vector<base_color>::const_iterator I = surface.begin();
-    xr_vector<base_color>::const_iterator E = surface.end();
-    xr_vector<u32>::iterator W = dest.begin();
+    std::vector<base_color>::const_iterator I = surface.begin();
+    std::vector<base_color>::const_iterator E = surface.end();
+    std::vector<u32>::iterator W = dest.begin();
     for (; I != E; I++) {
         base_color_c C;
         I->_get(C);
@@ -34,7 +34,7 @@ void lm_layer::Pack_hemi(xr_vector<u32>& dest) const //.
     }
 }
 void lm_layer::Pixel(u32 ID, u8& r, u8& g, u8& b, u8& s, u8& h) {
-    xr_vector<base_color>::iterator I = surface.begin() + ID;
+    std::vector<base_color>::iterator I = surface.begin() + ID;
     base_color_c c;
     I->_get(c);
     r = u8_clr(c.rgb.x);
@@ -47,8 +47,8 @@ void lm_layer::Pixel(u32 ID, u8& r, u8& g, u8& b, u8& s, u8& h) {
 /*
         u32						width;
         u32						height;
-        xr_vector<base_color>	surface;
-        xr_vector<u8>			marker;
+        std::vector<base_color>	surface;
+        std::vector<u8>			marker;
         LMODE					mode;
 */
 

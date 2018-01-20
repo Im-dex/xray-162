@@ -107,7 +107,7 @@ IC void CSelectorTemplate::perform_search(const _vertex_id_type vertex_id) {
 }
 
 TEMPLATE_SPECIALIZATION
-IC void CSelectorTemplate::set_dest_path(xr_vector<_vertex_id_type>& path) { m_path = &path; }
+IC void CSelectorTemplate::set_dest_path(std::vector<_vertex_id_type>& path) { m_path = &path; }
 
 TEMPLATE_SPECIALIZATION
 IC void CSelectorTemplate::set_dest_vertex(_vertex_id_type& vertex_id) {

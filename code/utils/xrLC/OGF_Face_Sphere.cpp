@@ -6,7 +6,7 @@
 
 BOOL f_valid(float f) { return _finite(f) && !_isnan(f); }
 
-BOOL SphereValid(xr_vector<Fvector>& geom, Fsphere& test) {
+BOOL SphereValid(std::vector<Fvector>& geom, Fsphere& test) {
     if (!f_valid(test.P.x) || !f_valid(test.R)) {
         clMsg("*** Attention ***: invalid sphere: %f,%f,%f - %f", test.P.x, test.P.y, test.P.z,
               test.R);
@@ -14,7 +14,7 @@ BOOL SphereValid(xr_vector<Fvector>& geom, Fsphere& test) {
 
     Fsphere S = test;
     S.R += EPS_L;
-    for (xr_vector<Fvector>::iterator I = geom.begin(); I != geom.end(); I++)
+    for (std::vector<Fvector>::iterator I = geom.begin(); I != geom.end(); I++)
         if (!S.contains(*I))
             return FALSE;
     return TRUE;
@@ -22,8 +22,8 @@ BOOL SphereValid(xr_vector<Fvector>& geom, Fsphere& test) {
 
 void OGF_Base::CalcBounds() {
     // get geometry
-    static xr_vector<Fvector> V;
-    xr_vector<Fvector>::iterator I;
+    static std::vector<Fvector> V;
+    std::vector<Fvector>::iterator I;
     V.clear();
     V.reserve(4096);
     GetGeometry(V);

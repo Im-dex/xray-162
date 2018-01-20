@@ -150,7 +150,7 @@ void dx103DFluidObstacles::ProcessStaticObstacles(const dx103DFluidData& FluidDa
                                                   const Fmatrix& WorldToFluid) {
     RCache.set_Element(m_ObstacleTechnique[OS_OOBB]);
 
-    const xr_vector<Fmatrix>& Obstacles = FluidData.GetObstaclesList();
+    const std::vector<Fmatrix>& Obstacles = FluidData.GetObstaclesList();
     int iObstNum = Obstacles.size();
     for (int i = 0; i < iObstNum; ++i) {
         Fmatrix Transform;
@@ -349,7 +349,8 @@ void dx103DFluidObstacles::RenderDynamicOOBB( const IPhysicsElement &Element, co
 TranslationVelocity3.z, 0.0f);
 
         float	fVelocityScale;
-        
+        
+
         VERIFY(timestep!=0);
 
         fVelocityScale = 1/timestep;

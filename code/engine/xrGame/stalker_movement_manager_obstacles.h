@@ -78,7 +78,7 @@ public:
 #ifdef DEBUG
 private:
     typedef CDetailPathManager::STravelPoint STravelPoint;
-    typedef xr_vector<STravelPoint> KEY_POINTS;
+    typedef std::vector<STravelPoint> KEY_POINTS;
 
 private:
     KEY_POINTS m_detail_key_points;
@@ -86,9 +86,9 @@ private:
 
 private:
     bool m_saved_state;
-    xr_vector<u32> m_level_path;
+    std::vector<u32> m_level_path;
     u32 m_detail_current_index;
-    xr_vector<STravelPathPoint> m_detail_path;
+    std::vector<STravelPathPoint> m_detail_path;
     u32 m_detail_last_patrol_point;
     obstacles_query m_saved_current_iteration;
     const CGameObject* m_last_query_object;
@@ -100,7 +100,7 @@ private:
     dynamic_obstacles_avoider m_dynamic_obstacles;
     u32 m_last_dest_vertex_id;
     u32 m_last_fail_time;
-    xr_vector<u32> m_temp_path;
+    std::vector<u32> m_temp_path;
     bool m_failed_to_build_path;
 }; // class stalker_movement_manager_obstacles
 

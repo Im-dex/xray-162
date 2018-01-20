@@ -24,7 +24,7 @@ public:
     struct SSource : public SFlare {
         BOOL ignore_color;
     };
-    using FlareVec = xr_vector<SFlare>;
+    using FlareVec = std::vector<SFlare>;
     FlareVec m_Flares;
 
     enum { flFlare = (1 << 0), flSource = (1 << 1), flGradient = (1 << 2) };
@@ -56,7 +56,7 @@ public:
     void OnDeviceDestroy();
 };
 
-using LensFlareDescVec = xr_vector<CLensFlareDescriptor*>;
+using LensFlareDescVec = std::vector<CLensFlareDescriptor*>;
 
 class ENGINE_API CLensFlare {
     friend class dxLensFlareRender;

@@ -16,11 +16,11 @@ const float lr_granularity = 0.1f;       // assume similar positions
 
 class ENGINE_API Vision : private pure_relcase {
 private:
-    xr_vector<CObject*> seen;
-    xr_vector<CObject*> query;
-    xr_vector<CObject*> diff;
+    std::vector<CObject*> seen;
+    std::vector<CObject*> query;
+    std::vector<CObject*> diff;
     collide::rq_results RQR;
-    xr_vector<ISpatial*> r_spatial;
+    std::vector<ISpatial*> r_spatial;
     CObject const* m_owner;
 
     void o_new(CObject* E);
@@ -41,22 +41,22 @@ public:
         float Cache_vis;
         u16 bone_id;
     };
-    xr_vector<feel_visible_Item> feel_visible;
+    std::vector<feel_visible_Item> feel_visible;
 
 public:
     void feel_vision_clear();
     void feel_vision_query(Fmatrix& mFull, Fvector& P);
     void feel_vision_update(CObject* parent, Fvector& P, float dt, float vis_threshold);
     void __stdcall feel_vision_relcase(CObject* object);
-    void feel_vision_get(xr_vector<CObject*>& R) {
+    void feel_vision_get(std::vector<CObject*>& R) {
         R.clear();
-        xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
+        std::vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
         for (; I != E; I++)
             if (positive(I->fuzzy))
                 R.push_back(I->O);
     }
     Fvector feel_vision_get_vispoint(CObject* _O) {
-        xr_vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
+        std::vector<feel_visible_Item>::iterator I = feel_visible.begin(), E = feel_visible.end();
         for (; I != E; I++)
             if (_O == I->O) {
                 VERIFY(positive(I->fuzzy));

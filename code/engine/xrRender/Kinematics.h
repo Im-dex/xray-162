@@ -18,7 +18,7 @@ struct SEnumVerticesCallback;
 
 class IKinematics {
 public:
-    typedef xr_vector<std::pair<std::string, u16>> accel;
+    typedef std::vector<std::pair<std::string, u16>> accel;
     struct pick_result {
         Fvector normal;
         float dist;
@@ -55,8 +55,8 @@ public:
     virtual ICF Fmatrix& LL_GetTransform_R(u16 bone_id) = 0;
     virtual Fobb& LL_GetBox(u16 bone_id) = 0;
     virtual const Fbox& GetBox() const = 0;
-    virtual void LL_GetBindTransform(xr_vector<Fmatrix>& matrices) = 0;
-    virtual int LL_GetBoneGroups(xr_vector<xr_vector<u16>>& groups) = 0;
+    virtual void LL_GetBindTransform(std::vector<Fmatrix>& matrices) = 0;
+    virtual int LL_GetBoneGroups(std::vector<std::vector<u16>>& groups) = 0;
 
     virtual u16 LL_GetBoneRoot() = 0;
     virtual void LL_SetBoneRoot(u16 bone_id) = 0;

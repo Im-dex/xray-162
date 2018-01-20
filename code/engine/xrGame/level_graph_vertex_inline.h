@@ -311,7 +311,7 @@ IC void CLevelGraph::intersect(SSegment& tSegment, const SContour& tContour0,
 
 IC float CLevelGraph::nearest(Fvector& Dest, const Fvector& P, const Fvector& A,
                               const Fvector& B) const {
-    // Determine t (the length of the xr_vector from ‘a’ to ‘p’)
+    // Determine t (the length of the std::vector from ‘a’ to ‘p’)
     Fvector c;
     c.sub(P, A);
     Fvector V;

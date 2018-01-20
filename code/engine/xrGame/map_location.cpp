@@ -292,8 +292,8 @@ bool CMapLocation::Update() // returns actual
     return m_cached.m_Actuality;
 }
 
-extern xr_vector<CLevelChanger*> g_lchangers;
-xr_vector<u32> map_point_path;
+extern std::vector<CLevelChanger*> g_lchangers;
+std::vector<u32> map_point_path;
 
 void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp) {
     if (map->MapName() == GetLevelName()) {
@@ -376,11 +376,11 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp) {
                                        dest_graph_id, &map_point_path, params);
 
         if (res) {
-            xr_vector<u32>::reverse_iterator it = map_point_path.rbegin();
-            xr_vector<u32>::reverse_iterator it_e = map_point_path.rend();
+            std::vector<u32>::reverse_iterator it = map_point_path.rbegin();
+            std::vector<u32>::reverse_iterator it_e = map_point_path.rend();
 
-            xr_vector<CLevelChanger*>::iterator lit = g_lchangers.begin();
-            // xr_vector<CLevelChanger*>::iterator lit_e = g_lchangers.end();
+            std::vector<CLevelChanger*>::iterator lit = g_lchangers.begin();
+            // std::vector<CLevelChanger*>::iterator lit_e = g_lchangers.end();
             bool bDone = false;
             // for(; (it!=it_e)&&(!bDone) ;++it){
             //	for(lit=g_lchangers.begin();lit!=lit_e; ++lit){
@@ -398,8 +398,8 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp) {
                 Log("! Error. Path from actor to selected map spot does not contain level changer "
                     ":(");
                 Log("Path:");
-                xr_vector<u32>::iterator it = map_point_path.begin();
-                xr_vector<u32>::iterator it_e = map_point_path.end();
+                std::vector<u32>::iterator it = map_point_path.begin();
+                std::vector<u32>::iterator it_e = map_point_path.end();
                 for (; it != it_e; ++it) {
                     //					Msg("%d-%s",(*it),ai().game_graph().vertex(*it));
                     LogMsg("[{0}] level[{1}]", (*it),
@@ -409,7 +409,7 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp) {
                              .name());
                 }
                 Log("- Available LevelChangers:");
-                xr_vector<CLevelChanger*>::iterator lit, lit_e;
+                std::vector<CLevelChanger*>::iterator lit, lit_e;
                 lit_e = g_lchangers.end();
                 for (lit = g_lchangers.begin(); lit != lit_e; ++lit) {
                     GameGraph::_GRAPH_ID gid = (*lit)->ai_location().game_vertex_id();
@@ -429,8 +429,8 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp) {
                 m_position_on_map = map->ConvertRealToLocal(position, false);
                 UpdateSpotPointer(map, GetSpotPointer(sp));
             } else {
-                xr_vector<u32>::reverse_iterator it = map_point_path.rbegin();
-                xr_vector<u32>::reverse_iterator it_e = map_point_path.rend();
+                std::vector<u32>::reverse_iterator it = map_point_path.rbegin();
+                std::vector<u32>::reverse_iterator it_e = map_point_path.rend();
                 for (; (it != it_e) && (!bDone); ++it) {
                     if (ai().game_graph()
                              .header()
@@ -518,7 +518,7 @@ void CMapLocation::save(IWriter& stream) {
 }
 
 void CMapLocation::load(IReader& stream) {
-    xr_string str;
+    std::string str;
     stream.r_stringZ(str);
     SetHint(str.c_str());
     m_flags.flags = stream.r_u32();
@@ -618,7 +618,7 @@ CRelationMapLocation::CRelationMapLocation(const shared_str& type, u16 object_id
 
 CRelationMapLocation::~CRelationMapLocation() {}
 
-xr_vector<CMapLocation*> find_locations_res;
+std::vector<CMapLocation*> find_locations_res;
 
 bool CRelationMapLocation::Update() {
     if (false == inherited::Update())
@@ -717,8 +717,8 @@ bool CRelationMapLocation::Update() {
         m_b_levelmap_visible = true;
 
         if (Level().MapManager().GetMapLocationsForObject(m_objectID, find_locations_res)) {
-            xr_vector<CMapLocation*>::iterator it = find_locations_res.begin();
-            xr_vector<CMapLocation*>::iterator it_e = find_locations_res.end();
+            std::vector<CMapLocation*>::iterator it = find_locations_res.begin();
+            std::vector<CMapLocation*>::iterator it_e = find_locations_res.end();
             for (; it != it_e; ++it) {
                 CMapLocation* ml = (*it);
                 if (ml == this)

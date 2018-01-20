@@ -248,11 +248,11 @@ void STextureParams::FillProp(LPCSTR base_name, PropItemVec& items,
     }
 }
 
-BOOL STextureParams::similar(STextureParams& tp1, xr_vector<AnsiString>& sel_params) {
+BOOL STextureParams::similar(STextureParams& tp1, std::vector<AnsiString>& sel_params) {
     BOOL res = TRUE;
 
-    xr_vector<AnsiString>::iterator it = sel_params.begin();
-    xr_vector<AnsiString>::iterator it_e = sel_params.end();
+    std::vector<AnsiString>::iterator it = sel_params.begin();
+    std::vector<AnsiString>::iterator it_e = sel_params.end();
 
     for (; it != it_e; ++it) {
         const AnsiString& par_name = *it;

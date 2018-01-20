@@ -29,7 +29,7 @@ protected:
         shared_str _transl;
         int _id;
     };
-    typedef xr_vector<SInfo> Items;
+    typedef std::vector<SInfo> Items;
     typedef Items::iterator Items_it;
 
     Items m_list;

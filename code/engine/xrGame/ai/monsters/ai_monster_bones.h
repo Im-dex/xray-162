@@ -28,7 +28,7 @@ struct bonesBone {
 
 // управление движениями костей
 class bonesManipulation {
-    xr_vector<bonesBone> m_Bones;
+    std::vector<bonesBone> m_Bones;
     u32 freeze_time;
 
     bool in_return_state; // если идёт возврат к исходному положению

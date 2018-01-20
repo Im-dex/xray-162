@@ -28,7 +28,7 @@ struct SBinocVisibleObj {
 };
 
 class CBinocularsVision {
-    typedef xr_vector<SBinocVisibleObj*> VIS_OBJECTS;
+    typedef std::vector<SBinocVisibleObj*> VIS_OBJECTS;
     typedef VIS_OBJECTS::iterator VIS_OBJECTS_IT;
     VIS_OBJECTS m_active_objects;
 

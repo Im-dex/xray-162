@@ -8,7 +8,7 @@ enum EGameIDs { eGameIDNoGame = u32(0), eGameIDSingle = u32(1) << 0 };
 
 class PropValue;
 class PropItem;
-using PropItemVec = xr_vector<PropItem*>;
+using PropItemVec = std::vector<PropItem*>;
 
 struct GameTypeChooser {
     Flags16 m_GameType;

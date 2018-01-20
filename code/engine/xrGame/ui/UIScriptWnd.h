@@ -8,7 +8,7 @@ struct SCallbackInfo;
 
 class CUIDialogWndEx : public CUIDialogWnd, public DLL_Pure {
     typedef CUIDialogWnd inherited;
-    typedef xr_vector<SCallbackInfo*> CALLBACKS;
+    typedef std::vector<SCallbackInfo*> CALLBACKS;
     typedef CALLBACKS::iterator CALLBACK_IT;
 
 private:

@@ -2,7 +2,7 @@
 
 #include "base_lighting.h"
 #include "serialize.h"
-void base_lighting::select(xr_vector<R_Light>& dest, xr_vector<R_Light>& src, Fvector& P, float R) {
+void base_lighting::select(std::vector<R_Light>& dest, std::vector<R_Light>& src, Fvector& P, float R) {
     Fsphere Sphere;
     Sphere.set(P, R);
     dest.clear();
@@ -22,9 +22,9 @@ void base_lighting::select(base_lighting& from, Fvector& P, float R) {
     select(sun, from.sun, P, R);
 }
 /*
-        xr_vector<R_Light>		rgb;		// P,N
-        xr_vector<R_Light>		hemi;		// P,N
-        xr_vector<R_Light>		sun;		// P
+        std::vector<R_Light>		rgb;		// P,N
+        std::vector<R_Light>		hemi;		// P,N
+        std::vector<R_Light>		sun;		// P
 */
 void base_lighting::read(INetReader& r) {
     r_pod_vector(r, rgb);

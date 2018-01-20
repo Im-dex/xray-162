@@ -204,9 +204,8 @@ struct XRCORE_API xr_shortcut {
 };
 #pragma pack(pop)
 
-using RStringVec = xr_vector<std::string>;
-using RStringSet = xr_set<shared_str>;
-using RTokenVec = xr_vector<xr_rtoken>;
+using RStringSet = std::set<shared_str>;
+using RTokenVec = std::vector<xr_rtoken>;
 
 #define xr_pure_interface __interface
 

@@ -234,9 +234,9 @@ void CBuild::xrPhase_AdaptiveHT() {
     }
     */
 }
-void CollectProblematicFaces(const Face& F, int max_id, xr_vector<Face*>& reult, Vertex** V1,
+void CollectProblematicFaces(const Face& F, int max_id, std::vector<Face*>& reult, Vertex** V1,
                              Vertex** V2) {
-    xr_vector<Face*>& adjacent_vec = reult;
+    std::vector<Face*>& adjacent_vec = reult;
     adjacent_vec.reserve(6 * 2 * 3);
     // now, we need to tesselate all faces which shares this 'problematic' edge
     // collect all this faces
@@ -275,9 +275,9 @@ bool do_tesselate_face(const Face& F, tesscb_estimator* cb_E, int& max_id) {
     return true;
 }
 
-void tessalate_faces(xr_vector<Face*>& faces, Vertex* V1, Vertex* V2, tesscb_face* cb_F,
+void tessalate_faces(std::vector<Face*>& faces, Vertex* V1, Vertex* V2, tesscb_face* cb_F,
                      tesscb_vertex* cb_V) {
-    xr_vector<Face*>& adjacent_vec = faces;
+    std::vector<Face*>& adjacent_vec = faces;
     // create new vertex (lerp)
     Vertex* V = lc_global_data()->create_vertex();
     V->P.lerp(V1->P, V2->P, .5f);
@@ -402,7 +402,7 @@ void CBuild::u_Tesselate(tesscb_estimator* cb_E, tesscb_face* cb_F, tesscb_verte
         if (!do_tesselate_face(*F, cb_E, max_id))
             continue;
 
-        xr_vector<Face*> adjacent_vec;
+        std::vector<Face*> adjacent_vec;
         Vertex *V1, *V2;
         CollectProblematicFaces(*F, max_id, adjacent_vec, &V1, &V2);
         ++counter_create;
@@ -441,11 +441,11 @@ void CBuild::u_Tesselate(tesscb_estimator* cb_E, tesscb_face* cb_F, tesscb_verte
 void CBuild::u_SmoothVertColors(int count) {
     for (int iteration = 0; iteration < count; ++iteration) {
         // Gather
-        xr_vector<base_color> colors;
+        std::vector<base_color> colors;
         colors.resize(lc_global_data()->g_vertices().size());
         for (u32 it = 0; it < lc_global_data()->g_vertices().size(); ++it) {
             // Circle
-            xr_vector<Vertex*> circle_vec;
+            std::vector<Vertex*> circle_vec;
             Vertex* V = lc_global_data()->g_vertices()[it];
 
             for (u32 fit = 0; fit < V->m_adjacents.size(); ++fit) {

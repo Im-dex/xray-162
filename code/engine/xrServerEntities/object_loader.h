@@ -114,7 +114,7 @@ struct CLoader {
 
     IC static void load_data(shared_str& data, M& stream, const P& p) { stream.r_stringZ(data); }
 
-    IC static void load_data(xr_string& data, M& stream, const P& p) {
+    IC static void load_data(std::string& data, M& stream, const P& p) {
         shared_str S;
         stream.r_stringZ(S);
         data = *S;
@@ -133,13 +133,13 @@ struct CLoader {
         p.after_load(data, stream);
     }
 
-    IC static void load_data(xr_vector<bool>& data, M& stream, const P& p) {
+    IC static void load_data(std::vector<bool>& data, M& stream, const P& p) {
         if (p.can_clear())
             data.clear();
         u32 prev_count = data.size();
         data.resize(prev_count + stream.r_u32());
-        xr_vector<bool>::iterator I = data.begin() + prev_count;
-        xr_vector<bool>::iterator E = data.end();
+        std::vector<bool>::iterator I = data.begin() + prev_count;
+        std::vector<bool>::iterator E = data.end();
         u32 mask = 0;
         for (int j = 32; I != E; ++I, ++j) {
             if (j >= 32) {
@@ -219,7 +219,7 @@ struct CLoader {
     }
 
     template <typename T1, typename T2>
-    IC static void load_data(xr_stack<T1, T2>& data, M& stream, const P& p) {
+    IC static void load_data(std::stack<T1, T2>& data, M& stream, const P& p) {
         load_data(data, stream, p, true);
     }
 

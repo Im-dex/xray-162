@@ -797,7 +797,7 @@ void DBG_DrawBind(CObject& O) {
     IKinematics* K = smart_cast<IKinematics*>(O.Visual());
 
     u16 nbb = K->LL_BoneCount();
-    xr_vector<Fmatrix> binds;
+    std::vector<Fmatrix> binds;
     K->LL_GetBindTransform(binds);
 
     for (u16 i = 0; i < nbb; ++i) {

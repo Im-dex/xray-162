@@ -5,7 +5,7 @@
 #include "soundrender_emitter.h"
 #include "soundrender_source.h"
 
-xr_vector<u8> g_target_temp_data;
+std::vector<u8> g_target_temp_data;
 
 CSoundRender_TargetA::CSoundRender_TargetA() : CSoundRender_Target() {
     cache_gain = 0.f;

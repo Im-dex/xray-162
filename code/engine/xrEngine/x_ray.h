@@ -45,7 +45,7 @@ public:
     CGameFont* pFontSystem;
 
     // Levels
-    xr_vector<sLevelInfo> Levels;
+    std::vector<sLevelInfo> Levels;
     u32 Level_Current;
     void Level_Scan();
     int Level_ID(LPCSTR name, LPCSTR ver, bool bSet);

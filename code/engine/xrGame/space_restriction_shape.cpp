@@ -89,8 +89,8 @@ void CSpaceRestrictionShape::build_border() {
     m_border.clear();
     CCF_Shape* shape = smart_cast<CCF_Shape*>(m_restrictor->collidable.model);
     VERIFY(shape);
-    xr_vector<CCF_Shape::shape_def>::const_iterator I = shape->Shapes().begin();
-    xr_vector<CCF_Shape::shape_def>::const_iterator E = shape->Shapes().end();
+    std::vector<CCF_Shape::shape_def>::const_iterator I = shape->Shapes().begin();
+    std::vector<CCF_Shape::shape_def>::const_iterator E = shape->Shapes().end();
     for (; I != E; ++I)
         fill_shape(*I);
 
@@ -124,7 +124,7 @@ void CSpaceRestrictionShape::test_correctness() {
     // flood
     ai().level_graph().set_mask(border());
 
-    xr_vector<u32> nodes;
+    std::vector<u32> nodes;
     ai().graph_engine().search(ai().level_graph(), m_test_storage.back(), m_test_storage.back(),
                                &nodes, GraphEngineSpace::CFlooder());
 
@@ -143,7 +143,7 @@ void CSpaceRestrictionShape::test_correctness() {
     //	Msg("NOT Correct restrictor: [%s], flood less = [%u] Dump unique nodes: ",
     //*m_restrictor->cName(), flood_less);
 
-    //	xr_vector<u32>::iterator src_b, src_e, tgt_b, tgt_e;
+    //	std::vector<u32>::iterator src_b, src_e, tgt_b, tgt_e;
     //
     //	u32 index = 1;
     //	if (m_test_storage.size() > nodes.size()) {
@@ -158,12 +158,12 @@ void CSpaceRestrictionShape::test_correctness() {
     //		tgt_e = m_test_storage.end();
     //	}
     //
-    //	xr_vector<u32>::iterator I = src_b;
-    //	xr_vector<u32>::iterator E = src_e;
+    //	std::vector<u32>::iterator I = src_b;
+    //	std::vector<u32>::iterator E = src_e;
 
     //	for (; I != E; ++I) {
-    //		xr_vector<u32>::iterator II = tgt_b;
-    //		xr_vector<u32>::iterator EE = tgt_e;
+    //		std::vector<u32>::iterator II = tgt_b;
+    //		std::vector<u32>::iterator EE = tgt_e;
 
     //		bool b_found = false;
     //		for (; II != EE; ++II) {

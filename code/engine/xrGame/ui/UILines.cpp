@@ -391,7 +391,7 @@ float CUILines::GetVIndentByAlign() {
 }
 
 // %c[255,255,255,255]
-u32 CUILines::GetColorFromText(const xr_string& str) const {
+u32 CUILines::GetColorFromText(const std::string& str) const {
     StrSize begin, end, comma1_pos, comma2_pos, comma3_pos;
 
     begin = str.find(BEGIN);
@@ -421,7 +421,7 @@ u32 CUILines::GetColorFromText(const xr_string& str) const {
     R_ASSERT2(npos != comma3_pos, "CUISubLine::GetColorFromText -- can't find third comma");
 
     u32 a, r, g, b;
-    xr_string single_color;
+    std::string single_color;
 
     begin += 3;
 
@@ -437,10 +437,10 @@ u32 CUILines::GetColorFromText(const xr_string& str) const {
     return color_argb(a, r, g, b);
 }
 
-CUILine* CUILines::ParseTextToColoredLine(const xr_string& str) {
+CUILine* CUILines::ParseTextToColoredLine(const std::string& str) {
     CUILine* line = new CUILine();
-    xr_string tmp = str;
-    xr_string entry;
+    std::string tmp = str;
+    std::string entry;
     u32 color;
 
     do {
@@ -451,24 +451,24 @@ CUILine* CUILines::ParseTextToColoredLine(const xr_string& str) {
     return line;
 }
 
-void CUILines::CutFirstColoredTextEntry(xr_string& entry, u32& color, xr_string& text) const {
+void CUILines::CutFirstColoredTextEntry(std::string& entry, u32& color, std::string& text) const {
     entry.clear();
 
     StrSize begin = text.find(BEGIN);
     StrSize end = text.find(END, begin);
-    if (xr_string::npos == end)
+    if (std::string::npos == end)
         begin = end;
     StrSize begin2 = text.find(BEGIN, end);
     StrSize end2 = text.find(END, begin2);
-    if (xr_string::npos == end2)
+    if (std::string::npos == end2)
         begin2 = end2;
 
     // if we do not have any color entry or it is single with 0 position
-    if (xr_string::npos == begin) {
+    if (std::string::npos == begin) {
         entry = text;
         color = m_dwTextColor;
         text.clear();
-    } else if (0 == begin && xr_string::npos == begin2) {
+    } else if (0 == begin && std::string::npos == begin2) {
         entry = text;
         color = GetColorFromText(entry);
         entry.replace(begin, end - begin + 1, "");
@@ -481,7 +481,7 @@ void CUILines::CutFirstColoredTextEntry(xr_string& entry, u32& color, xr_string&
         text.replace(0, begin, "");
     }
     // if we have two color entries. and first has 0 position
-    else if (0 == begin && xr_string::npos != begin2) {
+    else if (0 == begin && std::string::npos != begin2) {
         entry = text.substr(0, begin2);
         color = GetColorFromText(entry);
         entry.replace(begin, end - begin + 1, "");

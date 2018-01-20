@@ -239,7 +239,7 @@ void CScriptGameObject::enable_memory_object(CScriptGameObject* game_object, boo
         monster->memory().enable(&game_object->object(), enable);
 }
 
-const xr_vector<CNotYetVisibleObject>& CScriptGameObject::not_yet_visible_objects() const {
+const std::vector<CNotYetVisibleObject>& CScriptGameObject::not_yet_visible_objects() const {
     CCustomMonster* monster = smart_cast<CCustomMonster*>(&object());
     if (!monster) {
         ai().script_engine().script_log(

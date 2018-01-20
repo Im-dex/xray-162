@@ -88,7 +88,7 @@ enum EGameActions {
 struct _keyboard {
     LPCSTR key_name;
     int dik;
-    xr_string key_local_name;
+    std::string key_local_name;
 };
 enum _key_group {
     _both = (1 << 0),
@@ -117,7 +117,7 @@ _action* action_name_to_ptr(LPCSTR _name);
 
 extern _action actions[];
 // extern _keyboard	keyboards	[];
-// extern xr_vector< _keyboard >	keyboards;
+// extern std::vector< _keyboard >	keyboards;
 
 #define bindings_count kLASTACTION
 struct _binding {
@@ -139,7 +139,7 @@ struct _conCmd {
 
 class ConsoleBindCmds {
 public:
-    xr_map<int, _conCmd> m_bindConsoleCmds;
+    std::map<int, _conCmd> m_bindConsoleCmds;
 
     void bind(int dik, LPCSTR N);
     void unbind(int dik);

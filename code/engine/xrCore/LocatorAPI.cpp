@@ -59,7 +59,7 @@ struct eq_pointer<CStreamReader> {
     bool operator()(_open_file& itm) { return (_val == itm._stream_reader); }
 };
 
-XRCORE_API xr_vector<_open_file> g_open_files;
+XRCORE_API std::vector<_open_file> g_open_files;
 
 static void _check_open_file(const char* fname) {
     const auto it = std::find_if(g_open_files.begin(), g_open_files.end(),
@@ -107,8 +107,8 @@ void _unregister_open_file(T* _r) {
 }
 
 XRCORE_API void _dump_open_files(int mode) {
-    xr_vector<_open_file>::iterator it = g_open_files.begin();
-    xr_vector<_open_file>::iterator it_e = g_open_files.end();
+    std::vector<_open_file>::iterator it = g_open_files.begin();
+    std::vector<_open_file>::iterator it_e = g_open_files.end();
 
     bool bShow = false;
     if (mode == 1) {
@@ -773,14 +773,14 @@ const CLocatorAPI::file* CLocatorAPI::exist(string_path& fn, LPCSTR path, LPCSTR
     return exist(fn);
 }
 
-xr_vector<char*>* CLocatorAPI::file_list_open(const char* initial, const char* folder, u32 flags) {
+std::vector<char*>* CLocatorAPI::file_list_open(const char* initial, const char* folder, u32 flags) {
     string_path N;
     R_ASSERT(initial && initial[0]);
     update_path(N, initial, folder);
     return file_list_open(N, flags);
 }
 
-xr_vector<char*>* CLocatorAPI::file_list_open(const char* _path, u32 flags) {
+std::vector<char*>* CLocatorAPI::file_list_open(const char* _path, u32 flags) {
     R_ASSERT(_path);
     VERIFY(flags);
     // проверить нужно ли пересканировать пути
@@ -799,7 +799,7 @@ xr_vector<char*>* CLocatorAPI::file_list_open(const char* _path, u32 flags) {
     if (I == m_files.end())
         return 0;
 
-    xr_vector<char*>* dest = new xr_vector<char*>();
+    std::vector<char*>* dest = new std::vector<char*>();
 
     size_t base_len = xr_strlen(N);
     for (++I; I != m_files.end(); I++) {
@@ -835,9 +835,9 @@ xr_vector<char*>* CLocatorAPI::file_list_open(const char* _path, u32 flags) {
     return dest;
 }
 
-void CLocatorAPI::file_list_close(xr_vector<char*>*& lst) {
+void CLocatorAPI::file_list_close(std::vector<char*>*& lst) {
     if (lst) {
-        for (xr_vector<char*>::iterator I = lst->begin(); I != lst->end(); I++)
+        for (std::vector<char*>::iterator I = lst->begin(); I != lst->end(); I++)
             xr_free(*I);
         xr_delete(lst);
     }
@@ -906,7 +906,7 @@ int CLocatorAPI::file_list(FS_FileSet& dest, LPCSTR path, u32 flags, LPCSTR mask
             /*std::pair<FS_FileSet::iterator,bool> pr = */ dest.insert(std::move(file));
 #endif
 
-            //			xr_string fn			= entry_begin;
+            //			std::string fn			= entry_begin;
             // insert file entry
 
             //			std::pair<FS_FileSet::iterator,bool> pr =
@@ -1406,7 +1406,7 @@ LPCSTR CLocatorAPI::update_path(string_path& dest, LPCSTR initial, LPCSTR src) {
     return get_path(initial)->_update(dest, src);
 }
 /*
-void CLocatorAPI::update_path(xr_string& dest, LPCSTR initial, LPCSTR src)
+void CLocatorAPI::update_path(std::string& dest, LPCSTR initial, LPCSTR src)
 {
     return get_path(initial)->_update(dest,src);
 }*/

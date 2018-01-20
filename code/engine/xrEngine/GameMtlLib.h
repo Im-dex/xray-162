@@ -64,8 +64,8 @@
 #define ShaderVec shared_str
 //	#define ShaderVec 	shared_str
 #else
-using SoundVec = xr_vector<ref_sound>;
-using PSVec = xr_vector<shared_str>;
+using SoundVec = std::vector<ref_sound>;
+using PSVec = std::vector<shared_str>;
 #include "xrRender/WallMarkArray.h"
 #include "xrRender/RenderFactory.h"
 //	DEFINE_VECTOR(ref_shader,ShaderVec,ShaderIt);
@@ -148,7 +148,7 @@ public:
     void FillProp(PropItemVec& values, ListItem* owner);
 #endif
 };
-using GameMtlVec = xr_vector<SGameMtl*>;
+using GameMtlVec = std::vector<SGameMtl*>;
 using GameMtlIt = GameMtlVec::iterator;
 
 struct MTL_EXPORT_API SGameMtlPair {
@@ -234,7 +234,7 @@ public:
 #endif
 };
 
-using GameMtlPairVec = xr_vector<SGameMtlPair*>;
+using GameMtlPairVec = std::vector<SGameMtlPair*>;
 using GameMtlPairIt = GameMtlPairVec::iterator;
 
 class MTL_EXPORT_API CGameMtlLibrary {

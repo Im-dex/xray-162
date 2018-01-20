@@ -114,21 +114,21 @@ public:
     CSector* pLastSector;
     Fvector vLastCameraPos;
     u32 uLastLTRACK;
-    xr_vector<IRender_Portal*> Portals;
-    xr_vector<IRender_Sector*> Sectors;
+    std::vector<IRender_Portal*> Portals;
+    std::vector<IRender_Sector*> Sectors;
     xrXRC Sectors_xrc;
     CDB::MODEL* rmPortals;
     CHOM HOM;
     R_occlusion HWOCC;
 
     // Global vertex-buffer container
-    xr_vector<FSlideWindowItem> SWIs;
-    xr_vector<ref_shader> Shaders;
+    std::vector<FSlideWindowItem> SWIs;
+    std::vector<ref_shader> Shaders;
     typedef svector<D3DVERTEXELEMENT9, MAXD3DDECLLENGTH + 1> VertexDeclarator;
-    xr_vector<VertexDeclarator> nDC, xDC;
-    xr_vector<ID3DVertexBuffer*> nVB, xVB;
-    xr_vector<ID3DIndexBuffer*> nIB, xIB;
-    xr_vector<dxRender_Visual*> Visuals;
+    std::vector<VertexDeclarator> nDC, xDC;
+    std::vector<ID3DVertexBuffer*> nVB, xVB;
+    std::vector<ID3DIndexBuffer*> nIB, xIB;
+    std::vector<dxRender_Visual*> Visuals;
     CPSLibrary PSLibrary;
 
     CDetailManager* Details;
@@ -139,12 +139,12 @@ public:
 
     CLight_DB Lights;
     CLight_Compute_XFORM_and_VIS LR;
-    xr_vector<light*> Lights_LastFrame;
+    std::vector<light*> Lights_LastFrame;
     SMAP_Allocator LP_smap_pool;
     light_Package LP_normal;
     light_Package LP_pending;
 
-    xr_vector<Fbox3, render_alloc<Fbox3>> main_coarse_structure;
+    std::vector<Fbox3, render_alloc<Fbox3>> main_coarse_structure;
 
     shared_str c_sbase;
     shared_str c_lmaterial;
@@ -157,7 +157,7 @@ public:
     bool m_bMakeAsyncSS;
     bool m_bFirstFrameAfterReset; // Determines weather the frame is the first after resetting
                                   // device.
-    xr_vector<sun::cascade> m_sun_cascades;
+    std::vector<sun::cascade> m_sun_cascades;
 
 private:
     // Loading / Unloading
@@ -349,7 +349,7 @@ public:
     void clearAllShaderOptions() { m_ShaderOptions.clear(); }
 
 private:
-    xr_vector<D3D_SHADER_MACRO> m_ShaderOptions;
+    std::vector<D3D_SHADER_MACRO> m_ShaderOptions;
 
 protected:
     virtual void ScreenshotImpl(ScreenshotMode mode, LPCSTR name, CMemoryWriter* memory_writer);

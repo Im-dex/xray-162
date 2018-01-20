@@ -17,10 +17,10 @@ class dcTriListCollider {
     dxGeom* Geometry;    // The geom object
     dxTriList* GeomData; // Buffered pointer to classdata
 
-    xr_vector<Triangle> pos_tries;
-    xr_vector<Triangle> neg_tries;
-    xr_vector<flags8> gl_cl_tries_state;
-    xr_vector<int>::iterator I, E, B;
+    std::vector<Triangle> pos_tries;
+    std::vector<Triangle> neg_tries;
+    std::vector<flags8> gl_cl_tries_state;
+    std::vector<int>::iterator I, E, B;
 
 public:
     dcTriListCollider(dxGeom* Geometry);
@@ -98,7 +98,7 @@ TRI_PRIMITIVE_COLIDE_CLASS_IMPLEMENT(Cyl)
 TRI_PRIMITIVE_COLIDE_CLASS_IMPLEMENT(Sphere)
 IC void dcTriListCollider::VxToGlClTriState(u32 v, CDB::TRI* T_array) {
     // CDB::TRI*       T_array      = Level().ObjectSpace.GetStaticTris();
-    xr_vector<int>::iterator LI = I + 1;
+    std::vector<int>::iterator LI = I + 1;
     for (; E != LI; ++LI) {
         u32* verts = T_array[*LI].verts;
         flags8& state = gl_cl_tries_state[LI - B];
@@ -112,7 +112,7 @@ IC void dcTriListCollider::VxToGlClTriState(u32 v, CDB::TRI* T_array) {
 }
 IC void dcTriListCollider::SideToGlClTriState(u32 v0, u32 v1, CDB::TRI* T_array) {
     //      = Level().ObjectSpace.GetStaticTris();
-    xr_vector<int>::iterator LI = I + 1;
+    std::vector<int>::iterator LI = I + 1;
     for (; E != LI; ++LI) {
         u32* verts = T_array[*LI].verts;
         flags8& state = gl_cl_tries_state[LI - B];

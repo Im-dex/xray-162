@@ -29,7 +29,7 @@ struct SPhraseDialogData : CSharedResource {
     int m_iPriority;
 };
 
-using PHRASE_VECTOR = xr_vector<CPhrase*>;
+using PHRASE_VECTOR = std::vector<CPhrase*>;
 
 class CPhraseDialog;
 class CPhraseDialogManager;

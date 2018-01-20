@@ -48,7 +48,7 @@ public:
     void OnYesOk();
 
 protected:
-    xr_string m_ret_val;
+    std::string m_ret_val;
     CUI3tButton* m_UIButtonYesOk;
     CUI3tButton* m_UIButtonNo;
     CUI3tButton* m_UIButtonCancel;

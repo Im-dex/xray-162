@@ -69,10 +69,10 @@ private:
     typedef buffer_vector<Fvector> shot_targets_t;
 #ifdef DEBUG
     struct dbg_draw_data {
-        typedef xr_vector<std::pair<Fvector, float>> spheres_t;
-        typedef xr_vector<Fobb> obbes_t;
-        typedef xr_vector<std::pair<Fvector, Fvector>> lines_t;
-        typedef xr_vector<Fvector> targets_t;
+        typedef std::vector<std::pair<Fvector, float>> spheres_t;
+        typedef std::vector<Fobb> obbes_t;
+        typedef std::vector<std::pair<Fvector, Fvector>> lines_t;
+        typedef std::vector<Fvector> targets_t;
 
         spheres_t m_spheres;
         lines_t m_pick_vectors;
@@ -115,7 +115,7 @@ private:
     u16 m_except_id;
     CObject* m_last_picked_obj;
 
-    typedef xr_vector<ISpatial*> spartial_base_t;
+    typedef std::vector<ISpatial*> spartial_base_t;
     typedef buffer_vector<CEntityAlive*> victims_list_t;
     struct victim_bone_data {
         CCF_Skeleton::SElement const* m_bone_element;

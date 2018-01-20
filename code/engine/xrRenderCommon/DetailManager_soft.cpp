@@ -29,9 +29,9 @@ void CDetailManager::soft_Render() {
         u32 vCount_Object = Object.number_vertices;
         u32 iCount_Object = Object.number_indices;
 
-        xr_vector<SlotItemVec*>& _vis = m_visibles[0][O];
-        xr_vector<SlotItemVec*>::iterator _vI = _vis.begin();
-        xr_vector<SlotItemVec*>::iterator _vE = _vis.end();
+        std::vector<SlotItemVec*>& _vis = m_visibles[0][O];
+        std::vector<SlotItemVec*>::iterator _vI = _vis.begin();
+        std::vector<SlotItemVec*>::iterator _vE = _vis.end();
         for (; _vI != _vE; _vI++) {
             SlotItemVec* items = *_vI;
             u32 vCount_Total = items->size() * vCount_Object;
@@ -146,11 +146,13 @@ void CDetailManager::soft_Render() {
 /*
 //.
                 VERIFY(sizeof(CDetail::fvfVertexOut)==soft_Geom->vb_stride);
-                
+                
+
                 CDetail::fvfVertexOut	*dstIt = vDest;
 
                 VERIFY(items->size()*Object.number_vertices==vCount_Lock);
-                
+                
+
                 for	(u32 k=0; k<vCount_Lock; k++)
                 {
                                         // Transfer vertices

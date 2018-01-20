@@ -29,7 +29,7 @@ IC bool FaceEqual(Face& F1, Face& F2) {
     return false;
 }
 
-void SaveUVM(LPCSTR fname, xr_vector<b_rc_face>& vm) {
+void SaveUVM(LPCSTR fname, std::vector<b_rc_face>& vm) {
     IWriter* W = FS.w_open(fname);
     string256 tmp;
     // vertices
@@ -52,7 +52,7 @@ void CBuild::BuildRapid(BOOL bSaveForOtherCompilers) {
     for (u32 fit = 0; fit < lc_global_data()->g_faces().size(); fit++)
         lc_global_data()->g_faces()[fit]->flags.bProcessed = false;
 
-    xr_vector<Face*> adjacent_vec;
+    std::vector<Face*> adjacent_vec;
     adjacent_vec.reserve(6 * 2 * 3);
 
     CDB::CollectorPacked CL(scene_bb, lc_global_data()->g_vertices().size(),
@@ -134,7 +134,7 @@ void CBuild::BuildRapid(BOOL bSaveForOtherCompilers) {
         string_path fn;
 
         IWriter* MFS = FS.w_open(strconcat(sizeof(fn), fn, pBuild->path, "build.cform"));
-        xr_vector<b_rc_face> rc_faces;
+        std::vector<b_rc_face> rc_faces;
         rc_faces.resize(CL.getTS());
         // Prepare faces
         for (u32 k = 0; k < CL.getTS(); k++) {

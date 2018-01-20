@@ -22,9 +22,9 @@ private:
     static const u32 iInvalidHandle = 0xFFFFFFFF;
 
     BOOL enabled;        //
-    xr_vector<_Q> pool;  // sorted (max ... min), insertions are usually at the end
-    xr_vector<_Q> used;  // id's are generated from this and it is cleared from back only
-    xr_vector<u32> fids; // free id's
+    std::vector<_Q> pool;  // sorted (max ... min), insertions are usually at the end
+    std::vector<_Q> used;  // id's are generated from this and it is cleared from back only
+    std::vector<u32> fids; // free id's
 public:
 #if defined(USE_DX10) || defined(USE_DX11)
     typedef u64 occq_result;

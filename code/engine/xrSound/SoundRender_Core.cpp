@@ -74,7 +74,7 @@ void CSoundRender_Core::_initialize(int stage) {
     bReady = TRUE;
 }
 
-extern xr_vector<u8> g_target_temp_data;
+extern std::vector<u8> g_target_temp_data;
 void CSoundRender_Core::_clear() {
     bReady = FALSE;
     cache.destroy();
@@ -205,7 +205,7 @@ void CSoundRender_Core::set_geometry_env(IReader* I) {
         return;
 
     // Assosiate names
-    xr_vector<u16> ids;
+    std::vector<u16> ids;
     IReader* names = I->open_chunk(0);
     while (!names->eof()) {
         string256 n;

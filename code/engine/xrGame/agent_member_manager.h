@@ -16,7 +16,7 @@ class CEntity;
 
 class CAgentMemberManager {
 public:
-    typedef xr_vector<CMemberOrder*> MEMBER_STORAGE;
+    typedef std::vector<CMemberOrder*> MEMBER_STORAGE;
     typedef MEMBER_STORAGE::iterator iterator;
     typedef MEMBER_STORAGE::const_iterator const_iterator;
     typedef MemorySpace::squad_mask_type squad_mask_type;

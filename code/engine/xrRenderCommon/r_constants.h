@@ -137,12 +137,12 @@ public:
 
 class ECORE_API R_constant_table : public xr_resource_flagged {
 public:
-    typedef xr_vector<ref_constant> c_table;
+    typedef std::vector<ref_constant> c_table;
     c_table table;
 
 #if defined(USE_DX10) || defined(USE_DX11)
     typedef std::pair<u32, ref_cbuffer> cb_table_record;
-    typedef xr_vector<cb_table_record> cb_table;
+    typedef std::vector<cb_table_record> cb_table;
     cb_table m_CBTable;
 #endif //	USE_DX10
 private:

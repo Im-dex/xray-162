@@ -36,7 +36,7 @@ private:
     void read(src& P, const Fvector& min, const Fvector& max);
 };
 
-using PHNETSTATE_VECTOR = xr_vector<SPHNetState>;
+using PHNETSTATE_VECTOR = std::vector<SPHNetState>;
 
 struct SPHBonesData {
     u64 bones_mask;

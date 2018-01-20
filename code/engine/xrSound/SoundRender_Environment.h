@@ -34,7 +34,7 @@ public:
 
 class XRSOUND_EDITOR_API SoundEnvironment_LIB {
 public:
-    using SE_VEC = xr_vector<CSoundRender_Environment*>;
+    using SE_VEC = std::vector<CSoundRender_Environment*>;
 
 private:
     SE_VEC library;

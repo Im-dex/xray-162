@@ -9,10 +9,10 @@
 #pragma once
 
 template <typename T, typename _predicate>
-IC void CMemoryManager::fill_enemies(const xr_vector<T>& objects,
+IC void CMemoryManager::fill_enemies(const std::vector<T>& objects,
                                      const _predicate& predicate) const {
-    xr_vector<T>::const_iterator I = objects.begin();
-    xr_vector<T>::const_iterator E = objects.end();
+    std::vector<T>::const_iterator I = objects.begin();
+    std::vector<T>::const_iterator E = objects.end();
     for (; I != E; ++I) {
         if (!(*I).m_enabled)
             continue;

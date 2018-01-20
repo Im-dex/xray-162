@@ -34,8 +34,8 @@ struct record {
     Vertex* T;
 };
 
-static xr_vector<record>* vecJunctions;
-static xr_vector<record>* vecEdges;
+static std::vector<record>* vecJunctions;
+static std::vector<record>* vecEdges;
 
 static void check(Vertex* vE1, Vertex* vE2, Vertex* vTEST) {
     if (std::sqrt(SqrDistance2Segment(vTEST->P, vE1->P, vE2->P)) < 0.002f) {
@@ -94,9 +94,9 @@ static void edge(Vertex* vE1, Vertex* vE2) {
 
 void CBuild::CorrectTJunctions() {
     Status("Processing...");
-    vecJunctions = new xr_vector<record>();
+    vecJunctions = new std::vector<record>();
     vecJunctions->reserve(1024);
-    vecEdges = new xr_vector<record>();
+    vecEdges = new std::vector<record>();
     vecEdges->reserve(1024);
 
     for (u32 I = 0; I < lc_global_data()->g_faces().size(); ++I) {

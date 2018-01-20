@@ -7,7 +7,7 @@
 
 #include "xrcdb/xrCDB.h"
 //-----------------------------------------------------------------------
-typedef xr_multimap<float, vecVertex> mapVert;
+typedef std::multimap<float, vecVertex> mapVert;
 typedef mapVert::iterator mapVertIt;
 mapVert* g_trans;
 std::recursive_mutex g_trans_CS;

@@ -891,7 +891,7 @@ bool CInventoryItem::can_kill() const { return (false); }
 
 CInventoryItem* CInventoryItem::can_kill(CInventory* inventory) const { return (0); }
 
-const CInventoryItem* CInventoryItem::can_kill(const xr_vector<const CGameObject*>& items) const {
+const CInventoryItem* CInventoryItem::can_kill(const std::vector<const CGameObject*>& items) const {
     return (0);
 }
 

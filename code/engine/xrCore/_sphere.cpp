@@ -44,7 +44,7 @@ public:
 class Miniball {
 public:
     // types
-    typedef xr_list<Fvector> VectorList;
+    typedef std::list<Fvector> VectorList;
     typedef VectorList::iterator It;
     typedef VectorList::const_iterator Cit;
 

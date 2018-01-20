@@ -50,7 +50,7 @@ private:
     IReader* m_reader; // level graph virtual storage
     CHeader* m_header; // level graph header
     CVertex* m_nodes;  // nodes array
-    xr_vector<bool> m_access_mask;
+    std::vector<bool> m_access_mask;
     GameGraph::_LEVEL_ID m_level_id; // unique level identifier
     u32 m_row_length;
     u32 m_column_length;
@@ -87,14 +87,14 @@ public:
     IC const_vertex_iterator begin() const;
     IC const_vertex_iterator end() const;
 
-    IC void set_mask(const xr_vector<u32>& mask);
-    IC void set_mask_no_check(const xr_vector<u32>& mask);
+    IC void set_mask(const std::vector<u32>& mask);
+    IC void set_mask_no_check(const std::vector<u32>& mask);
 
     IC void set_mask(u32 vertex_id);
     IC void set_mask_no_check(u32 vertex_id);
 
-    IC void clear_mask(const xr_vector<u32>& mask);
-    IC void clear_mask_no_check(const xr_vector<u32>& mask);
+    IC void clear_mask(const std::vector<u32>& mask);
+    IC void clear_mask_no_check(const std::vector<u32>& mask);
 
     IC void clear_mask(u32 vertex_id);
     IC void clear_mask_no_check(u32 vertex_id);
@@ -216,33 +216,33 @@ public:
                                       const float max_distance) const;
     float mark_nodes_in_direction(u32 start_vertex_id, const Fvector& start_position,
                                   const Fvector& direction, float distance,
-                                  xr_vector<u32>& vertex_stack,
-                                  xr_vector<bool>* vertex_marks) const;
+                                  std::vector<u32>& vertex_stack,
+                                  std::vector<bool>* vertex_marks) const;
     float mark_nodes_in_direction(u32 start_vertex_id, const Fvector& start_position,
-                                  u32 finish_node, xr_vector<u32>& vertex_stack,
-                                  xr_vector<bool>* vertex_marks) const;
+                                  u32 finish_node, std::vector<u32>& vertex_stack,
+                                  std::vector<bool>* vertex_marks) const;
     float mark_nodes_in_direction(u32 start_vertex_id, const Fvector& start_position,
-                                  const Fvector& finish_point, xr_vector<u32>& vertex_stack,
-                                  xr_vector<bool>* vertex_marks) const;
+                                  const Fvector& finish_point, std::vector<u32>& vertex_stack,
+                                  std::vector<bool>* vertex_marks) const;
     float farthest_vertex_in_direction(u32 start_vertex_id, const Fvector& start_point,
                                        const Fvector& finish_point, u32& finish_vertex_id,
-                                       xr_vector<bool>* tpaMarks,
+                                       std::vector<bool>* tpaMarks,
                                        bool check_accessability = false) const;
     bool create_straight_path(u32 start_vertex_id, const Fvector& start_point,
-                              const Fvector& finish_point, xr_vector<Fvector>& tpaOutputPoints,
-                              xr_vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
+                              const Fvector& finish_point, std::vector<Fvector>& tpaOutputPoints,
+                              std::vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
                               bool bClearPath = true) const;
     bool create_straight_path(u32 start_vertex_id, const Fvector2& start_point,
-                              const Fvector2& finish_point, xr_vector<Fvector>& tpaOutputPoints,
-                              xr_vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
+                              const Fvector2& finish_point, std::vector<Fvector>& tpaOutputPoints,
+                              std::vector<u32>& tpaOutputNodes, bool bAddFirstPoint,
                               bool bClearPath = true) const;
     template <bool bAssignY, typename T>
     IC bool create_straight_path(u32 start_vertex_id, const Fvector2& start_point,
-                                 const Fvector2& finish_point, xr_vector<T>& tpaOutputPoints,
+                                 const Fvector2& finish_point, std::vector<T>& tpaOutputPoints,
                                  const T& example, bool bAddFirstPoint,
                                  bool bClearPath = true) const;
     template <typename T>
-    IC void assign_y_values(xr_vector<T>& path);
+    IC void assign_y_values(std::vector<T>& path);
     template <typename P>
     IC void iterate_vertices(const Fvector& min_position, const Fvector& max_position,
                              const P& predicate) const;

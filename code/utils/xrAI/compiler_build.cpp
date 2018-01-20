@@ -234,7 +234,7 @@ BOOL CreateNode(Fvector& vAt, vertex& N) {
 const int HDIM_X = 128;
 const int HDIM_Z = 128;
 
-using vecDW = xr_vector<u32>;
+using vecDW = std::vector<u32>;
 
 static vecDW* HASH[HDIM_X + 1][HDIM_Z + 1];
 

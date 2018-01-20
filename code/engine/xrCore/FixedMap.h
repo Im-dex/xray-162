@@ -83,14 +83,14 @@ private:
         if (N->left)
             recurseRL(N->left, CB);
     }
-    IC void getLR(TNode* N, xr_vector<T, typename allocator::template helper<T>::result>& D) {
+    IC void getLR(TNode* N, std::vector<T, typename allocator::template helper<T>::result>& D) {
         if (N->left)
             getLR(N->left, D);
         D.push_back(N->val);
         if (N->right)
             getLR(N->right, D);
     }
-    IC void getRL(TNode* N, xr_vector<T, typename allocator::template helper<T>::result>& D) {
+    IC void getRL(TNode* N, std::vector<T, typename allocator::template helper<T>::result>& D) {
         if (N->right)
             getRL(N->right, D);
         D.push_back(N->val);
@@ -98,7 +98,7 @@ private:
             getRL(N->left, D);
     }
     IC void getLR_P(TNode* N,
-                    xr_vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
+                    std::vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
         if (N->left)
             getLR_P(N->left, D);
         D.push_back(N);
@@ -106,7 +106,7 @@ private:
             getLR_P(N->right, D);
     }
     IC void getRL_P(TNode* N,
-                    xr_vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
+                    std::vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
         if (N->right)
             getRL_P(N->right, D);
         D.push_back(N);
@@ -225,35 +225,35 @@ public:
             CB(cur);
     }
 
-    IC void getLR(xr_vector<T, typename allocator::template helper<T>::result>& D) {
+    IC void getLR(std::vector<T, typename allocator::template helper<T>::result>& D) {
         if (pool)
             getLR(nodes, D);
     }
-    IC void getLR_P(xr_vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
+    IC void getLR_P(std::vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
         if (pool)
             getLR_P(nodes, D);
     }
-    IC void getRL(xr_vector<T, typename allocator::template helper<T>::result>& D) {
+    IC void getRL(std::vector<T, typename allocator::template helper<T>::result>& D) {
         if (pool)
             getRL(nodes, D);
     }
-    IC void getRL_P(xr_vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
+    IC void getRL_P(std::vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
         if (pool)
             getRL_P(nodes, D);
     }
-    IC void getANY(xr_vector<T, typename allocator::template helper<T>::result>& D) {
+    IC void getANY(std::vector<T, typename allocator::template helper<T>::result>& D) {
         TNode* _end = end();
         for (TNode* cur = begin(); cur != _end; cur++)
             D.push_back(cur->val);
     }
-    IC void getANY_P(xr_vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
+    IC void getANY_P(std::vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
         D.resize(size());
         TNode** _it = &*D.begin();
         TNode* _end = end();
         for (TNode *cur = begin(); cur != _end; cur++, _it++)
             *_it = cur;
     }
-    IC void getANY_P(xr_vector<void*, typename allocator::template helper<void*>::result>& D);
+    IC void getANY_P(std::vector<void*, typename allocator::template helper<void*>::result>& D);
     IC void setup(callback CB) {
         for (int i = 0; i < limit; i++)
             CB(nodes + i);
@@ -262,7 +262,7 @@ public:
 
 template <class K, class T, class allocator>
 void FixedMAP<K, T, allocator>::getANY_P(
-    xr_vector<void*, typename allocator::template helper<void*>::result>& D) {
+    std::vector<void*, typename allocator::template helper<void*>::result>& D) {
     D.resize(size());
     void** _it = &*D.begin();
     TNode* _end = end();

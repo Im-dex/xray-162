@@ -17,8 +17,8 @@ class ENGINE_API CEventAPI {
     };
 
 private:
-    xr_vector<EVENT> Events;
-    xr_vector<Deferred> Events_Deferred;
+    std::vector<EVENT> Events;
+    std::vector<Deferred> Events_Deferred;
     std::recursive_mutex CS;
 
 public:

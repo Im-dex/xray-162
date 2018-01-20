@@ -846,7 +846,7 @@ void CActor::UpdateCL() {
     UpdateInventoryOwner(Device.dwTimeDelta);
 
     if (m_feel_touch_characters > 0) {
-        for (xr_vector<CObject*>::iterator it = feel_touch.begin(); it != feel_touch.end(); it++) {
+        for (std::vector<CObject*>::iterator it = feel_touch.begin(); it != feel_touch.end(); it++) {
             CPhysicsShellHolder* sh = smart_cast<CPhysicsShellHolder*>(*it);
             if (sh && sh->character_physics_support()) {
                 sh->character_physics_support()->movement()->UpdateObjectBox(

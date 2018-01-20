@@ -220,7 +220,7 @@ protected:
     CUIDragDropListEx* GetSlotList(u16 slot_idx);
     bool CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_slot);
 
-    xr_vector<EDDListType> m_allowed_drops[iListTypeMax];
+    std::vector<EDDListType> m_allowed_drops[iListTypeMax];
     bool AllowItemDrops(EDDListType from, EDDListType to);
 
     bool xr_stdcall OnItemDrop(CUICellItem* itm);

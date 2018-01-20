@@ -58,11 +58,11 @@ public:
     sound_channels::manager const& sounds_manager() const;
 
 public:
-    typedef xr_vector<effect_id*> effect_container_type;
+    typedef std::vector<effect_id*> effect_container_type;
     typedef property_collection<effect_container_type, ambient> effect_collection_type;
 
 public:
-    typedef xr_vector<sound_id*> sound_container_type;
+    typedef std::vector<sound_id*> sound_container_type;
     typedef property_collection<sound_container_type, ambient> sound_collection_type;
 
 private:

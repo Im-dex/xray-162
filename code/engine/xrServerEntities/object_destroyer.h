@@ -59,7 +59,7 @@ struct CDestroyer {
     }
 
     template <typename T1, typename T2>
-    static void delete_data(xr_stack<T1, T2>& data) {
+    static void delete_data(std::stack<T1, T2>& data) {
         delete_data(data, true);
     }
 

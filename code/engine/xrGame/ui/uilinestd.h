@@ -1,7 +1,7 @@
-typedef xr_string::size_type StrSize;
+typedef std::string::size_type StrSize;
 
 #define BEGIN "%c["
 #define END "]"
-//#define xr_string::npos npos
+//#define std::string::npos npos
 
-const StrSize npos = (StrSize)xr_string::npos;
+const StrSize npos = (StrSize)std::string::npos;

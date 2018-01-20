@@ -9,9 +9,9 @@ struct GameEvent {
 
 class GameEventQueue {
     std::recursive_mutex cs;
-    xr_deque<GameEvent*> ready;
-    xr_vector<GameEvent*> unused;
-    xr_set<ClientID> m_blocked_clients;
+    std::deque<GameEvent*> ready;
+    std::vector<GameEvent*> unused;
+    std::set<ClientID> m_blocked_clients;
 
 public:
     typedef fastdelegate::FastDelegate1<GameEvent*, bool> event_predicate;

@@ -11,7 +11,7 @@ public:
 template <class T>
 class shared_container {
 protected:
-    typedef xr_map<shared_str, T*> SharedMap;
+    typedef std::map<shared_str, T*> SharedMap;
     typedef typename SharedMap::iterator SharedMapIt;
     SharedMap container;
 

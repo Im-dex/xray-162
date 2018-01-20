@@ -6,7 +6,7 @@ class CScriptDebugger;
 struct lua_State;
 
 class CDbgScriptThreads {
-    xr_vector<SScriptThread> m_threads;
+    std::vector<SScriptThread> m_threads;
 
 public:
     CScriptDebugger* m_debugger;

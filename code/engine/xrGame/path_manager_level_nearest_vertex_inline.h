@@ -23,7 +23,7 @@ CNearestVertexPathManager::~CPathManager() {}
 
 TEMPLATE_SPECIALIZATION
 IC void CNearestVertexPathManager::setup(const _Graph* _graph, _DataStorage* _data_storage,
-                                         xr_vector<_index_type>* _path,
+                                         std::vector<_index_type>* _path,
                                          const _index_type& _start_node_index,
                                          const _index_type& _goal_node_index,
                                          const _Parameters& parameters) {

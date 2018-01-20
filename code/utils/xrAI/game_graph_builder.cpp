@@ -214,8 +214,8 @@ void CGameGraphBuilder::fill_distances(const float& start, const float& amount) 
         DISTANCES::iterator E = m_distances.end();
         for (; I != E; I++) {
             (*I).resize(level_graph().header().vertex_count());
-            xr_vector<u32>::iterator i = (*I).begin();
-            xr_vector<u32>::iterator e = (*I).end();
+            std::vector<u32>::iterator i = (*I).begin();
+            std::vector<u32>::iterator e = (*I).end();
             for (; i != e; i++)
                 *i = u32(-1);
         }
@@ -229,7 +229,7 @@ void CGameGraphBuilder::recursive_update(const u32& game_vertex_id, const float&
     Progress(start);
 
     u32 level_vertex_id = graph().vertex(game_vertex_id)->data().level_vertex_id();
-    xr_vector<u32>& distances = m_distances[game_vertex_id];
+    std::vector<u32>& distances = m_distances[game_vertex_id];
     m_distances[m_results[level_vertex_id]][level_vertex_id] = u32(-1);
 
     m_current_fringe.reserve(distances.size());
@@ -245,8 +245,8 @@ void CGameGraphBuilder::recursive_update(const u32& game_vertex_id, const float&
 
     Progress(start);
     for (; !m_current_fringe.empty();) {
-        xr_vector<u32>::iterator I = m_current_fringe.begin();
-        xr_vector<u32>::iterator E = m_current_fringe.end();
+        std::vector<u32>::iterator I = m_current_fringe.begin();
+        std::vector<u32>::iterator E = m_current_fringe.end();
         for (; I != E; ++I) {
             u32* result = &m_results[*I];
             VERIFY(curr_dist < m_distances[*result][*I]);
@@ -473,8 +473,8 @@ float CGameGraphBuilder::path_distance(const u32& game_vertex_id0, const u32& ga
 void CGameGraphBuilder::generate_edges(const u32& game_vertex_id) {
     graph_type::CVertex* vertex = graph().vertex(game_vertex_id);
 
-    xr_vector<u32>::const_iterator I = m_current_fringe.begin();
-    xr_vector<u32>::const_iterator E = m_current_fringe.end();
+    std::vector<u32>::const_iterator I = m_current_fringe.begin();
+    std::vector<u32>::const_iterator E = m_current_fringe.end();
     for (; I != E; ++I) {
         VERIFY(!vertex->edge(*I));
         float distance = path_distance(game_vertex_id, *I);

@@ -249,7 +249,7 @@ float stalker_movement_manager_obstacles::is_going_through(Fmatrix const& matrix
 
     float current_distance = 0.f;
     float min_distance = flt_max;
-    typedef xr_vector<STravelPathPoint> detail_path_type;
+    typedef std::vector<STravelPathPoint> detail_path_type;
     detail_path_type::const_iterator i =
         detail().path().begin() + detail().curr_travel_point_index() + 1;
     detail_path_type::const_iterator e = detail().path().end();

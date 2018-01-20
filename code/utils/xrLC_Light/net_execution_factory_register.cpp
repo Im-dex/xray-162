@@ -22,7 +22,7 @@ public:
 
 private:
     void on_construct() {
-        const xr_vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
+        const std::vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
         u32 size = v.size();
         for (u32 i = 0; i < size; ++i)
             globals().get(v[i]).add_ref();
@@ -30,7 +30,7 @@ private:
     virtual net_execution_impl& implementation() { return execution_impl; };
 
     virtual void send_task(IGridUser& user, IGenericStream* outStream, u32 id) {
-        const xr_vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
+        const std::vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
         u32 size = v.size();
         for (u32 i = 0; i < size; ++i)
             globals().get(v[i]).on_task_send(outStream);
@@ -42,7 +42,7 @@ private:
         execution_impl.receive_result(outStream);
     };
     virtual bool receive_task(IAgent* agent, DWORD sessionId, IGenericStream* inStream) {
-        const xr_vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
+        const std::vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
         u32 size = v.size();
         for (u32 i = 0; i < size; ++i)
             if (!globals().get(v[i]).on_task_receive(agent, sessionId, inStream))
@@ -55,8 +55,8 @@ private:
         return execution_impl.execute(callback) && !callback.break_all();
     };
     virtual LPCSTR data_files(string_path& buf) {
-        const xr_vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
-        // xr_vector<e_net_globals>::const_iterator i = v.begin(), e = v.end();
+        const std::vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
+        // std::vector<e_net_globals>::const_iterator i = v.begin(), e = v.end();
         u32 size = v.size();
         buf[0] = 0;
         for (u32 i = 0; i < size; ++i) {
@@ -68,7 +68,7 @@ private:
 
 public:
     virtual ~tnet_execution() {
-        const xr_vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
+        const std::vector<e_net_globals>& v = exe_gl_reg().get_globals(etype);
         u32 size = v.size();
         for (u32 i = 0; i < size; ++i)
             globals().get(v[i]).free_ref();

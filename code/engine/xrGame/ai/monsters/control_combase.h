@@ -96,7 +96,7 @@ public:
     virtual void on_event(ControlCom::EEventType, ControlCom::IEventData*) {}
 
 protected:
-    using CONTROLLERS_VECTOR = xr_vector<CControl_Com*>;
+    using CONTROLLERS_VECTOR = std::vector<CControl_Com*>;
     CONTROLLERS_VECTOR m_controlled;
 };
 

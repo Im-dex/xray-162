@@ -21,14 +21,14 @@ public:
               //#endif
               {};
     };
-    using Items = xr_vector<Item>;
+    using Items = std::vector<Item>;
     struct XRCORE_API Sect {
         shared_str Name;
         Items Data;
 
         BOOL line_exist(LPCSTR L, LPCSTR* val = 0);
     };
-    using Root = xr_vector<Sect*>;
+    using Root = std::vector<Sect*>;
 
     typedef fastdelegate::FastDelegate1<LPCSTR, bool> allow_include_func_t;
     static CInifile* Create(LPCSTR szFileName, BOOL ReadOnly = TRUE);

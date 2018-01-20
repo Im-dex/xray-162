@@ -30,9 +30,9 @@ private:
 
 private:
     IRenderable* current;
-    xr_vector<recv> cache; // same as number of slots
-    xr_vector<IRenderable*> receivers;
-    xr_vector<int> taskid;
+    std::vector<recv> cache; // same as number of slots
+    std::vector<IRenderable*> receivers;
+    std::vector<int> taskid;
 
     ref_rt RT;
     shared_str c_xform;

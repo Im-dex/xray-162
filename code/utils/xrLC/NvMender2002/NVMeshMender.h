@@ -34,16 +34,16 @@ stretching that can ruin per-pixel lighting.
   and assume that positions, indices, and normals are in STL arrays: vpos, triIndices and vnor
 respectively.
 
-  xr_vector<float> vpos;
-  xr_vector<int> triIndices;
-  xr_vector<float> vnor;
+  std::vector<float> vpos;
+  std::vector<int> triIndices;
+  std::vector<float> vnor;
   ...
 
   NVMeshMender aMender;
 
 
-  xr_vector<NVMeshMender::VertexAttribute> inputAtts;		// What you have
-  xr_vector<NVMeshMender::VertexAttribute> outputAtts;	// What you want.
+  std::vector<NVMeshMender::VertexAttribute> inputAtts;		// What you have
+  std::vector<NVMeshMender::VertexAttribute> outputAtts;	// What you want.
 
   NVMeshMender::VertexAttribute posAtt;
   posAtt.Name_ = "position";
@@ -57,7 +57,7 @@ respectively.
   norAtt.Name_ = "normal";
   norAtt.floatVector_ = vnor;
 
-  xr_vector<float> texCoords;
+  std::vector<float> texCoords;
   NVMeshMender::VertexAttribute texCoordAtt;
   texCoordAtt.Name_ = "tex0";
   texCoordAtt.floatVector_;// = texCoords;
@@ -106,10 +106,10 @@ duplication WeightNormalsByFaceSize // weight vertex normals by the triangle's s
 
   vpos = outputAtts[0].floatVector_; // Note that there may be more vertices than you sent in.
   vnor = outputAtts[2].floatVector_;
-  xr_vector<float> texCoords = outputAtts[3].floatVector_; // texcoords
-  xr_vector<float> vtgt = outputAtts[4].floatVector_;		 // tgts
+  std::vector<float> texCoords = outputAtts[3].floatVector_; // texcoords
+  std::vector<float> vtgt = outputAtts[4].floatVector_;		 // tgts
   triIndices = outputAtts[1].intVector_;					 // new indices.
-  xr_vector<float> vbin = outputAtts[5].floatVector_;      // binormals.
+  std::vector<float> vbin = outputAtts[5].floatVector_;      // binormals.
 
   // Now the outputAtts may contain more vertex then you sent in !
   //  This is because in handling tangent space smoothing, and solving texture mirroring &
@@ -136,7 +136,7 @@ more
 
 class NVMeshMender {
 private:
-    mutable xr_vector<xr_string> LastErrors_;
+    mutable std::vector<std::string> LastErrors_;
 
     struct Edge {
         unsigned int v0;
@@ -161,10 +161,10 @@ private:
     };
 
 public:
-    void SetLastError(const xr_string& rhs) const { LastErrors_.push_back(rhs); }
+    void SetLastError(const std::string& rhs) const { LastErrors_.push_back(rhs); }
 
-    xr_string GetLastError() const {
-        xr_string aString;
+    std::string GetLastError() const {
+        std::string aString;
 
         if (LastErrors_.size() > 0) {
             aString = LastErrors_.back();
@@ -173,12 +173,12 @@ public:
     }
 
     struct VertexAttribute {
-        xr_string Name_;
+        std::string Name_;
 
-        typedef xr_vector<int> IntVector;
+        typedef std::vector<int> IntVector;
         IntVector intVector_;
 
-        typedef xr_vector<float> FloatVector;
+        typedef std::vector<float> FloatVector;
         FloatVector floatVector_;
 
         VertexAttribute& operator=(const VertexAttribute& rhs) {
@@ -197,7 +197,7 @@ public:
         bool operator<(const VertexAttribute& rhs) { return (Name_ < rhs.Name_); }
     };
 
-    typedef xr_vector<VertexAttribute> VAVector;
+    typedef std::vector<VertexAttribute> VAVector;
 
     enum Option {
         FixTangents,

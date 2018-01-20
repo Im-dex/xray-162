@@ -351,7 +351,7 @@ struct SAAParam {
     float dist;
 };
 
-using AA_VECTOR = xr_vector<SAAParam>;
+using AA_VECTOR = std::vector<SAAParam>;
 
 struct SCurrentAnimationInfo {
     shared_str name;
@@ -396,17 +396,17 @@ struct t_fx_index {
 
 enum EHitSide { eSideFront = u32(0), eSideBack, eSideLeft, eSideRight };
 
-using ANIM_ITEM_VECTOR = xr_vector<SAnimItem*>;
-using TRANSITION_ANIM_VECTOR = xr_vector<STransition>;
-using MOTION_ITEM_MAP = xr_map<EAction, SMotionItem>;
-using SEQ_VECTOR = xr_vector<EMotionAnim>;
-using ATTACK_ANIM = xr_vector<SAttackAnimation>;
-using REPLACED_ANIM = xr_vector<SReplacedAnim>;
+using ANIM_ITEM_VECTOR = std::vector<SAnimItem*>;
+using TRANSITION_ANIM_VECTOR = std::vector<STransition>;
+using MOTION_ITEM_MAP = std::map<EAction, SMotionItem>;
+using SEQ_VECTOR = std::vector<EMotionAnim>;
+using ATTACK_ANIM = std::vector<SAttackAnimation>;
+using REPLACED_ANIM = std::vector<SReplacedAnim>;
 
-using FX_MAP_U16 = xr_map<u16, t_fx_index>;
-using FX_MAP_STRING = xr_map<shared_str, t_fx_index>;
+using FX_MAP_U16 = std::map<u16, t_fx_index>;
+using FX_MAP_STRING = std::map<shared_str, t_fx_index>;
 
-using VELOCITY_CHAIN_VEC = xr_vector<SEQ_VECTOR>;
+using VELOCITY_CHAIN_VEC = std::vector<SEQ_VECTOR>;
 
 struct SVelocity {
     float current;
@@ -463,7 +463,7 @@ struct SMonsterEnemy {
 
 class CEntityAlive;
 
-using ENEMIES_MAP = xr_map<const CEntityAlive*, SMonsterEnemy>;
+using ENEMIES_MAP = std::map<const CEntityAlive*, SMonsterEnemy>;
 using ENEMIES_MAP_IT = ENEMIES_MAP::iterator;
 
 struct SMonsterCorpse {
@@ -472,7 +472,7 @@ struct SMonsterCorpse {
     TTime time;
 };
 
-using CORPSE_MAP = xr_map<const CEntityAlive*, SMonsterCorpse>;
+using CORPSE_MAP = std::map<const CEntityAlive*, SMonsterCorpse>;
 using CORPSE_MAP_IT = CORPSE_MAP::iterator;
 
 struct SMonsterHit {
@@ -484,8 +484,8 @@ struct SMonsterHit {
     bool operator==(const CObject* obj) { return (object == obj); }
 };
 
-using MONSTER_HIT_VECTOR = xr_vector<SMonsterHit>;
+using MONSTER_HIT_VECTOR = std::vector<SMonsterHit>;
 
 enum EDangerType { eWeak, eNormal, eStrong, eVeryStrong, eNone };
 
-using ANIM_TO_MOTION_MAP = xr_map<MotionID, shared_str>;
+using ANIM_TO_MOTION_MAP = std::map<MotionID, shared_str>;

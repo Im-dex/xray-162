@@ -30,7 +30,7 @@ private:
     };
 
 private:
-    xr_vector<State> States;
+    std::vector<State> States;
 
 public:
     void set_RS(u32 a, u32 b);

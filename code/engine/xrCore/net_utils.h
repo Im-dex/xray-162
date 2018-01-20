@@ -275,7 +275,7 @@ public:
 
     void r_sdir(Fvector& A);
     void r_stringZ(char* S);
-    void r_stringZ(xr_string& dest);
+    void r_stringZ(std::string& dest);
     void r_stringZ(shared_str& dest);
 
     void skip_stringZ();

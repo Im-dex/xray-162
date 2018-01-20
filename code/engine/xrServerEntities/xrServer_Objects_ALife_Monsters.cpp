@@ -187,7 +187,7 @@ void CSE_ALifeTraderAbstract::STATE_Read(NET_Packet& tNetPacket, u16 size) {
         }
 
         if (m_wVersion < 36) {
-            xr_vector<u16> temp;
+            std::vector<u16> temp;
             load_data(temp, tNetPacket);
         }
 
@@ -406,7 +406,7 @@ void CSE_ALifeTraderAbstract::set_specific_character(shared_str new_spec_char) {
     LPCSTR gen_name = "GENERATE_NAME_";
     if (strstr(m_character_name.c_str(), gen_name)) {
         // select name and lastname
-        xr_string subset = m_character_name.c_str() + xr_strlen(gen_name);
+        std::string subset = m_character_name.c_str() + xr_strlen(gen_name);
 
         string_path t1;
         strconcat(sizeof(t1), t1, "stalker_names_", subset.c_str());
@@ -414,7 +414,7 @@ void CSE_ALifeTraderAbstract::set_specific_character(shared_str new_spec_char) {
         u32 last_name_cnt = pSettings->r_u32(t1, "last_name_cnt");
 
         string512 S;
-        xr_string n = "name_";
+        std::string n = "name_";
         n += subset;
         n += "_";
         n += itoa(::Random.randI(name_cnt), S, 10);

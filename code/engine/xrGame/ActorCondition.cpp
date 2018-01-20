@@ -319,7 +319,7 @@ void CActorCondition::AffectDamage_InjuriousMaterialAndMonstersInfluence() {
     CPda* const pda = m_object->GetPDA();
 
     if (pda) {
-        typedef xr_vector<CObject*> monsters;
+        typedef std::vector<CObject*> monsters;
 
         for (monsters::const_iterator it = pda->feel_touch.begin(); it != pda->feel_touch.end();
              ++it) {

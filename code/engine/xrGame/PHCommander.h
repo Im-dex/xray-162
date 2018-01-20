@@ -56,7 +56,7 @@ public:
 #endif
 };
 
-using PHCALL_STORAGE = xr_vector<CPHCall*>;
+using PHCALL_STORAGE = std::vector<CPHCall*>;
 using PHCALL_I = PHCALL_STORAGE::iterator;
 
 class CPHCommander : public IPHWorldUpdateCallbck {

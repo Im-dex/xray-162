@@ -351,16 +351,16 @@ private:
     friend struct SWheel;
     friend struct SDoor;
 
-    xr_map<u16, SWheel> m_wheels_map;
-    xr_vector<SWheelDrive> m_driving_wheels;
-    xr_vector<SWheelSteer> m_steering_wheels;
-    xr_vector<SWheelBreak> m_breaking_wheels;
-    xr_vector<SExhaust> m_exhausts;
+    std::map<u16, SWheel> m_wheels_map;
+    std::vector<SWheelDrive> m_driving_wheels;
+    std::vector<SWheelSteer> m_steering_wheels;
+    std::vector<SWheelBreak> m_breaking_wheels;
+    std::vector<SExhaust> m_exhausts;
     shared_str m_exhaust_particles;
-    xr_map<u16, SDoor> m_doors;
-    xr_vector<SDoor*> m_doors_update;
-    xr_vector<Fvector> m_gear_ratious;
-    xr_vector<Fmatrix> m_sits_transforms; // m_sits_transforms[0] - driver_place
+    std::map<u16, SDoor> m_doors;
+    std::vector<SDoor*> m_doors_update;
+    std::vector<Fvector> m_gear_ratious;
+    std::vector<Fmatrix> m_sits_transforms; // m_sits_transforms[0] - driver_place
     float m_current_gear_ratio;
 
     /////////////////////////////////////////////////////////////
@@ -488,7 +488,7 @@ public:
     void cam_Update(float dt, float fov);
     void detach_Actor();
     bool attach_Actor(CGameObject* actor);
-    bool is_Door(u16 id, xr_map<u16, SDoor>::iterator& i);
+    bool is_Door(u16 id, std::map<u16, SDoor>::iterator& i);
     bool is_Door(u16 id);
     bool DoorOpen(u16 id);
     bool DoorClose(u16 id);
@@ -579,9 +579,9 @@ public:
 
 private:
     template <class T>
-    IC void fill_wheel_vector(LPCSTR S, xr_vector<T>& type_wheels);
-    IC void fill_exhaust_vector(LPCSTR S, xr_vector<SExhaust>& exhausts);
-    IC void fill_doors_map(LPCSTR S, xr_map<u16, SDoor>& doors);
+    IC void fill_wheel_vector(LPCSTR S, std::vector<T>& type_wheels);
+    IC void fill_exhaust_vector(LPCSTR S, std::vector<SExhaust>& exhausts);
+    IC void fill_doors_map(LPCSTR S, std::map<u16, SDoor>& doors);
 
     // Inventory for the car
     CInventory* inventory;

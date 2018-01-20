@@ -161,7 +161,7 @@ u32 game_sv_GameState::get_alive_count(u32 team) {
     return tmp_counter.count;
 }
 
-xr_vector<u16>* game_sv_GameState::get_children(ClientID id) {
+std::vector<u16>* game_sv_GameState::get_children(ClientID id) {
     xrClientData* C = (xrClientData*)m_server->ID_to_client(id);
     if (0 == C)
         return 0;
@@ -448,12 +448,12 @@ void game_sv_GameState::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who) {
     R_ASSERT2(l_uc_team < TEAM_COUNT,
               make_string("not found rpoint for team [%d]", l_uc_team).c_str());
 
-    xr_vector<RPoint>& rp = rpoints[l_uc_team];
+    std::vector<RPoint>& rp = rpoints[l_uc_team];
 #ifdef DEBUG
     Msg("---Size of rpoints of team [%d] is [%d]", l_uc_team, rp.size());
 #endif
     //-----------------------------------------------------------
-    xr_vector<u32> xrp; //	= rpoints[l_uc_team];
+    std::vector<u32> xrp; //	= rpoints[l_uc_team];
     for (u32 i = 0; i < rp.size(); i++) {
         if (rp[i].TimeToUnfreeze < Level().timeServer())
             xrp.push_back(i);

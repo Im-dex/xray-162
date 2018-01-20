@@ -417,8 +417,8 @@ void CAI_Stalker::update_best_item_info_impl() {
     // check if we remember we saw item which can kill
     // or items which can make my item killing
     {
-        xr_vector<const CGameObject*>::const_iterator I = memory().item().objects().begin();
-        xr_vector<const CGameObject*>::const_iterator E = memory().item().objects().end();
+        std::vector<const CGameObject*>::const_iterator I = memory().item().objects().begin();
+        std::vector<const CGameObject*>::const_iterator E = memory().item().objects().end();
         for (; I != E; ++I) {
             const CInventoryItem* inventory_item = smart_cast<const CInventoryItem*>(*I);
             if (!inventory_item || !memory().item().useful(&inventory_item->object()))
@@ -456,8 +456,8 @@ void CAI_Stalker::update_best_item_info_impl() {
 
     // check if we remember we saw item to kill
     // and item which can make this item killing
-    xr_vector<const CGameObject*>::const_iterator I = memory().item().objects().begin();
-    xr_vector<const CGameObject*>::const_iterator E = memory().item().objects().end();
+    std::vector<const CGameObject*>::const_iterator I = memory().item().objects().begin();
+    std::vector<const CGameObject*>::const_iterator E = memory().item().objects().end();
     for (; I != E; ++I) {
         const CInventoryItem* inventory_item = smart_cast<const CInventoryItem*>(*I);
         if (!inventory_item || !memory().item().useful(&inventory_item->object()))
@@ -653,8 +653,8 @@ bool CAI_Stalker::undetected_anomaly() {
 }
 
 bool CAI_Stalker::inside_anomaly() {
-    xr_vector<CObject*>::const_iterator I = feel_touch.begin();
-    xr_vector<CObject*>::const_iterator E = feel_touch.end();
+    std::vector<CObject*>::const_iterator I = feel_touch.begin();
+    std::vector<CObject*>::const_iterator E = feel_touch.end();
     for (; I != E; ++I) {
         CCustomZone* zone = smart_cast<CCustomZone*>(*I);
         if (zone && (zone->restrictor_type() != RestrictionSpace::eRestrictorTypeNone)) {
@@ -890,8 +890,8 @@ bool CAI_Stalker::throw_check_error(float low, float high, const Fvector& positi
 void CAI_Stalker::check_throw_trajectory(const float& throw_time) {
     m_throw_enabled = false;
 
-    xr_vector<trajectory_pick>* trajectory_picks = NULL;
-    xr_vector<Fvector>* collide_tris = NULL;
+    std::vector<trajectory_pick>* trajectory_picks = NULL;
+    std::vector<Fvector>* collide_tris = NULL;
 #ifdef DEBUG
     trajectory_picks = &m_throw_picks;
     collide_tris = &m_throw_collide_tris;

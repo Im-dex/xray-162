@@ -51,7 +51,7 @@ manager::~manager() {
 }
 
 void manager::load() {
-    typedef xr_vector<LPSTR> file_list_type;
+    typedef std::vector<LPSTR> file_list_type;
     file_list_type* file_list = FS.file_list_open("$game_weathers$", "");
     VERIFY(file_list);
 

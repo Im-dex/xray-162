@@ -11,7 +11,7 @@ class CUISequencer : public pureFrame, public pureRender, public IInputReceiver 
 protected:
     CUIWindow* m_UIWindow;
     ref_sound m_global_sound;
-    xr_deque<CUISequenceItem*> m_sequencer_items;
+    std::deque<CUISequenceItem*> m_sequencer_items;
 
     bool GrabInput();
     CUISequenceItem* GetNextItem();
@@ -62,7 +62,7 @@ public:
 };
 
 class CUISequenceItem {
-    xr_vector<int> m_disabled_actions;
+    std::vector<int> m_disabled_actions;
 
 protected:
     enum {
@@ -75,8 +75,8 @@ protected:
         etiStoredCursorState = (1 << 6),
         eti_last = 7,
     };
-    xr_vector<shared_str> m_start_lua_functions;
-    xr_vector<shared_str> m_stop_lua_functions;
+    std::vector<shared_str> m_start_lua_functions;
+    std::vector<shared_str> m_stop_lua_functions;
     luabind::functor<void> m_onframe_functor;
 
     Flags32 m_flags;
@@ -118,7 +118,7 @@ class CUISequenceSimpleItem : public CUISequenceItem {
         virtual void Start();
         virtual void Stop();
     };
-    using SubItemVec = xr_vector<SSubItem>;
+    using SubItemVec = std::vector<SSubItem>;
     SubItemVec m_subitems;
     struct SActionItem {
         EGameActions m_action;
@@ -134,7 +134,7 @@ public:
     string64 m_pda_section;
     Fvector2 m_desired_cursor_pos;
     int m_continue_dik_guard;
-    xr_vector<SActionItem> m_actions;
+    std::vector<SActionItem> m_actions;
 
 public:
     CUISequenceSimpleItem(CUISequencer* owner) : CUISequenceItem(owner) {}

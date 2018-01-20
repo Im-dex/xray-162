@@ -8,7 +8,7 @@
 global_claculation_data gl_data;
 
 template <class T>
-void transfer(const char* name, xr_vector<T>& dest, IReader& F, u32 chunk) {
+void transfer(const char* name, std::vector<T>& dest, IReader& F, u32 chunk) {
     IReader* O = F.open_chunk(chunk);
     u32 count = O ? (O->length() / sizeof(T)) : 0;
     clMsg("* %16s: %d", name, count);
@@ -104,7 +104,7 @@ void global_claculation_data::xrLoad() {
         post_process_materials(*g_shaders_xrlc, g_shader_compile, g_materials);
 // process textures
 #ifdef DEBUG
-        xr_vector<b_texture> dbg_textures;
+        std::vector<b_texture> dbg_textures;
 #endif
         Status("Processing textures...");
         {
@@ -212,14 +212,14 @@ void global_claculation_data::read(INetReader& r) {
 // base_lighting					g_lights; /////////////////////lc
 // Shader_xrLC_LIB*				g_shaders_xrlc;////////////////lc
 // b_params						g_params;//////////////////////lc
-// xr_vector<b_material>			g_materials;///////////////////lc
-// xr_vector<b_BuildTexture>		g_textures;////////////////////lc
+// std::vector<b_material>			g_materials;///////////////////lc
+// std::vector<b_BuildTexture>		g_textures;////////////////////lc
 // CDB::MODEL						RCAST_Model;///////////////////lc
 
 // Fbox							LevelBB;//-----------============
 // global_slots_data				slots_data;//-------=============
-// xr_vector<b_shader>				g_shader_compile;//-----==========
-// xr_vector<b_rc_face>			g_rc_faces;//---------===============
+// std::vector<b_shader>				g_shader_compile;//-----==========
+// std::vector<b_rc_face>			g_rc_faces;//---------===============
 
 void write(IWriter& w, const CDB::MODEL& m);
 void global_claculation_data::write(IWriter& w) const {

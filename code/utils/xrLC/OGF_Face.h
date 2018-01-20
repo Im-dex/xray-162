@@ -31,7 +31,7 @@ struct OGF_Vertex {
     BOOL similar(OGF* p, OGF_Vertex& other);
     void dump(u32 id);
 };
-typedef xr_vector<OGF_Vertex> vecOGF_V;
+typedef std::vector<OGF_Vertex> vecOGF_V;
 typedef vecOGF_V::iterator itOGF_V;
 typedef vecOGF_V::const_iterator citOGF_V;
 struct x_vertex // "fast" geometry, 16b/vertex
@@ -40,7 +40,7 @@ struct x_vertex // "fast" geometry, 16b/vertex
     x_vertex(const OGF_Vertex& c) { P = c.P; }
     BOOL similar(OGF* p, const x_vertex& other);
 };
-typedef xr_vector<x_vertex> vec_XV;
+typedef std::vector<x_vertex> vec_XV;
 typedef vec_XV::iterator itXV;
 
 #pragma pack(push, 1)
@@ -79,7 +79,7 @@ struct OGF_Face {
         return false;
     }
 };
-typedef xr_vector<OGF_Face> vecOGF_F;
+typedef std::vector<OGF_Face> vecOGF_F;
 typedef vecOGF_F::iterator itOGF_F;
 typedef vecOGF_F::const_iterator citOGF_F;
 typedef OGF_Face x_face;
@@ -107,10 +107,10 @@ struct OGF_Base {
 
     virtual void PreSave(u32 tree_id){};
     virtual void Save(IWriter& fs);
-    virtual void GetGeometry(xr_vector<Fvector>& RES) = 0;
+    virtual void GetGeometry(std::vector<Fvector>& RES) = 0;
     void CalcBounds();
 };
-extern xr_vector<OGF_Base*> g_tree;
+extern std::vector<OGF_Base*> g_tree;
 
 struct OGF : public OGF_Base {
     u32 material;
@@ -176,7 +176,7 @@ struct OGF : public OGF_Base {
     u16 _BuildVertex(OGF_Vertex& V1);
     void _BuildFace(OGF_Vertex& V1, OGF_Vertex& V2, OGF_Vertex& V3, bool _tc_ = true);
 
-    void adjacent_select(xr_vector<u32>& dest, xr_vector<bool>& vmark, xr_vector<bool>& fmark);
+    void adjacent_select(std::vector<u32>& dest, std::vector<bool>& vmark, std::vector<bool>& fmark);
 
     void Optimize();
     void CalculateTB();
@@ -201,8 +201,8 @@ struct OGF : public OGF_Base {
 
     //	void				Save_Progressive(IWriter &fs, ogf_header& H, BOOL bColors);
 
-    virtual void GetGeometry(xr_vector<Fvector>& R) {
-        for (xr_vector<OGF_Vertex>::iterator I = data.vertices.begin(); I != data.vertices.end();
+    virtual void GetGeometry(std::vector<Fvector>& R) {
+        for (std::vector<OGF_Vertex>::iterator I = data.vertices.begin(); I != data.vertices.end();
              I++)
             R.push_back(I->P);
     }
@@ -227,9 +227,9 @@ struct OGF_Reference : public OGF_Base {
     OGF_Reference() : OGF_Base(0) { model = 0; }
 
     virtual void Save(IWriter& fs);
-    virtual void GetGeometry(xr_vector<Fvector>& R) {
+    virtual void GetGeometry(std::vector<Fvector>& R) {
         Fvector P;
-        for (xr_vector<OGF_Vertex>::iterator I = model->data.vertices.begin();
+        for (std::vector<OGF_Vertex>::iterator I = model->data.vertices.begin();
              I != model->data.vertices.end(); I++) {
             xform.transform_tiny(P, I->P);
             R.push_back(P);
@@ -238,7 +238,7 @@ struct OGF_Reference : public OGF_Base {
 };
 
 struct OGF_Node : public OGF_Base {
-    xr_vector<u32> chields;
+    std::vector<u32> chields;
 
     OGF_Node(int _L, u16 _Sector) : OGF_Base(_L) { Sector = _Sector; }
 
@@ -250,8 +250,8 @@ struct OGF_Node : public OGF_Base {
         P->bConnected = TRUE;
     }
     virtual void Save(IWriter& fs);
-    virtual void GetGeometry(xr_vector<Fvector>& R) {
-        for (xr_vector<u32>::iterator I = chields.begin(); I != chields.end(); I++)
+    virtual void GetGeometry(std::vector<Fvector>& R) {
+        for (std::vector<u32>::iterator I = chields.begin(); I != chields.end(); I++)
             g_tree[*I]->GetGeometry(R);
     }
 };

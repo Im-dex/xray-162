@@ -42,7 +42,7 @@ protected:
     void ProcessEvent(EVENT ev);
 
     bool IsButton(CUIWindow* st);
-    void CreateList(xr_vector<CUITextWnd*>& lst, CUIXml& xml_doc, LPCSTR path);
+    void CreateList(std::vector<CUITextWnd*>& lst, CUIXml& xml_doc, LPCSTR path);
     void ShowMain();
     void ShowNewGame();
     void ShowNetworkGame();
@@ -59,9 +59,9 @@ protected:
     float m_mag_pos;
     float m_offset;
 
-    xr_vector<CUITextWnd*> m_buttons;
-    xr_vector<CUITextWnd*> m_buttons_new;
-    xr_vector<CUITextWnd*> m_buttons_new_network;
+    std::vector<CUITextWnd*> m_buttons;
+    std::vector<CUITextWnd*> m_buttons_new;
+    std::vector<CUITextWnd*> m_buttons_new_network;
 
     int m_selected_btn;
     enum_page_id m_page;

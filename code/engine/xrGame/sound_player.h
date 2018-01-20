@@ -48,7 +48,7 @@ public:
     };
 
     struct CSoundCollection : public CRandom32 {
-        xr_vector<ref_sound*> m_sounds;
+        std::vector<ref_sound*> m_sounds;
         u32 m_last_sound_id;
 
         CSoundCollection(const CSoundCollectionParams& params);
@@ -104,7 +104,7 @@ public:
 
 private:
     SOUND_COLLECTIONS m_sounds;
-    xr_vector<CSoundSingle> m_playing_sounds;
+    std::vector<CSoundSingle> m_playing_sounds;
     u32 m_sound_mask;
     CObject* m_object;
     shared_str m_sound_prefix;
@@ -129,7 +129,7 @@ public:
     void update(float time_delta);
     IC void set_sound_mask(u32 sound_mask);
     IC void remove_active_sounds(u32 sound_mask);
-    IC const xr_vector<CSoundSingle>& playing_sounds() const;
+    IC const std::vector<CSoundSingle>& playing_sounds() const;
     IC u32 active_sound_count(bool only_playing = false) const;
     bool need_bone_data() const;
     IC const SOUND_COLLECTIONS& objects() const;

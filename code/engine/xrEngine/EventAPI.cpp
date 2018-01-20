@@ -11,7 +11,7 @@ class ENGINE_API CEvent {
 
 private:
     char* Name;
-    xr_vector<IEventReceiver*> Handlers;
+    std::vector<IEventReceiver*> Handlers;
     u32 dwRefCount;
 
 public:
@@ -28,7 +28,7 @@ public:
             Handlers.push_back(H);
     }
     void Detach(IEventReceiver* H) {
-        xr_vector<IEventReceiver*>::iterator I = std::find(Handlers.begin(), Handlers.end(), H);
+        std::vector<IEventReceiver*>::iterator I = std::find(Handlers.begin(), Handlers.end(), H);
         if (I != Handlers.end())
             Handlers.erase(I);
     }
@@ -57,7 +57,7 @@ void CEventAPI::Dump() {
 EVENT CEventAPI::Create(const char* N) {
     std::lock_guard<decltype(CS)> lock(CS);
     CEvent E(N);
-    for (xr_vector<CEvent*>::iterator I = Events.begin(); I != Events.end(); I++) {
+    for (std::vector<CEvent*>::iterator I = Events.begin(); I != Events.end(); I++) {
         if ((*I)->Equal(E)) {
             EVENT F = *I;
             F->dwRefCount++;
@@ -73,7 +73,7 @@ void CEventAPI::Destroy(EVENT& E) {
     std::lock_guard<decltype(CS)> lock(CS);
     E->dwRefCount--;
     if (E->dwRefCount == 0) {
-        xr_vector<CEvent*>::iterator I = std::find(Events.begin(), Events.end(), E);
+        std::vector<CEvent*>::iterator I = std::find(Events.begin(), Events.end(), E);
         R_ASSERT(I != Events.end());
         Events.erase(I);
         xr_delete(E);
