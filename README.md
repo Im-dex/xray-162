@@ -1,6 +1,8 @@
 # xray-1.7
 XRay engine 1.7
 
+## Attention!!! The project is no longer maintained. Development is suspended.
+
 [![Build status](https://ci.appveyor.com/api/projects/status/fo8iwn5bvcmgnh8e/branch/master?svg=true)](https://ci.appveyor.com/project/Im-dex/xray-162)
 
 ## Branches
