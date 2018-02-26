@@ -248,7 +248,7 @@ public:
     }
     IC void getANY_P(xr_vector<TNode*, typename allocator::template helper<TNode*>::result>& D) {
         D.resize(size());
-        TNode** _it = &*D.begin();
+        TNode** _it = std::data(D);
         TNode* _end = end();
         for (TNode *cur = begin(); cur != _end; cur++, _it++)
             *_it = cur;
@@ -264,7 +264,7 @@ template <class K, class T, class allocator>
 void FixedMAP<K, T, allocator>::getANY_P(
     xr_vector<void*, typename allocator::template helper<void*>::result>& D) {
     D.resize(size());
-    void** _it = &*D.begin();
+    void** _it = std::data(D);
     TNode* _end = end();
     for (TNode *cur = begin(); cur != _end; cur++, _it++)
         *_it = cur;

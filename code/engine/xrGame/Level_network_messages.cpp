@@ -357,7 +357,8 @@ void CLevel::ClientReceive() {
                 P->r_seek(str_start);
                 P->r_stringZ(LevelName);
 
-                                                        
+                                                        
+
                 str_start = P->r_tell();
                 P->skip_stringZ();
                 str_end = P->r_tell();

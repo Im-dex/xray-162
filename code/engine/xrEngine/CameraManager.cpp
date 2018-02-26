@@ -322,9 +322,24 @@ bool CCameraManager::ProcessCameraEffector(CEffectorCam* eff) {
 void CCameraManager::UpdateCamEffectors() {
     if (m_EffectorsCam.empty())
         return;
-    EffectorCamVec::reverse_iterator rit = m_EffectorsCam.rbegin();
-    for (; rit != m_EffectorsCam.rend(); ++rit)
+
+#ifdef NDEBUG
+    for (auto rit = m_EffectorsCam.rbegin(); rit != m_EffectorsCam.rend(); ++rit)
         ProcessCameraEffector(*rit);
+#else
+    size_t processed = 0;
+    auto iter = m_EffectorsCam.rbegin();
+    while (iter != m_EffectorsCam.rend()) {
+        const auto size = m_EffectorsCam.size();
+        ProcessCameraEffector(*(iter++));
+        if (size != m_EffectorsCam.size()) {
+            iter = m_EffectorsCam.rbegin();
+            std::advance(iter, processed);
+        } else {
+            processed++;
+        }
+    }
+#endif
 
     m_cam_info.d.normalize();
     m_cam_info.n.normalize();

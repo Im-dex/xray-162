@@ -39,7 +39,7 @@ public:
         u32 size = P.r_elapsed();
         if (size) {
             data.resize(size);
-            P.r(&*data.begin(), size);
+            P.r(std::data(data), size);
         }
     }
     void export_(NET_Packet& P) {
@@ -49,11 +49,11 @@ public:
         P.w_u16(type);
         P.w_u16(destination);
         if (data.size())
-            P.w(&*data.begin(), (u32)data.size());
+            P.w(std::data(data), data.size());
     }
     void implication(NET_Packet& P) const {
-        std::memcpy(P.B.data, &*data.begin(), (u32)data.size());
-        P.B.count = (u32)data.size();
+        std::copy(data.begin(), data.end(), P.B.data);
+        P.B.count = data.size();
         P.r_pos = 0;
     }
 };
@@ -66,7 +66,7 @@ public:
     xr_deque<NET_Event> queue;
 
 public:
-    IC void insert(NET_Packet& P) {
+    void insert(NET_Packet& P) {
         NET_Event E;
         E.import(P);
         //		queue.insert	(E);
@@ -76,7 +76,8 @@ public:
 #ifdef DEBUG
         shared_str EventName;
         string16 tmp;
-        
+        
+
         switch (E.type)
         {
         case 1: EventName = "GE_OWNERSHIP_TAKE [1]"; break;

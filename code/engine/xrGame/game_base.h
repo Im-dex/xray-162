@@ -122,13 +122,6 @@ struct game_PlayerState {
     bool m_bClearRun;
 };
 
-struct game_TeamState {
-    int score;
-    u16 num_targets;
-
-    game_TeamState();
-};
-
 // [15.11.07] Alexander Maniluk: added next enumeratuion to solve problem with team identifiers
 enum ETeam { etGreenTeam = 0x00, etBlueTeam = 0X01, etSpectatorsTeam = 0x02 };
 //--------------

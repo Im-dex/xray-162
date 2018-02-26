@@ -101,8 +101,8 @@ void CWallmarksEngine::static_wm_render(CWallmarksEngine::static_wallmark* W, FV
     int aC = iFloor(a * 255.f);
     clamp(aC, 0, 255);
     u32 C = color_rgba(128, 128, 128, aC);
-    FVF::LIT* S = &*W->verts.begin();
-    FVF::LIT* E = &*W->verts.end();
+    FVF::LIT* S = std::data(W->verts);
+    FVF::LIT* E = std::data(W->verts) + std::size(W->verts);
     for (; S != E; S++, V++) {
         V->p.set(S->p);
         V->color = C;
@@ -238,10 +238,8 @@ void CWallmarksEngine::AddWallmark_internal(CDB::TRI* pTri, const Fvector* pVert
         Fbox bb;
         bb.invalidate();
 
-        FVF::LIT* I = &*W->verts.begin();
-        FVF::LIT* E = &*W->verts.end();
-        for (; I != E; I++)
-            bb.modify(I->p);
+        for (const auto& vert : W->verts)
+            bb.modify(vert.p);
         bb.getsphere(W->bounds.P, W->bounds.R);
     }
 
