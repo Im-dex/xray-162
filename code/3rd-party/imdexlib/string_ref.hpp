@@ -4,18 +4,61 @@
 #include <string_view>
 
 namespace imdex {
-namespace detail {
+namespace detail::str_ref {
 
-class string_ref_iterator final {
+template <typename Char>
+struct traits;
+
+template <>
+struct traits<char> {
+    static constexpr const char* empty = "";
+
+    static const char* find(const char* str, const char symbol) noexcept {
+        return std::strchr(str, symbol);
+    }
+
+    static const char* find(const char* str, const char* pattern) noexcept {
+        return std::strstr(str, pattern);
+    }
+
+    static char to_char_type(const std::char_traits<wchar_t>::int_type value) noexcept {
+        return std::char_traits<char>::to_char_type(value);
+    }
+};
+
+template <>
+struct traits<wchar_t> {
+    static constexpr const wchar_t* empty = L"";
+
+    static const wchar_t* find(const wchar_t* str, const wchar_t symbol) noexcept {
+        return std::wcschr(str, symbol);
+    }
+
+    static const wchar_t* find(const wchar_t* str, const wchar_t* pattern) noexcept {
+        return std::wcsstr(str, pattern);
+    }
+
+    static wchar_t to_char_type(const std::char_traits<wchar_t>::int_type value) noexcept {
+        return std::char_traits<wchar_t>::to_char_type(value);
+    }
+};
+
+template <typename Char, typename Traits>
+class iterator final {
 public:
     using difference_type = ptrdiff_t;
-    using value_type = const char;
-    using pointer = const char*;
-    using reference = const char&;
+    using value_type = const Char;
+    using pointer = const Char*;
+    using reference = const Char&;
     using iterator_category = std::bidirectional_iterator_tag;
 
-    string_ref_iterator() = default;
-    string_ref_iterator(const char* ptr) : ptr(ptr) {}
+    iterator() noexcept
+        : ptr(traits<Char>::empty)
+    {}
+
+    explicit iterator(const Char* ptr) noexcept
+        : ptr(ptr)
+    {}
 
     reference operator*() const noexcept {
         return *ptr;
@@ -25,154 +68,170 @@ public:
         return *ptr;
     }
 
-    string_ref_iterator& operator++() noexcept {
+    iterator& operator++() noexcept {
         ++ptr;
         return *this;
     }
 
-    string_ref_iterator operator++(int) noexcept {
-        ++ptr;
-        return ptr - 1;
+    iterator operator++(int) noexcept {
+        return ptr++;
     }
 
-    string_ref_iterator& operator--() noexcept {
+    iterator& operator--() noexcept {
         --ptr;
         return *this;
     }
 
-    string_ref_iterator operator--(int) noexcept {
-        --ptr;
-        return ptr + 1;
+    iterator operator--(int) noexcept {
+        return ptr--;
     }
 
-    bool operator==(const string_ref_iterator that) const noexcept {
-        return (ptr == that.ptr) || (*ptr == *that.ptr == '\0');
+    bool operator== (const iterator that) const noexcept {
+        return (ptr == that.ptr) && (Traits::to_char_type(0) == *ptr == *that.ptr);
     }
 
-    bool operator!= (const string_ref_iterator that) const noexcept {
+    bool operator!= (const iterator that) const noexcept {
         return !(*this == that);
     }
-
 private:
-    const char* ptr = "";
+    const Char* ptr;
 };
 
-} // detail namespace
+} // detail::str_ref namespace
 
-class string_ref final {
+template <typename Char>
+class basic_string_ref final {
+    using traits = detail::str_ref::traits<Char>;
 public:
-    using iterator = detail::string_ref_iterator;
+    using iterator = detail::str_ref::iterator<Char, traits>;
+    using size_type = size_t;
 
-    string_ref() noexcept
-        : str("")
+    static const auto npos = size_type(-1);
+
+    basic_string_ref() noexcept
+        : str(traits::empty)
     {}
 
-    string_ref(const char* str) noexcept
-        : str(str ? str : "")
+    basic_string_ref(const Char* str) noexcept
+        : str(str ? str : traits::empty)
     {}
 
-    template <typename Alloc>
-    string_ref(const std::basic_string<char, std::char_traits<char>, Alloc>& str) noexcept
+    template <typename StrTraits, typename Alloc>
+    basic_string_ref(const std::basic_string<Char, StrTraits, Alloc>& str) noexcept
         : str(str.c_str())
     {}
 
-    template <typename Alloc>
-    string_ref(std::basic_string<char, std::char_traits<char>, Alloc>&&) = delete;
+    template <typename StrTraits, typename Alloc>
+    basic_string_ref(std::basic_string<Char, StrTraits, Alloc>&&) = delete;
 
-    string_ref(const std::string_view&) = delete;
-    string_ref(const string_ref&) = default;
+    template <typename StrTraits>
+    basic_string_ref(const std::basic_string_view<Char, StrTraits>&) = delete;
 
-    string_ref& operator= (const string_ref&) = default;
-    string_ref& operator= (const std::string_view&) = delete;
+    basic_string_ref(const basic_string_ref&) = default;
+    basic_string_ref(basic_string_ref&&) = default;
+    ~basic_string_ref() = default;
 
-    string_ref& operator= (const char* str) noexcept {
+    basic_string_ref& operator= (const basic_string_ref&) = default;
+    basic_string_ref& operator= (basic_string_ref&&) = default;
+
+    template <typename StrTraits>
+    basic_string_ref& operator= (const std::basic_string_view<Char, StrTraits>&) = delete;
+
+    basic_string_ref& operator= (const Char* str) noexcept {
         this->str = str;
         return *this;
     }
 
-    template <typename Alloc>
-    string_ref& operator= (const std::basic_string<char, std::char_traits<char>, Alloc>& str) noexcept {
+    template <typename StrTraits, typename Alloc>
+    basic_string_ref& operator= (const std::basic_string<Char, StrTraits, Alloc>& str) noexcept {
         this->str = str.c_str();
         return *this;
     }
 
-    template <typename Alloc>
-    string_ref& operator= (std::basic_string<char, std::char_traits<char>, Alloc>&& str) = delete;
-
-    bool operator== (const char* str) const noexcept {
-        return std::strcmp(this->str, str) == 0;
-    }
-
-    bool operator!= (const char* str) const noexcept {
-        return !(*this == str);
-    }
-
-    template <typename Alloc>
-    bool operator== (const std::basic_string<char, std::char_traits<char>, Alloc>& str) const noexcept {
-        return this->str == str;
-    }
-
-    template <typename Alloc>
-    bool operator!= (const std::basic_string<char, std::char_traits<char>, Alloc>& str) const noexcept {
-        return this->str != str;
-    }
+    template <typename StrTraits, typename Alloc>
+    basic_string_ref& operator= (std::basic_string<Char, StrTraits, Alloc>&&) = delete;
 
     bool empty() const noexcept {
-        return str[0] == 0;
+        return str[0] == traits::to_char_type(0);
     }
 
-    bool nonEmpty() const noexcept {
+    bool non_empty() const noexcept {
         return !empty();
+    }
+
+    iterator begin() noexcept {
+        return str;
     }
 
     iterator begin() const noexcept {
         return str;
     }
 
+    iterator end() noexcept {
+        return iterator();
+    }
+
     iterator end() const noexcept {
         return iterator();
     }
 
-    const char* c_str() const noexcept {
+    const Char* c_str() const noexcept {
         return str;
     }
 
-    operator const char*() const noexcept {
+    explicit operator const Char*() const noexcept {
         return str;
     }
 
-    operator std::string() const {
-        return str;
+    void swap(basic_string_ref& that) noexcept {
+        using std::swap;
+        swap(str, that.str);
     }
 
-    operator std::string_view() const noexcept {
-        return str;
+    size_type find(const Char symbol) const noexcept {
+        const Char* pos = traits::find(str, symbol);
+        return pos ? size_type(str - pos) : npos;
     }
 
-    void swap(string_ref& that) noexcept {
-        std::swap(str, that.str);
+    size_type find(const Char* pattern) const noexcept {
+        const Char* pos = traits::find(str, pattern);
+        return pos ? size_type(str - pos) : npos;
     }
 
+    basic_string_ref remove_prefix(const size_type count) const noexcept {
+        return basic_string_ref(str + count);
+    }
 private:
-    const char* str;
+    const Char* str;
 };
 
-inline void swap(string_ref& lhs, string_ref& rhs) noexcept {
+using string_ref = basic_string_ref<char>;
+using wstring_ref = basic_string_ref<wchar_t>;
+
+template <typename Char>
+void swap(basic_string_ref<Char>& lhs, basic_string_ref<Char>& rhs) noexcept {
     lhs.swap(rhs);
 }
+
+namespace string_ref_literals {
 
 inline string_ref operator ""_sr(const char* str, size_t) noexcept {
     return str;
 }
 
+inline wstring_ref operator ""_sr(const wchar_t* str, size_t) noexcept {
+    return str;
+}
+
+} // string_ref_literals namespace
 } // namespace imdex
 
 namespace std {
 
-template <>
-struct hash<imdex::string_ref> {
-    size_t operator()(const imdex::string_ref value) const {
-        return std::hash<const char*>()(value);
+template <typename Char>
+struct hash<imdex::basic_string_ref<Char>> {
+    size_t operator()(const imdex::basic_string_ref<Char> value) const {
+        return std::hash<const Char*>()(value);
     }
 };
 

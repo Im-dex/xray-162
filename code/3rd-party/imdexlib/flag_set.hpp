@@ -33,8 +33,14 @@ public:
         return value & ~cast(val);
     }
 
-    FlagSet operator-= (const T val) {
+    FlagSet& operator-= (const T val) {
         value &= ~cast(val);
+        return *this;
+    }
+
+    FlagSet& upset(const T val, const bool enable) {
+        if (enable) *this |= val;
+        else        *this -= val;
         return *this;
     }
 
@@ -62,7 +68,8 @@ public:
     }
 
     bool notHas(const T val) const {
-        return (value & cast(val)) != val;
+        const auto underlyingVal = cast(val);
+        return (value & cast(val)) != underlyingVal;
     }
 
     underlying_type underlying() const noexcept {

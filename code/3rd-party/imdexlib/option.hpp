@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "utility.hpp"
+#include "fwd.hpp"
 #include "traits.hpp"
 
 namespace imdex {
@@ -47,6 +47,7 @@ public:
         if constexpr(std::is_constructible_v<T, U&&>) {
             construct(std::forward<U>(value));
         } else {
+            // ReSharper disable once CppStaticAssertFailure
             static_assert(false, "Optional type needs to be constructible from argument type");
         }
     }
@@ -58,7 +59,9 @@ public:
         if constexpr(std::is_constructible_v<T, const U&>) {
             if (that.non_empty()) construct(that.value());
         } else {
-            static_assert(false, "Optional type needs to be constructible from optinal argument type");
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false,
+                "Optional type needs to be constructible from optinal argument type");
         }
     }
 
@@ -69,17 +72,20 @@ public:
         if constexpr(std::is_constructible_v<T, U&&>) {
             if (that.non_empty()) construct(std::move(that.value()));
         } else {
-            static_assert(false, "Optional type needs to be constructible from optional argument type");
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false,
+                "Optional type needs to be constructible from optional argument type");
         }
     }
 
     template <typename... Ts>
-    explicit option(const in_place&, Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>)
+    explicit option(const std::in_place_t&, Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>)
         : storage(),
           empty_(false) {
         if constexpr (std::is_constructible_v<T, Ts&&...>) {
             construct(std::forward<Ts>(args)...);
         } else {
+            // ReSharper disable once CppStaticAssertFailure
             static_assert(false, "Optional type needs to be constructible from passed arguments");
         }
     }
@@ -105,7 +111,10 @@ public:
                 else                                  reset();
             }
         } else {
-            static_assert(false, "Optional type needs to be constructible and assignable from the argument optional type");
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false,
+                "Optional type needs to be constructible and assignable from the argument optional type"
+            );
         }
 
         return *this;
@@ -123,7 +132,10 @@ public:
                 else                                  reset();
             }
         } else {
-            static_assert(false, "Optional type needs to be constructible and assignable from the argument optional type");
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false,
+                "Optional type needs to be constructible and assignable from the argument optional type"
+            );
         }
 
         return *this;
@@ -135,7 +147,9 @@ public:
             if (empty()) initialize(std::forward<U>(value));
             else         assign(std::forward<U>(value));
         } else {
-            static_assert(false, "Optional type needs to be constructible and assignable from the argument type");
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false,
+                "Optional type needs to be constructible and assignable from the argument type");
         }
 
         return *this;
@@ -167,7 +181,9 @@ public:
         if constexpr (is_comparable_to_v<const T&, const U&>) {
             return (empty() == that.empty()) && (empty() ? true : (value() == that.value()));
         } else {
+            // ReSharper disable once CppStaticAssertFailure
             static_assert(false, "Types not comparable");
+            return false;
         }
     }
 
@@ -181,6 +197,7 @@ public:
         if constexpr (is_comparable_to_v<const T&, const U&>) {
             return empty() ? false : (value() == that);
         } else {
+            // ReSharper disable once CppStaticAssertFailure
             static_assert(false, "Types not comparable");
             return false;
         }
@@ -188,6 +205,10 @@ public:
 
     bool operator!= (const T& that) const noexcept {
         return !(*this == that);
+    }
+
+    explicit operator bool() const {
+        return non_empty();
     }
 
     size_t size() const noexcept {
@@ -275,6 +296,7 @@ public:
                 }
             }
         } else {
+            // ReSharper disable once CppStaticAssertFailure
             static_assert(false, "Optional type needs to be swapable and move constructible");
         }
     }
@@ -286,58 +308,38 @@ public:
             if (empty()) initialize(std::move(that));
             else         swap(value(), that);
         } else {
+            // ReSharper disable once CppStaticAssertFailure
             static_assert(false, "Optional type needs to be swapable and move constructible");
         }
     }
 
+    auto flatten() const & {
+        return flatten(*this);
+    }
+
+    auto flatten() && {
+        return flatten(std::move(*this));
+    }
+
     template <typename Handler>
     auto map(Handler&& handler) const & {
-        if constexpr (is_callable_v<Handler&&, const T&>) {
-            using Ret = std::decay_t<std::result_of_t<Handler&&(const T&)>>;
-            return empty() ? option<Ret>() : option<Ret>(get());
-        } else {
-            static_assert(false, "Invalid handler");
-            return option();
-        }
+        return map(*this, IMDEX_FWD(handler));
     }
 
     template <typename Handler>
     auto map(Handler&& handler) && {
-        if constexpr (is_callable_v<Handler&&, T&&>) {
-            using Ret = std::decay_t<std::result_of_t<Handler&&(T&&)>>;
-            return empty() ? option<Ret>() : option<Ret>(std::move(get()));
-        } else {
-            static_assert(false, "Invalid handler");
-            return option();
-        }
+        return map(std::move(*this), IMDEX_FWD(handler));
     }
 
-    auto flatten() const & {
-        if constexpr (is_option_v<T>) {
-            using Value = typename T::value_type;
-
-            if (empty()) return T();
-            const T& value = get();
-            return value.empty() ? T() : option<Value>(value.get());
-        } else {
-            static_assert(false, "Optional type needs to be an option");
-            return option();
-        }
+    template <typename Handler>
+    auto flat_map(Handler&& handler) const & {
+        return flat_map(*this, IMDEX_FWD(handler));
     }
 
-    auto flatten() && {
-        if constexpr (is_option_v<T>) {
-            using Value = typename T::value_type;
-
-            if (empty()) return T();
-            T& value = get();
-            return value.empty() ? T() : option<Value>(std::move(value.get()));
-        } else {
-            static_assert(false, "Optional type needs to be an option");
-            return option();
-        }
+    template <typename Handler>
+    auto flat_map(Handler&& handler) && {
+        return flat_map(std::move(*this), IMDEX_FWD(handler));
     }
-
 private:
     const T* pointer() const noexcept {
         return reinterpret_cast<const T*>(std::addressof(storage));
@@ -385,6 +387,58 @@ private:
         }
     }
 
+    template <typename Self, typename Handler>
+    static auto map(Self&& self, Handler&& handler) {
+        using Value = decltype(IMDEX_FWD(self).get());
+        if constexpr (std::is_invocable_v<Handler&&, Value>) {
+            using Res = remove_cvr_t<std::invoke_result_t<Handler&&, Value>>;
+            return self.empty() ? option<Res>()
+                                : option<Res>(handler(IMDEX_FWD(self).get()));
+        } else {
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false, "Invalid map handler");
+            return self;
+        }
+    }
+
+    template <typename Self, typename Handler>
+    static auto flat_map(Self&& self, Handler&& handler) {
+        using Value = decltype(IMDEX_FWD(self).get());
+        if constexpr (std::is_invocable_v<Handler&&, Value>) {
+            using Res = std::invoke_result_t<Handler&&, Value>;
+            if constexpr (is_option_v<Res>) {
+                if (self.empty()) {
+                    return Res{};
+                } else {
+                    return handler(IMDEX_FWD(self).get());
+                }
+            } else {
+                // ReSharper disable once CppStaticAssertFailure
+                static_assert(false, "Handler should return optional type");
+                return self;
+            }
+        } else {
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false, "Invalid flat_map handler");
+            return self;
+        }
+    }
+
+    template <typename Self>
+    static auto flatten(Self&& self) {
+        if constexpr (is_option_v<T>) {
+            if (self.empty()) {
+                return option<typename value_type::value_type>{};
+            } else {
+                return IMDEX_FWD(self).get();
+            }
+        } else {
+            // ReSharper disable once CppStaticAssertFailure
+            static_assert(false, "Nested optional required");
+            return self;
+        }
+    }
+
     std::aligned_storage_t<sizeof(T), alignof(T)> storage;
     bool empty_;
 };
@@ -400,11 +454,10 @@ public:
     option(const option& that) : ref(that.ref) {}
     option(none_t) : option() {}
     option(std::reference_wrapper<T> ref) : ref(&(ref.get())) {}
+    ~option() = default;
 
-    option& operator= (const option& that) {
-        ref = that.ref;
-        return *this;
-    }
+    option& operator= (const option&) = default;
+    option& operator= (option&&) = default;
 
     option& operator= (std::reference_wrapper<T> ref) {
         this->ref = &(ref.get());
@@ -416,6 +469,10 @@ public:
     }
 
     bool operator!= (none_t) const noexcept {
+        return non_empty();
+    }
+
+    explicit operator bool() const {
         return non_empty();
     }
 
@@ -490,14 +547,13 @@ public:
     void swap(option& that) noexcept {
         std::swap(ref, that.ref);
     }
-
 private:
     T* ref = nullptr;
 };
 
 template <typename T>
-option<std::decay_t<T>> some(T&& value) noexcept(std::is_nothrow_constructible_v<std::decay_t<T>, T&&>) {
-    return option<std::decay_t<T>>(std::forward<T>(value));
+option<remove_cvr_t<T>> some(T&& value) noexcept(std::is_nothrow_constructible_v<remove_cvr_t<T>, T&&>) {
+    return option<remove_cvr_t<T>>(std::forward<T>(value));
 }
 
 template <typename T>
@@ -512,7 +568,7 @@ constexpr none_t none() noexcept {
 
 template <typename T, typename... Ts>
 option<T> make_option(Ts&&... args) noexcept(std::is_nothrow_constructible_v<T, Ts&&...>) {
-    return option<T>(in_place{}, std::forward<Ts>(args)...);
+    return option<T>(std::in_place, std::forward<Ts>(args)...);
 }
 
 template <typename T>

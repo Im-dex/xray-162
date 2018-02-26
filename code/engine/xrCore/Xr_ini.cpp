@@ -85,7 +85,6 @@ CInifile::CInifile(IReader* F, LPCSTR path, allow_include_func_t allow_include_f
     m_flags.zero();
     m_flags.set(eSaveAtEnd, FALSE);
     m_flags.set(eReadOnly, TRUE);
-    m_flags.set(eOverrideNames, FALSE);
     Load(F, path, allow_include_func);
 }
 
@@ -640,8 +639,7 @@ void CInifile::w_string(LPCSTR S, LPCSTR L, LPCSTR V, LPCSTR comment) {
     if (it != data.Data.end()) {
         // Check for "first" matching
         if (0 == xr_strcmp(*it->first, *I.first)) {
-            BOOL b = m_flags.test(eOverrideNames);
-            R_ASSERT2(b, make_string("name[%s] already exist in section[%s]", line, sect).c_str());
+            R_ASSERT2(false, make_string("name[%s] already exist in section[%s]", line, sect).c_str());
             *it = I;
         } else {
             data.Data.insert(it, I);

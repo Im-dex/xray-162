@@ -315,6 +315,7 @@ void IReader::r(void* p, const size_t cnt) {
 #endif
 };
 
+// [imdex] is newline
 inline bool is_term(const char a) { return (a == 13) || (a == 10); }
 
 size_t IReader::advance_term_string() {

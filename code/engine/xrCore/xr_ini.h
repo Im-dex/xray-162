@@ -41,8 +41,7 @@ public:
 private:
     enum {
         eSaveAtEnd = (1 << 0),
-        eReadOnly = (1 << 1),
-        eOverrideNames = (1 << 2),
+        eReadOnly = (1 << 1)
     };
     Flags8 m_flags;
     string_path m_file_name;
@@ -50,6 +49,7 @@ private:
 
     void Load(IReader* F, const char* path, allow_include_func_t allow_include_func = nullptr);
 public:
+    // with path and without
     CInifile(IReader* F, const char* path = nullptr, allow_include_func_t allow_include_func = nullptr);
 
     CInifile(LPCSTR szFileName, BOOL ReadOnly = TRUE, BOOL bLoadAtStart = TRUE,
@@ -59,7 +59,6 @@ public:
     virtual ~CInifile();
     bool save_as(LPCSTR new_fname = 0);
     void save_as(IWriter& writer, bool bcheck = false) const;
-    void set_override_names(BOOL b) { m_flags.set(eOverrideNames, b); }
     void save_at_end(BOOL b) { m_flags.set(eSaveAtEnd, b); }
     LPCSTR fname() const { return m_file_name; };
 

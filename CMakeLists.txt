@@ -205,6 +205,7 @@ if (${BUILD_UTILS})
     add_subdirectory(code/utils/xrLC_LightStab)
     add_subdirectory(code/utils/xrDO_Light)
     add_subdirectory(code/utils/xrLC)
+    add_subdirectory(code/utils/xrInivld)
 
     set_target_properties(ctool PROPERTIES FOLDER utils)
     set_target_properties(xrCompress PROPERTIES FOLDER utils)

@@ -2,3 +2,9 @@
 
 #cmakedefine DEBUG_CAPS
 #cmakedefine PNG_SCREENSHOTS
+
+#ifdef __RESHARPER__
+#define co_return return
+#define co_yield
+#define co_await
+#endif

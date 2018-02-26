@@ -45,7 +45,7 @@ TEST_F(OptionValueTest, ConstructorTest) {
     EXPECT_EQ(OptVal(value), value);
     EXPECT_EQ(some(value), value);
 
-    EXPECT_EQ(option<complex_constructible>(in_place(), 0, .0), complex_constructible(0, .0));
+    EXPECT_EQ(option<complex_constructible>(std::in_place, 0, .0), complex_constructible(0, .0));
     EXPECT_EQ(make_option<complex_constructible>(0, .0), complex_constructible(0, .0));
 }
 
@@ -135,8 +135,11 @@ TEST_F(OptionValueTest, GetTest) {
 #ifdef DEBUG
     EXPECT_DEATH(empty.get(), ".*");
 #endif
+
+#if _HAS_EXCEPTIONS
     EXPECT_THROW(empty.get_or_throw<test_exception>(), test_exception);
     EXPECT_THROW(empty.get_or_throw(test_exception()), test_exception);
+#endif
 }
 
 TEST_F(OptionRefTest, GetTest) {
@@ -153,8 +156,11 @@ TEST_F(OptionRefTest, GetTest) {
 #ifdef DEBUG
     EXPECT_DEATH(empty.get(), ".*");
 #endif
+
+#if _HAS_EXCEPTIONS
     EXPECT_THROW(empty.get_or_throw<test_exception>(), test_exception);
     EXPECT_THROW(empty.get_or_throw(test_exception()), test_exception);
+#endif
 }
 
 TEST_F(OptionValueTest, SwapTest) {

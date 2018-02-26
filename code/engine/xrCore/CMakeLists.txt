@@ -16,7 +16,8 @@ set_source_files_properties(xrDebug.cpp PROPERTIES HEADER_FILE_ONLY TRUE)
 set(FS FileSystem.cpp FileSystem.h FS.h FS.cpp
        FS_internal.h LocatorAPI.h LocatorAPI.cpp LocatorAPI_defs.h
        LocatorAPI_defs.cpp log.h log.cpp NET_utils.cpp net_utils.h Xr_ini.cpp xr_ini.h
-       ini.h ini.cpp)
+       ini.h ini.cpp ini_parser.h ini_parser.cpp ini_error.h)
+
 set(FS_STREAM_READER stream_reader.h stream_reader.cpp)
 set(FS_FILE_STREAM_READER file_stream_reader.h file_stream_reader.cpp)
 
@@ -24,7 +25,7 @@ set(INTRUSIVE_PTR intrusive_ptr.h)
 
 set(KERNEL FTimer.h FTimer.cpp resource.h stdafx.h stdafx.cpp xrCore.h xrCore.cpp
            xrCore_platform.h xrCore.rc stacktrace_collector.h stacktrace_collector.cpp
-           conv.h xr_writer.h
+           conv.h xr_writer.h xr_error.h
            ${CMAKE_CURRENT_BINARY_DIR}/../../../generated/xr_config.h)
 
 set(MATH_ _bitwise.h _color.h _compressed_normal.h _compressed_normal.cpp _cylinder.h

@@ -11,26 +11,18 @@ public:
           buffer(alloc)
     {}
 
-    BasicXrWriter(BasicXrWriter&& other)
-        : fmt::BasicWriter<Char>(buffer),
-          buffer(std::move(other.buffer))
-    {}
-
-    BasicXrWriter& operator= (BasicXrWriter&& other) {
-        buffer = std::move(other.buffer);
-        return *this;
-    }
-
     std::string_view strView() const {
         return std::string_view(Base::data(), Base::size());
     }
 
 private:
-    fmt::internal::MemoryBuffer<Char, StaticSize, Allocator> buffer;
+    fmt::internal::MemoryBuffer<Char, StaticSize, std::allocator<Char>> buffer;
 };
 
+// TODO: [imdex] add type
 template <size_t StaticSize>
 using XrWriter = BasicXrWriter<char, StaticSize>;
 
+// TODO: [imdex] add type
 template <typename BaseArray>
 using XrWriterAs = XrWriter<std::extent_v<BaseArray>>;

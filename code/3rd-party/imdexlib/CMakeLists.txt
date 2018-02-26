@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project(imdexlib)
 
-file(GLOB HEADERS *.hpp)
+file(GLOB HEADERS *.hpp range/*.hpp)
 
 add_library(imdexlib INTERFACE)
 target_sources(imdexlib INTERFACE ${HEADERS})

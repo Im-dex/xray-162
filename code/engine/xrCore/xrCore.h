@@ -131,12 +131,14 @@
 #include <filesystem>
 #include <cinttypes>
 #include <chrono>
+#include <variant>
 
 #include <unordered_map>
 #include <unordered_set>
 
 #include <string>
 #include <string_view>
+
 #pragma warning(pop)
 #pragma warning(disable : 4100) // unreferenced formal parameter
 

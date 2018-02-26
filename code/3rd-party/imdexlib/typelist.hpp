@@ -150,4 +150,58 @@ void ts_apply(Handler&& handler) {
     detail::ts_applier<List>::apply(std::forward<Handler>(handler));
 }
 
+template <typename List, typename T>
+struct ts_is_contains;
+
+template <typename T, typename H, typename... Ts>
+struct ts_is_contains<typelist<H, Ts...>, T>
+    : std::conditional_t<
+          std::is_same_v<H, T>,
+          std::true_type,
+          ts_is_contains<typelist<Ts...>, T>
+      >
+{};
+
+template <typename T>
+struct ts_is_contains<typelist<>, T> : std::false_type {};
+
+template <typename List, typename T>
+constexpr bool ts_is_contains_v = ts_is_contains<List, T>::value;
+
+namespace detail::ts {
+
+template <typename Left, typename Right>
+struct is_unique;
+
+template <typename T, typename... Ls, typename... Rs>
+struct is_unique<typelist<Ls...>, typelist<T, Rs...>>
+    : std::conditional_t<
+          ts_is_contains_v<typelist<Ls...>, T>,
+          std::false_type,
+          is_unique<typelist<Ls..., T>, typelist<Rs...>>
+      >
+{};
+
+template <typename... Ls>
+struct is_unique<typelist<Ls...>, typelist<>> : std::true_type {};
+
+} // detail::ts namespace
+
+template <typename List>
+struct ts_is_unique;
+
+template <typename T, typename... Ts>
+struct ts_is_unique<typelist<T, Ts...>>
+    : detail::ts::is_unique<typelist<T>, typelist<Ts...>>
+{};
+
+template <typename T>
+struct ts_is_unique<typelist<T>> : std::true_type {};
+
+template <>
+struct ts_is_unique<typelist<>> : std::true_type {};
+
+template <typename List>
+constexpr bool ts_is_unique_v = ts_is_unique<List>::value;
+
 } // imdex namespace
