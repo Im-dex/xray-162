@@ -22,7 +22,7 @@ endif()
 configure_file(code/engine/xr_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/xr_config.h @ONLY)
 
 if (MSVC)
-    if(MSVC_VERSION EQUAL 1912) # MSVS 2017.5
+    if(MSVC_VERSION GREATER 1911) # MSVS 2017.5
         execute_process(COMMAND "vswhere" "-version" "15.5" "-property" "installationPath"
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extras
                         OUTPUT_VARIABLE VS_TOOLS_PATH
